@@ -18,7 +18,7 @@ class PharmaController extends Controller
     public function public_index()
     {
         $pharmas =DB::table('pharmacies')->get();
-        return view('public.pharmacylist', compact("pharmas"));
+        return view('public.pharmacyList', compact("pharmas"));
     }
 
 

@@ -17,7 +17,6 @@ Route::view('/about', 'public.about')->name('about');
 Route::get('/hfrresources', 'ResourceController@public_index')->name('public_resources');
 
 
-
 Auth::routes();
 
 Route::middleware(["auth"])->group(function(){

@@ -19,7 +19,7 @@ class ImagingController extends Controller
     public function public_index()
     {
         $imagings =DB::table('radiologies')->get();
-        return view('public.radiologylist', compact("imagings"));
+        return view('public.radiologyList', compact("imagings"));
     }
     public function create()
     {

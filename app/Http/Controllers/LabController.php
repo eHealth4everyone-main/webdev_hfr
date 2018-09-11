@@ -18,7 +18,7 @@ class LabController extends Controller
     public function public_index()
     {
         $labs =DB::table('laboratory')->get();
-        return view('public.lablist', compact("labs"));
+        return view('public.labList', compact("labs"));
     }
 
     /**
