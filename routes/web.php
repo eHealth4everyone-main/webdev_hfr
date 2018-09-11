@@ -18,8 +18,6 @@ Route::get('/hfrresources', 'ResourceController@public_index')->name('public_res
 
 
 
-
-
 Auth::routes();
 
 Route::middleware(["auth"])->group(function(){
