@@ -19,13 +19,19 @@ class RoleController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request);
+
         $request->validate([
             'role' => 'required|string|max:50',
+            'description' => 'required|string|max:100',
             'perm' => 'required',
         ]);
 
         
-        $role = Role::create(['name' => $request->role]);
+        $role = Role::create([
+            'name' => $request->role,
+            'description' => $request->description
+            ]);
         $role->givePermissionTo($request->perm);
 
         session()->flash("alert-success", "Role created successfully!");
@@ -49,11 +55,13 @@ class RoleController extends Controller
     {
         $request->validate([
             'role1' => 'required|string|max:50',
+            'description1' => 'required|string|max:100',
             'perm1' => 'required',
         ]);
 
         $role = Role::findOrfail($request->RoleID);
         $role->name = $request->role1;
+        $role->description = $request->description1;
         $role->save();
 
         $role->syncPermissions($request->perm1);

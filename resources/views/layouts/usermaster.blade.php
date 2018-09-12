@@ -27,18 +27,19 @@
       <div class="container">
           <div class="row">
               <div class="col-md-2">
-                  {{-- <img class="img-responsive center-block" src="/img/logo.png" title="Nigeria Health Facility Registry" /> --}}
+                  <img class="img-responsive center-block" src="/img/logo.png" width="50" height="50" title="" />
                   {{-- <img class="img-responsive" src="/img/logo.png" class="img-circle" alt="FMOH Logo"> --}}
               </div>
+              <h4 class="text-center"><p> NIGERIA HEALTH FACILITY REGISTRY </p></h4>
               <div class="col-md-8">
-                  <h2 class="text-center"><p> NIGERIA HEALTH FACILITY REGISTRY </p></h2>
+                
                  
               </div>
               <div class="col-md-2"></div>
           </div>
      
         <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse pull-left" id="navbar-collapse">
+        <div class="collapse navbar-collapse pull-right" id="navbar-collapse">
             <ul class="nav navbar-nav">
               <li><a href="{{route('home')}}">Home</a></li>
               <li><a href="{{route('about')}}">About</a></li>

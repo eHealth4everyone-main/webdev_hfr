@@ -4,27 +4,21 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>HFR | Nigeria</title>
-    <!-- Tell the browser to be responsive to screen width -->
+
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <!-- Bootstrap 3.3.7 -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="{{ asset("dist/css/font-awesome/css/font-awesome.min.css")}}" >
-    <!-- Ionicons -->
     <link rel="stylesheet" href="{{ asset("dist/css/ionicons/css/ionicons.min.css")}}">
-    <!-- Theme style -->
     <link rel="stylesheet" href="{{ asset("dist/css/AdminLTE.min.css")}}">
-    <!-- bootstrap datepicker -->
     <link rel="stylesheet" href="{{ asset("dist/css/bootstrap-datepicker.min.css")}}">
     <!-- Select2 -->
     <link rel="stylesheet" href="{{asset("/dist/css/select2.min.css")}}">
-    <!--data tables -->
     <link rel="stylesheet"   href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css">
+    <link rel="stylesheet" href="{{asset("dist/multiselect-master/css/bootstrap-multiselect.css")}}" type="text/css"/>
     
-    
-    @yield("bk_css")
     <link rel="stylesheet" href="{{ asset("dist/css/skins/skin-green.min.css")}}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+    @yield("bk_css")
 </head>
         <body class="hold-transition skin-green sidebar-mini">
             <!-- Site wrapper -->
@@ -138,35 +132,22 @@
         </div>
         <!-- ./wrapper -->
         
-        <!-- jQuery 3 -->
+       
         <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
-        <!-- Bootstrap 3.3.7 -->
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-        <!-- AdminLTE App -->
         <script src="{{ asset("dist/js/adminlte.min.js")}}"></script>
-        <!-- bootstrap datepicker -->
         <script src="{{asset("dist/js/bootstrap-datepicker.min.js")}}"></script>
         <!-- SlimScroll -->
         <script src="{{asset("dist/js/select2.full.min.js")}}"></script>
-        <!-- data tables -->
         <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
         <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script>
-        <!-- AdminLTE for demo purposes -->
-        <script src="{{asset("dist/js/demo.js")}}"></script>
-        <!-- FastClick -->
-        <script src="{{ asset("dist/js/fastclick.js")}}"></script>
-        
-        
-        
+        <script type="text/javascript" src="{{asset("dist/multiselect-master/js/bootstrap-multiselect.js")}}"></script>
+       
         <script>
             $(document).ready(function () {
                 $('.sidebar-menu').tree()
             })
-        </script>
-        
-        @stack("bk_script")
-        
-        <script>
+
             $(function () {
                 //Initialize Select2 Elements
                 $('.select2').select2()
@@ -176,7 +157,11 @@
                     autoclose: true
                 })                                                   
             })
+
         </script>
+        
+        @stack("bk_script")
+        
     </body>
     </html>
     

@@ -22,12 +22,61 @@
                                 </div>
                         </div>      
                         <div class="form-group row">
+                            <label for="descr1" class="col-md-2 col-form-label text-md-right">Description</label>
+                            <div class="col-md-10">
+                                    <input id="descr1" type="text" class="form-control" name="description1" required>
+                            <span class="text-danger">
+                                <strong id="descr-error"></strong>
+                            </span>
+                            </div>
+                         </div>  
+                        <div class="form-group row">
                                 <label for="perm1" class="col-md-2 col-form-label text-md-right">{{ __('Permissions') }}</label>
                                 <div class="col-md-10">
-                                    <select class="form-control select2" id="perm1" name="perm1[]" multiple="multiple" data-placeholder="Select Permissions" style="width: 100%;" required>
-                                        @foreach($permissions as $perms)
+                                    <select class="form-control" id="perm1" name="perm1[]" multiple="multiple" data-placeholder="Select Permissions" style="width: 100%;" required>
+                                        {{-- @foreach($permissions as $perms)
                                         <option value="{{$perms->name}}">{{$perms->name}}</option>
-                                    @endforeach
+                                        @endforeach --}}
+                                        <optgroup label="Hospitals Module" id="hosp">
+                                                <option value="1">View-Hospital</option>
+                                                <option value="2">Edit-Hospital</option>
+                                                <option value="3">Add-Hospital</option>
+                                                <option value="4">Delete-Hospital</option>
+                                            </optgroup>
+                                            <optgroup label="Laboratory Module" id="lab">
+                                                 <option value="5">View-Laboratory</option>
+                                                <option value="6">Edit-Laboratory</option>
+                                                <option value="7">Add-Laboratory</option>
+                                                <option value="8">Delete-Laboratory</option>
+                                            </optgroup>
+                                            <optgroup label="Pharmacys Module" id="pharm">
+                                                 <option value="9">View-Pharmacy</option>
+                                                <option value="10">Edit-Pharmacy</option>
+                                                <option value="11">Add-Pharmacy</option>
+                                                <option value="12">Delete-Pharmacy</option>
+                                            </optgroup>
+                                            <optgroup label="Radiology Module" id="rad">
+                                                 <option value="13">View-Radiology</option>
+                                                <option value="14">Edit-Radiology</option>
+                                                <option value="15">Add-Radiology</option>
+                                                <option value="16">Delete-Radiology</option>
+                                            </optgroup>
+                                            <optgroup label="Roles & Users" id="user">
+                                                <option value="21">View-Role</option>
+                                                <option value="22">Edit-Role</option>
+                                                <option value="23">Add-Role</option>
+                                                <option value="24">Delete-Role</option>
+                                                <option value="17">View-User</option>
+                                                <option value="18">Edit-User</option>
+                                                <option value="19">Add-User</option>
+                                                <option value="20">Delete-User</option>
+                                            </optgroup>
+                                            <optgroup label="Resources Module" id="resources">
+                                                 <option value="25">View-Resources</option>
+                                                <option value="26">Add-Resources</option>
+                                                <option value="27">Delete-Resources</option>
+                                            </optgroup>
+                                        </select>
                                     </select>
                                 </div>
                                 <span class="text-danger">
