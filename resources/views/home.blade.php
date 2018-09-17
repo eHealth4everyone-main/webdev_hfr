@@ -1,4 +1,4 @@
-@extends("layouts.usermaster")
+@extends("layouts.public_master")
 
 @section('kibiti_css')
   <script src="{{asset("https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js")}}"></script>

@@ -1,4 +1,4 @@
-@extends("layouts.usermaster")
+@extends("layouts.public_master")
 
 @section('kibiti_css')
 
