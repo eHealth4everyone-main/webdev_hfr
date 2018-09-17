@@ -4,13 +4,13 @@
 /* This makes sure that the padding and border are included in the total width and height of the elements. */ * {
     box-sizing: border-box;
 }
-/**** DIV after Body TAG ****/ .container {
+/**** DIV after Body TAG ****/ .containerx {
     min-height: 100%;
     padding: 15px;
     float: left;
     width: 100%;
 }
-/*** Header ***/ .header {
+/*** Header ***/ .headerx {
     width: 100%;
     float: left;
     padding: 15px;
@@ -20,13 +20,13 @@
     background: -moz-linear-gradient(#5CB85C, #5CB86D); /* For Firefox 3.6 to 15 */
     background: linear-gradient(#5CB85C, #5CB86D); /* Standard syntax */
 }
-/*** Navigation Header ***/ .navigation {
+/*** Navigation Header ***/ .navigationx {
     width: 100%;
     float: left;
     padding: 10px;
     background: #5CB85C;
 }
-/*** Anchor Links Within Navigation DIV ****/ .navigation nav.navbar a {
+/*** Anchor Links Within Navigation DIV ****/ .navigationx nav.navbar a {
     color: #000;
 }
 /*** Active Anchor Links Within Navigation DIV ****/ .navigation nav.navbar div.collapse ul.nav a:active {
@@ -57,7 +57,7 @@
     width: 20%;
     float: left;
 }
-/*** Header Text Enclosing DIV **/ .headertext {
+/*** Header Text Enclosing DIV **/ .headertextx {
     width: 60%;
     float: left;
     text-align: center;
