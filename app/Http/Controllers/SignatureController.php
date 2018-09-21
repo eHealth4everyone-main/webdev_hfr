@@ -20,11 +20,7 @@ class SignatureController extends Controller
         return view('sign.index', compact("facilities"));
     }
        
-    public function public_index()
-    {
-        $facilities = DB::table('view_hospitals')->get();
-        return view('public.hospitalList', compact("facilities"));
-    }
+  
     public function create()
     {
         return view('sign.create');

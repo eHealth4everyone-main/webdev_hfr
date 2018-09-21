@@ -5,7 +5,7 @@
 @endsection
 
 @section('content-title')
-  {{-- <h4><p class="text-light-blue">List of Hospitals and Clinics</p></h4>        --}}
+       
   
 @endsection
 
@@ -88,9 +88,21 @@
     </div>
 
 </div>
-
+<div class="">
+        <h5><p class="text-light-blue">
+            @if ($type === 1)
+                List of Hospitals and Clinics
+            @elseif ($type === 2)
+                List of Laboratories
+            @elseif($type === 3)
+                List of Pharmacies
+            @elseif($type === 4)
+                List of Radiologies/Imaging facilities
+            @endif
+        </p></h5> 
+    </div>
 <div class="box">
- 
+
   <div class="box-body">
           <table id="hosp" class="table table-bordered table-striped">
             <thead>
@@ -99,7 +111,10 @@
                 <th>Facility Name</th>
                 <th>State</th>
                 <th>LGA</th>
-                <th>Facility Type</th>
+                @if (($type === 1)||($type === 2))
+                    <th>Facility Level</th>
+                @endif
+               
                 <th>Ownership</th>
                 
               </tr>
@@ -112,7 +127,11 @@
                 <td>{{$fac->reg_fac_name}}</td>
                 <td>{{$fac->state}}</td>
                 <td>{{$fac->lga}}</td>
-                <td>{{$fac->level}}</td>
+                
+                @if (($type === 1)||($type === 2))
+                    <td>{{$fac->level}}</td>
+                @endif
+               
                 <td>{{$fac->ownership}}</td>
           
               </tr>
@@ -139,7 +158,7 @@
         "lengthChange": false,
         "searching"   : true,
         "autoWidth"   : false,
-        "pageLength": 30,
+        "pageLength": 25,
     } );
   } );
 </script>

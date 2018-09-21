@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="{{ asset("dist/css/ionicons/css/ionicons.min.css")}}">
   <link rel="stylesheet" href="{{ asset("dist/css/AdminLTE.min.css")}}">
   <link rel="stylesheet" href="{{ asset("dist/css/bootstrap-datepicker.min.css")}}">
+  <link rel="stylesheet" href="{{asset("/dist/css/select2.min.css")}}">
   <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
   {{-- <link rel="stylesheet" href="{{ asset("dist/css/skins/skin-green.min.css")}}"> --}}
@@ -61,19 +62,17 @@
   
     <div class="content-wrapper">
         <div class="container">
-      <!-- Content Header (Page header) -->
-      <section class="content-header">
-         @yield("content-title")
-      </section>
+          <!-- Content Header (Page header) -->
+          <section class="content-header">
+            @yield("content-title")
+          </section>
 
-      <!-- Main content -->
-      <section class="content">
-      
-          @yield("content")
-          
-      </section>
-      <!-- /.content -->
-    </div>
+          <!-- Main content -->
+          <section class="content">
+              @yield("content")
+          </section>
+       <!-- /.content -->
+      </div>
     <!-- /.container -->
   </div>
   <!-- /.content-wrapper -->
@@ -93,7 +92,12 @@
 <script src="{{asset("dist/js/select2.full.min.js")}}"></script>
 <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script>
-<script src="{{asset("dist/js/demo.js")}}"></script>
+   
+<script>
+    $(function () {
+        $('.select2').select2()                                         
+    })
+</script>
 @stack("kibiti_scripts")
 
 </body>

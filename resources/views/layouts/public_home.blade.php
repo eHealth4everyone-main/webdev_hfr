@@ -71,25 +71,38 @@
       </section>
 
       <!-- Main content -->
-      <section class="content">
-      
-          @yield("content")
-          <div class="row">
+      <section class="content-wrapper">
+          <div class="container">
+              <!-- Content Header (Page header) -->
+              <section class="content-header">
+                @yield("content-title")
+              </section>
     
-            <div class="col-sm-12">
-                <div class="panel panel-success">
-                    <div class="panel-heading">Contact us</div>
-                    <div class="panel-body">
-                        Department of Health Planning Research and Statistics <br>
-                        Federal Ministry of Health <br>
-                        Abuja - Nigeria <br>
-                        Mobile: <br>
-                        Email: hfr@health.gov.ng
-                    </div>
-                  </div>
-            </div>
-       
-        </div>
+              <!-- Main content -->
+              <section class="content">
+                  @yield("content")
+{{-- 
+                  <div class="row">
+    
+                      <div class="col-sm-12">
+                          <div class="panel panel-success">
+                              <div class="panel-heading">Contact us</div>
+                              <div class="panel-body">
+                                  Department of Health Planning Research and Statistics <br>
+                                  Federal Ministry of Health <br>
+                                  Abuja - Nigeria <br>
+                                  Mobile: <br>
+                                  Email: hfr@health.gov.ng
+                              </div>
+                            </div>
+                      </div>
+                 
+                  </div> --}}
+              </section>
+           <!-- /.content -->
+          </div>
+         
+    
       </section>
       <!-- /.content -->
     </div>
