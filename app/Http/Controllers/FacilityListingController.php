@@ -39,9 +39,21 @@ class FacilityListingController extends Controller
 
         return view('public.faclist', compact("facilities","type"));
         
-    
     }
 
+    public function statistics(){
+
+        $results = DB::select("SELECT  
+            (SELECT count(id) FROM hospitals_details) AS hosp,
+            (SELECT count(id) FROM laboratory) AS lab,
+            (SELECT count(id) FROM pharmacies) as pharma,
+            (SELECT count(id) FROM radiologies) as radio
+             FROM dual");
+        
+       
+        return view('public.statistics', compact("results"));
+
+    }
 
   
 }
