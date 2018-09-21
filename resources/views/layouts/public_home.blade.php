@@ -14,13 +14,15 @@
   <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
   {{-- <link rel="stylesheet" href="{{ asset("dist/css/skins/skin-green.min.css")}}"> --}}
-	<link rel="stylesheet" href="{{asset("styles/style-resp.css")}}" type="text/css" media="all" />
+  <link rel="stylesheet" href="{{asset("styles/style-resp.css")}}" type="text/css" media="all" />
+ 
+
 
   @yield("kibiti_css")
 
 </head>
 
-<body class="hold-transition layout-top-nav" >
+<body class="hold-transition skin-green layout-top-nav" >
 <div class="wrapper"> 
     <nav class="navbar navbar-default navbar-static-top">
 
@@ -49,18 +51,20 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              {{-- <a class="navbar-brand" href="#">HFR</a> --}}
+            
             </div>
          
-         
-            @include('layouts.topmenu')
-
+           @include('layouts.topmenu')
+           
           </div><!-- /.container-fluid -->
         </nav>
+
+ 
+ 
+
   <!-- Full Width Column -->
   
     <div class="content-wrapper">
-        <div class="container">
       <!-- Content Header (Page header) -->
       <section class="content-header">
          @yield("content-title")
@@ -70,14 +74,29 @@
       <section class="content">
       
           @yield("content")
-          
+          <div class="row">
+    
+            <div class="col-sm-12">
+                <div class="panel panel-success">
+                    <div class="panel-heading">Contact us</div>
+                    <div class="panel-body">
+                        Department of Health Planning Research and Statistics <br>
+                        Federal Ministry of Health <br>
+                        Abuja - Nigeria <br>
+                        Mobile: <br>
+                        Email: hfr@health.gov.ng
+                    </div>
+                  </div>
+            </div>
+       
+        </div>
       </section>
       <!-- /.content -->
     </div>
     <!-- /.container -->
-  </div>
+  
   <!-- /.content-wrapper -->
-
+ 
   <footer class="main-footer">
   
           <strong>Copyright &copy; 2017-2018 <a href="http://health.gov.ng/">MOH</a>.</strong> All rights reserved.     
@@ -88,6 +107,9 @@
 
 
 <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script src="{{ asset("js/highmaps.js")}}"></script>
+<script src="{{ asset("js/drilldown.js")}}"></script>
+
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 <script src="{{ asset("dist/js/adminlte.min.js")}}"></script>
 <script src="{{asset("dist/js/select2.full.min.js")}}"></script>

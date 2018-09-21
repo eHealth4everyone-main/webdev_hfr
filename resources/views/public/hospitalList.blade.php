@@ -5,13 +5,13 @@
 @endsection
 
 @section('content-title')
+  <h4><p class="text-light-blue">List of Hospitals and Clinics</p></h4>       
 
-<h4><p class="text-light-blue">List of Hospitals and Clinics</p></h4>
 @endsection
 
-@section("content")
-
-          
+@section("content")   
+<div class="box">
+  <div class="box-body">
           <table id="hosp" class="table table-bordered table-striped">
             <thead>
               <tr>
@@ -40,9 +40,10 @@
               
             </tbody>
           </table>
-       
-
       
+        </div>
+        <!-- /.box-body -->
+      </div> 
       <!-- /.box -->
 @endsection 
 
@@ -55,9 +56,10 @@
         "paging":   true,
         "ordering": true,
         "info":     true,
-        "lengthChange": true,
+        "lengthChange": false,
         "searching"   : true,
         "autoWidth"   : false,
+        "pageLength": 40,
     } );
   } );
 </script>

@@ -1,44 +1,25 @@
-@extends("layouts.public_master")
+@extends("layouts.public_home")
 
 @section('kibiti_css')
-  <script src="{{asset("https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js")}}"></script>
+ 
 @endsection
 
-@section('content-title')
-    Dashboard
-@endsection
+
 
 @section("content")
   <div class="">
         <div class="row">
-                <div class="col-sm-8">
+                <div class="col-sm-12">
                     <div class="box box-default">
-                  <img class="img-responsive center-block" src="/img/map.png" title="Nigeria Health Facility Registry">
-                 
+                        <div id="map1" style="height: 500px; min-width: 500px; max-width: 800px; margin: 0 auto" ></div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                        <div class="box box-default">
-                            <canvas id="myChart2"></canvas>
-                        </div>
-                        
-                </div>  
+             
                 
         </div>
    
-        <div class="row">
-                <div class="col-md-6">
-                    <div class="box box-default">
-                        <canvas id="myChart2"></canvas>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="box box-default">
-                        NA
-                    </div>
-                </div>
-        </div>
-        <div class="row">
+      
+        {{-- <div class="row">
                 <div class="col-md-6">
                     <div class="box box-default">
                         NA
@@ -49,98 +30,114 @@
                             NA
                         </div>
                 </div>    
-        </div>
+        </div> --}}
   </div>
 
- 
+
 @endsection 
 
 @push('kibiti_scripts')
 
+
 <script>
-    var ctx = document.getElementById("myChart").getContext('2d');
-    
-    var states= @json($state_name);
-    var num_states=@json($num_of_fac);
+$(document).ready( function () {
+    var data = [
+        ['RI', 0],
+        ['KT', 1],
+        ['SO', 2],
+        ['ZA', 3],
+        ['YO', 4],
+        ['KB', 5],
+        ['AD', 6],
+        ['BR', 7],
+        ['AK', 8],
+        ['AB', 9],
+        ['IM', 10],
+        ['BY', 11],
+        ['BE', 12],
+        ['CR', 13],
+        ['TA', 14],
+        ['KW', 15],
+        ['LA', 16],
+        ['NI', 17],
+        ['FC', 18],
+        ['OG', 19],
+        ['ON', 20],
+        ['EK', 21],
+        ['OS', 22],
+        ['OY', 23],
+        ['AN', 24],
+        ['BA', 25],
+        ['GO', 26],
+        ['DE', 27],
+        ['ED', 28],
+        ['EN', 29],
+        ['EB', 30],
+        ['KD', 31],
+        ['KO', 32],
+        ['PL', 33],
+        ['NA', 34],
+        ['JI', 35],
+        ['KN', 36]
+];
 
-    var myChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: states,
-            datasets: [{
-                label: 'States',
-                data: num_states,
-                borderWidth: 1,
-                // fillColor: 'rgba(54, 162, 235, 1)',
-                // strokeColor: 'rgba(54, 162, 235, 1)',
-                backgroundColor: 'rgba(54, 162, 235, 1)',
-            }]
+
+$.getJSON('geo/states.geojson', function (geojson) {
+
+    // Initiate the chart
+    Highcharts.mapChart('map1', {
+        chart: {
+            map: geojson
         },
-        options: {
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero:true
-                    }
-                }]
-            },
-            title:{
-                display:true,
-                text:'# of Facilities per State',
-                fontSize:20
-            },
-            legend:{
-                dislay:false,
-                position:'right',
-            }
-        }
-    });
-    </script>
-    
-    {{-- Summary of fac types --}}
-    <script>
-        var ctx = document.getElementById("myChart2").getContext('2d');
-     
-        var no_factypes = [{{$factypes[0]->total}},{{$factypes[1]->total}},{{$factypes[2]->total}},{{$factypes[3]->total}}];
-        
-        var myChart = new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: ["Hospitals", "Pharmaceuticals", "Laboratories", "Imaging"],
-                datasets: [{
-                    
-                    data: no_factypes,
-                    backgroundColor: [
-                        'rgba(255,99,132,1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                    
-                    ],
-                    borderColor: [
-                        'rgba(255,99,132,1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                       
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-            
-                title:{
-                    display:true,
-                    text:'Facilities by Type',
-                    fontSize:20
-                },
-                legend:{
-                    dislay:false,
-                    position:'bottom',
-                }
-            }
-        });
-        </script>
 
+        title: {
+            text: 'Number of Health Facilities'
+        },
+
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'top'
+            }
+        },
+
+        colorAxis: {
+            min: 0,
+            minColor: '#E6E7E8',
+            maxColor: '#008000'
+        },
+        credits: {
+            enabled: false
+        },
+
+
+        series: [{
+            data: data,
+            keys: ['statecode', 'value'],
+            joinBy: 'statecode',
+            name: 'Health Facilities',
+            states: {
+                hover: {
+                    color: '#BADA56'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.properties.statename}'
+            }
+        }]
+
+    });//highmpa end
+
+});
+  
+
+
+     
+
+} );//doc end
+
+</script>
+    
 
 @endpush

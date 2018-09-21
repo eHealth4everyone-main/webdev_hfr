@@ -63,7 +63,8 @@
     $('#table1').DataTable( {
       "paging":   true,
       "ordering": true,
-      "info":     true
+      "info":     true,
+      "pageLength": 40,
     } );
   } );
 </script>
