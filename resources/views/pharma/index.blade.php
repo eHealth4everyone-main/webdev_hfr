@@ -52,6 +52,7 @@ Pharmaceutical Premises
               <button class="btn btn-warning btn-sm"  type="button" > Edit</button>
             </a>
           </td>
+        </tr>
         @endforeach
       </tbody>
 

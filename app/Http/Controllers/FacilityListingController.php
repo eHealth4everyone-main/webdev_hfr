@@ -49,9 +49,21 @@ class FacilityListingController extends Controller
             (SELECT count(id) FROM pharmacies) as pharma,
             (SELECT count(id) FROM radiologies) as radio
              FROM dual");
-        
+
+        $num_failities = DB::select("SELECT state, count(id) as num FROM hospitals_details group by state");
+
+        $state_name=array();
+        $num_of_fac=array();
+
+        foreach ($num_failities as $fac){
+            $state_name[]=$fac->state;
+            $num_of_fac[]=$fac->num;
+        };
+
+        $fac_levels = DB::table('num_hosp_by_level_state_clm')->get();
+        $fac_ownerships = DB::table('num_hosp_by_ownership_state_clm')->get();
        
-        return view('public.statistics', compact("results"));
+        return view('public.statistics', compact('results','state_name','num_of_fac','fac_ownerships','fac_levels'));
 
     }
 
