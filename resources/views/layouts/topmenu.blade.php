@@ -4,6 +4,7 @@
         <li><a href="{{route('home')}}">Home</a></li>
         <li><a href="{{route('about')}}">About</a></li>
         <li><a href="{{route('statistics')}}">Statistics</a></li>
+        <li><a href="{{route('statistics_charts')}}">Charts</a></li>
         <li><a href="{{route('listhosp')}}">Facilities List</a></li>
         
         {{-- <li class="dropdown">

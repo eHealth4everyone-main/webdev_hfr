@@ -50,6 +50,16 @@ class FacilityListingController extends Controller
             (SELECT count(id) FROM radiologies) as radio
              FROM dual");
 
+    
+        $fac_levels = DB::table('num_hosp_by_level_state_clm')->get();
+        $fac_ownerships = DB::table('num_hosp_by_ownership_state_clm')->get();
+       
+        return view('public.statistics', compact('results','fac_ownerships','fac_levels'));
+
+    }
+
+    public function statistics_charts(){
+
         $num_failities = DB::select("SELECT state, count(id) as num FROM hospitals_details group by state");
 
         $state_name=array();
@@ -60,12 +70,25 @@ class FacilityListingController extends Controller
             $num_of_fac[]=$fac->num;
         };
 
-        $fac_levels = DB::table('num_hosp_by_level_state_clm')->get();
-        $fac_ownerships = DB::table('num_hosp_by_ownership_state_clm')->get();
+        //by levels
+        $facbylevels=array();
+        $facbylevel=DB::select("SELECT level,COUNT(id) AS num FROM hospitals_details GROUP BY level order by level");
        
-        return view('public.statistics', compact('results','state_name','num_of_fac','fac_ownerships','fac_levels'));
+        foreach ($facbylevel as $lv){
+            $facbylevels[]=$lv->num;
+            
+        };
+
+        //by ownership
+        $facbyownership=array();
+        $facbyown=DB::select(" SELECT ownership,COUNT(id) AS num FROM hospitals_details GROUP BY ownership order by ownership");
+       
+        foreach ($facbyown as $own){
+            $facbyownership[]=$own->num;
+        };
+       
+       
+        return view('public.statistic_charts', compact('state_name','num_of_fac','facbylevels','facbyownership'));
 
     }
-
-  
 }

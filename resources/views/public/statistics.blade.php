@@ -237,20 +237,12 @@
     </div>
     {{-- summary 2 ends --}}
 
-
-    <div class="row" >
-        <div class="col-sm-12">
-                <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
-        </div>
-    </div>
-
     
 
 @endsection 
 
 @push('kibiti_scripts')
-<script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/modules/exporting.js"></script>
+
 
 @include('partials.dynamic_lgas_only')
 
@@ -258,54 +250,7 @@
 <script>
 
 $(document).ready( function () {
-    var states= @json($state_name);
-    var num_states=@json($num_of_fac);
-
-    Highcharts.chart('container', {
-    chart: {
-        type: 'column'
-    },
-    title: {
-        text: 'Number of Health Facilities per State'
-    },
-
-    xAxis: {
-        categories: states,
-        crosshair: true
-    },
-    yAxis: {
-        min: 0,
-        title: {
-        text: 'Number of facilities'
-        }
-    },
-    tooltip: {
-        headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
-        pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-        '<td style="padding:0"><b>{point.y:.1f} </b></td></tr>',
-        footerFormat: '</table>',
-        shared: true,
-        useHTML: true
-    },
-    plotOptions: {
-        column: {
-        pointPadding: 0.2,
-        borderWidth: 0
-        }
-    },
-    series: [{
-        name: 'Facilities',
-        data: num_states
-
-    }],
-    credits: {
-            enabled: false
-        },
-    });
-
-
-    });
-
+    
     //table 1
     $('#table1').DataTable( {
         "paging":   true,
@@ -326,6 +271,9 @@ $(document).ready( function () {
         "autoWidth"   : false,
         "pageLength": 5,
     } );
+
+    
+});
 </script>
 
 @endpush

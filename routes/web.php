@@ -12,6 +12,7 @@ Route::get('/', 'HomeController@userhome')->name('home');
 Route::get('/hosptitals', 'FacilityListingController@hosptials')->name('listhosp');
 Route::get('/facilitieslist', 'FacilityListingController@index')->name('getfacilities');
 Route::get('/statistics', 'FacilityListingController@statistics')->name('statistics');
+Route::get('/statisticscharts', 'FacilityListingController@statistics_charts')->name('statistics_charts');
 
 Route::view('/about', 'public.about')->name('about');
 Route::get('/hfrresources', 'ResourceController@public_index')->name('public_resources');
