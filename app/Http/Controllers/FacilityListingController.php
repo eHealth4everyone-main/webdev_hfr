@@ -76,7 +76,6 @@ class FacilityListingController extends Controller
        
         foreach ($facbylevel as $lv){
             $facbylevels[]=$lv->num;
-            
         };
 
         //by ownership
@@ -91,4 +90,36 @@ class FacilityListingController extends Controller
         return view('public.statistic_charts', compact('state_name','num_of_fac','facbylevels','facbyownership'));
 
     }
+
+
+    
+    public function search (Request $request)
+    {
+    
+        $type=1;
+
+        if ($type==1){
+            $facilities = DB::table('hospitals_details')
+                ->where('facility_name', 'like', '%'. $request->fac_name . '%')
+                ->get();
+            $type = 1;
+        }
+
+        if ($request->facilitytype==2){
+            $facilities = DB::table('laboratory')->get();
+            $type = 2;
+        }
+        if ($request->facilitytype==3){
+            $facilities = DB::table('pharmacies')->get();
+            $type = 3;
+        }
+        if ($request->facilitytype==4){
+            $facilities = DB::table('radiologies')->get();
+            $type = 4;
+        }
+
+        return view('public.search', compact("facilities","type"));
+        
+    }
+
 }

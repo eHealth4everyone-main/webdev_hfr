@@ -6,21 +6,19 @@
         <li><a href="{{route('statistics')}}">Statistics</a></li>
         <li><a href="{{route('statistics_charts')}}">Charts</a></li>
         <li><a href="{{route('listhosp')}}">Facilities List</a></li>
-        
-        {{-- <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Facilities List <span class="caret"></span></a>
-          <ul class="dropdown-menu" role="menu">
-            <li><a href="{{route('listhosp')}}">Hospitals</a></li>
-            <li><a href="{{route('listlab')}}">Laboratories</a></li>
-            <li><a href="{{route('listpharmacy')}}">Pharmaceuticals</a></li>
-            <li><a href="{{route('listradiology')}}">Radiology and Imaging</a></li>
-          </ul>
-        </li> --}}
     
         <li><a href="#">Data Downloads</a></li>
         <li><a href="{{route('public_resources')}}">Resources</a></li>
         <li><a href="#">Contact us</a></li>
         <li><a href="{{route('admin_home')}}">Administrator</a></li>
+
+        <form class="navbar-form navbar-right" action="{{route('search')}}" role="search">
+          @csrf
+            <div class="form-group">
+              <input type="text" name="fac_name" class="form-control" placeholder="Enter facility name to" required>
+            </div>
+            <button type="submit" class="btn btn-default">Search</button>
+        </form>
 
       </ul>
 </div><!-- /.navbar-collapse -->

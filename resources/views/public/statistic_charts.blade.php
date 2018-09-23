@@ -110,7 +110,7 @@
                     </div>
                     </div>
                     <div class="box-body">
-                            <div id="levels" style="min-width: 310px; height: 300px; margin: 0 auto"></div>
+                            <div id="levels" style="min-width: 310px; height: 250px; margin: 0 auto"></div>
                     </div>
                 </div>
         </div>
@@ -126,7 +126,7 @@
                         </div>
                         </div>
                         <div class="box-body">
-                                <div id="ownership" style="min-width: 310px; height: 300px; margin: 0 auto"></div>
+                                <div id="ownership" style="min-width: 310px; height: 250px; margin: 0 auto"></div>
                         </div>
                     </div>
         </div>
