@@ -96,9 +96,9 @@ class FacilityListingController extends Controller
     public function search (Request $request)
     {
     
-        $type=1;
+        $type=0;
 
-        if ($type==1){
+        if ($request->facilitytype==1){
             $facilities = DB::table('hospitals_details')
                 ->where('facility_name', 'like', '%'. $request->fac_name . '%')
                 ->get();
@@ -106,15 +106,21 @@ class FacilityListingController extends Controller
         }
 
         if ($request->facilitytype==2){
-            $facilities = DB::table('laboratory')->get();
+            $facilities = DB::table('laboratory')
+                ->where('reg_fac_name', 'like', '%'. $request->fac_name . '%')
+                ->get();
             $type = 2;
         }
         if ($request->facilitytype==3){
-            $facilities = DB::table('pharmacies')->get();
+            $facilities = DB::table('pharmacies')
+                ->where('reg_fac_name', 'like', '%'. $request->fac_name . '%')
+                ->get();
             $type = 3;
         }
         if ($request->facilitytype==4){
-            $facilities = DB::table('radiologies')->get();
+            $facilities = DB::table('radiologies')
+                ->where('reg_fac_name', 'like', '%'. $request->fac_name . '%')
+                ->get();
             $type = 4;
         }
 

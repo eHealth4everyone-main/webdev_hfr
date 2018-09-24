@@ -14,10 +14,20 @@
 
         <form class="navbar-form navbar-right" action="{{route('search')}}" role="search">
           @csrf
-            <div class="form-group">
-              <input type="text" name="fac_name" class="form-control" placeholder="Enter facility name to" required>
-            </div>
-            <button type="submit" class="btn btn-default">Search</button>
+          <select class="form-control input-sm" id="facilitytype" name="facilitytype" required>
+              <option value="">-- Select facility type --</option>
+              <option value="1">Hospitals</option>
+              <option value="2">Laboratories</option>
+              <option value="3">Pharmaceuticals</option>
+              <option value="4">Radiology and Imaging</option>
+          </select>
+            <div class="input-group input-group-sm" >
+               
+                <input type="text" name="fac_name" class="form-control" placeholder="facility name to search" required>
+                    <span class="input-group-btn">
+                      <button type="submit" class="btn btn-success btn-flat">Go!</button>
+                    </span>
+              </div>
         </form>
 
       </ul>
