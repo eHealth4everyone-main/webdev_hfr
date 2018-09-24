@@ -17,7 +17,8 @@ Route::get('/statisticscharts', 'FacilityListingController@statistics_charts')->
 Route::view('/about', 'public.about')->name('about');
 Route::get('/hfrresources', 'ResourceController@public_index')->name('public_resources');
 Route::get('/facilities', 'FacilityListingController@search')->name('search');
-Route::get('/fdownload', 'FacilityListingController@DownloadForm')->name('download');
+Route::get('/fdownload', 'DownloadController@DownloadForm')->name('download');
+Route::post('/fdownload', 'DownloadController@store')->name('saveDownloadUser');
 
 Auth::routes();
 

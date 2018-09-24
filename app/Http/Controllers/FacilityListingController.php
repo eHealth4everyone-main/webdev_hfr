@@ -128,10 +128,6 @@ class FacilityListingController extends Controller
         
     }
     
-    public function DownloadForm()
-    {
-    
-        return view('public.download');
-    }
+   
 
 }
