@@ -39,7 +39,7 @@ class UserController extends Controller
                 'username' => $data['username'],
                 'email' => $data['email'],
                 'job_title' => $data['job'],
-                'status'=>'active',
+                'status'=>'Active',
                 'organisation' => $data['organisation'],
                 'password' => Hash::make('password'),
             ]);

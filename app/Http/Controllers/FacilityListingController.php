@@ -127,5 +127,11 @@ class FacilityListingController extends Controller
         return view('public.search', compact("facilities","type"));
         
     }
+    
+    public function DownloadForm()
+    {
+    
+        return view('public.download');
+    }
 
 }

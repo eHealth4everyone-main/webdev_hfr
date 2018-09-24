@@ -28,44 +28,7 @@
                 </div>
               <div class="col-sm-2">
                   <select class="form-control select2" id="state" name ="state">
-                      <option value="">--Select State--</option>
-                      <option value='01' > Abia</option>
-                      <option value='02' > Adamawa</option>
-                      <option value='03' > Akwa Ibom</option>
-                      <option value='04' > Anambra</option>
-                      <option value='05' > Bauchi</option>
-                      <option value='06' > Bayelsa</option>
-                      <option value='07' > Benue</option>
-                      <option value='08' > Borno</option>
-                      <option value='09' > Cross River</option>
-                      <option value='10' > Delta</option>
-                      <option value='11' > Ebonyi</option>
-                      <option value='12' > Edo</option>
-                      <option value='13' > Ekiti</option>
-                      <option value='14' > Enugu</option>
-                      <option value='37' > FCT</option>
-                      <option value='15' > Gombe</option>
-                      <option value='16' > Imo</option>
-                      <option value='17' > Jigawa</option>
-                      <option value='18' > Kaduna</option>
-                      <option value='19' > Kano</option>
-                      <option value='20' > Katsina</option>
-                      <option value='21' > Kebbi</option>
-                      <option value='22' > Kogi</option>
-                      <option value='23' > Kwara</option>
-                      <option value='24' > Lagos</option>
-                      <option value='25' > Nasarawa</option>
-                      <option value='26' > Niger</option>
-                      <option value='27' > Ogun</option>
-                      <option value='28' > Ondo</option>
-                      <option value='29' > Osun</option>
-                      <option value='30' > Oyo</option>
-                      <option value='31' > Plateau</option>
-                      <option value='32' > Rivers</option>
-                      <option value='33' > Sokoto</option>
-                      <option value='34' > Taraba</option>
-                      <option value='35' > Yobe</option>
-                      <option value='36' > Zamfara</option>
+                      @include('public.states')
                   </select>
               </div>
               

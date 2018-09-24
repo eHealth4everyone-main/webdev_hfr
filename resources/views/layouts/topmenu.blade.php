@@ -7,7 +7,7 @@
         <li><a href="{{route('statistics_charts')}}">Charts</a></li>
         <li><a href="{{route('listhosp')}}">Facilities List</a></li>
     
-        <li><a href="#">Data Downloads</a></li>
+        <li><a href="{{route('download')}}">Data Downloads</a></li>
         <li><a href="{{route('public_resources')}}">Resources</a></li>
         <li><a href="#">Contact us</a></li>
         <li><a href="{{route('admin_home')}}">Administrator</a></li>
@@ -25,7 +25,7 @@
                
                 <input type="text" name="fac_name" class="form-control" placeholder="facility name to search" required>
                     <span class="input-group-btn">
-                      <button type="submit" class="btn btn-success btn-flat">Go!</button>
+                      <button type="submit" class="btn btn-success btn-flat">Search</button>
                     </span>
               </div>
         </form>
