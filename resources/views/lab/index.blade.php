@@ -32,8 +32,8 @@ Laboratory Premises
            
               @foreach($labs as $lab)
               <tr>
-                <td>{{$lab->sig_unique_id}}</td>
-                <td>{{$lab->reg_fac_name}}</td>
+                <td>{{$lab->unique_id}}</td>
+                <td>{{$lab->facility_name}}</td>
                 <td>{{$lab->state}}</td>
                 <td>{{$lab->lga}}</td>
                 <td>{{$lab->level}}</td>

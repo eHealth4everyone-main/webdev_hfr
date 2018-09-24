@@ -10,7 +10,7 @@ class FacilityListingController extends Controller
    
     public function hosptials()
     {
-        $facilities = DB::table('view_hospitals')->get();
+        $facilities = DB::table('hospitals_details')->get();
         return view('public.hospitalList', compact("facilities"));
     }
 
@@ -20,7 +20,7 @@ class FacilityListingController extends Controller
         $type=0;
 
         if ($request->facilitytype==1){
-            $facilities = DB::table('view_hospitals')->get();
+            $facilities = DB::table('hospitals_details')->get();
             $type = 1;
         }
 
@@ -107,19 +107,19 @@ class FacilityListingController extends Controller
 
         if ($request->facilitytype==2){
             $facilities = DB::table('laboratory')
-                ->where('reg_fac_name', 'like', '%'. $request->fac_name . '%')
+                ->where('facility_name', 'like', '%'. $request->fac_name . '%')
                 ->get();
             $type = 2;
         }
         if ($request->facilitytype==3){
             $facilities = DB::table('pharmacies')
-                ->where('reg_fac_name', 'like', '%'. $request->fac_name . '%')
+                ->where('facility_name', 'like', '%'. $request->fac_name . '%')
                 ->get();
             $type = 3;
         }
         if ($request->facilitytype==4){
             $facilities = DB::table('radiologies')
-                ->where('reg_fac_name', 'like', '%'. $request->fac_name . '%')
+                ->where('facility_name', 'like', '%'. $request->fac_name . '%')
                 ->get();
             $type = 4;
         }

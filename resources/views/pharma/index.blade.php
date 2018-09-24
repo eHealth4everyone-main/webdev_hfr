@@ -32,8 +32,8 @@ Pharmaceutical Premises
         
         @foreach($pharmas as $ph)
         <tr>
-          <td>{{$ph->sig_unique_id}}</td>
-          <td>{{$ph->reg_fac_name}}</td>
+          <td>{{$ph->unique_id}}</td>
+          <td>{{$ph->facility_name}}</td>
           <td>{{$ph->state}}</td>
           <td>{{$ph->lga}}</td>
           <td>{{$ph->ownership}}</td>

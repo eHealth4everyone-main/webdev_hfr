@@ -16,7 +16,7 @@ class SignatureController extends Controller
         // $signatures =Signature::where('fac_tpye',1)->get();
         // return view('sign.index', compact("signatures"));
       
-        $facilities = DB::table('view_hospitals')->get();
+        $facilities = DB::table('hospitals_details')->get();
         return view('sign.index', compact("facilities"));
     }
        
@@ -422,67 +422,5 @@ class SignatureController extends Controller
         //
     }
     
-    public function search(Request $request)
-    {
-        return "dfdafd";
-        
-        if($request->ajax())
-        {
-            $output = '';
-            $query = $request->get('query');
-            
-            if($query != '')
-            {
-                $data = Signature::where('reg_fac_name','LIKE',"%{$query}%")
-                ->orderBy('reg_fac_name', 'asc')
-                ->get();
-                
-            }
-            else
-            {
-                $data = Signature::all()
-                ->orderBy('state', 'asc')
-                ->get();
-                
-            }
-            
-            $total_row = $data->count();
-            
-            if($total_row > 0)
-            {
-                foreach($data as $row)
-                {
-                    $output .= '
-                    <tr>
-                    <td>'.$row->sig_unique_id.'</td>
-                    <td>'.$row->reg_fac_name.'</td>
-                    <td>'.$row->state.'</td>
-                    <td>'.$row->lga.'</td>
-                    <td>
-                    <a href="#">
-                    <button class="btn btn-info btn-sm"  type="button">Details</button>
-                    </a>
-                    <a href="#">
-                    <button class="btn btn-primary btn-sm"  type="button" > Edit</button>
-                    </a>
-                    </td>
-                    </tr>';
-                }
-            }
-            else
-            {
-                $output = '
-                <tr>
-                <td align="center" colspan="5">No Data Found</td>
-                </tr>
-                ';
-            }
-            $data = array(
-                'table_data'  => $output,
-                'total_data'  => $total_row
-            );
-            dd($data);
-            echo json_encode($data);
-        }
-    }
+
 }

@@ -32,7 +32,7 @@ Radiological Premises
               @foreach($imagings as $im)
               <tr>
                 <td>{{$im->unique_id}}</td>
-                <td>{{$im->fac_name}}</td>
+                <td>{{$im->facility_name}}</td>
                 <td>{{$im->state}}</td>
                 <td>{{$im->lga}}</td>
                 <td>{{$im->ownership}}</td>

@@ -34,8 +34,8 @@ Hospitals and Clinics Facilities
            
               @foreach($facilities as $fac)
               <tr>
-                <td>{{$fac->sig_unique_id}}</td>
-                <td>{{$fac->reg_fac_name}}</td>
+                <td>{{$fac->unique_id}}</td>
+                <td>{{$fac->facility_name}}</td>
                 <td>{{$fac->state}}</td>
                 <td>{{$fac->lga}}</td>
                 <td>{{$fac->level}}</td>
