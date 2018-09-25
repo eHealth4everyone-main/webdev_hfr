@@ -90,13 +90,13 @@
       @endif
       <div class="box-footer clearfix">
             <div class="btn-group pull-right">
-                <a href="{{route('toCSV')}}">
+                <a href="{{route('export',['type'=>$type,'state'=>$state,'format'=>'csv'])}}">
                     <button type="button" class="btn btn-info btn-sm">Download CSV</button>
                 </a>
-                <a href="{{route('toExcel',['type'=>$type,'state'=>$state])}}">
+                <a href="{{route('export',['type'=>$type,'state'=>$state,'format'=>'excel'])}}">
                     <button type="button" class="btn btn-success btn-sm">Download Excel</button>
                 </a>
-            
+                
             </div>
       </div>
     </div>

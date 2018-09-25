@@ -56,11 +56,7 @@ class DownloadController extends Controller
         return view('public.download_export', compact("facilities","type","indx","state"));
     }
 
-    public function toExcel($type,$state){
-       
-
-        //$state = '0';
-
+    public function export($type,$state,$format){
         $condition = '';
 
         if ($state == 0){
@@ -69,23 +65,30 @@ class DownloadController extends Controller
         else{
             $condition = '=';
         }
-      
 
         if ($type == 1){
             $facilities = DB::table('hospitals_details')
                             ->where('state_id', $condition, $state)
                             ->get();
-  
+
+            $column_header = array("id","unique_id","reg_number","facility_name","alt_facility_name","state_id","state","state_code",
+            "lga_id","lga","level","ownership","ownership_type","ownership_details","comm_date","ward",
+            "house_no","street_name","longitude","latitude","postal_address","phone_number","email_address",
+            "website","operational_days","operational_hours","op_status_id","op_status","reg_status_id",
+            "reg_status","lic_status_id","lic_status","IPD","OPD");
+
         }
 
-        $column_header = array("id","unique_id","reg_number","facility_name","alt_facility_name","state_id","state","state_code",
-        "lga_id","lga","level","ownership","ownership_type","ownership_details","comm_date","ward",
-        "house_no","street_name","longitude","latitude","postal_address","phone_number","email_address",
-        "website","operational_days","operational_hours","op_status_id","op_status","reg_status_id",
-        "reg_status","lic_status_id","lic_status","IPD","OPD");
+      
      
+        if ($format = 'excel'){
+            $down_filename = 'list_of_facilities.xlsx';
+        }
+        if ($format = 'csv'){
+            $down_filename = 'list_of_facilities.csv';
+        }
      
-        return Excel::download(new HFExport( $facilities, $column_header), 'list_of_facilities.xlsx');
+        return Excel::download(new HFExport( $facilities, $column_header), $down_filename );
 
     }
 
