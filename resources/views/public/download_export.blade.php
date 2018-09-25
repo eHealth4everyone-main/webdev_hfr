@@ -24,7 +24,7 @@
                            
                             <div class="col-sm-4">
                                 <select class="form-control select2" id="facilitytype" name="facilitytype" required>
-                                    <option value="">--Facility Type--</option>
+                                    <option value="0">--Facility Type--</option>
                                     <option value="1">Hospitals</option>
                                     <option value="2">Laboratories</option>
                                     <option value="3">Pharmaceuticals</option>
@@ -32,7 +32,7 @@
                                 </select>
                             </div>
                           <div class="col-sm-4">
-                              <select class="form-control select2" id="state" name ="state">
+                              <select class="form-control select2" id="stateid" name ="stateid">
                                   @include('public.states')
                               </select>
                           </div>
@@ -90,8 +90,13 @@
       @endif
       <div class="box-footer clearfix">
             <div class="btn-group pull-right">
-                <button type="button" class="btn btn-info btn-sm">Download CSV</button>
-                <button type="button" class="btn btn-success btn-sm">Download Excel</button>
+                <a href="{{route('toCSV')}}">
+                    <button type="button" class="btn btn-info btn-sm">Download CSV</button>
+                </a>
+                <a href="{{route('toExcel',['type'=>$type,'state'=>$state])}}">
+                    <button type="button" class="btn btn-success btn-sm">Download Excel</button>
+                </a>
+            
             </div>
       </div>
     </div>
@@ -101,20 +106,26 @@
 @endsection 
 
 @push('kibiti_scripts')
-@include('partials.dynamic_lgas_only')
 
 <script>
     $(document).ready( function () {
-      $('#hosp').DataTable( {
-        "paging":   true,
-        "ordering": true,
-        "info":     true,
-        "lengthChange": false,
-        "searching"   : true,
-        "autoWidth"   : false,
-        "pageLength": 20,
-    } );
+        $('#stateid').val("{{$state}}");
+        $('#facilitytype').val("{{$type}}");
+
+
+        $('#hosp').DataTable( {
+            "paging":   true,
+            "ordering": true,
+            "info":     true,
+            "lengthChange": false,
+            "searching"   : true,
+            "autoWidth"   : false,
+            "pageLength": 20,
+        } );
+
+ 
   } );
+
 </script>
 
 @endpush

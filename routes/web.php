@@ -21,6 +21,8 @@ Route::get('/fdownload', 'DownloadController@DownloadForm')->name('downloadfm');
 Route::post('/fdownload', 'DownloadController@store')->name('saveDownloadUser');
 Route::get('/download', 'DownloadController@index')->name('download');
 Route::get('/downloads', 'DownloadController@getFacilities')->name('facToDownload');
+Route::get('/downloads/csv', 'DownloadController@ToCSV')->name('toCSV');
+Route::get('/downloads/excel/{type}/{state}', 'DownloadController@toExcel')->name('toExcel');
 
 Auth::routes();
 
