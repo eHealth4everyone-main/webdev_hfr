@@ -1,4 +1,4 @@
-        <option value="">--Select State--</option>
+        <option value="0">All</option>
         <option value='01' > Abia</option>
         <option value='02' > Adamawa</option>
         <option value='03' > Akwa Ibom</option>

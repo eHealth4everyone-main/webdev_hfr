@@ -4,12 +4,54 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Download;
+use Illuminate\Support\Facades\DB;
+
 class DownloadController extends Controller
 {
-    //
+    public function index (){
+        $indx='1';
+        $facilities = DB::table('hospitals_details')->get();
+        return view('public.download_export',compact("indx"));
+    }
+    
+    public function getFacilities(Request $request){
+        $type = 0;
+        $indx='0';
+        $state = $request->state;
+        $condition = '';
+
+        if ($state == 0){
+            $condition = '<>';
+        }
+        else{
+            $condition = '=';
+        }
+      
+
+        if ($request->facilitytype==1){
+            $facilities = DB::table('hospitals_details')
+                            ->where('state_id', $condition, $state)
+                            ->get();
+            $type = 1;
+        }
+
+        if ($request->facilitytype==2){
+            $facilities = DB::table('laboratory')->get();
+            $type = 2;
+        }
+        if ($request->facilitytype==3){
+            $facilities = DB::table('pharmacies')->get();
+            $type = 3;
+        }
+        if ($request->facilitytype==4){
+            $facilities = DB::table('radiologies')->get();
+            $type = 4;
+        }
+
+        return view('public.download_export', compact("facilities","type","indx"));
+    }
     public function DownloadForm()
     {
-    
         return view('public.download');
     }
 
