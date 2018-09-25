@@ -24,7 +24,6 @@
                            
                             <div class="col-sm-4">
                                 <select class="form-control select2" id="facilitytype" name="facilitytype" required>
-                                    <option value="0">--Facility Type--</option>
                                     <option value="1">Hospitals</option>
                                     <option value="2">Laboratories</option>
                                     <option value="3">Pharmaceuticals</option>
@@ -51,7 +50,6 @@
         </div>
   <div class="box-body">
     
-      @if($indx != 1)
           <table id="hosp" class="table table-bordered table-striped">
             <thead>
               <tr>
@@ -87,7 +85,7 @@
               
             </tbody>
           </table>
-      @endif
+    
       <div class="box-footer clearfix">
             <div class="btn-group pull-right">
                 <a href="{{route('export',['type'=>$type,'state'=>$state,'format'=>'csv'])}}">
@@ -118,9 +116,9 @@
             "ordering": true,
             "info":     true,
             "lengthChange": false,
-            "searching"   : true,
+            "searching"   : false,
             "autoWidth"   : false,
-            "pageLength": 20,
+            "pageLength": 15,
         } );
 
  

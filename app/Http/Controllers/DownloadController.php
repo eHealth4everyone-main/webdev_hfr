@@ -11,17 +11,15 @@ use Maatwebsite\Excel\Facades\Excel;
 class DownloadController extends Controller
 {
     public function index (){
-        $indx='1';
         $state = '0';
-        $type = '0';
+        $type = '1';
 
         $facilities = DB::table('hospitals_details')->get();
-        return view('public.download_export',compact("indx","state","type"));
+        return view('public.download_export', compact("facilities","type","state"));
     }
     
     public function getFacilities(Request $request){
         $type = 0;
-        $indx='0';
         $state = $request->stateid;
         $condition = '';
 
@@ -53,7 +51,7 @@ class DownloadController extends Controller
             $type = 4;
         }
 
-        return view('public.download_export', compact("facilities","type","indx","state"));
+        return view('public.download_export', compact("facilities","type","state"));
     }
 
     public function export($type,$state,$format){
@@ -94,6 +92,7 @@ class DownloadController extends Controller
 
     public function DownloadForm()
     {
+     
         return view('public.download');
     }
 
