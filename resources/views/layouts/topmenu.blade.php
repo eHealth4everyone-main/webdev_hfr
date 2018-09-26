@@ -14,8 +14,7 @@
 
         <form class="navbar-form navbar-right" action="{{route('search')}}" role="search">
           @csrf
-          <select class="form-control input-sm" id="facilitytype" name="facilitytype" required>
-              <option value="">-- Select facility type --</option>
+          <select class="form-control input-sm" id="facilitytype1" name="facilitytype" required>
               <option value="1">Hospitals</option>
               <option value="2">Laboratories</option>
               <option value="3">Pharmaceuticals</option>

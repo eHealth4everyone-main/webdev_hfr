@@ -10,62 +10,57 @@
 @endsection
 
 @section("content")   
+
+
 <div class="box">
-    
-    <div class="box-body">
-        <form class="form-horizontal"  action="{{route('getfacilities')}}" method="GET">
-            @csrf
-            <div class="form-group">
-               
-                <div class="col-sm-4">
-                    <select class="form-control select2" id="facilitytype" name="facilitytype" required>
-                        <option value="">--Facility Type--</option>
-                        <option value="1">Hospitals</option>
-                        <option value="2">Laboratories</option>
-                        <option value="3">Pharmaceuticals</option>
-                        <option value="4">Radiology and Imaging</option>
-                    </select>
+        <div class="box-header">
+                <form class="form-horizontal"  action="{{route('getfacilities')}}" method="GET">
+                    @csrf
+                    <div class="form-group">
+                       
+                        <div class="col-sm-4">
+                            <select class="form-control select2" id="facilitytype" name="facilitytype" required>
+                               
+                                <option value="1">Hospitals</option>
+                                <option value="2">Laboratories</option>
+                                <option value="3">Pharmaceuticals</option>
+                                <option value="4">Radiology and Imaging</option>
+                            </select>
+                        </div>
+                      <div class="col-sm-3">
+                          <select class="form-control select2" id="state" name ="state">
+                                @include('public.states')
+                          </select>
+                      </div>
+                      
+                      <div class="col-sm-3">
+                          <select class="form-control select2" id="lga" name="lga">
+                              <option value="">--Select LGA--</option>
+                          </select>
+                      </div>
+                     
+                  
+                      <div class="col-sm-2">
+                          <button type="submit" class="btn btn-success btn-sm pull-right">Search</button>
+                      </div>
+                    
+                  </div>
+                </form>
+        
+                <div class="">
+                        <h5><p class="text-light-blue">
+                            @if ($type === 1)
+                                List of Hospitals and Clinics
+                            @elseif ($type === 2)
+                                List of Laboratories
+                            @elseif($type === 3)
+                                List of Pharmacies
+                            @elseif($type === 4)
+                                List of Radiologies/Imaging facilities
+                            @endif
+                        </p></h5> 
                 </div>
-              <div class="col-sm-2">
-                  <select class="form-control select2" id="state" name ="state">
-                      @include('public.states')
-                  </select>
-              </div>
-              
-              <div class="col-sm-2">
-                  <select class="form-control select2" id="lga" name="lga">
-                      <option value="">--Select LGA--</option>
-                  </select>
-              </div>
-             
-              <div class="col-sm-2">
-                 
-              </div>
-              <div class="col-sm-2">
-                  <button type="submit" class="btn btn-success pull-right">Search</button>
-              </div>
-            
-          </div>
-        </form>
-
-    </div>
-
-</div>
-<div class="">
-        <h5><p class="text-light-blue">
-            @if ($type === 1)
-                List of Hospitals and Clinics
-            @elseif ($type === 2)
-                List of Laboratories
-            @elseif($type === 3)
-                List of Pharmacies
-            @elseif($type === 4)
-                List of Radiologies/Imaging facilities
-            @endif
-        </p></h5> 
-    </div>
-<div class="box">
-
+        </div>
   <div class="box-body">
           <table id="hosp" class="table table-bordered table-striped">
             <thead>
@@ -124,6 +119,10 @@
         "pageLength": 25,
     } );
   } );
+
+
+
+
 </script>
 
 @endpush

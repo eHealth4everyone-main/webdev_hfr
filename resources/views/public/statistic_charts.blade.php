@@ -12,26 +12,26 @@
 @section("content")  
 <div class="box">
     
-        <div class="box-body">
+        <div class="box-header">
             <form class="form-horizontal"  action="{{route('getfacilities')}}" method="GET">
                 @csrf
                 <div class="form-group">
                    
-                  <div class="col-sm-4">
+                  <div class="col-sm-5">
                       <select class="form-control select2" id="state" name ="state">
                             @include('public.states')
                       </select>
                   </div>
                   
-                  <div class="col-sm-4">
+                  <div class="col-sm-5">
                       <select class="form-control select2" id="lga" name="lga">
                           <option value="">--Select LGA--</option>
                       </select>
                   </div>
                  
                 
-                  <div class="col-sm-4">
-                      <button type="submit" class="btn btn-success pull-right">Search</button>
+                  <div class="col-sm-2">
+                      <button type="submit" class="btn btn-success btn-sm pull-right">Search</button>
                   </div>
                 
               </div>

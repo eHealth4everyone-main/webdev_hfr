@@ -22,7 +22,7 @@
                         @csrf
                         <div class="form-group">
                            
-                            <div class="col-sm-4">
+                            <div class="col-sm-5">
                                 <select class="form-control select2" id="facilitytype" name="facilitytype" required>
                                     <option value="1">Hospitals</option>
                                     <option value="2">Laboratories</option>
@@ -30,19 +30,14 @@
                                     <option value="4">Radiology and Imaging</option>
                                 </select>
                             </div>
-                          <div class="col-sm-4">
+                          <div class="col-sm-5">
                               <select class="form-control select2" id="stateid" name ="stateid">
                                   @include('public.states')
                               </select>
                           </div>
-                          
-                          
-                         
+
                           <div class="col-sm-2">
-                             
-                          </div>
-                          <div class="col-sm-2">
-                              <button type="submit" class="btn btn-success pull-right">Search</button>
+                              <button type="submit" class="btn btn-success btn-sm pull-right">Search</button>
                           </div>
                         
                       </div>
@@ -107,10 +102,6 @@
 
 <script>
     $(document).ready( function () {
-        $('#stateid').val("{{$state}}");
-        $('#facilitytype').val("{{$type}}");
-
-
         $('#hosp').DataTable( {
             "paging":   true,
             "ordering": true,
@@ -123,6 +114,9 @@
 
  
   } );
+
+  $('#stateid').val("{{$state}}");
+  $('#facilitytype').val("{{$type}}");
 
 </script>
 
