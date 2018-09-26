@@ -13,24 +13,24 @@
         <div class="row">
                 <div class="col-sm-12">
                     <div class="box box-default">
-                        <canvas id="myChart"></canvas>
+                        <canvas id="myCdddhart"></canvas>
                     </div>
                 </div>
                 
         </div>
-   
         <div class="row">
                 <div class="col-md-6">
                     <div class="box box-default">
-                        <canvas id="myChart2"></canvas>
+                        <canvas id=""></canvas>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="box box-default">
-                        NA
+                        <canvas id=""></canvas>
                     </div>
                 </div>
         </div>
+
         <div class="row">
                 <div class="col-md-6">
                     <div class="box box-default">
@@ -38,9 +38,9 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                        <div class="box box-default">
-                            NA
-                        </div>
+                    <div class="box box-default">
+                        NA
+                    </div>
                 </div>    
         </div>
   </div>
@@ -90,50 +90,6 @@
     });
     </script>
     
-    {{-- Summary of fac types --}}
-    <script>
-        var ctx = document.getElementById("myChart2").getContext('2d');
-     
-        var no_factypes = [{{$factypes[0]->total}},{{$factypes[1]->total}},{{$factypes[2]->total}},{{$factypes[3]->total}}];
-        
-        var myChart = new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: ["Hospitals", "Pharmaceuticals", "Laboratories", "Imaging"],
-                datasets: [{
-                    
-                    data: no_factypes,
-                    backgroundColor: [
-                        'rgba(255,99,132,1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                    
-                    ],
-                    borderColor: [
-                        'rgba(255,99,132,1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                       
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-            
-                title:{
-                    display:true,
-                    text:'Facilities by Type',
-                    fontSize:20
-                },
-                legend:{
-                    dislay:false,
-                    position:'bottom',
-                }
-            }
-        });
-        </script>
 
 
 @endpush
