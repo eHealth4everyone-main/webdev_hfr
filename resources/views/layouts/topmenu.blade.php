@@ -9,7 +9,7 @@
     
         <li><a href="{{route('download')}}">Data Downloads</a></li>
         <li><a href="{{route('public_resources')}}">Resources</a></li>
-        <li><a href="#">Contact us</a></li>
+        <li><a href="{{route('open_contact_form')}}">Contact us</a></li>
         <li><a href="{{route('admin_home')}}">Administrator</a></li>
 
         <form class="navbar-form navbar-right" action="{{route('search')}}" role="search">
@@ -22,7 +22,7 @@
           </select>
             <div class="input-group input-group-sm" >
                
-                <input type="text" name="fac_name" class="form-control" placeholder="facility name to search" required>
+                <input type="text" name="fac_name" class="form-control" placeholder="Facility name" required>
                     <span class="input-group-btn">
                       <button type="submit" class="btn btn-success btn-flat">Search</button>
                     </span>

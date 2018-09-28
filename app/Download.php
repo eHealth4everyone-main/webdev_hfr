@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class Download extends Model
 {
-    protected $fillable = ['firstname','lastname','email','organisation','designation','country','purpose','created_at','updated_at'];
+    protected $fillable = ['firstname','lastname','email','organisation','designation','country','purpose'];
 }

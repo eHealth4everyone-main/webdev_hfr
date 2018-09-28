@@ -22,6 +22,8 @@ Route::post('/fdownload', 'DownloadController@store')->name('saveDownloadUser');
 Route::get('/download', 'DownloadController@index')->name('download');
 Route::get('/downloads', 'DownloadController@getFacilities')->name('facToDownload');
 Route::get('/downloads/excel/{type}/{state}/{format}', 'DownloadController@export')->name('export');
+Route::get('/contactus', 'ContactController@openContactForm')->name('open_contact_form');
+Route::post('/contactus', 'ContactController@store')->name('storecontact');
 
 Auth::routes();
 
