@@ -2,8 +2,7 @@
 
 
 @section('content-title')
-
-
+Inbox
 @endsection
 
 @section("content")
@@ -11,7 +10,7 @@
     
           <div class="box box-default">
             <div class="box-header with-border">
-              <h3 class="box-title">Inbox</h3>
+              <h3 class="box-title"></h3>
 
               <div class="box-tools pull-right">
                 <div class="has-feedback">
@@ -49,18 +48,31 @@
               <!-- /.mail-box-messages -->
             </div>
             <!-- /.box-body -->
-            <div class="box-footer no-padding">
-              <div class="mailbox-controls">
-              
-                <div class="pull-right">
-                  1-50/200
-                  <div class="btn-group">
-                    <button type="button" class="btn btn-default btn-sm"><i class="fa fa-chevron-left"></i></button>
-                    <button type="button" class="btn btn-default btn-sm"><i class="fa fa-chevron-right"></i></button>
-                  </div>
-                  <!-- /.btn-group -->
-                </div>
-                <!-- /.pull-right -->
+            <div class="box-footer">
+              <div class="row">
+                
+                    @php
+                      $perpage = $messages->perpage();
+                      $currentpage = $messages->currentpage();
+                      $from = ($currentpage-1)*$perpage+1;
+                      
+                      if ($messages->currentpage() == $messages->lastpage()) {
+                        $to = $messages->total();
+                      } else {
+                        $to = $currentpage*$perpage;
+                      }
+                    @endphp
+               
+                    <div class="col-md-6">
+                        Showing {{$from}} to {{$to}} of {{$messages->total()}} entries
+                       
+                    </div>
+                    <div class="col-md-6">
+                        <div class="pull-right">
+                            {{$messages->links()}}                  
+                        </div>
+                    </div>
+
               </div>
             </div>
           </div>

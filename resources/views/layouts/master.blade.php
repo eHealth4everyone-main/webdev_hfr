@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>HFR | Nigeria</title>
+    <title>Nigeria Health Facility Registry</title>
 
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
@@ -30,7 +30,7 @@
                         <!-- mini logo for sidebar mini 50x50 pixels -->
                         <span class="logo-mini"><b>H</b>FR</span>
                         <!-- logo for regular state and mobile devices -->
-                        <span class="logo-lg"><b>HFR </b>Administration</span>
+                        <span class="logo-lg"><b>HFR </b>Administrator</span>
                     </a>
                     <!-- Header Navbar: style can be found in header.less -->
                     <nav class="navbar navbar-static-top">
@@ -45,7 +45,13 @@
                         <div class="navbar-custom-menu">
                             <ul class="nav navbar-nav">
                                 <!-- Messages: style can be found in dropdown.less-->
-                                
+                                <li class="dropdown messages-menu">
+                                        <a href="/messages">
+                                          <i class="fa fa-envelope-o"></i>
+                                          <span class="label label-primary">R</span>
+                                        </a>
+                                   
+                                </li>
                                 
                                 <!-- User Account: style can be found in dropdown.less -->
                                 <li class="dropdown user user-menu">

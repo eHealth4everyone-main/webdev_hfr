@@ -115,4 +115,10 @@ class DownloadController extends Controller
             session()->flash("alert-success", "Download successfully!");
             return back();
     }
+
+    public function adminIndex (){
+        $downloads = Download::all();
+        return view('downloads.index', compact("downloads"));
+    }
+    
 }

@@ -12,7 +12,8 @@
         <li><a href="{{route('open_contact_form')}}">Contact us</a></li>
         <li><a href="{{route('admin_home')}}">Administrator</a></li>
 
-        <form class="navbar-form navbar-right" action="{{route('search')}}" role="search">
+        
+        <form class="navbar-form navbar-right " action="{{route('search')}}" role="search">
           @csrf
           <select class="form-control input-sm" id="facilitytype1" name="facilitytype" required>
               <option value="1">Hospitals</option>

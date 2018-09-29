@@ -86,6 +86,9 @@ Route::middleware(["auth"])->group(function(){
     //messages
     Route::get('/messages', 'ContactController@index')->name('messages');
 
+    //download
+    Route::get('/download/list', 'DownloadController@adminIndex')->name('downloadList');
+
 });
 
 

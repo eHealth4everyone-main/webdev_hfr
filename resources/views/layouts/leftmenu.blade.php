@@ -63,6 +63,12 @@
                         <span>Messages</span>
                     </a>
                 </li>
+                <li> 
+                    <a href="/download/list">
+                        <i class="fa  fa-download"></i>
+                        <span>Downloads</span>
+                    </a>
+                </li>
             
                 <li  class="treeview"> 
                     <a href="#">
