@@ -112,13 +112,20 @@ class DownloadController extends Controller
 
             Download::create($request->all());
 
-            session()->flash("alert-success", "Download successfully!");
-            return back();
+            session()->flash("alert-success", "Successfull! Download the data");
+            
+        
+            $state = '0';
+            $type = '1';
+    
+            $facilities = DB::table('hospitals_details')->get();
+            return view('public.download_export', compact("facilities","type","state"));
     }
 
     public function adminIndex (){
         $downloads = Download::all();
         return view('downloads.index', compact("downloads"));
+     
     }
     
 }

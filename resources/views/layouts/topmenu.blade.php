@@ -7,7 +7,7 @@
         <li><a href="{{route('statistics_charts')}}">Charts</a></li>
         <li><a href="{{route('listhosp')}}">Facilities List</a></li>
     
-        <li><a href="{{route('download')}}">Data Downloads</a></li>
+        <li><a href="{{route('downloadfm')}}">Data Downloads</a></li>
         <li><a href="{{route('public_resources')}}">Resources</a></li>
         <li><a href="{{route('open_contact_form')}}">Contact us</a></li>
         <li><a href="{{route('admin_home')}}">Administrator</a></li>

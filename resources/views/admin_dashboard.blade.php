@@ -10,18 +10,11 @@
 
 @section("content")
   <div class="">
-        <div class="row">
-                <div class="col-sm-12">
-                    <div class="box box-default">
-                        <canvas id="myCdddhart"></canvas>
-                    </div>
-                </div>
-                
-        </div>
+      
         <div class="row">
                 <div class="col-md-6">
                     <div class="box box-default">
-                        <canvas id=""></canvas>
+                            <div id="no_downloads"></div>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -49,46 +42,64 @@
 @endsection 
 
 @push('bk_script')
+<script src="{{ asset("js/highcharts.js")}}"></script>
+<script src="{{ asset("js/series-label.js")}}"></script>
+<script src="{{ asset("js/exporting.js")}}"></script>
 
 <script>
-    var ctx = document.getElementById("myChart").getContext('2d');
-    
-    var states= @json($state_name);
-    var num_states=@json($num_of_fac);
+  
+</script>
+<script>
 
-    var myChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: states,
-            datasets: [{
-                label: 'States',
-                data: num_states,
-                borderWidth: 1,
-                // fillColor: 'rgba(54, 162, 235, 1)',
-                // strokeColor: 'rgba(54, 162, 235, 1)',
-                backgroundColor: 'rgba(54, 162, 235, 1)',
-            }]
+Highcharts.chart('no_downloads', {
+
+        title: {
+        text: 'Number Monthly Downloads Requests'
         },
-        options: {
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero:true
-                    }
-                }]
-            },
-            title:{
-                display:true,
-                text:'# of Facilities per State',
-                fontSize:20
-            },
-            legend:{
-                dislay:false,
-                position:'right',
-            }
+
+        yAxis: {
+        title: {
+            text: 'Number of Downloads'
         }
-    });
-    </script>
+        },
+        legend: {
+        layout: 'vertical',
+        align: 'right',
+        verticalAlign: 'middle'
+        },
+
+        plotOptions: {
+        series: {
+            label: {
+            connectorAllowed: false
+            },
+            pointStart: 2010
+        }
+        },
+
+        series: [{
+        name: 'Downloads',
+        data: [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175]
+        }],
+
+        responsive: {
+        rules: [{
+            condition: {
+            maxWidth: 500
+            },
+            chartOptions: {
+            legend: {
+                layout: 'horizontal',
+                align: 'center',
+                verticalAlign: 'bottom'
+            }
+            }
+        }]
+        }
+
+});
+</script>
+
     
 
 

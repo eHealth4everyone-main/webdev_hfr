@@ -33,7 +33,7 @@ Guest Data Downloads
           <td>{{$d->designation}}</td>
           <td>{{$d->country}}</td>
           <td>{{$d->purpose}}</td>
-          <td>{{$d->created_at}}</td>
+          <td> {{ Carbon\Carbon::parse($d->created_at)->toFormattedDateString() }}</td>
         </tr>
         @endforeach
       </tbody>

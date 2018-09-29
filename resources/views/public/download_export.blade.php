@@ -99,6 +99,7 @@
 @endsection 
 
 @push('kibiti_scripts')
+@include('partials.notification')
 
 <script>
     $(document).ready( function () {
