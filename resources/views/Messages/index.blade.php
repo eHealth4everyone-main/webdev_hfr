@@ -25,6 +25,7 @@ Inbox
               <div class="mailbox-controls">
                
                 
+                
                 <!-- /.pull-right -->
               </div>
               <div class="table-responsive mailbox-messages">
