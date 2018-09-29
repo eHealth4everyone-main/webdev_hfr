@@ -83,6 +83,8 @@ Route::middleware(["auth"])->group(function(){
     Route::post('/resources/delete/{file}', 'ResourceController@destroy')->name('deleteFile');
     Route::get('/resources/download/{file}', 'ResourceController@download')->name('downloadFile');
 
+    //messages
+    Route::get('/messages', 'ContactController@index')->name('messages');
 
 });
 

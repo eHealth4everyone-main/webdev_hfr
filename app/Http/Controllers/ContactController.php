@@ -11,7 +11,11 @@ class ContactController extends Controller
         return view('public.contact');
     }
 
-
+    public function index(){
+        $messages = Contactus::all();
+        //return view('messages.index');
+        return view('messages.index', compact("messages"));
+    }
     public function store(Request $request)
         {
             $request->validate([

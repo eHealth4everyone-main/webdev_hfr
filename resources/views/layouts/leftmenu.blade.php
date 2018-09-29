@@ -58,9 +58,9 @@
                 </li>
 
                 <li> 
-                    <a href="#">
-                        <i class="fa fa-download"></i>
-                        <span>Data Download</span>
+                    <a href="/messages">
+                        <i class="fa  fa-comments"></i>
+                        <span>Messages</span>
                     </a>
                 </li>
             
