@@ -10,40 +10,11 @@
 @endsection
 
 @section("content")  
-<div class="box">
-    
-        <div class="box-body">
-            <form class="form-horizontal"  action="{{route('getfacilities')}}" method="GET">
-                @csrf
-                <div class="form-group">
-                   
-                  <div class="col-sm-4">
-                      <select class="form-control select2" id="state" name ="state">
-                            @include('public.states')
-                      </select>
-                  </div>
-                  
-                  <div class="col-sm-4">
-                      <select class="form-control select2" id="lga" name="lga">
-                          <option value="">--Select LGA--</option>
-                      </select>
-                  </div>
-                 
-                
-                  <div class="col-sm-4">
-                      <button type="submit" class="btn btn-success pull-right">Search</button>
-                  </div>
-                
-              </div>
-            </form>
-    
-        </div>
-    
-    </div> 
+
 
 <!-- ********************summary one ************ -->
     <div class="row">
-        <div class="col-md-3 col-sm-6 col-xs-12">
+        {{-- <div class="col-md-3 col-sm-6 col-xs-12">
           <div class="info-box">
             <span class="info-box-icon bg-aqua"><i class="fa fa-hospital-o"></i></span>
 
@@ -58,9 +29,9 @@
             <!-- /.info-box-content -->
           </div>
           <!-- /.info-box -->
-        </div>
+        </div> --}}
         <!-- /.col -->
-        <div class="col-md-3 col-sm-6 col-xs-12">
+        {{-- <div class="col-md-3 col-sm-6 col-xs-12">
           <div class="info-box">
             <span class="info-box-icon bg-red"><i class="fa fa-stethoscope"></i></span>
 
@@ -75,11 +46,11 @@
             <!-- /.info-box-content -->
           </div>
           <!-- /.info-box -->
-        </div>
+        </div> --}}
         <!-- /.col -->
 
         <!-- fix for small devices only -->
-        <div class="clearfix visible-sm-block"></div>
+        {{-- <div class="clearfix visible-sm-block"></div>
 
         <div class="col-md-3 col-sm-6 col-xs-12">
           <div class="info-box">
@@ -113,9 +84,74 @@
             <!-- /.info-box-content -->
           </div>
           <!-- /.info-box -->
-        </div>
+        </div> --}}
         <!-- /.col -->
     </div>
+    
+    <div class="row">
+            <div class="col-sm-12">
+                    <div class="box box-default">
+                        <div class="box-header with-border">
+                                <form class="form-horizontal"  action="" method="GET">
+                                        @csrf
+                                        <div class="form-group">
+                                           
+                                          <div class="col-sm-5">
+                                              <select class="form-control select2" id="state" name ="state">
+                                                    @include('public.states')
+                                              </select>
+                                          </div>
+                                          
+                                          <div class="col-sm-5">
+                                              <select class="form-control select2" id="lga" name="lga">
+                                                  <option value="">--Select LGA--</option>
+                                              </select>
+                                          </div>
+                                         
+                                        
+                                          <div class="col-sm-2">
+                                              <button type="submit" class="btn btn-success btn-sm pull-right">Search</button>
+                                          </div>
+                                        
+                                      </div>
+                                </form>
+                        
+                        
+                                <h4>Number of Facilities by Type</h4>
+                        </div>
+                    
+                        <div class="box-body">
+                               
+
+                                <div class="table-responsive">
+                                    <table class="table no-margin">
+                                        <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>Hospitals and Clinics</th>
+                                            <th>Pharmaceuticals</th>
+                                            <th>Laboratories</th>
+                                            <th>Radiologies and Imaging</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                                @foreach($results as $res)
+                                                <tr>
+                                                <td>Total facilities</td>
+                                                  <td>{{$res->hosp}}</td>
+                                                  <td>{{$res->pharma}}</td>
+                                                  <td>{{$res->lab}}</td>
+                                                  <td>{{$res->radio}}</td>
+                                                </tr>
+                                                @endforeach
+                                        <tbody>
+                                    </table>
+                                </div>
+                        </div>
+                    </div>
+            </div>
+    </div>
+
       <!-- *******************summary 1 ends**************** -->
 
     {{-- summary 2 --}}
@@ -157,6 +193,7 @@
                     </div>
                 </div>
         </div>
+
         <div class="col-sm-6">
                 <div class="box box-info">
                         <div class="box-header with-border">
