@@ -25,7 +25,7 @@ Inbox
               <div class="mailbox-controls">
                
                 
-                
+
                 <!-- /.pull-right -->
               </div>
               <div class="table-responsive mailbox-messages">
@@ -37,14 +37,14 @@ Inbox
                             <td class="mailbox-name"><a href="">{{$m->name}}</a></td>
                             <td class="mailbox-name">{{$m->email}}</td>
                             <td class="mailbox-subject"><b>{{$m->subject}}</b> -  {{$truncated = str_limit($m->message, 30, ' ...')}}</td>
-                            <td class="mailbox-date">{{$m->created_at}}</td>
-                            @php
+                            {{-- <td class="mailbox-date">{{$m->created_at}}</td> --}}
+                            {{-- @php
                              
                               $now = Carbon\Carbon::now();
                          
                             
-                            @endphp
-                            <td> {{ $now->diffForHumans($m->created_at) }}</td>
+                            @endphp --}}
+                            <td> {{ $m->created_at->diffForHumans() }}</td>
                         </tr>
                     
                       @endforeach
