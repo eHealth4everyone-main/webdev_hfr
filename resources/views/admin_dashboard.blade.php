@@ -56,7 +56,9 @@ Highcharts.chart('no_downloads', {
         title: {
         text: 'Number Monthly Downloads Requests'
         },
-
+        xAxis: {
+        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        },
         yAxis: {
         title: {
             text: 'Number of Downloads'
@@ -69,17 +71,17 @@ Highcharts.chart('no_downloads', {
         },
 
         plotOptions: {
-        series: {
-            label: {
-            connectorAllowed: false
+        line: {
+            dataLabels: {
+                enabled: true
             },
-            pointStart: 2010
-        }
+            enableMouseTracking: false
+            }
         },
 
         series: [{
         name: 'Downloads',
-        data: [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175]
+        data: [40, 50, 77, 15, 50, 41, 53, 65]
         }],
 
         responsive: {
@@ -95,7 +97,11 @@ Highcharts.chart('no_downloads', {
             }
             }
         }]
-        }
+      
+        },
+        credits: {
+            enabled: false
+        },
 
 });
 </script>

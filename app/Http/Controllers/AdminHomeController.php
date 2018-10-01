@@ -5,27 +5,15 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class HomeController extends Controller
-{
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-  
 
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+class AdminHomeController extends Controller
+{
+    public function __construct()
     {
-        return view('home');
+        $this->middleware('auth');
     }
 
-
-    public function userhome(){
+    public function adminhome(){
         $factypes = DB::table('tbl_signatures')
                      ->select(DB::raw('fac_tpye,count(*) as total'))
                      ->groupBy('fac_tpye')
@@ -47,6 +35,8 @@ class HomeController extends Controller
             $num_of_fac[]=$state->total;
         };
                      
-        return view("home",compact('factypes','state_name','num_of_fac'));
+        return view("admin_dashboard",compact('factypes','state_name','num_of_fac'));
     }
+
+
 }

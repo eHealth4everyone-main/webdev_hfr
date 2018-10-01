@@ -90,9 +90,9 @@
                     </a>
                 </li>
                 <li> 
-                    <a href="#">
-                        <i class="fa fa-key"></i>
-                        <span>Change Password</span>
+                    <a href="#changepass" data-toggle="modal" data-target="#changepass" >
+                            <i class="fa fa-key"></i>
+                            <span>Change Password</span>
                     </a>
                 </li>
             </ul>

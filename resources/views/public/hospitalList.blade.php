@@ -92,7 +92,7 @@
         "lengthChange": false,
         "searching"   : true,
         "autoWidth"   : false,
-        "pageLength": 20,
+        "pageLength": 15,
     } );
   } );
 </script>

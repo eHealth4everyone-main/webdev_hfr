@@ -18,9 +18,9 @@
                         @csrf
 
                         <div class="form-group row">
-                            <label for="firstname" class="col-md-2 control-label">First Name<font color="red">*</font> </label>
+                            <label for="firstname" class="col-md-3 control-label">First Name<font color="red">*</font> </label>
 
-                            <div class="col-md-10">
+                            <div class="col-md-6">
                                 <input id="firstname" type="text" class="form-control{{ $errors->has('firstname') ? ' is-invalid' : '' }}" name="firstname" value="{{ old('firstname') }}" required autofocus>
 
                                 @if ($errors->has('firstname'))
@@ -29,11 +29,13 @@
                                     </span>
                                 @endif
                             </div>
+                           
+
                         </div>
                         <div class="form-group row">
-                                <label for="name" class="col-md-2 control-label">Last Name<font color="red">*</font> </label>
+                                <label for="name" class="col-md-3 control-label">Last Name<font color="red">*</font> </label>
     
-                                <div class="col-md-10">
+                                <div class="col-md-6">
                                     <input id="lastname" type="text" class="form-control{{ $errors->has('lastname') ? ' is-invalid' : '' }}" name="lastname" value="{{ old('lastname') }}" required>
     
                                     @if ($errors->has('lastname'))
@@ -44,9 +46,9 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                    <label for="email" class="col-md-2 control-label">E-Mail Address<font color="red">*</font> </label>
+                                    <label for="email" class="col-md-3 control-label">E-Mail Address<font color="red">*</font> </label>
         
-                                    <div class="col-md-10">
+                                    <div class="col-md-6">
                                         <input id="email" type="email" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" value="{{ old('email') }}" required>
         
                                         @if ($errors->has('email'))
@@ -57,9 +59,9 @@
                                     </div>
                             </div>
                             <div class="form-group row">
-                                    <label for="organisation" class="col-md-2 control-label">Organisation<font color="red">*</font> </label>
+                                    <label for="organisation" class="col-md-3 control-label">Organisation<font color="red">*</font> </label>
         
-                                    <div class="col-md-10">
+                                    <div class="col-md-6">
                                         <input id="organisation" type="text" class="form-control{{ $errors->has('organisation') ? ' is-invalid' : '' }}" name="organisation" value="{{ old('organisation') }}" required>
         
                                         @if ($errors->has('organisation'))
@@ -70,9 +72,9 @@
                                     </div>
                             </div>
                             <div class="form-group row">
-                                    <label for="designation" class="col-md-2 control-label">Designation<font color="red">*</font> </label>
+                                    <label for="designation" class="col-md-3 control-label">Designation<font color="red">*</font> </label>
         
-                                    <div class="col-md-10">
+                                    <div class="col-md-6">
                                         <input id="designation" type="text" class="form-control{{ $errors->has('designation') ? ' is-invalid' : '' }}" name="designation" value="{{ old('designation') }}" required>
         
                                         @if ($errors->has('designation'))
@@ -85,8 +87,8 @@
                      
 
                         <div class="form-group row">
-                                <label for="country" class="col-md-2 control-label">Country<font color="red">*</font> </label>
-                                <div class="col-md-10">
+                                <label for="country" class="col-md-3 control-label">Country<font color="red">*</font> </label>
+                                <div class="col-md-6">
                                         <select class="form-control select2"  class="form-control{{ $errors->has('country') ? ' is-invalid' : '' }}" id="country" name="country" required>
                                                
                                              @include('public.countries')
@@ -99,9 +101,9 @@
                                 @endif
                         </div>
                         <div class="form-group row">
-                                <label for="purpose" class="col-md-2 control-label">Purpose<font color="red">*</font> </label>
+                                <label for="purpose" class="col-md-3 control-label">Purpose<font color="red">*</font> </label>
     
-                                <div class="col-md-10">
+                                <div class="col-md-6">
                                     <textarea  id="purpose" name="purpose" class="form-control" rows="5" placeholder="Inteded usage of the data.." required></textarea>
                                     @if ($errors->has('purpose'))
                                         <span class="invalid-feedback" role="alert">
@@ -111,9 +113,9 @@
                                 </div>
                         </div>
                         <div class="form-group row">
-                                <div class="col-md-2">
+                                <div class="col-md-3">
                                 </div>
-                                <div class="col-md-10">
+                                <div class="col-md-6">
                                     <div class="g-recaptcha" data-sitekey="{{env('NOCAPTCHA_SITEKEY')}}"></div>
                                 </div>
                                 @if ($errors->has('g-recaptcha-response'))
@@ -125,8 +127,15 @@
                    
 
                         <div class="box-footer">
-                            
-                                <button type="submit" class="btn btn-success pull-right">Submit  </button>
+                                <div class="form-group row">
+                                    <div class="col-md-3"> </div>
+                                    
+                                    <div class="col-md-6">
+                                            <button type="submit" class="btn btn-success pull-right">Submit  </button>
+                                    </div>
+                                    
+                                </div>
+                                
                         </div>
                     </form>
             
