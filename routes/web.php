@@ -29,22 +29,24 @@ Auth::routes();
 
 Route::middleware(["auth"])->group(function(){
 
-    Route::get('/admin', 'HomeController@adminhome')->name('admin_home');
+    Route::get('/admin', 'AdminHomeController@adminhome')->name('admin_home');
 
     //equipments
     Route::get('/equipments','EquipmentController@index');
 
-    //users and roles
+    //roles
     Route::get('/roles', 'RoleController@index');
     Route::post('/roles/add', 'RoleController@store')->name('addrole');
     Route::post('/roles/update', 'RoleController@update')->name('updaterole');
+
+    //users
     Route::get('/users', 'UserController@index')->name('users');
     Route::get('/users/register', 'UserController@create');
     Route::post('/users/register', 'UserController@store')->name("registeruser");
     Route::post('/users/update', 'UserController@update')->name("updateuser");
     Route::put('/users/del', 'UserController@deactivate')->name("delUser");
-
-
+    Route::post('/changePassword','UserController@changePassword')->name('changePassword');
+ 
     //hospitals
     Route::resource('sign','SignatureController');
     Route::get('/sign/search','SignatureController@search')->name('sign.search');

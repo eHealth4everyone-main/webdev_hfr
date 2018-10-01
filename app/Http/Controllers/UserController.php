@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Traits\HasRoles;
 use Spatie\Permission\Models\Role;
+use Auth;
 
 class UserController extends Controller
     {
@@ -105,4 +106,34 @@ class UserController extends Controller
         }
       
     }
+
+   
+    public function changePassword(Request $request){
+ 
+        if (!(Hash::check($request->current_password, Auth::user()->password))) {
+            // The passwords matches
+            session()->flash("alert-danger", "Your current password does not matches with the password you provided. Please try again.");
+            return redirect()->back();
+        }
+ 
+        if(strcmp($request->current_password, $request->new_password) == 0){
+            //Current password and new password are same
+            session()->flash("alert-danger", "New Password cannot be same as your current password. Please choose a different password.");
+            return redirect()->back();
+        }
+ 
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|string|min:6|confirmed',
+        ]);
+ 
+        //Change Password
+        $user = Auth::user();
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+        
+        session()->flash("alert-success","Password changed successfully !");
+        return redirect()->back();
+    }
+
 }
