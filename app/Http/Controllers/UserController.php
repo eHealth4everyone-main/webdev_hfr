@@ -65,7 +65,7 @@ class UserController extends Controller
         ]);
 
         $data = $request->all();
-    
+        
         $user = User::findOrFail($request->UserID);
         $user->firstname = $data['firstname1'];
         $user->lastname = $data['lastname1'];
@@ -162,7 +162,6 @@ class UserController extends Controller
  
         //Change Password
         $user = Auth::user();
-        // $user->password = $request->new_password;
         $user->password = Hash::make($request->new_password);
         $user->save();
         

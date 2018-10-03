@@ -85,10 +85,13 @@ class FacilityListingController extends Controller
         foreach ($facbyown as $own){
             $facbyownership[]=$own->num;
         };
-       
-       
-        return view('public.statistic_charts', compact('state_name','num_of_fac','facbylevels','facbyownership'));
 
+        //levels by state
+        $fac_levels = DB::table('num_hosp_by_level_state_clm')->get();
+       
+
+
+        return view('public.statistic_charts', compact('state_name','num_of_fac','facbylevels','facbyownership','fac_levels'));
     }
 
 

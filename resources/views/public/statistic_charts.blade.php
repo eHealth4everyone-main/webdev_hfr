@@ -41,25 +41,46 @@
     
     </div>  
 
-
     <div class="row" >
-        <div class="col-sm-12">
-            <div class="box box-info">
-                <div class="box-header with-border">
-                <h3 class="box-title"> </h3>
+            <div class="col-sm-12">
+                <div class="box box-info">
+                    <div class="box-header with-border">
+                    <h3 class="box-title"> Number of Health Facilities per State</h3>
+    
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                        </button>
+                    </div>
+                    </div>
+                    <div class="box-body">
+                            <div id="container3" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 
-                <div class="box-tools pull-right">
-                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                    </button>
-                </div>
-                </div>
-                <div class="box-body">
-                        <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+                            <table  id="table3">
+                                    <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Primary</th>
+                                        <th>Secondary</th>
+                                        <th>Tertiary</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($fac_levels as $lev)
+                                            <tr>
+                                                <td>{{$lev->state}}</td>
+                                                <td>{{$lev->Primary}}</td>
+                                                <td>{{$lev->Secondary}}</td>
+                                                <td>{{$lev->Tertiary}}</td>
+                                            </tr>
+                                        @endforeach
+                                    <tbody>
+                            </table> 
+                            
+                    </div>
                 </div>
             </div>
+          
         </div>
-      
-    </div>
 
     <div class="row">
        <div class="col-sm-6">
@@ -79,7 +100,7 @@
         </div>
 
         <div class="col-sm-6">
-                <div class="box box-success">
+                <div class="box box-primary">
                         <div class="box-header with-border">
                         <h3 class="box-title">Facilities by Ownership </h3>
     
@@ -103,65 +124,74 @@
 @push('kibiti_scripts')
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/data.js"></script>
 
 @include('partials.dynamic_lgas_only')
 
     
 <script>
+ 
+    
+//Chart 1
+$('#table3').hide();
+        Highcharts.chart('container3', {
+        chart: {
+            type: 'column'
+            },
+            title: {
+                text: ''
+            },
+            data: {
+                table: 'table3'
+            },
+         
+            yAxis: {
+                min: 0,
+                title: {
+                text: 'Number of facilities'
+                },
+                stackLabels: {
+                enabled: true,
+                style: {
+                    fontWeight: 'bold',
+                    color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+                }
+                }
+            },
+            legend: {
+                align: 'right',
+                x: -30,
+                verticalAlign: 'top',
+                y: 25,
+                floating: true,
+                backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || 'white',
+                borderColor: '#CCC',
+                borderWidth: 1,
+                shadow: false
+            },
+            tooltip: {
+                headerFormat: '<b>{point.x}</b><br/>',
+                pointFormat: '{series.name}: {point.y}<br/>Total: {point.stackTotal}'
+            },
+            plotOptions: {
+                column: {
+                stacking: 'normal',
+                dataLabels: {
+                    enabled: true,
+                    color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white'
+                }
+                }
+            },
+            credits: {
+                enabled: false
+            },
+  
+        });
 
-$(document).ready( function () {
-    //barchart
-    var states= @json($state_name);
-    var num_states=@json($num_of_fac);
-
-    Highcharts.chart('container', {
-    chart: {
-        type: 'column'
-    },
-    title: {
-        text: 'Number of Health Facilities per State'
-    },
-
-    xAxis: {
-        categories: states,
-        crosshair: true
-    },
-    yAxis: {
-        min: 0,
-        title: {
-        text: 'Number of facilities'
-        }
-    },
-    tooltip: {
-        headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
-        pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-        '<td style="padding:0"><b>{point.y:.1f} </b></td></tr>',
-        footerFormat: '</table>',
-        shared: true,
-        useHTML: true
-    },
-    plotOptions: {
-        column: {
-        pointPadding: 0.2,
-        borderWidth: 0
-        }
-    },
-    series: [{
-        name: 'Facilities',
-        data: num_states
-
-    }],
-    credits: {
-            enabled: false
-        },
-    });
-
-
-    });
+</script>
 
     
-
-////pi chart by ownership
+<script>
         Highcharts.chart('ownership', {
         chart: {
             plotBackgroundColor: null,
@@ -192,11 +222,11 @@ $(document).ready( function () {
             name: 'Facilities',
             colorByPoint: true,
             data: [{
-            name: 'Public',
-            y: {{$facbyownership[1]}}
-            }, {
-            name: 'Private',
-            y: {{$facbyownership[0]}}
+                name: 'Public',
+                y: {{$facbyownership[1]}}
+                }, {
+                name: 'Private',
+                y: {{$facbyownership[0]}}
             }]
         }],
         credits: {
@@ -205,8 +235,8 @@ $(document).ready( function () {
         });
 
 </script>
+
 <script> 
-//facilities by levels
 Highcharts.chart('levels', {
         chart: {
             plotBackgroundColor: null,
@@ -253,6 +283,7 @@ Highcharts.chart('levels', {
                     enabled: false
                 },
         });
+        
 </script>
 
 @endpush
