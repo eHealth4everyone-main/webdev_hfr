@@ -1,5 +1,5 @@
-<script src="{{ asset("dist/notify/bootstrap-notify.min.js")}}"></script>
 <link rel="stylesheet" href="{{asset("/dist/notify/animate.min.css")}}">
+<script src="{{ asset("dist/notify/bootstrap-notify.min.js")}}"></script>
 
 <script>
     
@@ -9,10 +9,10 @@
         },{
             type:'success',
             delay: 3000,
-            animate: {
-                    enter: 'animated fadeInRight',
-		            exit: 'animated fadeOutRight'
-             },
+            // animate: {
+            //         enter: 'animated fadeInRight',
+		    //         exit: 'animated fadeOutRight'
+            //  },
              offset:{
                     y:60,
                     x:20
@@ -26,11 +26,12 @@
         $.notify({
             message: '{{session("alert-danger")}}'
         },{
-            type:'danger'
-            animate: {
-                    enter: 'animated fadeInRight',
-		            exit: 'animated fadeOutRight'
-             },
+            type:'danger',
+            delay: 3000,
+            // animate: {
+            //         enter: 'animated fadeInRight',
+		    //         exit: 'animated fadeOutRight'
+            //  },
              offset:{
                     y:60,
                     x:20
@@ -51,10 +52,10 @@
                 spacing: 5,
                 delay: delay,
 	            timer: 1000,
-                animate: {
-                    enter: 'animated fadeInRight',
-		            exit: 'animated fadeOutRight'
-                },
+                // animate: {
+                //     enter: 'animated fadeInRight',
+		        //     exit: 'animated fadeOutRight'
+                // },
                 offset:{
                     y:60,
                     x:20

@@ -21,7 +21,7 @@ class UserController extends Controller
             return view('users.index', compact("users","roles"));  
         }
         
-        public function store(Request $request)
+    public function store(Request $request)
         {
             $data = $request->all();
             $request->validate([
@@ -51,10 +51,7 @@ class UserController extends Controller
             return back();
     }
 
-    public function show($id)
-    {
-        //
-    }
+
 
     public function update(Request $request)
     {
@@ -107,7 +104,43 @@ class UserController extends Controller
       
     }
 
+    public function profile()
+    {
+
+       
+        $users = Auth::user();
+        $roles=  $users->getRoleNames()->toArray();
+       
+        $role = implode(",",$roles);
    
+        return view('users.userprofile', compact("users","role"));  
+    }
+
+    
+    public function updateProfile (Request $request)
+    {
+        //dd($request->all());
+        $request->validate([
+            'firstname' => 'required|string|max:255',
+            'lastname' => 'required|string|max:255',
+            'job' => 'nullable|string|max:50',
+            'organisation' => 'nullable|string|max:50',
+        ]);
+
+        $data = $request->all();
+
+        $user = Auth::user();
+        $user->firstname = $data['firstname'];
+        $user->lastname = $data['lastname'];
+        $user->job_title = $data['job'];
+        $user->organisation = $data['organisation'];
+        $user->save();
+
+        session()->flash("alert-success", "Profile updated successfully!");
+        return back();
+    }
+
+    
     public function changePassword(Request $request){
  
         if (!(Hash::check($request->current_password, Auth::user()->password))) {
@@ -129,6 +162,7 @@ class UserController extends Controller
  
         //Change Password
         $user = Auth::user();
+        // $user->password = $request->new_password;
         $user->password = Hash::make($request->new_password);
         $user->save();
         

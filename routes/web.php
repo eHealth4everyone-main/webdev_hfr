@@ -46,7 +46,9 @@ Route::middleware(["auth"])->group(function(){
     Route::post('/users/update', 'UserController@update')->name("updateuser");
     Route::put('/users/del', 'UserController@deactivate')->name("delUser");
     Route::post('/changePassword','UserController@changePassword')->name('changePassword');
- 
+    Route::get('/profile','UserController@profile')->name('profile');
+    Route::post('/profile/update', 'UserController@updateProfile')->name("updateProfile");
+
     //hospitals
     Route::resource('sign','SignatureController');
     Route::get('/sign/search','SignatureController@search')->name('sign.search');

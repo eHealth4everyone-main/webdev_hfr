@@ -73,8 +73,8 @@
                                         <!-- Menu Footer-->
                                         <li class="user-footer">
                                             <div class="pull-left">
-                                                <a >
-                                                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#user_profile">Profile</button>
+                                            <a  href="{{route('profile')}}">
+                                                    <button type="button" class="btn btn-default" >Profile</button>
                                                     
                                                 </a>
                                             </div>
@@ -120,8 +120,7 @@
                 <section class="content">
                     @yield("content")
                     
-                    @include('users.profile')
-                    @include('auth.changepassword')
+                 
                 </section>
                 <!-- /.content -->
                 
@@ -149,7 +148,6 @@
         <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script>
         <script type="text/javascript" src="{{asset("dist/multiselect-master/js/bootstrap-multiselect.js")}}"></script>
         
-        @include('partials.notification')
         <script>
             $(document).ready(function () {
                 $('.sidebar-menu').tree()
