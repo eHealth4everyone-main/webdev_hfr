@@ -8,11 +8,18 @@ use Illuminate\Support\Facades\DB;
 class FacilityListingController extends Controller
 {
    
-    public function hosptials()
+    public function hospitals()
     {
-        $facilities = DB::table('hospitals_details')->get();
-        return view('public.hospitalList', compact("facilities"));
+        // $facilities = DB::table('hospitals_details')->get();
+      
+        $facilities = DB::table('hospitals_details')
+        ->select('state','lga','unique_id','facility_name','level','ownership')
+        ->paginate(15);
+
+        return view('public.hospitalList',compact("facilities"));
     }
+
+  
 
     public function index(Request $request)
     {

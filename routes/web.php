@@ -9,7 +9,8 @@
 | contains the "web" middleware group. Now create something great!
 */
 Route::get('/', 'HomeController@userhome')->name('home');
-Route::get('/hospitals', 'FacilityListingController@hosptials')->name('listhosp');
+Route::get('/hospital', 'FacilityListingController@hospitals')->name('listhosp');
+
 Route::get('/facilitieslist', 'FacilityListingController@index')->name('getfacilities');
 Route::get('/statistics', 'FacilityListingController@statistics')->name('statistics');
 Route::get('/statisticscharts', 'FacilityListingController@statistics_charts')->name('statistics_charts');
