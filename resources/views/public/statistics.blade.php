@@ -90,7 +90,7 @@
     
     <div class="row">
             <div class="col-sm-12">
-                    <div class="box box-default">
+                    <div class="box box-info">
                         <div class="box-header with-border">
                                 <form class="form-horizontal"  action="" method="GET">
                                         @csrf
@@ -157,7 +157,7 @@
     {{-- summary 2 --}}
     <div class="row">
         <div class="col-sm-6">
-                <div class="box box-success">
+                <div class="box box-info">
                     <div class="box-header with-border">
                     <h3 class="box-title">Number of facilities by Ownership</h3>
     

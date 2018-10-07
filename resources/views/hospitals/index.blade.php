@@ -21,11 +21,11 @@ Hospitals and Clinics Facilities
           <table id="table1" class="table table-bordered table-striped">
             <thead>
               <tr>
-                <th>Unique ID</th>
-                <th>Facility Name</th>
                 <th>State</th>
                 <th>LGA</th>
-                <th>Facility Type</th>
+                <th>Unique ID</th>
+                <th>Facility Name</th>
+                <th>Facility Level</th>
                 <th>Ownership</th>
                 <th>Actions</th>
               </tr>
@@ -34,17 +34,17 @@ Hospitals and Clinics Facilities
            
               @foreach($facilities as $fac)
               <tr>
-                <td>{{$fac->unique_id}}</td>
-                <td>{{$fac->facility_name}}</td>
                 <td>{{$fac->state}}</td>
                 <td>{{$fac->lga}}</td>
+                <td>{{$fac->unique_id}}</td>
+                <td>{{$fac->facility_name}}</td>
                 <td>{{$fac->level}}</td>
                 <td>{{$fac->ownership}}</td>
                 <td>
-                    <a href="{{route('sign.show',$fac->id)}}">
+                    <a href="{{route('hosp.show',$fac->id)}}">
                           <button class="btn btn-success btn-sm"  type="button">View</button>
                         </a>
-                        <a href="{{route('sign.edit',$fac->id)}}">
+                        <a href="{{route('hosp.edit',$fac->id)}}">
                           <button class="btn btn-warning btn-sm"  type="button" > Edit</button>
                         </a>
                       </td>
@@ -55,9 +55,37 @@ Hospitals and Clinics Facilities
           </table>
        
 
-        </div>
-        <!-- /.box-body -->
       </div>
+        <!-- /.box-body -->
+        <div class="box-footer">
+          <div class="row">
+            
+                @php
+                  $perpage = $facilities->perpage();
+                  $currentpage = $facilities->currentpage();
+                  $from = ($currentpage-1)*$perpage+1;
+                  
+                  if ($facilities->currentpage() == $facilities->lastpage()) {
+                    $to = $facilities->total();
+                  } else {
+                    $to = $currentpage*$perpage;
+                  }
+                @endphp
+           
+                <div class="col-md-4">
+                    Showing {{$from}} to {{$to}} of {{$facilities->total()}} entries
+                   
+                </div>
+                <div class="col-md-8">
+                    <div class="pull-right">
+                        {{$facilities->links()}}                  
+                    </div>
+                </div>
+
+          </div>
+        </div>
+
+  </div>
       <!-- /.box -->
 @endsection 
 
@@ -66,7 +94,7 @@ Hospitals and Clinics Facilities
 
 <script>
     $(document).ready( function () {
-      $('#table1').DataTable( {
+      $('#tabl').DataTable( {
         "paging":   true,
         "ordering": true,
         "info":     true,

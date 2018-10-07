@@ -51,10 +51,10 @@ Route::middleware(["auth"])->group(function(){
     Route::post('/profile/update', 'UserController@updateProfile')->name("updateProfile");
 
     //hospitals
-    Route::resource('sign','SignatureController');
-    Route::get('/sign/search','SignatureController@search')->name('sign.search');
-    Route::post('/sign/fetchLga', 'SignatureController@fetchLga')->name('sign.fetchLga');
-    Route::post('/sign/fetctWards', 'SignatureController@fetchWards')->name('sign.fetchWards');
+    Route::resource('hosp','HospitalsController');
+    Route::get('/hosp/search','HospitalsController@search')->name('hosp.search');
+    Route::post('/hosp/fetchLga', 'HospitalsController@fetchLga')->name('hosp.fetchLga');
+    Route::post('/hosp/fetctWards', 'HospitalsController@fetchWards')->name('hosp.fetchWards');
 
     //laboratory
     Route::resource('lab','LabController');

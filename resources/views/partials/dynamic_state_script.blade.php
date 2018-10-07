@@ -7,7 +7,7 @@
                 var stateID= $('#state').val();
                 var _token = $('input[name="_token"]').val();
                 $.ajax({
-                    url:"{{route('sign.fetchLga')}}",
+                    url:"{{route('hosp.fetchLga')}}",
                     method:"POST",
                     data:{id:stateID, _token:_token},
                     success:function(result)
@@ -25,7 +25,7 @@
                 var stateID= $('#state').val();
                 var _token = $('input[name="_token"]').val();
                 $.ajax({
-                    url:"{{route('sign.fetchWards')}}",
+                    url:"{{route('hosp.fetchWards')}}",
                     method:"POST",
                     data:{lgaId:lgaID,stateId:stateID, _token:_token},
                     success:function(result)

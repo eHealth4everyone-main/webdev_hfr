@@ -19,7 +19,7 @@
  
 {{-- ***** end of error messages dispay --}}
 
-<form class="form-horizontal" action="/sign/{{$hosp->id}}" method="POST">
+<form class="form-horizontal" action="/hosp/{{$hosp->id}}" method="POST">
     @csrf
     @method("PUT")   
     
@@ -313,7 +313,7 @@
         <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
             <div class="panel-body">
                 
-                @include('sign.services_edit')
+                @include('hospitals.services_edit')
                 
             </div>
         </div>
@@ -463,7 +463,7 @@
 
 <!-- /.box-body -->
 <div class="box-footer">
-    <a href="/sign">
+    <a href="/hosp">
         <button type="button" class="btn btn-danger">Cancel</button>
     </a>
     <button type="submit" class="btn btn-primary pull-right">Update Record</button>
@@ -476,5 +476,5 @@
 @push('bk_script')
     @include('partials.dynamic_state_script')
     @include('partials.notification')
-    @include('sign.scripts_edit')
+    @include('hospitals.scripts_edit')
 @endpush

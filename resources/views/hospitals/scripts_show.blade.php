@@ -10,7 +10,7 @@
         {
             var _token = $('input[name="_token"]').val();
             $.ajax({
-                url:"{{route('sign.fetchLga')}}",
+                url:"{{route('hosp.fetchLga')}}",
                 method:"POST",
                 data:{id:state1, _token:_token},
                 success:function(result)
@@ -25,7 +25,7 @@
         {
             var _token = $('input[name="_token"]').val();
             $.ajax({
-                url:"{{route('sign.fetchWards')}}",
+                url:"{{route('hosp.fetchWards')}}",
                 method:"POST",
                 data:{lgaId:lga1,stateId:state1, _token:_token},
                 success:function(result)

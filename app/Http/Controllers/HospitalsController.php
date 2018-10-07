@@ -8,22 +8,19 @@ use Illuminate\Support\Facades\DB;
 use App\Signature;
 use App\Hospital;
 
-class SignatureController extends Controller
+class HospitalsController extends Controller
 {
     
     public function index()
     {
-        // $signatures =Signature::where('fac_tpye',1)->get();
-        // return view('sign.index', compact("signatures"));
-      
-        $facilities = DB::table('hospitals_details')->get();
-        return view('sign.index', compact("facilities"));
+        $facilities = DB::table('hospitals_details')->paginate(10);
+        return view('hospitals.index', compact("facilities"));
     }
        
   
     public function create()
     {
-        return view('sign.create');
+        return view('hospitals.create');
     }
     
     public function store(Request $request)
@@ -242,14 +239,14 @@ class SignatureController extends Controller
     {
         $hosp =Signature::findorfail($id);
         // dd($hosp);
-        return view('sign.show', compact("hosp"));   
+        return view('hospitals.show', compact("hosp"));   
     }
     
     
     public function edit($id)
     {
         $hosp =Signature::findorfail($id);
-        return view('sign.edit', compact("hosp"));   
+        return view('hospitals.edit', compact("hosp"));   
     }
     
   
@@ -421,6 +418,4 @@ class SignatureController extends Controller
     {
         //
     }
-    
-
 }

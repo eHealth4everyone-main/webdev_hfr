@@ -8,7 +8,7 @@
 
 
 
-<form class="form-horizontal" action="/sign/{{$hosp->id}}" method="POST">
+<form class="form-horizontal" action="/hosp/{{$hosp->id}}" method="POST">
     @csrf
     
     
@@ -302,7 +302,7 @@
         <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
             <div class="panel-body">
                 
-                @include('sign.services_show')
+                @include('hospitals.services_show')
                 
             </div>
         </div>
@@ -450,7 +450,7 @@
 
 <!-- /.box-body -->
 <div class="box-footer">
-    <a href="/sign">
+    <a href="/hosp">
         <button type="button" class="btn btn-danger">Return Back</button>
     </a>
 </div>
@@ -460,5 +460,5 @@
 @endsection 
 
 @push('bk_script')
-    @include('sign.scripts_show')
+    @include('hospitals.scripts_show')
 @endpush
