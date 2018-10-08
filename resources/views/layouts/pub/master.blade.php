@@ -83,7 +83,7 @@
                                 <div class="row">
                                         <div class="col-lg-7 col-md-6 col-sm-5 hidden-xs">
                                             <a href=""><img src="/img/logo.png"  width="50" height="50" alt="FMOH"></a>
-                                            <span>   <h4> &nbsp;&nbsp; FEDERAL MINISTRY OF HEALTH</h4></span>
+                                            <span>    &nbsp;&nbsp; FEDERAL MINISTRY OF HEALTH</span>
                                          
                                         </div>
                                         <div class="col-lg-5 col-md-6 col-sm-7 col-xs-12">
@@ -251,7 +251,9 @@
 		============================================ -->	
         <script src="{{asset("design/js/styleswitch.js")}}"></script>
         
-	
+	    <!-- main JS
+		============================================ -->		
+        <script src="{{asset("design/js/main.js")}}"></script>
 
         @stack("kibiti_scripts")
     </body>
