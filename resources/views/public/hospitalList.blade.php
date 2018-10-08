@@ -1,17 +1,15 @@
-@extends("layouts.public_master")
+@extends("layouts.pub.master")
 
 @section('kibiti_css')
 
 @endsection
 
-@section('content-title')
-  {{-- <h4><p class="text-light-blue">List of Hospitals and Clinics</p></h4>        --}}
-  
-@endsection
+
 
 @section("content")   
+<div class="latest-area section-padding bg-white">
+    <div class="container">
 
-<div class="box">
     <div class="box-header">
         <form class="form-horizontal"  action="{{route('getfacilities')}}" method="GET">
             @csrf
@@ -38,48 +36,48 @@
               </div>
 
               <div class="col-sm-4" >
-                <input type="text" name="fac_name" class="form-control input-sm" placeholder="Facility name" required>
+                <input type="text" name="fac_name" class="form-control" placeholder="Facility name" required>
               </div>
 
               <div class="col-sm-1">
-                  <button type="submit" class="btn btn-success btn-sm pull-right">Search</button>
+                  <button type="submit" class="btn btn-success pull-right">Search</button>
               </div>
 
           </div>
         </form>
 
     </div>
-  <div class="box-body">
-          <table id="hosp" class="table table-bordered table-striped">
-            <thead>
-              <tr>
-                <th>State</th>
-                <th>LGA</th>
-                <th>Unique ID</th>
-                <th>Facility Name</th>
-                <th>Facility Level</th>
-                <th>Ownership</th>
-              </tr>
-            </thead>
-            <tbody>
-           
-                @foreach($facilities as $fac)
-                <tr>
-                 
-                  <td>{{$fac->state}}</td>
-                  <td>{{$fac->lga}}</td>
-                  <td>{{$fac->unique_id}}</td>
-                  <td>{{$fac->facility_name}}</td>
-                  <td>{{$fac->level}}</td>
-                  <td>{{$fac->ownership}}</td>
-            
-                </tr>
-                @endforeach
+        <div class="box-body">
+                <table id="hosp" class="table table-bordered table-striped">
+                    <thead>
+                    <tr>
+                        <th>State</th>
+                        <th>LGA</th>
+                        <th>Unique ID</th>
+                        <th>Facility Name</th>
+                        <th>Facility Level</th>
+                        <th>Ownership</th>
+                    </tr>
+                    </thead>
+                    <tbody>
                 
-              </tbody>
-          </table>
-      
-    </div>
+                        @foreach($facilities as $fac)
+                        <tr>
+                        
+                        <td>{{$fac->state}}</td>
+                        <td>{{$fac->lga}}</td>
+                        <td>{{$fac->unique_id}}</td>
+                        <td>{{$fac->facility_name}}</td>
+                        <td>{{$fac->level}}</td>
+                        <td>{{$fac->ownership}}</td>
+                    
+                        </tr>
+                        @endforeach
+                        
+                    </tbody>
+                </table>
+            
+            </div>
         <!-- /.box-body -->
         <div class="box-footer">
             <div class="row">
@@ -108,8 +106,9 @@
 
             </div>
           </div>
-</div> 
-      <!-- /.box -->
+    </div> <!-- /contanier-->
+</div> <!-- / -->
+      
 @endsection 
 
 @push('kibiti_scripts')

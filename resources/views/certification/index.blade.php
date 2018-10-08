@@ -38,7 +38,7 @@ Laboratory Certification
 
           <td>
             <a href="#">
-              <button class="btn btn-info btn-sm" data-id="{{$eq->lab_eq_id}}" data-service="" type="button" data-toggle="modal" data-target="#editModal">Edit</button>
+              <button class="btn btn-warning btn-sm" data-id="{{$eq->lab_eq_id}}" data-service="" type="button" data-toggle="modal" data-target="#editModal">Edit</button>
             </a>
             <a href="#">
               <button class="btn btn-danger btn-sm" data-id="{{$eq->lab_eq_id}}" type="button" data-toggle="modal" data-target="#deleteModal" > Delete</button>

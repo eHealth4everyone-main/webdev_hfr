@@ -1,4 +1,4 @@
-@extends("layouts.public_master")
+@extends("layouts.pub.master")
 
 
 @section('content-title')	
@@ -6,9 +6,12 @@
 @endsection
 
 @section("content")
-<div class="box">
-        <div class="box-body">  
-          <table id="table1" class="table " style="width:100%">
+<div class="contact-form-area section-padding">
+    <div class="container">
+        <div role="alert" class="alert alert-success"> 
+            <strong>Public Resources</strong>
+        </div> 
+        <table id="table1" class="table " style="width:100%">
             <thead>
               <tr>
               
@@ -44,28 +47,14 @@
             </tbody>
           
           </table>
+    </div>
+</div>
 
 
-        </div>
-        <!-- /.box-body -->
-      </div>
-      <!-- /.box -->
 @endsection 
 
 
 @push("kibiti_scripts")
-<script>
-  $(document).ready( function () {
-    $('#table1').DataTable( {
-      "paging":   true,
-      "ordering": false,     
-      "lengthChange": false,
-      "searching"   : false,
-      "autoWidth"   : false,
-  } );
 
 
-
-} );
-</script>
 @endpush

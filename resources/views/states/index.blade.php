@@ -12,8 +12,9 @@ States
           <table id="table1" class="table table-bordered table-striped" style="width:100%">
             <thead>
               <tr>
+                <th>State ID</th>
                 <th>State Code</th>
-                <th>State Name</th>
+                <th>State </th>
               </tr>
             </thead>
             <tbody>
@@ -22,6 +23,7 @@ States
               <tr>
                 <td>{{$st->state_id}}</td>
                 <td>{{$st->state}}</td>
+                <td>{{$st->code}}</td>
               </tr>
               @endforeach
               

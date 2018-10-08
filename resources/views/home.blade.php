@@ -1,4 +1,4 @@
-@extends("layouts.public_home")
+@extends("layouts.pub.master")
 
 @section('kibiti_css')
  
@@ -7,37 +7,25 @@
 
 
 @section("content")
-  <div class="">
-        <div class="row">
-                <div class="col-sm-12">
-                    <div class="box box-default">
-                        <div id="map1" style="height: 500px; min-width: 500px; max-width: 800px; margin: 0 auto" ></div>
-                    </div>
-                </div>
-             
-                
-        </div>
-   
-      
-        {{-- <div class="row">
-                <div class="col-md-6">
-                    <div class="box box-default">
-                        NA
-                    </div>
-                </div>
-                <div class="col-md-6">
-                        <div class="box box-default">
-                            NA
+<div class="latest-area section-padding bg-white">
+        <div class="container">
+                <div class="row">
+                        <div class="col-sm-12">
+                                <div id="map1" style="height: 500px; min-width: 500px; max-width: 800px; margin: 0 auto" ></div>
+                         
                         </div>
-                </div>    
-        </div> --}}
-  </div>
+                            
+                </div>
+          </div>        
+
+</div>
 
 
 @endsection 
 
 @push('kibiti_scripts')
-
+<script src="{{ asset("js/highmaps.js")}}"></script>
+<script src="{{ asset("js/drilldown.js")}}"></script>
 
 <script>
 $(document).ready( function () {

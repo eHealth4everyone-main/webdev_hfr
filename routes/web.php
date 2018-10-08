@@ -16,6 +16,7 @@ Route::get('/statistics', 'FacilityListingController@statistics')->name('statist
 Route::get('/statisticscharts', 'FacilityListingController@statistics_charts')->name('statistics_charts');
 
 Route::view('/about', 'public.about')->name('about');
+// Route::view('/about', 'layouts.pub.theme')->name('about');
 Route::get('/hfrresources', 'ResourceController@public_index')->name('public_resources');
 Route::get('/facilities', 'FacilityListingController@search')->name('search');
 Route::get('/fdownload', 'DownloadController@DownloadForm')->name('downloadfm');

@@ -1,124 +1,103 @@
-@extends("layouts.public_master")
+@extends("layouts.pub.master")
 
 @section('kibiti_css')
 
-@endsection
-
-@section('content-title')
-       
   
 @endsection
 
 @section("content")  
-<div class="box">
-    
-        <div class="box-header">
-            <form class="form-horizontal"  action="{{route('getfacilities')}}" method="GET">
-                @csrf
-                <div class="form-group">
-                   
-                  <div class="col-sm-5">
-                      <select class="form-control select2" id="state" name ="state">
-                            @include('public.states')
-                      </select>
-                  </div>
-                  
-                  <div class="col-sm-5">
-                      <select class="form-control select2" id="lga" name="lga">
-                          <option value="">--Select LGA--</option>
-                      </select>
-                  </div>
-                 
-                
-                  <div class="col-sm-2">
-                      <button type="submit" class="btn btn-success btn-sm pull-right">Search</button>
-                  </div>
-                
-              </div>
-            </form>
-    
-        </div>
-    
-    </div>  
-
-    <div class="row" >
-            <div class="col-sm-12">
-                <div class="box box-info">
-                    <div class="box-header with-border">
-                    <h3 class="box-title"> Number of Health Facilities per State</h3>
-    
-                    <div class="box-tools pull-right">
-                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                        </button>
-                    </div>
-                    </div>
-                    <div class="box-body">
-                            <div id="container3" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
-
-                            <table  id="table3">
-                                    <thead>
-                                    <tr>
-                                        <th></th>
-                                        <th>Primary</th>
-                                        <th>Secondary</th>
-                                        <th>Tertiary</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($fac_levels as $lev)
-                                            <tr>
-                                                <td>{{$lev->state}}</td>
-                                                <td>{{$lev->Primary}}</td>
-                                                <td>{{$lev->Secondary}}</td>
-                                                <td>{{$lev->Tertiary}}</td>
-                                            </tr>
-                                        @endforeach
-                                    <tbody>
-                            </table> 
-                            
-                    </div>
-                </div>
+<div class="latest-area section-padding bg-white">
+    <div class="container">
+            <div class="box-header">
+                    <form class="form-horizontal"  action="{{route('getfacilities')}}" method="GET">
+                        @csrf
+                        <div class="form-group">
+                           
+                          <div class="col-sm-5">
+                              <select class="form-control select2" id="state" name ="state">
+                                    @include('public.states')
+                              </select>
+                          </div>
+                          
+                          <div class="col-sm-5">
+                              <select class="form-control select2" id="lga" name="lga">
+                                  <option value="">--Select LGA--</option>
+                              </select>
+                          </div>
+                         
+                        
+                          <div class="col-sm-2">
+                              <button type="submit" class="btn btn-success btn-sm pull-right">Search</button>
+                          </div>
+                        
+                      </div>
+                    </form>
+            
             </div>
-          
-        </div>
 
-    <div class="row">
-       <div class="col-sm-6">
-            <div class="box box-primary">
-                    <div class="box-header with-border">
-                    <h3 class="box-title">Facilities by Level of Care </h3>
 
-                    <div class="box-tools pull-right">
-                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                        </button>
+
+            <div class="row" >
+                    <div class="col-sm-12">
+                            <div class="single-latest-item">      
+                                    <div class="single-latest-text">
+                                            <h4>Number of Health Facilities per State</h4>
+        
+                                            <div id="container3" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+                                    </div>
+                                    <table  id="table3">
+                                            <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th>Primary</th>
+                                                <th>Secondary</th>
+                                                <th>Tertiary</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($fac_levels as $lev)
+                                                    <tr>
+                                                        <td>{{$lev->state}}</td>
+                                                        <td>{{$lev->Primary}}</td>
+                                                        <td>{{$lev->Secondary}}</td>
+                                                        <td>{{$lev->Tertiary}}</td>
+                                                    </tr>
+                                                @endforeach
+                                            <tbody>
+                                    </table>
+                            </div>
+                 
                     </div>
-                    </div>
-                    <div class="box-body">
-                            <div id="levels" style="min-width: 310px; height: 250px; margin: 0 auto"></div>
+                
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="single-latest-item">      
+                            <div class="single-latest-text">
+                                    <h4>Facilities by Level of Care</h4>
+
+                                    <div id="levels" style="min-width: 310px; height: 250px; margin: 0 auto"></div>
+                            </div>
                     </div>
                 </div>
-        </div>
 
-        <div class="col-sm-6">
-                <div class="box box-primary">
-                        <div class="box-header with-border">
-                        <h3 class="box-title">Facilities by Ownership </h3>
+                <div class="col-sm-6">
+                        <div class="single-latest-item">      
+                                <div class="single-latest-text">
+                                        <h4>Facilities by Ownership </h4>
     
-                        <div class="box-tools pull-right">
-                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                            </button>
+                                        <div id="ownership" style="min-width: 310px; height: 250px; margin: 0 auto"></div>
+                                </div>
                         </div>
-                        </div>
-                        <div class="box-body">
-                                <div id="ownership" style="min-width: 310px; height: 250px; margin: 0 auto"></div>
-                        </div>
-                    </div>
-        </div>
-     
-        
+                       
+                </div>
+            
+                
+            </div>
+    
     </div>
-    
-
+</div>
 @endsection 
 
 @push('kibiti_scripts')
