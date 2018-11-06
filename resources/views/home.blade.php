@@ -10,9 +10,13 @@
 <div class="latest-area section-padding bg-white">
         <div class="container">
                 <div class="row">
-                        <div class="col-sm-12">
+                        <div class="col-sm-6">
                                 <div id="map1" style="height: 500px; min-width: 500px; max-width: 800px; margin: 0 auto" ></div>
                          
+                        </div>
+                        <div class="col-sm-6">
+                          <div id="map2" style="height: 500px; min-width: 500px; max-width: 800px; margin: 0 auto" ></div>
+                   
                         </div>
                             
                 </div>
@@ -20,16 +24,37 @@
 
 </div>
 
+<div id="myModal" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-12">
+           
+          </div>
+                    
+        </div>
+  </div>   
+    </div>
+  </div>
+</div>
+
+
 
 @endsection 
 
 @push('kibiti_scripts')
 <script src="{{ asset("js/highmaps.js")}}"></script>
 <script src="{{ asset("js/drilldown.js")}}"></script>
+<script src="{{ asset("js/exporting.js")}}"></script>
+
+
+
 
 <script>
 $(document).ready( function () {
-    var data = [
+   
+  var data = [
         ['RI', 0],
         ['KT', 1],
         ['SO', 2],
@@ -70,7 +95,7 @@ $(document).ready( function () {
 ];
 
 
-$.getJSON('geo/states.geojson', function (geojson) {
+$.getJSON('geo/All_States.geojson', function (geojson) {
 
     // Initiate the chart
     Highcharts.mapChart('map1', {
@@ -112,13 +137,94 @@ $.getJSON('geo/states.geojson', function (geojson) {
             dataLabels: {
                 enabled: true,
                 format: '{point.properties.statename}'
+            },
+
+            point:{
+                events:{
+                    click: function(){
+                      showState();
+                    }
+                }
             }
         }]
-
+    
     });//highmpa end
 
 });
   
+
+
+function showState(){
+  var data2 = [
+        ['01_02', 3],
+        ['01_13', 1],
+        ['01_01', 2],
+        ['01_11', 3],
+        ['01_10', 4],
+        ['01_06', 5],
+        ['01_16', 6],
+        ['01_15', 7],
+        ['01_05', 8],
+        ['01_07', 9],
+      ];
+$.getJSON('geo/Abia.geojson', function (geojson) {
+
+    // Initiate the chart
+    Highcharts.mapChart('map2', {
+        chart: {
+            map: geojson
+        },
+
+        title: {
+            text: 'Number of Health Facilities'
+        },
+
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'top'
+            }
+        },
+
+        colorAxis: {
+            min: 0,
+            minColor: '#E6E7E8',
+            maxColor: '#008000'
+        },
+        credits: {
+            enabled: false
+        },
+
+
+        series: [{
+            data: data2,
+            keys: ['LGA_UID', 'value'],
+            joinBy: 'LGA_UID',
+            name: 'Health Facilities',
+            states: {
+                hover: {
+                    color: '#BADA56'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.properties.lganame}'
+            },
+
+            point:{
+                events:{
+                    click: function(){
+                      $('#myModal').modal();
+                    }
+                }
+            }
+        }]
+    
+    });//highmap2
+
+});
+  
+}//end of fx
 
 
      
