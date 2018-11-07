@@ -1,6 +1,6 @@
 @extends("layouts.pub.master")
 
-@section('kibiti_css')
+@section('custom_css')
 
 @endsection
 
@@ -8,29 +8,33 @@
 @section("content")  
 
 
-
 <div class="latest-area section-padding bg-white">
     <div class="container">
             <div class="box-header">
                     <form class="form-horizontal"  action="" method="GET">
                             @csrf
-                            <div class="form-group">
-                            
-                            <div class="col-sm-5">
-                                <select class="form-control select2" id="state" name ="state">
-                                        @include('public.states')
-                                </select>
-                            </div>
-                            
-                            <div class="col-sm-5">
-                                <select class="form-control select2" id="lga" name="lga">
-                                    <option value="">--Select LGA--</option>
-                                </select>
-                            </div>
+                        <div class="form-group">
+                                <div class="col-sm-6">
+                                        <select class="form-control select2" id="facility_type_id" name="facility_type_id">
+                                            @foreach($lst_facility_types as $ty)
+                                                <option value="{{$ty->id}}">{{$ty->name}}</option>
+                                            @endforeach
+                                        </select>
+                                </div>
+                                    
+                                <div class="col-sm-4">
+                                    <select class="form-control select2" id="state_id" name ="state_id">
+                                        <option value="0">All States</option>
+                                        @foreach($lst_states as $st)
+                                            <option value="{{$st->id}}">{{$st->name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                
                             
                             
                             <div class="col-sm-2">
-                                <button type="submit" class="btn btn-success btn-sm pull-right">Search</button>
+                                <button type="submit" class="btn btn-success btn-sm pull-right">Filter</button>
                             </div>
                             
                         </div>
@@ -39,40 +43,45 @@
             </div>
             
         <div class="row">
-                <div class="col-sm-12">
-                          
-                        <div class="single-latest-item">
-                               
+            {{-- Hospitals --}}
+                <div class="col-sm-3">     
+                        <div class="single-latest-item">   
                             <div class="single-latest-text">
-                                    <h4>Number of Facilities by Type</h4>
-
-                                    <div class="display" style="width:100%">
-                                        <table class="table no-margin">
-                                            <thead>
-                                            <tr>
-                                                <th></th>
-                                                <th>Hospitals and Clinics</th>
-                                                <th>Pharmaceuticals</th>
-                                                <th>Laboratories</th>
-                                                <th>Radiologies and Imaging</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                                    @foreach($results as $res)
-                                                    <tr>
-                                                    <td>Total facilities</td>
-                                                    <td>{{$res->hosp}}</td>
-                                                    <td>{{$res->pharma}}</td>
-                                                    <td>{{$res->lab}}</td>
-                                                    <td>{{$res->radio}}</td>
-                                                    </tr>
-                                                    @endforeach
-                                            <tbody>
-                                        </table>
-                                    </div>
+                                    Total Number of Hospitals and Clinics - 
+                                   <strong> {{ $total_num_fac[0] }}</strong>
                             </div>
                         </div>
                 </div>
+                   {{-- pharmacy --}}
+                <div class="col-sm-3">     
+                        <div class="single-latest-item">   
+                            <div class="single-latest-text">
+                                    Total Number of Pharmaceuticals Premises - 
+                                    <strong>{{ $total_num_fac[2] }}</strong>
+                                    
+                            </div>
+                        </div>
+                </div>
+                    {{-- lab --}}
+                <div class="col-sm-3">     
+                        <div class="single-latest-item">   
+                            <div class="single-latest-text">
+                                    Total Number of Laboratories Premises - 
+                                   <strong> {{ $total_num_fac[1] }}</strong>
+                            </div>
+                        </div>
+                </div>
+                {{-- radiology--}}
+                <div class="col-sm-3">     
+                        <div class="single-latest-item">   
+                            <div class="single-latest-text">
+                                    Total Number of Radiologies and Imaging - 
+                                    <strong>{{ $total_num_fac[3] }}</strong>
+                                   
+                            </div>
+                        </div>
+                </div>
+
         </div>
 
         <!-- *******************summary 1 ends**************** -->
@@ -84,7 +93,7 @@
                     
                     
                         <div class="single-latest-text">
-                                <h4>Number of facilities by Ownership</h4>
+                                <h4>Hospitals and Clinics by Ownership</h4> <br>
                                 <div class="display" style="width:100%">
                                     <table class="table no-margin" id="table1">
                                         <thead>
@@ -96,12 +105,12 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                                @foreach($fac_ownerships as $own)
+                                                @foreach($ownerships_by_state as $own)
                                                 <tr>
                                                 <td>{{$own->state}}</td>
                                                 <td>{{$own->Public}}</td>
                                                 <td>{{$own->Private}}</td>
-                                                <td>{{$own->Total}}</td>
+                                                <td>{{$own->Public + $own->Private}}</td>
                                                 </tr>
                                                 @endforeach
                                         <tbody>
@@ -115,7 +124,7 @@
                     <div class="single-latest-item">
                            
                             <div class="single-latest-text">
-                                    <h4>Number of facilities by Level of Care </h4>
+                                    <h4>Hospitals and Clinics by Level of Care </h4> <br>
                                     <div class="display">
                                             <table class="table no-margin" id="table2">
                                                 <thead>
@@ -128,13 +137,13 @@
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @foreach($fac_levels as $lev)
+                                                    @foreach($levels_by_state as $lev)
                                                         <tr>
                                                             <td>{{$lev->state}}</td>
                                                             <td>{{$lev->Primary}}</td>
                                                             <td>{{$lev->Secondary}}</td>
                                                             <td>{{$lev->Tertiary}}</td>
-                                                            <td>{{$lev->Total}}</td>
+                                                            <td>{{$lev->Primary + $lev->Secondary + $lev->Tertiary}}</td>
                                                         </tr>
                                                     @endforeach
                                                 <tbody>
@@ -147,13 +156,62 @@
             
         </div>
         {{-- summary 2 ends --}}
+        {{-- summary table 3 --}}
+        <div class="row">
+                <div class="col-sm-12">
+                        <div class="single-latest-item">
+                        
+                            <div class="single-latest-text">
+                                    <h4>Hospitals and Clinics by Ownership and Level of Care</h4> <br>
+                                    <div class="display" style="width:100%">
+                                        <table class="table no-margin" id="table3">
+                                            <thead>
+                                                <tr>
+                                                    <th rowspan="2">State</th> 
+                                                    <th colspan="4">Public</th> 
+                                                    <th colspan="4">Private</th> 
+                                                    <th rowspan="2">Total (A+B)</th>
+                                                </tr>                                          
+                                                    <th>Primary</th> 
+                                                    <th>Secondary</th> 
+                                                    <th>Tertiary</th>
+                                                    <th>Sub-Total (A)</th> 
+                                                    <th>Primary</th> 
+                                                    <th>Secondary</th> 
+                                                    <th>Tertiary</th>  
+                                                    <th>Sub-Total (B)</th> 
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                    @foreach($levels_ownership_by_state as $lev)
+                                                    <tr>
+                                                        <td>{{$lev->state}}</td>
+                                                        <td>{{$lev->Pub_Primary}}</td>
+                                                        <td>{{$lev->Pub_Secondary}}</td>
+                                                        <td>{{$lev->Pub_Tertiary}}</td>
+                                                        <td>{{$lev->Pub_Primary + $lev->Pub_Secondary + $lev->Pub_Tertiary}}</td>
+                                                        <td>{{$lev->Priv_Primary}}</td>
+                                                        <td>{{$lev->Priv_Secondary}}</td>
+                                                        <td>{{$lev->Priv_Tertiary}}</td>
+                                                        <td>{{$lev->Priv_Primary + $lev->Priv_Secondary + $lev->Priv_Tertiary}}</td>
+                                                        <td>{{$lev->Pub_Primary + $lev->Pub_Secondary + $lev->Pub_Tertiary+$lev->Priv_Primary + $lev->Priv_Secondary + $lev->Priv_Tertiary}}</td>
+                                                    </tr>
+                                                @endforeach
+                                            <tbody>
+                                        </table>
+                                    </div>
+                            </div>
+                        </div>
+                </div>
+
+        </div>
 
     </div> 
 </div> {{--  --}}
 
 @endsection 
 
-@push('kibiti_scripts')
+@push('custom_scripts')
 
 <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script>
@@ -170,7 +228,7 @@ $(document).ready( function () {
         "paging":   true,
         "ordering": false,
         "info":     true,
-        "lengthChange": false,
+        "lengthChange": true,
         "searching"   : true,
         "autoWidth"   : false,
         "pageLength": 8,
@@ -180,13 +238,23 @@ $(document).ready( function () {
         "paging":   true,
         "ordering": false,
         "info":     true,
-        "lengthChange": false,
+        "lengthChange": true,
         "searching"   : true,
         "autoWidth"   : false,
         "pageLength": 8,
     } );
 
-    
+       //table 3
+       $('#table3').DataTable( {
+        "paging":   true,
+        "ordering": false,
+        "info":     true,
+        "lengthChange": true,
+        "searching"   : true,
+        "autoWidth"   : false,
+        "pageLength": 8,
+    } );
+
 });
 </script>
 
