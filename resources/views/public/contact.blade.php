@@ -93,7 +93,7 @@
 </div>
 @endsection
 
-@push('kibiti_scripts')
+@push('custom_scripts')
     <script src='https://www.google.com/recaptcha/api.js'></script> 
     @include('partials.notification')
 @endpush

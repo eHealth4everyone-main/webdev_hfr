@@ -54,7 +54,7 @@
 @endsection 
 
 
-@push("kibiti_scripts")
+@push("custom_scripts")
 
 
 @endpush

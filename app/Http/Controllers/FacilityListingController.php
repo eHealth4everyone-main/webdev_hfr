@@ -4,19 +4,34 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 class FacilityListingController extends Controller
 {
    
     public function hospitals()
     {
-        // $facilities = DB::table('hospitals_details')->get();
       
-        $facilities = DB::table('hospitals_details')
-        ->select('state','lga','unique_id','facility_name','level','ownership')
-        ->paginate(15);
+        $facilities = DB::table('hospital_details')
+        ->select('state','lga','unique_id','facility_name','facility_level','ownership')
+        ->orderByRaw('state','lga','facility_name')
+        ->paginate(20);
 
-        return view('public.hospitalList',compact("facilities"));
+        //get state list
+          $lst_states = Cache::remember('lst_states', 30, function () {
+            return DB::table('ou_states')
+                    ->select('id','name')
+                    ->orderByRaw('name ASC')
+                    ->get();
+        });
+        //get facility types
+        $lst_facility_types = Cache::remember('lst_facility_types', 30, function () {
+            return DB::table('lst_facility_types')
+                    ->select('id','name')
+                    ->get();
+        });
+
+        return view('public.hospitalList',compact("facilities",'lst_states','lst_facility_types'));
     }
 
   
@@ -48,58 +63,7 @@ class FacilityListingController extends Controller
         
     }
 
-    public function statistics(){
 
-        $results = DB::select("SELECT  
-            (SELECT count(id) FROM hospitals_details) AS hosp,
-            (SELECT count(id) FROM laboratory) AS lab,
-            (SELECT count(id) FROM pharmacies) as pharma,
-            (SELECT count(id) FROM radiologies) as radio
-             FROM dual");
-
-    
-        $fac_levels = DB::table('num_hosp_by_level_state_clm')->get();
-        $fac_ownerships = DB::table('num_hosp_by_ownership_state_clm')->get();
-       
-        return view('public.statistics', compact('results','fac_ownerships','fac_levels'));
-
-    }
-
-    public function statistics_charts(){
-
-        $num_failities = DB::select("SELECT state, count(id) as num FROM hospitals_details group by state");
-
-        $state_name=array();
-        $num_of_fac=array();
-
-        foreach ($num_failities as $fac){
-            $state_name[]=$fac->state;
-            $num_of_fac[]=$fac->num;
-        };
-
-        //by levels
-        $facbylevels=array();
-        $facbylevel=DB::select("SELECT level,COUNT(id) AS num FROM hospitals_details GROUP BY level order by level");
-       
-        foreach ($facbylevel as $lv){
-            $facbylevels[]=$lv->num;
-        };
-
-        //by ownership
-        $facbyownership=array();
-        $facbyown=DB::select(" SELECT ownership,COUNT(id) AS num FROM hospitals_details GROUP BY ownership order by ownership");
-       
-        foreach ($facbyown as $own){
-            $facbyownership[]=$own->num;
-        };
-
-        //levels by state
-        $fac_levels = DB::table('num_hosp_by_level_state_clm')->get();
-       
-
-
-        return view('public.statistic_charts', compact('state_name','num_of_fac','facbylevels','facbyownership','fac_levels'));
-    }
 
 
     

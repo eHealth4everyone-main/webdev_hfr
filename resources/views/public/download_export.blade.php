@@ -1,6 +1,6 @@
 @extends("layouts.pub.master")
 
-@section('kibiti_css')
+@section('custom_css')
 
 @endsection
 
@@ -95,7 +95,7 @@
       <!-- /.box -->
 @endsection 
 
-@push('kibiti_scripts')
+@push('custom_scripts')
 @include('partials.notification')
 
 <script>

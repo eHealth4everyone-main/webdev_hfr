@@ -1,6 +1,6 @@
 @extends("layouts.pub.master")
 
-@section('kibiti_css')
+@section('custom_css')
 
 @endsection
 
@@ -15,32 +15,34 @@
             @csrf
             <div class="form-group">
                
-                <div class="col-sm-2">
-                    <select class="form-control select2" id="facilitytype" name="facilitytype" required>
-                        <option value="1">Hospitals</option>
-                        <option value="2">Laboratories</option>
-                        <option value="3">Pharmaceuticals</option>
-                        <option value="4">Radiology and Imaging</option>
-                    </select>
-                </div>
               <div class="col-sm-2">
-                  <select class="form-control select2" id="state" name ="state">
-                        @include('public.states')
-                  </select>
+                    <select class="form-control select2" id="state_id" name ="state_id">
+                            <option value="0">All States</option>
+                            @foreach($lst_states as $st)
+                                <option value="{{$st->id}}">{{$st->name}}</option>
+                            @endforeach
+                    </select>
               </div>
               
-              <div class="col-sm-3">
-                  <select class="form-control select2" id="lga" name="lga">
+              <div class="col-sm-2">
+                  <select class="form-control select2" id="lga_id" name="lga_id">
                       <option value="">--Select LGA--</option>
                   </select>
               </div>
+              <div class="col-sm-3">
+                    <select class="form-control select2" id="facility_type_id" name="facility_type_id">
+                            @foreach($lst_facility_types as $ty)
+                                <option value="{{$ty->id}}">{{$ty->name}}</option>
+                            @endforeach
+                    </select>
+                </div>
 
               <div class="col-sm-4" >
-                <input type="text" name="fac_name" class="form-control" placeholder="Facility name" required>
+                <input class="form-control input-sm"type="text" name="facility_name" class="form-control" placeholder="Facility name">
               </div>
 
               <div class="col-sm-1">
-                  <button type="submit" class="btn btn-success pull-right">Search</button>
+                  <button type="submit" class="btn btn-success pull-right btn-sm">Search</button>
               </div>
 
           </div>
@@ -68,7 +70,7 @@
                         <td>{{$fac->lga}}</td>
                         <td>{{$fac->unique_id}}</td>
                         <td>{{$fac->facility_name}}</td>
-                        <td>{{$fac->level}}</td>
+                        <td>{{$fac->facility_level}}</td>
                         <td>{{$fac->ownership}}</td>
                     
                         </tr>
@@ -111,12 +113,12 @@
       
 @endsection 
 
-@push('kibiti_scripts')
-@include('partials.dynamic_lgas_only')
+@push('custom_scripts')
+    @include('partials.dynamic_lgas_only')
 
-<script>
+    <script>
 
-  
-</script>
+    
+    </script>
 
 @endpush

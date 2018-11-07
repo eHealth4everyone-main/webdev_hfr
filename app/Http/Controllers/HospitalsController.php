@@ -204,35 +204,7 @@ class HospitalsController extends Controller
         
     }
     
-    public function fetchLga(Request $request){
-        $data = DB::table('tbl_lga')
-        ->select('lga','lga_id')
-        ->where('state_id', $request->id)
-        ->groupBy('lga','lga_id')
-        ->get();
-        
-        $output = '<option value="">Select LGA </option>';
-        foreach($data as $row)
-        {
-            $output .= '<option value="'.$row->lga_id.'">'.$row->lga.'</option>';
-        }
-        return $output;
-    }
-    public function fetchWards(Request $request){
-        $data = DB::table('tbl_ward')
-        ->select('ward','wd_id')
-        ->where('lga_id', $request->lgaId)
-        ->where('state_id', $request->stateId)
-        ->groupBy('ward','wd_id')
-        ->get();
     
-        $output = '<option value="">Select Ward </option>';
-        foreach($data as $row)
-        {
-            $output .= '<option value="'.$row->wd_id.'">'.$row->ward.'</option>';
-        }
-        return $output;
-    }
     
     
     public function show($id)

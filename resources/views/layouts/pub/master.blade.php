@@ -65,9 +65,9 @@
 		<!-- Responsive CSS
 		============================================ -->
         <link rel="stylesheet" href="{{asset("design/css/responsive.css")}}">
-        
+        <link rel="stylesheet" href="{{asset("/dist/css/select2.min.css")}}">
 	
-        @yield("kibiti_css")
+        @yield("custom_css")
      
     </head>
     <body>
@@ -104,9 +104,12 @@
                             <div class="row">
                                 <div class="col-md-3 col-sm-12">
                                         <div class="logo">
-                                                <a href=""><img src="/img/nigeriahfr.png"  width="" height="50" alt="FMOH"></a>
-                                              
+                                                {{-- <a href=""><img src="/img/nigeriahfr.png"  width="" height="50" alt="FMOH"></a> --}}
+                                                <h3 style="color:black">Nigeria </h3>
+                                                <h4 style="color:DarkGreen">Health Facility Registry (HFR)</h4>
+                
                                         </div>
+                                        
                                 </div>
                                 <div class="col-md-9">
                                     <div class="mainmenu-area pull-right">
@@ -116,11 +119,11 @@
                                                     <li class="current"><a href="{{route('home')}}">Home</a>
                                                     </li>
                                                     
-                                                    <li><a href="">Statistics</a>
+                                                    <li><a >Statistics</a>
                                                         <ul class="sub-menu">
-                                                            <li><a href="{{route('statistics')}}">Tables</a></li>
-                                                            <li><a href="{{route('statistics_charts')}}">Charts</a></li>
-                                                     
+                                                            <li><a href="{{route('statistics')}}">Summary Tables</a></li>
+                                                            <li><a href="{{route('statistics_charts')}}">Summary Charts</a></li>
+                                                            <li><a href="">Population Index</a></li>
                                                         </ul>
                                                     </li>
                                                     <li><a href="{{route('listhosp')}}">Facilities List</a> </li>
@@ -179,7 +182,10 @@
                     <div class="container">
                         <div class="row">
                             <div class="col-md-6 col-sm-7">
-                                <span>Copyright &copy; FMOH 2018. All right reserved </span>
+                                <span>Copyright &copy; FMOH 2018. All Right Reserved </span>
+                            </div>
+                            <div class="col-md-6 col-sm-6">
+                                    <span>Version 2.0 </span>
                             </div>
                             
                         </div>
@@ -254,8 +260,15 @@
 	    <!-- main JS
 		============================================ -->		
         <script src="{{asset("design/js/main.js")}}"></script>
+        <script src="{{asset("dist/js/select2.full.min.js")}}"></script>
 
-        @stack("kibiti_scripts")
+        <script>
+    
+            $('.select2').select2() 
+
+        </script>
+
+        @stack("custom_scripts")
     </body>
 
 </html>

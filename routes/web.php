@@ -12,8 +12,8 @@ Route::get('/', 'HomeController@userhome')->name('home');
 Route::get('/hospital', 'FacilityListingController@hospitals')->name('listhosp');
 
 Route::get('/facilitieslist', 'FacilityListingController@index')->name('getfacilities');
-Route::get('/statistics', 'FacilityListingController@statistics')->name('statistics');
-Route::get('/statisticscharts', 'FacilityListingController@statistics_charts')->name('statistics_charts');
+Route::get('/statistics', 'SummaryTablesController@index')->name('statistics');
+Route::get('/statisticscharts', 'SummaryChartsController@index')->name('statistics_charts');
 
 Route::view('/about', 'public.about')->name('about');
 // Route::view('/about', 'layouts.pub.theme')->name('about');
@@ -26,6 +26,10 @@ Route::get('/downloads', 'DownloadController@getFacilities')->name('facToDownloa
 Route::get('/downloads/excel/{type}/{state}/{format}', 'DownloadController@export')->name('export');
 Route::get('/contactus', 'ContactController@openContactForm')->name('open_contact_form');
 Route::post('/contactus', 'ContactController@store')->name('storecontact');
+
+//routes to populate lgas and wards
+Route::post('/hosp/fetchLga', 'GeneralController@getLgaList')->name('getLgaList');
+Route::post('/hosp/fetctWards', 'GeneralController@getWardList')->name('getWardList');
 
 Auth::routes();
 
@@ -54,8 +58,7 @@ Route::middleware(["auth"])->group(function(){
     //hospitals
     Route::resource('hosp','HospitalsController');
     Route::get('/hosp/search','HospitalsController@search')->name('hosp.search');
-    Route::post('/hosp/fetchLga', 'HospitalsController@fetchLga')->name('hosp.fetchLga');
-    Route::post('/hosp/fetctWards', 'HospitalsController@fetchWards')->name('hosp.fetchWards');
+   
 
     //laboratory
     Route::resource('lab','LabController');
