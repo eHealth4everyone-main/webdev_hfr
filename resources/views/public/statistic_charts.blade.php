@@ -1,6 +1,6 @@
 @extends("layouts.pub.master")
 
-@section('kibiti_css')
+@section('custom_css')
 
   
 @endsection
@@ -12,24 +12,27 @@
                     <form class="form-horizontal"  action="{{route('getfacilities')}}" method="GET">
                         @csrf
                         <div class="form-group">
-                           
-                          <div class="col-sm-5">
-                              <select class="form-control select2" id="state" name ="state">
-                                    @include('public.states')
-                              </select>
-                          </div>
-                          
-                          <div class="col-sm-5">
-                              <select class="form-control select2" id="lga" name="lga">
-                                  <option value="">--Select LGA--</option>
-                              </select>
-                          </div>
-                         
+                
+                                <div class="col-sm-6">
+                                        <select class="form-control select2" id="facility_type_id" name="facility_type_id">
+                                            @foreach($lst_facility_types as $ty)
+                                                <option value="{{$ty->id}}">{{$ty->name}}</option>
+                                            @endforeach
+                                        </select>
+                                </div>
+                                    
+                                <div class="col-sm-4">
+                                    <select class="form-control select2" id="state_id" name ="state_id">
+                                        <option value="0">All States</option>
+                                        @foreach($lst_states as $st)
+                                            <option value="{{$st->id}}">{{$st->name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                         
-                          <div class="col-sm-2">
-                              <button type="submit" class="btn btn-success btn-sm pull-right">Search</button>
-                          </div>
-                        
+                                <div class="col-sm-2">
+                                    <button type="submit" class="btn btn-success btn-sm pull-right">Filter</button>
+                                </div>
                       </div>
                     </form>
             
@@ -40,11 +43,9 @@
             <div class="row" >
                     <div class="col-sm-12">
                             <div class="single-latest-item">      
-                                    <div class="single-latest-text">
-                                            <h4>Number of Health Facilities per State</h4>
-        
-                                            <div id="container3" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
-                                    </div>
+                                  
+                                    <div id="container3" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+
                                     <table  id="table3">
                                             <thead>
                                             <tr>
@@ -55,7 +56,7 @@
                                             </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach($fac_levels as $lev)
+                                                @foreach($levels_by_state as $lev)
                                                     <tr>
                                                         <td>{{$lev->state}}</td>
                                                         <td>{{$lev->Primary}}</td>
@@ -74,21 +75,15 @@
             <div class="row">
                 <div class="col-sm-6">
                     <div class="single-latest-item">      
-                            <div class="single-latest-text">
-                                    <h4>Facilities by Level of Care</h4>
+                            <div id="levels" style="min-width: 310px; height: 250px; margin: 0 auto"></div>
 
-                                    <div id="levels" style="min-width: 310px; height: 250px; margin: 0 auto"></div>
-                            </div>
                     </div>
                 </div>
 
                 <div class="col-sm-6">
                         <div class="single-latest-item">      
-                                <div class="single-latest-text">
-                                        <h4>Facilities by Ownership </h4>
-    
-                                        <div id="ownership" style="min-width: 310px; height: 250px; margin: 0 auto"></div>
-                                </div>
+                                <div id="ownership" style="min-width: 310px; height: 250px; margin: 0 auto"></div>
+
                         </div>
                        
                 </div>
@@ -100,7 +95,7 @@
 </div>
 @endsection 
 
-@push('kibiti_scripts')
+@push('custom_scripts')
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
 <script src="https://code.highcharts.com/modules/data.js"></script>
@@ -118,7 +113,7 @@ $('#table3').hide();
             type: 'column'
             },
             title: {
-                text: ''
+                text: 'Number of Hospitals and Clinics by Level of Care'
             },
             data: {
                 table: 'table3'
@@ -179,7 +174,7 @@ $('#table3').hide();
             type: 'pie'
         },
         title: {
-            text: ''
+            text: 'Percentage of Hospitals and Clinics by Ownership'
         },
         tooltip: {
             pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -224,7 +219,7 @@ Highcharts.chart('levels', {
             type: 'pie'
         },
         title: {
-            text: ''
+            text: 'Percentage of Hospitals and Clinics by Level of Care'
         },
         tooltip: {
             pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
