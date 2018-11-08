@@ -1,6 +1,6 @@
 @extends("layouts.pub.master")
 
-@section('kibiti_css')
+@section('custom_css')
  
 @endsection
 
@@ -43,7 +43,7 @@
 
 @endsection 
 
-@push('kibiti_scripts')
+@push('custom_scripts')
 <script src="{{ asset("js/highmaps.js")}}"></script>
 <script src="{{ asset("js/drilldown.js")}}"></script>
 <script src="{{ asset("js/exporting.js")}}"></script>
@@ -52,50 +52,11 @@
 
 
 <script>
-$(document).ready( function () {
-   
-  var data = [
-        ['RI', 0],
-        ['KT', 1],
-        ['SO', 2],
-        ['ZA', 3],
-        ['YO', 4],
-        ['KB', 5],
-        ['AD', 6],
-        ['BR', 7],
-        ['AK', 8],
-        ['AB', 9],
-        ['IM', 10],
-        ['BY', 11],
-        ['BE', 12],
-        ['CR', 13],
-        ['TA', 14],
-        ['KW', 15],
-        ['LA', 16],
-        ['NI', 17],
-        ['FC', 18],
-        ['OG', 19],
-        ['ON', 20],
-        ['EK', 21],
-        ['OS', 22],
-        ['OY', 23],
-        ['AN', 24],
-        ['BA', 25],
-        ['GO', 26],
-        ['DE', 27],
-        ['ED', 28],
-        ['EN', 29],
-        ['EB', 30],
-        ['KD', 31],
-        ['KO', 32],
-        ['PL', 33],
-        ['NA', 34],
-        ['JI', 35],
-        ['KN', 36]
-];
 
+   //all states map
+    var data= @json($total_facilities_state);
 
-$.getJSON('geo/All_States.geojson', function (geojson) {
+    $.getJSON('geo/All_States.geojson', function (geojson) {
 
     // Initiate the chart
     Highcharts.mapChart('map1', {
@@ -104,7 +65,7 @@ $.getJSON('geo/All_States.geojson', function (geojson) {
         },
 
         title: {
-            text: 'Number of Health Facilities'
+            text: 'Number of Hospitals and Clinics'
         },
 
         mapNavigation: {
@@ -113,7 +74,11 @@ $.getJSON('geo/All_States.geojson', function (geojson) {
                 verticalAlign: 'top'
             }
         },
-
+        legend: {
+                layout: 'vertical',
+                align: 'left',
+                verticalAlign: 'middle'
+        },
         colorAxis: {
             min: 0,
             minColor: '#E6E7E8',
@@ -122,13 +87,13 @@ $.getJSON('geo/All_States.geojson', function (geojson) {
         credits: {
             enabled: false
         },
-
+  
 
         series: [{
             data: data,
             keys: ['statecode', 'value'],
             joinBy: 'statecode',
-            name: 'Health Facilities',
+            name: 'Hospitals and Clinics',
             states: {
                 hover: {
                     color: '#BADA56'
@@ -138,11 +103,11 @@ $.getJSON('geo/All_States.geojson', function (geojson) {
                 enabled: true,
                 format: '{point.properties.statename}'
             },
-
+      
             point:{
                 events:{
                     click: function(){
-                      showState();
+                        showState(this.statecode);
                     }
                 }
             }
@@ -150,86 +115,93 @@ $.getJSON('geo/All_States.geojson', function (geojson) {
     
     });//highmpa end
 
-});
+    });//all states map ends
   
 
-
-function showState(){
-  var data2 = [
-        ['01_02', 3],
-        ['01_13', 1],
-        ['01_01', 2],
-        ['01_11', 3],
-        ['01_10', 4],
-        ['01_06', 5],
-        ['01_16', 6],
-        ['01_15', 7],
-        ['01_05', 8],
-        ['01_07', 9],
-      ];
-$.getJSON('geo/Abia.geojson', function (geojson) {
-
-    // Initiate the chart
-    Highcharts.mapChart('map2', {
-        chart: {
-            map: geojson
-        },
-
-        title: {
-            text: 'Number of Health Facilities'
-        },
-
-        mapNavigation: {
-            enabled: true,
-            buttonOptions: {
-                verticalAlign: 'top'
-            }
-        },
-
-        colorAxis: {
-            min: 0,
-            minColor: '#E6E7E8',
-            maxColor: '#008000'
-        },
-        credits: {
-            enabled: false
-        },
-
-
-        series: [{
-            data: data2,
-            keys: ['LGA_UID', 'value'],
-            joinBy: 'LGA_UID',
-            name: 'Health Facilities',
-            states: {
-                hover: {
-                    color: '#BADA56'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.properties.lganame}'
-            },
-
-            point:{
-                events:{
-                    click: function(){
-                      $('#myModal').modal();
-                    }
-                }
-            }
-        }]
+//load state map
+function showState(statecode){
     
-    });//highmap2
+    var path = "geo/";
+    file = statecode.concat(".geojson");
+    full_path = path.concat(file);
 
-});
+    //get number of facilities of selected state by lga
+    
+        $.ajax({
+                url:"{{route('getFacilitesByLGA')}}",
+                method:"POST",
+                data:{state_code:statecode, _token: "{{ csrf_token() }}"},
+                success:function(result)
+                {
+                    var statename= result.state[0];
+
+                    //if success get and display map
+                    $.getJSON(full_path, function (geojson) {
+
+                        // Initiate the chart
+                        Highcharts.mapChart('map2', {
+                            chart: {
+                                map: geojson
+                            },
+
+                            title: {
+                                text: 'Number of Hospitals and Clinics'
+                            },
+                            subtitle: {
+                                text: statename.concat(" State")
+                            },
+
+                            legend: {
+                                layout: 'vertical',
+                                align: 'left',
+                                verticalAlign: 'middle'
+                            },
+                            colorAxis: {
+                                min: 1,
+                                minColor: '#E6E7E8',
+                                maxColor: '#9A5A4D'
+                            },
+
+                            mapNavigation: {
+                                enabled: true,
+                                buttonOptions: {
+                                    verticalAlign: 'top',
+                                    align: 'right'
+                                }
+                            },
+
+                            credits: {
+                                enabled: false
+                            },
+
+                            series: [{
+                                data: result.facilities,
+                                keys: ['LGA_UID','value'],
+                                joinBy: ['LGA_UID'],
+                                name: 'Health Facilities',
+                                states: {
+                                    hover: {
+                                        color: '#BADA56'
+                                    }
+                                },
+                                dataLabels: {
+                                    enabled: true,
+                                    format: '{point.properties.lganame}'
+                                },
+                            }]
+
+                        });//chart ends
+
+                    });
+                }//success ends         
+        });//ajax ends
   
-}//end of fx
+}//end show state
 
 
      
 
-} );//doc end
+
 
 </script>
     

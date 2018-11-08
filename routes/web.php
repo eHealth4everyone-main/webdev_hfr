@@ -8,7 +8,7 @@
 | routes are loaded by the RouteServiceProvider within a group which
 | contains the "web" middleware group. Now create something great!
 */
-Route::get('/', 'HomeController@userhome')->name('home');
+Route::get('/', 'HomeController@index')->name('home');
 Route::get('/hospital', 'FacilityListingController@hospitals')->name('listhosp');
 
 Route::get('/facilitieslist', 'FacilityListingController@index')->name('getfacilities');
@@ -30,6 +30,7 @@ Route::post('/contactus', 'ContactController@store')->name('storecontact');
 //routes to populate lgas and wards
 Route::post('/hosp/fetchLga', 'GeneralController@getLgaList')->name('getLgaList');
 Route::post('/hosp/fetctWards', 'GeneralController@getWardList')->name('getWardList');
+Route::post('/home/facilitiesbyLga', 'HomeController@getFacilitesByLGA')->name('getFacilitesByLGA');
 
 Auth::routes();
 

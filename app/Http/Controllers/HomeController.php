@@ -4,49 +4,44 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
+
 
 class HomeController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-  
 
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        return view('home');
+         //get number of facilities by state
+        $total_facilities_state= Cache::remember('facilities_ownership_state', 30, function () {
+            return DB::select("SELECT s.short_code statecode,count(h.id) as 'value' FROM hs_hospitals h 
+            JOIN ou_states s ON s.id = h.state_id GROUP BY s.short_code");
+        });      
+       
+        return view('home',compact('total_facilities_state'));
     }
 
 
-    public function userhome(){
-        $factypes = DB::table('tbl_signatures')
-                     ->select(DB::raw('fac_tpye,count(*) as total'))
-                     ->groupBy('fac_tpye')
-                     ->get();
-       
-        $states = DB::table('tbl_signatures')
-                     ->join('tbl_state', 'tbl_signatures.state', '=', 'tbl_state.state_id')
-                     ->select(DB::raw('tbl_state.state as sta,count(*) as total'))
-                     ->groupBy('sta')
-                     ->orderBy('sta','asc')
-                     ->get();
-       
-        $state_name=array();
-        $num_of_fac=array();
+    public function getFacilitesByLGA(Request $request){
+        $total_facilities_lga = DB::select("SELECT l.map_code LGA_UID,count(h.id) value 
+                    FROM hs_hospitals h 
+                    JOIN ou_lgas l ON l.id = h.lga_id 
+                    JOIN ou_states s ON s.id=l.state_id
+                    WHERE s.short_code ='".$request->state_code.
+                    "'GROUP BY l.map_code");
 
+      //  $state = DB::select("select name from ou_states where short_code ='".$request->state_code."'")->pluck('name');
+        $state = DB::table('ou_states')
+        ->select('name')
+        ->where('short_code', $request->state_code)
+        ->pluck('name');
 
-        foreach ($states as $state){
-            $state_name[]=$state->sta;
-            $num_of_fac[]=$state->total;
-        };
-                     
-        return view("home",compact('factypes','state_name','num_of_fac'));
+        $result  = array();
+        $result['state'] = $state;
+        $result['facilities'] =  $total_facilities_lga ;
+
+        return $result;
     }
+    
+
 }
