@@ -12,8 +12,9 @@ Route::get('/', 'HomeController@index')->name('home');
 Route::get('/hospital', 'FacilityListingController@hospitals')->name('listhosp');
 
 Route::get('/facilitieslist', 'FacilityListingController@index')->name('getfacilities');
-Route::get('/statistics', 'SummaryTablesController@index')->name('statistics');
-Route::get('/statisticscharts', 'SummaryChartsController@index')->name('statistics_charts');
+Route::get('/statistics/tables', 'SummaryTablesController@index')->name('statistics');
+Route::get('/statistics/charts', 'SummaryChartsController@index')->name('statistics_charts');
+Route::get('/statistics/populationindex', 'SummaryChartsController@population_index')->name('population_index');
 
 Route::view('/about', 'public.about')->name('about');
 // Route::view('/about', 'layouts.pub.theme')->name('about');

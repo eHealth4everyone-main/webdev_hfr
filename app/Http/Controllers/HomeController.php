@@ -13,7 +13,7 @@ class HomeController extends Controller
     public function index()
     {
          //get number of facilities by state
-        $total_facilities_state= Cache::remember('facilities_ownership_state', 30, function () {
+        $total_facilities_state= Cache::remember('total_facilities_state', 30, function () {
             return DB::select("SELECT s.short_code statecode,count(h.id) as 'value' FROM hs_hospitals h 
             JOIN ou_states s ON s.id = h.state_id GROUP BY s.short_code");
         });      
@@ -30,7 +30,7 @@ class HomeController extends Controller
                     WHERE s.short_code ='".$request->state_code.
                     "'GROUP BY l.map_code");
 
-      //  $state = DB::select("select name from ou_states where short_code ='".$request->state_code."'")->pluck('name');
+   
         $state = DB::table('ou_states')
         ->select('name')
         ->where('short_code', $request->state_code)

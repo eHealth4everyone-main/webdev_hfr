@@ -11,19 +11,7 @@ class SummaryChartsController extends Controller
     
     public function index(){
 
-        $facilities_by_state = Cache::remember('facilities_by_state', 30, function () {
-            return DB::select("SELECT state, count(id) as num FROM hospital_details group by state");
-        });
-        
-        $state_name=array();
-        $num_of_fac=array();
-
-        foreach ($facilities_by_state as $fac){
-            $state_name[]=$fac->state;
-            $num_of_fac[]=$fac->num;
-        };
-
-        //by levels
+        //facilities by levels
         $facilities_level_state = Cache::remember('facilities_level_state', 30, function () {
             return DB::select("SELECT facility_level,COUNT(id) AS num FROM hospital_details GROUP BY facility_level order by facility_level");
         });
@@ -35,7 +23,7 @@ class SummaryChartsController extends Controller
 
         //by ownership
         $facilities_ownership_state = Cache::remember('facilities_ownership_state', 30, function () {
-            return DB::select(" SELECT ownership,COUNT(id) AS num FROM hospital_details GROUP BY ownership order by ownership");
+            return DB::select("SELECT ownership,COUNT(id) AS num FROM hospital_details GROUP BY ownership order by ownership");
         });
 
         $facbyownership=array();
@@ -43,9 +31,11 @@ class SummaryChartsController extends Controller
             $facbyownership[]=$own->num;
         };
 
-        //levels by state
+        //get health facilities by level of care by state
         $levels_by_state = Cache::remember('levels_by_state', 30, function () {
-            return DB::table('hospitals_count_by_level_state_column')->get();
+            return DB::table('hospitals_count_by_level_state_column')
+                    ->orderByRaw('state')
+                    ->get();
         });
         
         //get state list
@@ -63,8 +53,29 @@ class SummaryChartsController extends Controller
         });
 
 
-        return view('public.statistic_charts', compact('state_name','num_of_fac','facbylevels','facbyownership',
-        'levels_by_state','lst_facility_types','lst_states'));
+        return view('public.statistic_charts', compact('facbylevels','facbyownership','levels_by_state',
+        'lst_facility_types','lst_states'));
+    }
+
+    public function population_index(){
+
+        // $population_index = Cache::remember('population_index', 30, function () {
+            $population_index = DB::select("SELECT state, ROUND(p.population/count(id)) AS ppf FROM hospital_details h
+                                JOIN population p ON p.state_id=h.state_id
+                                group by state,p.population
+                                order by state");
+        // });
+        
+        $pop_index_states=array();
+        $pop_index_ppf=array();
+
+        foreach ($population_index as $indx){
+            $pop_index_states[]=$indx->state;
+            $pop_index_ppf[]=(int)$indx->ppf;
+        };
+        // dd($pop_index_ppf);
+
+        return view('public.statistic_population_index', compact('pop_index_states','pop_index_ppf'));
     }
 
 }

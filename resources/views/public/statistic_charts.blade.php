@@ -107,7 +107,8 @@
  
     
 //Chart 1
-$('#table3').hide();
+        $('#table3').hide();
+        
         Highcharts.chart('container3', {
         chart: {
             type: 'column'

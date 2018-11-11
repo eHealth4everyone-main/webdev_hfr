@@ -143,7 +143,7 @@ function showState(statecode){
                             chart: {
                                 map: geojson
                             },
-
+                                        
                             title: {
                                 text: 'Number of Hospitals and Clinics'
                             },

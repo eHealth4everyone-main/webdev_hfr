@@ -123,7 +123,7 @@
                                                         <ul class="sub-menu">
                                                             <li><a href="{{route('statistics')}}">Summary Tables</a></li>
                                                             <li><a href="{{route('statistics_charts')}}">Summary Charts</a></li>
-                                                            <li><a href="">Population Index</a></li>
+                                                        <li><a href="{{route('population_index')}}">Population Index</a></li>
                                                         </ul>
                                                     </li>
                                                     <li><a href="{{route('listhosp')}}">Facilities List</a> </li>
