@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Cache;
 class FacilityListingController extends Controller
 {
    
-    public function hospitals()
+    public function index()
     {
       
         $facilities = DB::table('hospital_details')
@@ -36,72 +36,84 @@ class FacilityListingController extends Controller
 
   
 
-    public function index(Request $request)
+    public function searchFacilities(Request $request)
     {
+        // dd($request->all());
+        $state_id = $request->state_id;
+        $lga_id = $request->lga_id;
+        $facility_type_id = $request->facility_type_id;
+        $facility_name = $request->facility_name;
+
+        if ($state_id == 0){
+            $state_id = "";
+        }
+        if ($facility_type_id==1){
+
+            $facilities = DB::table('hospital_details')
+            ->select('state','lga','unique_id','facility_name','facility_level','ownership')
+            ->where('state_id','like','%'.$state_id.'%')
+            ->where('lga_id','like','%'.$lga_id.'%')
+            ->Where('facility_name', 'like', '%' .  $facility_name . '%')
+            ->orderByRaw('state','lga','facility_name')
+            ->paginate(20);
+
+            $facilities->appends([
+                'state_id'=>$request->state_id,
+                'lga_id'=>$request->lga_id,
+                'facility_name'=>$request->facility_name,
+                'facility_type_id' => $request->facility_type_id,
+            ]);
+
+        }
+
+        if ($facility_type_id==2){
+           
+        }
+        if ($facility_type_id==3){
        
-        $type=0;
-
-        if ($request->facilitytype==1){
-            $facilities = DB::table('hospitals_details')->get();
-            $type = 1;
+           
+        }
+        if ($facility_type_id==4){
+           
         }
 
-        if ($request->facilitytype==2){
-            $facilities = DB::table('laboratory')->get();
-            $type = 2;
-        }
-        if ($request->facilitytype==3){
-            $facilities = DB::table('pharmacies')->get();
-            $type = 3;
-        }
-        if ($request->facilitytype==4){
-            $facilities = DB::table('radiologies')->get();
-            $type = 4;
-        }
 
-        return view('public.faclist', compact("facilities","type"));
-        
+        //get state list
+          $lst_states = Cache::remember('lst_states', 30, function () {
+            return DB::table('ou_states')
+                    ->select('id','name')
+                    ->orderByRaw('name ASC')
+                    ->get();
+        });
+        //get facility types
+        $lst_facility_types = Cache::remember('lst_facility_types', 30, function () {
+            return DB::table('lst_facility_types')
+                    ->select('id','name')
+                    ->get();
+        });
+       
+        return view('public.hospitalList',compact("facilities",'lst_states','lst_facility_types'));       
     }
 
 
-
-
-    
-    public function search (Request $request)
+    public function searchHospitals(Request $request)
     {
-    
-        $type=0;
+      
+        $facility_name = $request->facility_name;
 
-        if ($request->facilitytype==1){
-            $facilities = DB::table('hospitals_details')
-                ->where('facility_name', 'like', '%'. $request->fac_name . '%')
-                ->get();
-            $type = 1;
-        }
+        $facilities = DB::table('hospital_details')
+        ->select('state','lga','unique_id','facility_name','facility_level','ownership')
+        ->Where('facility_name', 'like', '%' .  $facility_name . '%')
+        ->orderByRaw('state','lga','facility_name')
+        ->paginate(20);
 
-        if ($request->facilitytype==2){
-            $facilities = DB::table('laboratory')
-                ->where('facility_name', 'like', '%'. $request->fac_name . '%')
-                ->get();
-            $type = 2;
-        }
-        if ($request->facilitytype==3){
-            $facilities = DB::table('pharmacies')
-                ->where('facility_name', 'like', '%'. $request->fac_name . '%')
-                ->get();
-            $type = 3;
-        }
-        if ($request->facilitytype==4){
-            $facilities = DB::table('radiologies')
-                ->where('facility_name', 'like', '%'. $request->fac_name . '%')
-                ->get();
-            $type = 4;
-        }
+        $facilities->appends([
+            'facility_name'=>$request->facility_name,
+        ]);
 
-        return view('public.search', compact("facilities","type"));
-        
+        return view('public.hospital_search',compact("facilities"));        
     }
-    
+
    
 
 }

@@ -9,23 +9,23 @@
 | contains the "web" middleware group. Now create something great!
 */
 Route::get('/', 'HomeController@index')->name('home');
-Route::get('/hospitalsandclinics', 'FacilityListingController@hospitals')->name('listhosp');
+Route::view('/about', 'public.about')->name('about');
+Route::get('/contactus', 'ContactController@openContactForm')->name('open_contact_form');
+Route::post('/contactus', 'ContactController@store')->name('storecontact');
 
-Route::get('/facilitieslist', 'FacilityListingController@getFacilities')->name('getfacilities');
+Route::get('/facilities/hospitals', 'FacilityListingController@index')->name('listhosp');
+Route::get('/facilities/searchlist', 'FacilityListingController@searchFacilities')->name('searchFacilities');
+Route::get('/facilities/hospitalssearch', 'FacilityListingController@searchHospitals')->name('searchHospitals');
 Route::get('/statistics/tables', 'SummaryTablesController@index')->name('statistics');
 Route::get('/statistics/charts', 'SummaryChartsController@index')->name('statistics_charts');
 Route::get('/statistics/populationindex', 'SummaryChartsController@population_index')->name('population_index');
 
-Route::view('/about', 'public.about')->name('about');
 Route::get('/hfrresources', 'ResourceController@public_index')->name('public_resources');
-Route::get('/facilities', 'FacilityListingController@search')->name('search');
 Route::get('/fdownload', 'DownloadController@DownloadForm')->name('downloadfm');
 Route::post('/fdownload', 'DownloadController@store')->name('saveDownloadUser');
 Route::get('/download', 'DownloadController@index')->name('download');
 Route::get('/downloads', 'DownloadController@getFacilities')->name('facToDownload');
 Route::get('/downloads/excel/{type}/{state}/{format}', 'DownloadController@export')->name('export');
-Route::get('/contactus', 'ContactController@openContactForm')->name('open_contact_form');
-Route::post('/contactus', 'ContactController@store')->name('storecontact');
 
 //routes to populate lgas and wards
 Route::post('/hosp/fetchLga', 'GeneralController@getLgaList')->name('getLgaList');

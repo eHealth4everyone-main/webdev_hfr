@@ -141,8 +141,8 @@
                                         <!--Search Form-->
                                         <div class="search">
                                             <div class="search-form">
-                                                <form id="search-form" action="#">
-                                                    <input type="search" placeholder="Search here..." name="search" />
+                                                <form id="search-form" action="{{route('searchHospitals')}}" method="GET">
+                                                    <input type="search" placeholder="Search hospital and clinics..." name="facility_name" />
                                                     <button type="submit">
                                                         <span><i class="fa fa-search"></i></span>
                                                     </button>

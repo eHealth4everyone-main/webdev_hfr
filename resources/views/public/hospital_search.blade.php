@@ -9,52 +9,12 @@
 @section("content")   
 <div class="latest-area section-padding bg-white">
     <div class="container">
+        <div role="alert" class="alert alert-success"> 
+                A total of {{$facilities->total()}} record(s) found                    
+        </div> 
 
-    <div class="box-header">
-        <form class="form-horizontal"  action="{{route('searchFacilities')}}" method="GET">
-            @csrf
-            <div class="form-group">
-               
-              <div class="col-sm-2">
-                    <select class="form-control select2" id="state_id" name ="state_id">
-                            <option value="0">All States</option>
-                            @foreach($lst_states as $st)
-                                <option value="{{$st->id}}">{{$st->name}}</option>
-                            @endforeach
-                    </select>
-              </div>
-              
-              <div class="col-sm-2">
-                  <select class="form-control select2" id="lga_id" name="lga_id">
-                      <option value="">--Select LGA--</option>
-                  </select>
-              </div>
-              <div class="col-sm-3">
-                    <select class="form-control select2" id="facility_type_id" name="facility_type_id">
-                            @foreach($lst_facility_types as $ty)
-                                <option value="{{$ty->id}}">{{$ty->name}}</option>
-                            @endforeach
-                    </select>
-                </div>
-
-              <div class="col-sm-4" >
-                <input class="form-control input-sm"type="text" name="facility_name" id="facility_name" class="form-control" placeholder="Facility name">
-              </div>
-
-              <div class="col-sm-1">
-                  <button type="submit" class="btn btn-success pull-right btn-sm">Search</button>
-              </div>
-
-          </div>
-        </form>
-
-    </div>
-    <div role="alert" class="alert alert-success"> 
-            A total of {{$facilities->total()}} record(s) found  
-                          
-    </div>
-        <div class="box-body">                
-
+        <div class="box-body">
+ 
                 <table id="hosp" class="table table-bordered table-striped">
                     <thead>
                     <tr>
@@ -84,7 +44,7 @@
                     </tbody>
                 </table>
             
-            </div>
+        </div>
         <!-- /.box-body -->
         <div class="box-footer">
             <div class="row">
