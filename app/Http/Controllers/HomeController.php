@@ -18,7 +18,7 @@ class HomeController extends Controller
             JOIN ou_states s ON s.id = h.state_id GROUP BY s.short_code");
         });      
        
-        return view('home',compact('total_facilities_state'));
+        return view('public.home',compact('total_facilities_state'));
     }
 
 
@@ -42,6 +42,36 @@ class HomeController extends Controller
 
         return $result;
     }
-    
 
+    public function getFacilitesGMap(Request $request)
+    {   
+        //get lga id and name
+        $lga = DB::table('ou_lgas')
+        ->select('id','name')
+        ->where('map_code', $request->lga_code)
+        ->get();
+        
+         $lga_details = array();
+ 
+         foreach ($lga as $l){
+             $lga_details[0] = $l->id; //lga id
+             $lga_details[1] = $l->name; //lga name
+         };
+
+     
+        $facilities = DB::select("SELECT id,unique_id,facility_name,latitude,longitude 
+                        FROM hospital_details where latitude != '' and 
+                        lga_id='". $lga_details[0] . "'");
+       
+        $lga_name =  $lga_details[1];
+
+        $result  = array();
+        $result['lga_name'] = $lga_name;
+        $result['facilities_list'] =  $facilities;
+
+        return  $result;
+    }
+
+    
+    
 }

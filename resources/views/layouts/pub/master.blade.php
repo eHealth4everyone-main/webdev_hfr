@@ -184,7 +184,10 @@
                             <div class="col-md-6 col-sm-7">
                                 <span>Copyright &copy; FMOH 2018. All Right Reserved </span>
                             </div>
-                            <div class="col-md-6 col-sm-6">
+                            <div class="col-md-4">
+                                
+                            </div>
+                            <div class="col-md-2 col-sm-2">
                                     <span>Version 2.0 </span>
                             </div>
                             

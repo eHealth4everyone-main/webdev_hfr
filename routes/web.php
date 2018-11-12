@@ -9,15 +9,14 @@
 | contains the "web" middleware group. Now create something great!
 */
 Route::get('/', 'HomeController@index')->name('home');
-Route::get('/hospital', 'FacilityListingController@hospitals')->name('listhosp');
+Route::get('/hospitalsandclinics', 'FacilityListingController@hospitals')->name('listhosp');
 
-Route::get('/facilitieslist', 'FacilityListingController@index')->name('getfacilities');
+Route::get('/facilitieslist', 'FacilityListingController@getFacilities')->name('getfacilities');
 Route::get('/statistics/tables', 'SummaryTablesController@index')->name('statistics');
 Route::get('/statistics/charts', 'SummaryChartsController@index')->name('statistics_charts');
 Route::get('/statistics/populationindex', 'SummaryChartsController@population_index')->name('population_index');
 
 Route::view('/about', 'public.about')->name('about');
-// Route::view('/about', 'layouts.pub.theme')->name('about');
 Route::get('/hfrresources', 'ResourceController@public_index')->name('public_resources');
 Route::get('/facilities', 'FacilityListingController@search')->name('search');
 Route::get('/fdownload', 'DownloadController@DownloadForm')->name('downloadfm');
@@ -32,6 +31,7 @@ Route::post('/contactus', 'ContactController@store')->name('storecontact');
 Route::post('/hosp/fetchLga', 'GeneralController@getLgaList')->name('getLgaList');
 Route::post('/hosp/fetctWards', 'GeneralController@getWardList')->name('getWardList');
 Route::post('/home/facilitiesbyLga', 'HomeController@getFacilitesByLGA')->name('getFacilitesByLGA');
+Route::post('/home/googlemap', 'HomeController@getFacilitesGMap')->name('getFacilitesGMap');
 
 Auth::routes();
 
