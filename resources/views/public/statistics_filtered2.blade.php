@@ -57,7 +57,7 @@
                 <div class="col-sm-3">     
                         <div class="single-latest-item">   
                             <div class="single-latest-text">
-                                    Number of Pharmaceuticals Premises  
+                                    Number of Pharmaceuticals Premises   
                                     <strong>{{ $total_num_fac[2] }}</strong>
                                     
                             </div>
@@ -76,7 +76,7 @@
                 <div class="col-sm-3">     
                         <div class="single-latest-item">   
                             <div class="single-latest-text">
-                                    Number of Radiologies and Imaging   
+                                    Number of Radiologies and Imaging  
                                     <strong>{{ $total_num_fac[3] }}</strong>
                                    
                             </div>
@@ -89,7 +89,7 @@
 
         {{-- summary 2 --}}
         <div class="row">
-            <div class="col-sm-6">
+            <div class="col-sm-12">
                     <div class="single-latest-item">
                     
                     
@@ -126,99 +126,11 @@
                     </div>
             </div>
 
-            <div class="col-sm-6">
-                    <div class="single-latest-item">
-                           
-                            <div class="single-latest-text">
-                                    <h4 id="h_level"> </h4> <br>
-                                    <div class="display">
-                                            <table class="table no-margin" id="table2">
-                                                <thead>
-                                                <tr>
-                                                    <th>LGA</th>
-                                                    <th>Primary</th>
-                                                    <th>Secondary</th>
-                                                    <th>Tertiary</th>
-                                                    <th>Total</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach($levels_by_lga as $lev)
-                                                        <tr>
-                                                            @if($state_id==0)
-                                                                <td>{{$lev->state}}</td>
-                                                            @else
-                                                                <td>{{$lev->lga}}</td>
-                                                            @endif
-                                                            <td>{{$lev->Primary}}</td>
-                                                            <td>{{$lev->Secondary}}</td>
-                                                            <td>{{$lev->Tertiary}}</td>
-                                                            <td>{{$lev->Primary + $lev->Secondary + $lev->Tertiary}}</td>
-                                                        </tr>
-                                                    @endforeach
-                                                <tbody>
-                                            </table>
-                                        </div>
-                            </div>
-                        </div>
-            </div>
         
             
         </div>
         {{-- summary 2 ends --}}
-        {{-- summary table 3 --}}
-        @if($facility_type_id ==1)
-
-            <div class="row">
-                <div class="col-sm-12">
-                        <div class="single-latest-item">
-                        
-                            <div class="single-latest-text">
-                                    <h4>Hospitals and Clinics by Ownership and Level of Care</h4> <br>
-                                    <div class="display" style="width:100%">
-                                        <table class="table no-margin" id="table3">
-                                            <thead>
-                                                <tr>
-                                                    <th rowspan="2">LGA</th> 
-                                                    <th colspan="4">Public</th> 
-                                                    <th colspan="4">Private</th> 
-                                                    <th rowspan="2">Total (A+B)</th>
-                                                </tr>                                          
-                                                    <th>Primary</th> 
-                                                    <th>Secondary</th> 
-                                                    <th>Tertiary</th>
-                                                    <th>Sub-Total (A)</th> 
-                                                    <th>Primary</th> 
-                                                    <th>Secondary</th> 
-                                                    <th>Tertiary</th>  
-                                                    <th>Sub-Total (B)</th> 
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                    @foreach($levels_ownership_by_lga as $lev)
-                                                    <tr>
-                                                        <td>{{$lev->lga}}</td>
-                                                        <td>{{$lev->Pub_Primary}}</td>
-                                                        <td>{{$lev->Pub_Secondary}}</td>
-                                                        <td>{{$lev->Pub_Tertiary}}</td>
-                                                        <td>{{$lev->Pub_Primary + $lev->Pub_Secondary + $lev->Pub_Tertiary}}</td>
-                                                        <td>{{$lev->Priv_Primary}}</td>
-                                                        <td>{{$lev->Priv_Secondary}}</td>
-                                                        <td>{{$lev->Priv_Tertiary}}</td>
-                                                        <td>{{$lev->Priv_Primary + $lev->Priv_Secondary + $lev->Priv_Tertiary}}</td>
-                                                        <td>{{$lev->Pub_Primary + $lev->Pub_Secondary + $lev->Pub_Tertiary+$lev->Priv_Primary + $lev->Priv_Secondary + $lev->Priv_Tertiary}}</td>
-                                                    </tr>
-                                                @endforeach
-                                            <tbody>
-                                        </table>
-                                    </div>
-                            </div>
-                        </div>
-                </div>
-
-            </div>
-            
-        @endif
+      
     </div> 
 </div> {{--  --}}
 
@@ -247,33 +159,12 @@ $(document).ready( function () {
         "autoWidth"   : false,
         "pageLength": 8,
     } );
-     //table 2
-     $('#table2').DataTable( {
-        "paging":   true,
-        "ordering": false,
-        "info":     true,
-        "lengthChange": true,
-        "searching"   : true,
-        "autoWidth"   : false,
-        "pageLength": 8,
-    } );
-
-       //table 3
-       $('#table3').DataTable( {
-        "paging":   true,
-        "ordering": false,
-        "info":     true,
-        "lengthChange": true,
-        "searching"   : true,
-        "autoWidth"   : false,
-        "pageLength": 8,
-    } );
-
+ 
+   
 
     $("#state_id").val({{$state_id}}).change();
     $("#facility_type_id").val({{$facility_type_id}}).change();
     $("#h_ownership").text($("#facility_type_id :selected").text() + " by Ownership");
-    $("#h_level").text($("#facility_type_id :selected").text() + " by Level of Care");
     //set message after filter
     $("#filtermessage").text("Summary of "+ $("#facility_type_id :selected").text() + " in "+  $("#state_id :selected").text() + " State");
     

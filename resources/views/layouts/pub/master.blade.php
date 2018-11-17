@@ -127,7 +127,7 @@
                                                         </ul>
                                                     </li>
                                                     <li><a href="{{route('listhosp')}}">Facilities List</a> </li>
-                                                    <li><a href="{{route('downloadFacilitiesList')}}">Data Downloads</a> </li>
+                                                    <li><a href="{{route('openRegistrationForm')}}">Data Downloads</a> </li>
                                                     <li><a href="{{route('public_resources')}}">Resources</a></li>
                                       
                                                 </ul>

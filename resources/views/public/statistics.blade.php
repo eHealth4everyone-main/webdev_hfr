@@ -22,8 +22,9 @@
                                         </select>
                                 </div>
                                     
-                                <div class="col-sm-4">
+                                <div class="col-sm-5">
                                     <select class="form-control select2" id="state_id" name ="state_id">
+                                            <option value="0">All States</option>
                                         @foreach($lst_states as $st)
                                             <option value="{{$st->id}}">{{$st->name}}</option>
                                         @endforeach
@@ -32,7 +33,7 @@
                                 
                             
                             
-                            <div class="col-sm-2">
+                            <div class="col-sm-1">
                                 <button type="submit" class="btn btn-success btn-sm pull-right">Filter</button>
                             </div>
                             

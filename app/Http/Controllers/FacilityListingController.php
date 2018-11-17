@@ -13,7 +13,7 @@ class FacilityListingController extends Controller
     {
       
         $facilities = DB::table('hospital_details')
-        ->select('state','lga','unique_id','facility_name','facility_level','ownership')
+        ->select('state','lga','ward','unique_id','facility_name','facility_level','ownership')
         ->orderByRaw('state','lga','facility_name')
         ->paginate(20);
 
@@ -61,7 +61,7 @@ class FacilityListingController extends Controller
         if ($facility_type_id==1){
 
             $facilities = DB::table('hospital_details')
-            ->select('state','lga','unique_id','facility_name','facility_level','ownership')
+            ->select('state','lga','ward','unique_id','facility_name','facility_level','ownership')
             ->where('state_id','like','%'.$state_id2.'%')
             ->where('lga_id','like','%'.$lga_id.'%')
             ->Where('facility_name', 'like', '%' .  $facility_name . '%')
@@ -78,14 +78,54 @@ class FacilityListingController extends Controller
         }
 
         if ($facility_type_id==2){
-           
+            $facilities = DB::table('pharmacy_details')
+            ->select('state','lga','ward','unique_id','facility_name','ownership')
+            ->where('state_id','like','%'.$state_id2.'%')
+            ->where('lga_id','like','%'.$lga_id.'%')
+            ->Where('facility_name', 'like', '%' .  $facility_name . '%')
+            ->orderByRaw('state','lga','facility_name')
+            ->paginate(20);
+
+            $facilities->appends([
+                'state_id'=>$request->state_id,
+                'lga_id'=>$request->lga_id,
+                'facility_name'=>$request->facility_name,
+                'facility_type_id' => $request->facility_type_id,
+            ]);
         }
         if ($facility_type_id==3){
-       
+
+            $facilities = DB::table('laboratory_details')
+            ->select('state','lga','ward','unique_id','facility_name','facility_level','ownership')
+            ->where('state_id','like','%'.$state_id2.'%')
+            ->where('lga_id','like','%'.$lga_id.'%')
+            ->Where('facility_name', 'like', '%' .  $facility_name . '%')
+            ->orderByRaw('state','lga','facility_name')
+            ->paginate(20);
+
+            $facilities->appends([
+                'state_id'=>$request->state_id,
+                'lga_id'=>$request->lga_id,
+                'facility_name'=>$request->facility_name,
+                'facility_type_id' => $request->facility_type_id,
+            ]);
            
         }
         if ($facility_type_id==4){
-           
+            $facilities = DB::table('imaging_details')
+            ->select('state','lga','ward','unique_id','facility_name','ownership')
+            ->where('state_id','like','%'.$state_id2.'%')
+            ->where('lga_id','like','%'.$lga_id.'%')
+            ->Where('facility_name', 'like', '%' .  $facility_name . '%')
+            ->orderByRaw('state','lga','facility_name')
+            ->paginate(20);
+
+            $facilities->appends([
+                'state_id'=>$request->state_id,
+                'lga_id'=>$request->lga_id,
+                'facility_name'=>$request->facility_name,
+                'facility_type_id' => $request->facility_type_id,
+            ]);
         }
 
 

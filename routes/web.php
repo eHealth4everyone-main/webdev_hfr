@@ -24,8 +24,8 @@ Route::get('/statistics/charts/filter', 'SummaryChartsController@filter')->name(
 Route::get('/statistics/populationindex', 'SummaryChartsController@population_index')->name('population_index');
 
 Route::get('/hfrresources', 'ResourceController@public_index')->name('public_resources');
-Route::get('/download/register', 'DownloadController@openRegistrationForm')->name('openRegistrationForm');
-Route::post('/download/register', 'DownloadController@store')->name('saveDownloadUserRecords');
+Route::get('/download/facilities', 'DownloadController@openRegistrationForm')->name('openRegistrationForm');
+Route::post('/download/facilities', 'DownloadController@store')->name('saveDownloadUserRecords');
 Route::get('/download/facilitylist', 'DownloadController@index')->name('downloadFacilitiesList');
 Route::get('/download/filter', 'DownloadController@filter')->name('downloadFacilityFilter');
 Route::get('/downloads/excel/{type}/{state}/{format}', 'DownloadController@export')->name('export');

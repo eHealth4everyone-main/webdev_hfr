@@ -60,9 +60,13 @@
                     <tr>
                         <th>State</th>
                         <th>LGA</th>
+                        <th>Ward</th>
                         <th>Unique ID</th>
                         <th>Facility Name</th>
-                        <th>Facility Level</th>
+                        @if($facility_type_id == 1 OR $facility_type_id == 3)
+                            <th>Facility Level</th>
+                        @endif
+
                         <th>Ownership</th>
                     </tr>
                     </thead>
@@ -73,9 +77,14 @@
                         
                         <td>{{$fac->state}}</td>
                         <td>{{$fac->lga}}</td>
+                        <td>{{$fac->ward}}</td>
                         <td>{{$fac->unique_id}}</td>
                         <td>{{$fac->facility_name}}</td>
-                        <td>{{$fac->facility_level}}</td>
+
+                        @if($facility_type_id == 1 OR $facility_type_id == 3)
+                            <td>{{$fac->facility_level}}</td>
+                        @endif
+                        
                         <td>{{$fac->ownership}}</td>
                     
                         </tr>

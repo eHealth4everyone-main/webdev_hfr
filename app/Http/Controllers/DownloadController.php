@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Cache;
 class DownloadController extends Controller
 {
     public function index (){
-      
+        
         //get state list
         $lst_states = Cache::remember('lst_states', 30, function () {
             return DB::table('ou_states')
@@ -115,12 +115,12 @@ class DownloadController extends Controller
             $column_header = array("unique_id","reg_number","start_date","facility_name","state","lga","ward","ownership",
             "facility_level","longitude","latitude","operation_status","regulatory_status","license_status");
         }
-     
-        if ($format = 'excel'){
-            $down_filename = 'list_of_facilities.xlsx';
+    
+        if ($format == 'excel'){
+            $down_filename = 'facilitieslist.xlsx';
         }
-        if ($format = 'csv'){
-            $down_filename = 'list_of_facilities.csv';
+        if ($format == 'csv'){
+            $down_filename = 'facilitieslist.csv';
         }
      
         return Excel::download(new HFExport( $facilities, $column_header), $down_filename );
@@ -129,7 +129,12 @@ class DownloadController extends Controller
 
     public function openRegistrationForm()
     {
-        return view('public.download_registration');
+        if (Cache::has('downloadRegistration')) {
+            return $this->index();
+        }
+        else {
+            return view('public.download_registration');
+        }
     }
 
     public function store(Request $request)
@@ -147,15 +152,13 @@ class DownloadController extends Controller
             ]);
 
             Download::create($request->all());
-
-            session()->flash("alert-success", "Successfull! Download the data");
             
-        
-            $state = '0';
-            $type = '1';
-    
-            $facilities = DB::table('hospitals_details')->get();
-            return view('public.download_facility_list', compact("facilities","type","state"));
+            Cache::put('downloadRegistration', 'true', 60);
+
+            session()->flash("alert-success", "You have successfull being registered! You can download facilities");
+            
+        //call index fnx
+        return $this->index();
     }
 
     public function adminIndex (){

@@ -27,14 +27,16 @@
                                         <option value="{{$st->id}}">{{$st->name}}</option>
                                     @endforeach
                             </select>
+                    </div>         
+                    
+                    <div class="col-sm-4" >
+                        <div class="pull-right">
+                                <button type="submit" class="btn btn-success pull-right btn-sm">Filter</button>
+                        </div>
+                    
                     </div>
+                    
                         
-                    <div class="col-sm-2" >
-                    </div>
-        
-                    <div class="col-sm-2">
-                        <button type="submit" class="btn btn-success pull-right btn-sm">Filter</button>
-                    </div>
               </div>
             </form>
     
