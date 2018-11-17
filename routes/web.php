@@ -24,10 +24,10 @@ Route::get('/statistics/charts/filter', 'SummaryChartsController@filter')->name(
 Route::get('/statistics/populationindex', 'SummaryChartsController@population_index')->name('population_index');
 
 Route::get('/hfrresources', 'ResourceController@public_index')->name('public_resources');
-Route::get('/fdownload', 'DownloadController@DownloadForm')->name('downloadfm');
-Route::post('/fdownload', 'DownloadController@store')->name('saveDownloadUser');
-Route::get('/download', 'DownloadController@index')->name('download');
-Route::get('/downloads', 'DownloadController@getFacilities')->name('facToDownload');
+Route::get('/download/register', 'DownloadController@openRegistrationForm')->name('openRegistrationForm');
+Route::post('/download/register', 'DownloadController@store')->name('saveDownloadUserRecords');
+Route::get('/download/facilitylist', 'DownloadController@index')->name('downloadFacilitiesList');
+Route::get('/download/filter', 'DownloadController@filter')->name('downloadFacilityFilter');
 Route::get('/downloads/excel/{type}/{state}/{format}', 'DownloadController@export')->name('export');
 
 //routes to populate lgas and wards

@@ -7,77 +7,114 @@ use Illuminate\Http\Request;
 use App\Download;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Cache;
 
 class DownloadController extends Controller
 {
     public function index (){
-        $state = '0';
-        $type = '1';
+      
+        //get state list
+        $lst_states = Cache::remember('lst_states', 30, function () {
+            return DB::table('ou_states')
+                    ->select('id','name')
+                    ->orderByRaw('name ASC')
+                    ->get();
+        });
+        //get facility types
+        $lst_facility_types = Cache::remember('lst_facility_types', 30, function () {
+            return DB::table('lst_facility_types')
+                    ->select('id','name')
+                    ->get();
+        });
 
-        $facilities = DB::table('hospitals_details')->get();
-        return view('public.download_export', compact("facilities","type","state"));
+
+        $facilities = DB::table('hospital_details')
+        ->select('state','lga','unique_id','facility_name','facility_level','ownership')
+        ->orderByRaw('state','lga','facility_name')
+        ->paginate(20);
+      
+        $state_id = 0;
+        $facility_type_id = 1;
+
+        return view('public.download_facility_list',compact("facilities",'lst_states','lst_facility_types',
+        'state_id','facility_type_id')); 
     }
     
-    public function getFacilities(Request $request){
-        $type = 0;
-        $state = $request->stateid;
-        $condition = '';
-
-        if ($state == 0){
-            $condition = '<>';
+    public function filter(Request $request){
+        $state_id = $request->state_id;
+        $facility_type_id = $request->facility_type_id;
+      
+        if ($state_id == 0){
+            $state_id2 = "";
         }
         else{
-            $condition = '=';
+            $state_id2 = $state_id;
         }
+
+        if ($facility_type_id==1){
+
+            $facilities = DB::table('hospital_details')
+            ->select('state','lga','unique_id','facility_name','facility_level','ownership')
+            ->where('state_id','like','%'.$state_id2.'%')
+            ->orderByRaw('state','lga','facility_name')
+            ->paginate(20);
+
+            $facilities->appends([
+                'state_id'=>$request->state_id,
+                'facility_type_id' => $request->facility_type_id,
+            ]);
+
+        }
+
+        if ($facility_type_id==2){
+           
+        }
+        if ($facility_type_id==3){
+       
+           
+        }
+        if ($facility_type_id==4){
+           
+        }
+
+
+        //get state list
+        $lst_states = Cache::remember('lst_states', 30, function () {
+            return DB::table('ou_states')
+                    ->select('id','name')
+                    ->orderByRaw('name ASC')
+                    ->get();
+        });
+        //get facility types
+        $lst_facility_types = Cache::remember('lst_facility_types', 30, function () {
+            return DB::table('lst_facility_types')
+                    ->select('id','name')
+                    ->get();
+        });
+       
       
-
-        if ($request->facilitytype==1){
-            $facilities = DB::table('hospitals_details')
-                            ->where('state_id', $condition, $state)
-                            ->get();
-            $type = 1;
-        }
-
-        if ($request->facilitytype==2){
-            $facilities = DB::table('laboratory')->get();
-            $type = 2;
-        }
-        if ($request->facilitytype==3){
-            $facilities = DB::table('pharmacies')->get();
-            $type = 3;
-        }
-        if ($request->facilitytype==4){
-            $facilities = DB::table('radiologies')->get();
-            $type = 4;
-        }
-
-        return view('public.download_export', compact("facilities","type","state"));
+        return view('public.download_facility_list',compact("facilities",'lst_states','lst_facility_types',
+        'state_id','facility_type_id')); 
+    
     }
 
-    public function export($type,$state,$format){
-        $condition = '';
-
-        if ($state == 0){
-            $condition = '<>';
-        }
-        else{
-            $condition = '=';
+    public function export($type,$state_id,$format){
+  
+        if ($state_id == 0){
+            $state_id = "";
         }
 
         if ($type == 1){
-            $facilities = DB::table('hospitals_details')
-                            ->where('state_id', $condition, $state)
+            $facilities = DB::table('hospital_details')
+                            ->select('unique_id','registration_no','start_date','facility_name','state','lga','ward','ownership',
+                            'facility_level','longitude','latitude','operation_status','regulatory_status','license_status')
+                            ->where('state_id','like','%'.$state_id.'%')
+                            ->orderByRaw('state','lga','facility_name')
                             ->get();
 
-            $column_header = array("id","unique_id","reg_number","facility_name","alt_facility_name","state_id","state","state_code",
-            "lga_id","lga","level","ownership","ownership_type","ownership_details","comm_date","ward",
-            "house_no","street_name","longitude","latitude","postal_address","phone_number","email_address",
-            "website","operational_days","operational_hours","op_status_id","op_status","reg_status_id",
-            "reg_status","lic_status_id","lic_status","IPD","OPD");
-
+            $column_header = array("unique_id","reg_number","start_date","facility_name","state","lga","ward","ownership",
+            "facility_level","longitude","latitude","operation_status","regulatory_status","license_status");
         }
-
-      
      
         if ($format = 'excel'){
             $down_filename = 'list_of_facilities.xlsx';
@@ -90,10 +127,9 @@ class DownloadController extends Controller
 
     }
 
-    public function DownloadForm()
+    public function openRegistrationForm()
     {
-     
-        return view('public.download');
+        return view('public.download_registration');
     }
 
     public function store(Request $request)
@@ -119,7 +155,7 @@ class DownloadController extends Controller
             $type = '1';
     
             $facilities = DB::table('hospitals_details')->get();
-            return view('public.download_export', compact("facilities","type","state"));
+            return view('public.download_facility_list', compact("facilities","type","state"));
     }
 
     public function adminIndex (){

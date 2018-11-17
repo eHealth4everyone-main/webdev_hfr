@@ -7,7 +7,7 @@
     <div class="container">
         <div class="row">
 
-            <form method="POST" action="{{route('saveDownloadUser')}}" class="form-horizontal">
+            <form method="POST" action="{{route('saveDownloadUserRecords')}}" class="form-horizontal">
                                 @csrf
                                
                                 <div class="form-group row">
