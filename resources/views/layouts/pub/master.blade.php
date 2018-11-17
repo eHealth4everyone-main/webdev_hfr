@@ -105,8 +105,8 @@
                                 <div class="col-md-3 col-sm-12">
                                         <div class="logo">
                                                 {{-- <a href=""><img src="/img/nigeriahfr.png"  width="" height="50" alt="FMOH"></a> --}}
-                                                <h3 style="color:black">Nigeria </h3>
-                                                <h4 style="color:DarkGreen">Health Facility Registry (HFR)</h4>
+                                                <h3 style="color:black">Nigeria</h3>
+                                                <h5 style="color:DarkGreen"> Health Facility Registry (HFR)</h5>
                 
                                         </div>
                                         

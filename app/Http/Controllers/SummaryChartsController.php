@@ -59,12 +59,12 @@ class SummaryChartsController extends Controller
 
     public function population_index(){
 
-        // $population_index = Cache::remember('population_index', 30, function () {
-            $population_index = DB::select("SELECT state, ROUND(p.population/count(id)) AS ppf FROM hospital_details h
+        $population_index = Cache::remember('population_index', 30, function () {
+           return DB::select("SELECT state, ROUND(p.population/count(id)) AS ppf FROM hospital_details h
                                 JOIN population p ON p.state_id=h.state_id
                                 group by state,p.population
                                 order by state");
-        // });
+        });
         
         $pop_index_states=array();
         $pop_index_ppf=array();

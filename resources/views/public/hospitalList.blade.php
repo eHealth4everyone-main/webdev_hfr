@@ -122,8 +122,13 @@
     @include('partials.dynamic_lgas_only')
 
     <script>
-
-    
+        $(document).ready( function () {
+            $("#state_id").val({{$state_id}}).change();
+            $("#facility_type_id").val({{$facility_type_id}}).change();
+            $("#facility_name").val("{{$facility_name}}");
+            $("#lga_id").val({{$lga_id}}).change();
+                
+        });
     </script>
 
 @endpush

@@ -9,7 +9,7 @@
 <div class="latest-area section-padding bg-white">
     <div class="container">
             <div class="box-header">
-                    <form class="form-horizontal"  action="{{route('getfacilities')}}" method="GET">
+                <form class="form-horizontal"  action="" method="GET">
                         @csrf
                         <div class="form-group">
                 
@@ -34,7 +34,7 @@
                                     <button type="submit" class="btn btn-success btn-sm pull-right">Filter</button>
                                 </div>
                       </div>
-                    </form>
+                </form>
             
             </div>
 

@@ -31,7 +31,14 @@ class FacilityListingController extends Controller
                     ->get();
         });
 
-        return view('public.hospitalList',compact("facilities",'lst_states','lst_facility_types'));
+        //set values facility list when no filter
+        $state_id = 0;
+        $lga_id = "";
+        $facility_type_id = 1;
+        $facility_name = "";
+     
+        return view('public.hospitalList',compact("facilities",'lst_states','lst_facility_types',
+        'state_id','lga_id','facility_type_id','facility_name')); 
     }
 
   
@@ -43,15 +50,19 @@ class FacilityListingController extends Controller
         $lga_id = $request->lga_id;
         $facility_type_id = $request->facility_type_id;
         $facility_name = $request->facility_name;
-
+      
         if ($state_id == 0){
-            $state_id = "";
+            $state_id2 = "";
         }
+        else{
+            $state_id2 = $state_id;
+        }
+
         if ($facility_type_id==1){
 
             $facilities = DB::table('hospital_details')
             ->select('state','lga','unique_id','facility_name','facility_level','ownership')
-            ->where('state_id','like','%'.$state_id.'%')
+            ->where('state_id','like','%'.$state_id2.'%')
             ->where('lga_id','like','%'.$lga_id.'%')
             ->Where('facility_name', 'like', '%' .  $facility_name . '%')
             ->orderByRaw('state','lga','facility_name')
@@ -92,7 +103,9 @@ class FacilityListingController extends Controller
                     ->get();
         });
        
-        return view('public.hospitalList',compact("facilities",'lst_states','lst_facility_types'));       
+      
+        return view('public.hospitalList',compact("facilities",'lst_states','lst_facility_types',
+        'state_id','lga_id','facility_type_id','facility_name'));       
     }
 
 

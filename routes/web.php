@@ -17,6 +17,8 @@ Route::get('/facilities/hospitals', 'FacilityListingController@index')->name('li
 Route::get('/facilities/searchlist', 'FacilityListingController@searchFacilities')->name('searchFacilities');
 Route::get('/facilities/hospitalssearch', 'FacilityListingController@searchHospitals')->name('searchHospitals');
 Route::get('/statistics/tables', 'SummaryTablesController@index')->name('statistics');
+Route::get('/statistics/tables/filter', 'SummaryTablesController@filter')->name('filterStatistics');
+
 Route::get('/statistics/charts', 'SummaryChartsController@index')->name('statistics_charts');
 Route::get('/statistics/populationindex', 'SummaryChartsController@population_index')->name('population_index');
 
