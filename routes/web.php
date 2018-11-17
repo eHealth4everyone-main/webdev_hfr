@@ -20,6 +20,7 @@ Route::get('/statistics/tables', 'SummaryTablesController@index')->name('statist
 Route::get('/statistics/tables/filter', 'SummaryTablesController@filter')->name('filterStatistics');
 
 Route::get('/statistics/charts', 'SummaryChartsController@index')->name('statistics_charts');
+Route::get('/statistics/charts/filter', 'SummaryChartsController@filter')->name('filterStatisticsCharts');
 Route::get('/statistics/populationindex', 'SummaryChartsController@population_index')->name('population_index');
 
 Route::get('/hfrresources', 'ResourceController@public_index')->name('public_resources');

@@ -9,7 +9,7 @@
 <div class="latest-area section-padding bg-white">
     <div class="container">
             <div class="box-header">
-                <form class="form-horizontal"  action="" method="GET">
+            <form class="form-horizontal"  action="{{route('filterStatisticsCharts')}}" method="GET">
                         @csrf
                         <div class="form-group">
                 
@@ -23,7 +23,6 @@
                                     
                                 <div class="col-sm-4">
                                     <select class="form-control select2" id="state_id" name ="state_id">
-                                        <option value="0">All States</option>
                                         @foreach($lst_states as $st)
                                             <option value="{{$st->id}}">{{$st->name}}</option>
                                         @endforeach
@@ -38,7 +37,12 @@
             
             </div>
 
-
+            {{-- filter message --}}
+            @if($filtered)
+                <div role="alert" class="alert alert-success"> 
+                    <p id="filtermessage"></p>
+                </div>
+            @endif
 
             <div class="row" >
                     <div class="col-sm-12">
@@ -58,7 +62,12 @@
                                             <tbody>
                                                 @foreach($levels_by_state as $lev)
                                                     <tr>
-                                                        <td>{{$lev->state}}</td>
+                                                        @if($filtered)
+                                                            <td>{{$lev->lga}}</td>
+                                                        @else
+                                                            <td>{{$lev->state}}</td>
+                                                        @endif
+                                                        
                                                         <td>{{$lev->Primary}}</td>
                                                         <td>{{$lev->Secondary}}</td>
                                                         <td>{{$lev->Tertiary}}</td>
@@ -104,7 +113,13 @@
 
     
 <script>
- 
+
+    $("#state_id").val({{$state_id}}).change();
+    $("#facility_type_id").val({{$facility_type_id}}).change();
+
+    //set message after filter
+    $("#filtermessage").text("Statistics Summary of "+ $("#facility_type_id :selected").text() + " in "+  $("#state_id :selected").text() + " State");
+    
     
 //Chart 1
         $('#table3').hide();

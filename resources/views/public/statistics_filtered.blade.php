@@ -24,7 +24,6 @@
                                     
                                 <div class="col-sm-4">
                                     <select class="form-control select2" id="state_id" name ="state_id">
-                                        <option value="0">All States</option>
                                         @foreach($lst_states as $st)
                                             <option value="{{$st->id}}">{{$st->name}}</option>
                                         @endforeach
@@ -263,7 +262,7 @@ $(document).ready( function () {
     $("#facility_type_id").val({{$facility_type_id}}).change();
 
     //set message after filter
-    $("#filtermessage").text("Summary of "+ $("#facility_type_id :selected").text() + " in "+  $("#state_id :selected").text() + " state");
+    $("#filtermessage").text("Summary of "+ $("#facility_type_id :selected").text() + " in "+  $("#state_id :selected").text() + " State");
     
 });
 

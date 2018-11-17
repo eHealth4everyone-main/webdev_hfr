@@ -24,7 +24,6 @@
                                     
                                 <div class="col-sm-4">
                                     <select class="form-control select2" id="state_id" name ="state_id">
-                                        <option value="0">All States</option>
                                         @foreach($lst_states as $st)
                                             <option value="{{$st->id}}">{{$st->name}}</option>
                                         @endforeach
