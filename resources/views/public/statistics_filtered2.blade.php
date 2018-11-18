@@ -99,7 +99,12 @@
                                     <table class="table no-margin" id="table1">
                                         <thead>
                                         <tr>
-                                            <th>LGA</th>
+                                            
+                                            @if($state_id==0)
+                                                <th>State</th>
+                                            @else
+                                                <th>LGA</th>
+                                            @endif
                                             <th>Public</th>
                                             <th>Private</th>
                                             <th>Total</th>

@@ -21,15 +21,16 @@
                                         </select>
                                 </div>
                                     
-                                <div class="col-sm-4">
+                                <div class="col-sm-5">
                                     <select class="form-control select2" id="state_id" name ="state_id">
+                                        <option value="0">All States</option>
                                         @foreach($lst_states as $st)
                                             <option value="{{$st->id}}">{{$st->name}}</option>
                                         @endforeach
                                     </select>
                                 </div>
                         
-                                <div class="col-sm-2">
+                                <div class="col-sm-1">
                                     <button type="submit" class="btn btn-success btn-sm pull-right">Filter</button>
                                 </div>
                       </div>
@@ -62,10 +63,10 @@
                                             <tbody>
                                                 @foreach($levels_by_state as $lev)
                                                     <tr>
-                                                        @if($filtered)
-                                                            <td>{{$lev->lga}}</td>
-                                                        @else
+                                                        @if($state_id==0)
                                                             <td>{{$lev->state}}</td>
+                                                        @else
+                                                            <td>{{$lev->lga}}</td>
                                                         @endif
                                                         
                                                         <td>{{$lev->Primary}}</td>
@@ -120,7 +121,16 @@
     //set message after filter
     $("#filtermessage").text("Statistics Summary of "+ $("#facility_type_id :selected").text() + " in "+  $("#state_id :selected").text() + " State");
     
-    
+    if($("#facility_type_id").val()==1){
+        var title1 = "Hospitals and Clinics by Level of Care";
+        var title2 = "Percentage of Hospitals and Clinics by Ownership";
+        var title3 = "Percentage of Hospitals and Clinics by Level of Care";
+    }
+    if($("#facility_type_id").val()==3){
+        var title1 = "Laboratory Premises by Level of Care";
+        var title2 = "Percentage of Laboratory Premises by Ownership";
+        var title3 = "Percentage of Laboratory Premises by Level of Care";
+    }
 //Chart 1
         $('#table3').hide();
         
@@ -129,7 +139,7 @@
             type: 'column'
             },
             title: {
-                text: 'Number of Hospitals and Clinics by Level of Care'
+                text: title1
             },
             data: {
                 table: 'table3'
@@ -190,7 +200,7 @@
             type: 'pie'
         },
         title: {
-            text: 'Percentage of Hospitals and Clinics by Ownership'
+            text: title2
         },
         tooltip: {
             pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -211,13 +221,7 @@
         series: [{
             name: 'Facilities',
             colorByPoint: true,
-            data: [{
-                name: 'Public',
-                y: {{$facbyownership[1]}}
-                }, {
-                name: 'Private',
-                y: {{$facbyownership[0]}}
-            }]
+            data: @json($facilities_ownership_state)
         }],
         credits: {
                     enabled: false
@@ -235,7 +239,7 @@ Highcharts.chart('levels', {
             type: 'pie'
         },
         title: {
-            text: 'Percentage of Hospitals and Clinics by Level of Care'
+            text: title3
         },
         tooltip: {
             pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -256,18 +260,7 @@ Highcharts.chart('levels', {
         series: [{
             name: 'Facilities',
             colorByPoint: true,
-            data: [{
-            name: 'Primary',
-            y: {{$facbylevels[0]}},
-            sliced: true,
-            selected: true
-            }, {
-            name: 'Secondary',
-            y: {{$facbylevels[1]}}
-            },  {
-            name: 'Tertiary',
-            y: {{$facbylevels[2]}}
-            }]
+            data: @json($facilities_level_state)
         }],
         credits: {
                     enabled: false
