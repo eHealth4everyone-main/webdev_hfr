@@ -13,12 +13,22 @@ class HomeController extends Controller
     public function index()
     {
          //get number of facilities by state
-        $total_facilities_state= Cache::remember('total_facilities_state', 30, function () {
+        $total_facilities_state= Cache::remember('total_facilities_home', 30, function () {
             return DB::select("SELECT s.short_code statecode,count(h.id) as 'value' FROM hs_hospitals h 
             JOIN ou_states s ON s.id = h.state_id GROUP BY s.short_code");
         });      
+
+            //facilities by levels
+        $facilities_level_state = Cache::remember('facilities_level_home', 30, function () {
+            return DB::select("SELECT facility_level as name,COUNT(id) AS y FROM hospital_details GROUP BY facility_level order by facility_level");
+        });
+ 
+        //by ownership
+        $facilities_ownership_state = Cache::remember('facilities_ownership_home', 30, function () {
+            return DB::select("SELECT ownership as name,COUNT(id) AS y FROM hospital_details GROUP BY ownership order by ownership");
+        });
        
-        return view('public.home',compact('total_facilities_state'));
+        return view('public.home',compact('total_facilities_state','facilities_ownership_state','facilities_level_state'));
     }
 
 

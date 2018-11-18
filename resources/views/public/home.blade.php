@@ -11,14 +11,26 @@
     <div class="container">
         
         <div class="row">
-            <div id="backDiv" style="height: 30px" class="col-md-2 col-md-offset-9">
-                <button id="backbutton" style="display: none" class="btn btn-default btn-sm" type="button">Back to Nigeria Map</button>
-            </div>
-            <div class="col-sm-12">
+           
+            <div class="col-sm-8">
+                    <div id="backDiv" style="height: 30px">
+                            <button id="backbutton" style="display: none" class="btn btn-success btn-sm" type="button">Return Back</button>
+                    </div>
                 <div id="map1" style="height: 500px; min-width: 500px; max-width: 800px; margin: 0 auto" >
                     
                 </div>
             </div> 
+            <div class="col-sm-4">
+                    <div class="single-latest-item">      
+                            <div id="levels" style="min-width: 310px; height: 250px; margin: 0 auto"></div>
+
+                    </div>
+                    <div class="single-latest-item">      
+                            <div id="ownership" style="min-width: 310px; height: 250px; margin: 0 auto"></div>
+
+                    </div>
+            </div>
+
             
         </div>
     </div>        
@@ -50,10 +62,13 @@
 @endsection 
 
 @push('custom_scripts')
-<script src="{{ asset("js/highmaps.js")}}"></script>
-{{-- <script src="{{ asset("js/drilldown.js")}}"></script> --}}
-{{-- <script src="{{ asset("js/exporting.js")}}"></script> --}}
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAF8UERyCqSP9JZ_HfvfPH2cM_6-slYd7Q" async defer></script>
+    <script src="{{ asset("hcharts/chart/highcharts.js")}}"></script>
+ 
+    <script src="{{ asset("hcharts/map/exporting.js")}}"></script>
+    <script src="{{ asset("hcharts/map/data.js")}}"></script>
+    <script src="{{ asset("hcharts/map/map.js")}}"></script>
+   
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAF8UERyCqSP9JZ_HfvfPH2cM_6-slYd7Q" async defer></script>
 
 <script>
     
@@ -81,7 +96,7 @@
                 },
                 
                 title: {
-                    text: 'Number of Hospitals and Clinics'
+                    text: 'Distribution of Hospitals and Clinics'
                 },
                 
                 mapNavigation: {
@@ -162,7 +177,7 @@
                         },
                         
                         title: {
-                            text: 'Number of Hospitals and Clinics'
+                            text: 'Distribution of Hospitals and Clinics'
                         },
                         subtitle: {
                             text: statename.concat(" State")
@@ -298,6 +313,83 @@
     
     
 </script>
+{{-- show facility by leveles chart--}}
+<script> 
+        Highcharts.chart('levels', {
+                chart: {
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: false,
+                    type: 'pie'
+                },
+                title: {
+                    text: "Hospitals and Clinics by Level of Care"
+                },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                },
+                plotOptions: {
+                    pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                        style: {
+                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                        }
+                    }
+                    }
+                },
+                series: [{
+                    name: 'Facilities',
+                    colorByPoint: true,
+                    data: @json($facilities_level_state)
+                }],
+                credits: {
+                            enabled: false
+                        },
+                });
+                
+</script>
+{{-- show facilities by ownership sumary --}}
+<script>
+        Highcharts.chart('ownership', {
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            type: 'pie'
+        },
+        title: {
+            text: "Hospitals and Clinics by Ownership"
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+            pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels: {
+                enabled: true,
+                format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                style: {
+                color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                }
+            }
+            }
+        },
+        series: [{
+            name: 'Facilities',
+            colorByPoint: true,
+            data: @json($facilities_ownership_state)
+        }],
+        credits: {
+                    enabled: false
+                },
+        });
 
+</script>
 
 @endpush
