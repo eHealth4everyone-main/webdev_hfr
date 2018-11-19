@@ -1,7 +1,7 @@
 @extends("layouts.master")
 
 @section('bk_css')
-  <script src="{{asset("https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js")}}"></script>
+  
 @endsection
 
 @section('content-title')
@@ -19,7 +19,8 @@
                 </div>
                 <div class="col-md-6">
                     <div class="box box-default">
-                        <canvas id=""></canvas>
+                        <div id="no_feedback"></div>
+
                     </div>
                 </div>
         </div>
@@ -42,68 +43,65 @@
 @endsection 
 
 @push('bk_script')
-<script src="{{ asset("js/highcharts.js")}}"></script>
-<script src="{{ asset("js/series-label.js")}}"></script>
-<script src="{{ asset("js/exporting.js")}}"></script>
-
+    {{-- <script src="{{ asset("hcharts/chart/series-label.js")}}"></script> --}}
+    <script src="{{ asset("hcharts/chart/highcharts.js")}}"></script>
+    <script src="{{ asset("hcharts/chart/exporting.js")}}"></script>
+ 
 <script>
   
 </script>
 <script>
 
-Highcharts.chart('no_downloads', {
-
+    Highcharts.chart('no_downloads', {
         title: {
-        text: 'Number Monthly Downloads Requests'
+            text: 'Monthly Downloads Requests'
         },
         xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            type: 'category'
         },
         yAxis: {
-        title: {
-            text: 'Number of Downloads'
-        }
-        },
-        legend: {
-        layout: 'vertical',
-        align: 'right',
-        verticalAlign: 'middle'
-        },
-
-        plotOptions: {
-        line: {
-            dataLabels: {
-                enabled: true
-            },
-            enableMouseTracking: false
+            title: {
+                text: 'Downloads Requests'
             }
         },
 
         series: [{
-        name: 'Downloads',
-        data: [40, 50, 77, 15, 50, 41, 53, 65]
-        }],
+            name: 'Downloads',
+            data: @json($num_downloads)
+            }],
 
-        responsive: {
-        rules: [{
-            condition: {
-            maxWidth: 500
+            credits: {
+                enabled: false
             },
-            chartOptions: {
-            legend: {
-                layout: 'horizontal',
-                align: 'center',
-                verticalAlign: 'bottom'
-            }
-            }
-        }]
-      
+
+    });
+
+//feedback chart
+    Highcharts.chart('no_feedback', {
+        title: {
+            text: 'Monthly User Feedback'
         },
-        credits: {
-            enabled: false
+        xAxis: {
+            type: 'category'
+        },
+        yAxis: {
+            title: {
+                text: 'Downloads Requests'
+            }
         },
 
-});
+        series: [{
+            name: 'feedbacks',
+            data: @json($num_feedbacks)
+            }],
+
+            credits: {
+                enabled: false
+            },
+
+    });
+
+
 </script>
 
     

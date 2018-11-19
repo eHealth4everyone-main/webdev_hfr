@@ -12,17 +12,16 @@ class ContactController extends Controller
     }
 
     public function index(){
-        $messages = Contactus::paginate(5);
+        $messages = Contactus::paginate(10);
         return view('messages.index', compact("messages"));
     }
     public function store(Request $request)
         {
             $request->validate([
-                'name' => 'required|string|max:100',
+                'full_name' => 'required|string|max:100',
                 'message' => 'required|string|max:500',
                 'subject' => 'required|string|max:20',
                 'email' => 'required|string|email|max:100',
-           
             ]);
 
             Contactus::create($request->all());

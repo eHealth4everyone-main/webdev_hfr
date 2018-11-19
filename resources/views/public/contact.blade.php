@@ -46,7 +46,7 @@
                                 <label for="firstname" class="col-md-2 control-label">Your Name<font color="red">*</font> </label>
 
                                 <div class="col-md-10">
-                                    <input id="name" type="text"  name="name" class="form-control" value="{{ old('name') }}" placeholder="Full name" required autofocus>
+                                    <input id="full_name" type="text"  name="full_name" class="form-control" value="{{ old('full_name') }}" placeholder="Full name" required autofocus>
                                 </div>
                             </div>
                     

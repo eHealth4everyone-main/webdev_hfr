@@ -14,28 +14,13 @@ class AdminHomeController extends Controller
     }
 
     public function adminhome(){
-        $factypes = DB::table('tbl_signatures')
-                     ->select(DB::raw('fac_tpye,count(*) as total'))
-                     ->groupBy('fac_tpye')
-                     ->get();
-       
-        $states = DB::table('tbl_signatures')
-                     ->join('tbl_state', 'tbl_signatures.state', '=', 'tbl_state.state_id')
-                     ->select(DB::raw('tbl_state.state as sta,count(*) as total'))
-                     ->groupBy('sta')
-                     ->orderBy('sta','asc')
-                     ->get();
-       
-        $state_name=array();
-        $num_of_fac=array();
+        $num_downloads = DB::select("SELECT date_format(created_at,'%b %y') as name,month(created_at) mon,COUNT(id) y 
+        FROM downloads group by name,mon order by mon limit 12");
 
+        $num_feedbacks = DB::select("SELECT date_format(created_at,'%b %y') name, month(created_at) mon, COUNT(id) as y 
+        FROM contact_us group by name,mon order by mon limit 12");
 
-        foreach ($states as $state){
-            $state_name[]=$state->sta;
-            $num_of_fac[]=$state->total;
-        };
-                     
-        return view("admin_dashboard",compact('factypes','state_name','num_of_fac'));
+        return view("admin_dashboard",compact('num_downloads','num_feedbacks'));
     }
 
 

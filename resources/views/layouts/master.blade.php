@@ -129,7 +129,7 @@
             
             <footer class="main-footer">
                 <div class="pull-right hidden-xs">
-                    <b>Version</b> 2.4.0
+                    <b>Version</b> 2.0
                 </div>
                 <strong>Copyright &copy; 2017-2018 <a href="http://health.gov.ng/">MOH</a>.</strong> All rights
                 reserved.
