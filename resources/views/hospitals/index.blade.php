@@ -17,12 +17,13 @@ Hospitals and Clinics Facilities
 @section("content")
 <div class="box">
     <div class="box-header with-border">
-        <form class="form-horizontal"  action="" method="GET">
+    <form class="form-horizontal"  action="{{route('searchHospitalsAdmin')}}" method="post">
                 @csrf
                 <div class="form-group">
                    
                   <div class="col-sm-3">
                         <select class="form-control select2" id="state_id" name ="state_id">
+                                <option value="">--Select State--<option>
                                 @foreach($lst_states as $st)
                                     <option value="{{$st->id}}">{{$st->name}}</option>
                                 @endforeach
@@ -37,7 +38,7 @@ Hospitals and Clinics Facilities
              
     
                   <div class="col-sm-4" >
-                    <input class="form-control input-sm"type="text" name="facility_name" id="facility_name" class="form-control" placeholder="hospital/clinic name">
+                    <input class="form-control input-sm" type="text" name="facility_name" id="facility_name" class="form-control" placeholder="hospital/clinic name">
                   </div>
     
                   <div class="col-sm-2">

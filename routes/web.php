@@ -62,7 +62,7 @@ Route::middleware(["auth"])->group(function(){
 
     //hospitals
     Route::resource('admin/hospitals','HospitalsController');
-    Route::get('admin/hospitals/search','HospitalsController@search')->name('hosp.search');
+    Route::post('admin/hospitals/search','HospitalsController@search')->name('searchHospitalsAdmin');
     
     //general
     Route::post('admin/facilities/ownership','GeneralController@getOwnershipType')->name('getOwnershipType');

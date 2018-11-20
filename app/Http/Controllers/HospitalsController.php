@@ -320,5 +320,37 @@ class HospitalsController extends Controller
         //
     }
 
-  
+    public function search(Request $request)
+    {
+        
+        $state_id = $request->state_id;
+        $lga_id = $request->lga_id;
+        $facility_name = $request->facility_name;
+      
+
+         $facilities = DB::table('hospital_details')
+        ->select('state','lga','ward','unique_id','facility_name','facility_level','ownership','id')
+        ->where('state_id','like','%'.$state_id.'%')
+        ->where('lga_id','like','%'.$lga_id.'%')
+        ->Where('facility_name', 'like', '%' .  $facility_name . '%')
+        ->orderByRaw('state','lga','facility_name')
+        ->paginate(20);
+
+        $facilities->appends([
+            'state_id'=>$request->state_id,
+            'lga_id'=>$request->lga_id,
+            'facility_name'=>$request->facility_name,
+        ]);
+
+        //get state list
+        $lst_states = Cache::remember('lst_states', 60, function () {
+            return DB::table('ou_states')
+                    ->select('id','name')
+                    ->orderByRaw('name ASC')
+                    ->get();
+        });
+      
+        return view('hospitals.index',compact('facilities','lst_states','state_id','facility_name'));       
+    }
+
 }
