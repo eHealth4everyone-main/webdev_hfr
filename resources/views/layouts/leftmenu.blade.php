@@ -33,7 +33,7 @@
                     </ul>
                 </li>
                 <li> 
-                    <a href="{{route('hosp.index')}}">
+                    <a href="{{route('hospitals.index')}}">
                         <i class="fa fa-h-square"></i>
                         <span>Hospitals and Clinics</span>
                     </a>

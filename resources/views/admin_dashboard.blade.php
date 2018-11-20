@@ -43,7 +43,6 @@
 @endsection 
 
 @push('bk_script')
-    {{-- <script src="{{ asset("hcharts/chart/series-label.js")}}"></script> --}}
     <script src="{{ asset("hcharts/chart/highcharts.js")}}"></script>
     <script src="{{ asset("hcharts/chart/exporting.js")}}"></script>
  
@@ -64,7 +63,6 @@
                 text: 'Downloads Requests'
             }
         },
-
         series: [{
             name: 'Downloads',
             data: @json($num_downloads)
@@ -72,8 +70,7 @@
 
             credits: {
                 enabled: false
-            },
-
+        },
     });
 
 //feedback chart
@@ -98,12 +95,10 @@
             credits: {
                 enabled: false
             },
-
     });
 
 
 </script>
-
     
 
 

@@ -18,7 +18,7 @@ class FacilityListingController extends Controller
         ->paginate(20);
 
         //get state list
-          $lst_states = Cache::remember('lst_states', 30, function () {
+        $lst_states = Cache::remember('lst_states', 30, function () {
             return DB::table('ou_states')
                     ->select('id','name')
                     ->orderByRaw('name ASC')

@@ -61,10 +61,15 @@ Route::middleware(["auth"])->group(function(){
     Route::post('/profile/update', 'UserController@updateProfile')->name("updateProfile");
 
     //hospitals
-    Route::resource('hosp','HospitalsController');
-    Route::get('/hosp/search','HospitalsController@search')->name('hosp.search');
+    Route::resource('admin/hospitals','HospitalsController');
+    Route::get('admin/hospitals/search','HospitalsController@search')->name('hosp.search');
+    
+    //general
+    Route::post('admin/facilities/ownership','GeneralController@getOwnershipType')->name('getOwnershipType');
+    Route::post('admin/facilities/facilityleveloption','GeneralController@getFacilityLevelOption')->name('getFacilityLevelOption');
+    Route::post('admin/facilities/facilityspecializedoption','GeneralController@getSpecializedOptions')->name('getSpecializedOptions');
    
-
+   
     //laboratory
     Route::resource('lab','LabController');
     Route::post('/lab/equips', 'LabController@fetchEquips')->name('lab.fetchEquips');

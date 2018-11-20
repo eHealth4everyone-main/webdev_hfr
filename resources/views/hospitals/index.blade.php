@@ -7,15 +7,47 @@
 @section('content-title')
 Hospitals and Clinics Facilities
 
-    <a href="/sign/create">
+<a href="{{route('hospitals.create')}}">
         <button type="button" class="btn btn-primary pull-right">
-                Add New Hospital
+                New Hospital or Clinic
         </button>
     </a>
 @endsection
 
 @section("content")
 <div class="box">
+    <div class="box-header with-border">
+        <form class="form-horizontal"  action="" method="GET">
+                @csrf
+                <div class="form-group">
+                   
+                  <div class="col-sm-3">
+                        <select class="form-control select2" id="state_id" name ="state_id">
+                                @foreach($lst_states as $st)
+                                    <option value="{{$st->id}}">{{$st->name}}</option>
+                                @endforeach
+                        </select>
+                  </div>
+                  
+                  <div class="col-sm-3">
+                      <select class="form-control select2" id="lga_id" name="lga_id">
+                         
+                      </select>
+                  </div>
+             
+    
+                  <div class="col-sm-4" >
+                    <input class="form-control input-sm"type="text" name="facility_name" id="facility_name" class="form-control" placeholder="hospital/clinic name">
+                  </div>
+    
+                  <div class="col-sm-2">
+                      <button type="submit" class="btn btn-success pull-right btn-sm">Search</button>
+                  </div>
+    
+              </div>
+            </form>
+</div>
+
         <div class="box-body">
           
           <table id="table1" class="table table-bordered table-striped">
@@ -23,6 +55,7 @@ Hospitals and Clinics Facilities
               <tr>
                 <th>State</th>
                 <th>LGA</th>
+                <th>Ward</th>
                 <th>Unique ID</th>
                 <th>Facility Name</th>
                 <th>Facility Level</th>
@@ -34,21 +67,22 @@ Hospitals and Clinics Facilities
            
               @foreach($facilities as $fac)
               <tr>
-                <td>{{$fac->state}}</td>
-                <td>{{$fac->lga}}</td>
-                <td>{{$fac->unique_id}}</td>
-                <td>{{$fac->facility_name}}</td>
-                <td>{{$fac->level}}</td>
-                <td>{{$fac->ownership}}</td>
-                <td>
-                    <a href="{{route('hosp.show',$fac->id)}}">
-                          <button class="btn btn-success btn-sm"  type="button">View</button>
-                        </a>
-                        <a href="{{route('hosp.edit',$fac->id)}}">
-                          <button class="btn btn-warning btn-sm"  type="button" > Edit</button>
-                        </a>
-                      </td>
-              </tr>
+                  <td>{{$fac->state}}</td>
+                  <td>{{$fac->lga}}</td>
+                  <td>{{$fac->ward}}</td>
+                  <td>{{$fac->unique_id}}</td>
+                  <td>{{$fac->facility_name}}</td>
+                  <td>{{$fac->facility_level}}</td>
+                  <td>{{$fac->ownership}}</td>
+                  <td>
+                      <a href="{{route('hospitals.show',$fac->id)}}">
+                            <button class="btn btn-success btn-sm"  type="button">View</button>
+                          </a>
+                          <a href="{{route('hospitals.edit',$fac->id)}}">
+                            <button class="btn btn-warning btn-sm"  type="button" > Edit</button>
+                          </a>
+                        </td>
+                  </tr>
               @endforeach
               
             </tbody>
@@ -91,19 +125,13 @@ Hospitals and Clinics Facilities
 
 
 @push('bk_script')
+  @include('partials.dynamic_state_script')
 
-<script>
-    $(document).ready( function () {
-      $('#tabl').DataTable( {
-        "paging":   true,
-        "ordering": true,
-        "info":     true,
-        "lengthChange": true,
-        "searching"   : true,
-        "autoWidth"   : false,
-   
-    } );
-  } );
-</script>
+  <script>
+      $(document).ready( function () {
+
+
+      });
+  </script>
 
 @endpush
