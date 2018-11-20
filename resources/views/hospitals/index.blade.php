@@ -5,7 +5,7 @@
 @endsection
 
 @section('content-title')
-Hospitals and Clinics Facilities
+Hospitals and Clinics
 
 <a href="{{route('hospitals.create')}}">
         <button type="button" class="btn btn-primary pull-right">
@@ -21,7 +21,7 @@ Hospitals and Clinics Facilities
                 @csrf
                 <div class="form-group">
                    
-                  <div class="col-sm-3">
+                  <div class="col-sm-4">
                         <select class="form-control select2" id="state_id" name ="state_id">
                                 <option value="">--Select State--<option>
                                 @foreach($lst_states as $st)
@@ -41,7 +41,7 @@ Hospitals and Clinics Facilities
                     <input class="form-control input-sm" type="text" name="facility_name" id="facility_name" class="form-control" placeholder="hospital/clinic name">
                   </div>
     
-                  <div class="col-sm-2">
+                  <div class="col-sm-1">
                       <button type="submit" class="btn btn-success pull-right btn-sm">Search</button>
                   </div>
     

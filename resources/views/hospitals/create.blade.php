@@ -199,7 +199,7 @@
                     <div class="form-group">
                         <label for="hs_ownership_details" class="col-sm-2 control-label">Ownership Details:</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control"  id="ownership_details" name="ownership_details" value="">
+                        <input type="text" class="form-control"  id="ownership_details" name="ownership_details" value="{{old('ownership_details')}}">
                         </div>
                     </div>
                     
