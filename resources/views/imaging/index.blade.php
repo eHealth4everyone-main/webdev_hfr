@@ -4,7 +4,7 @@
 @section('content-title')
 Radiological Premises
 
-    <a href="/imaging/create">
+<a href="{{route('imaging.index')}}">
         <button type="button" class="btn btn-primary pull-right">
                 Add Radiological Facility
         </button>
@@ -18,37 +18,33 @@ Radiological Premises
       <table id="table1" class="table table-bordered table-striped" style="width:100%">
             <thead>
               <tr>
-                <th>Unique ID</th>
-                <th>Facility Name</th>
-                <th>State</th>
-                <th>LGA</th>
-                <th>Ownership</th>
-                <th>Category</th>
-                <th>Actions</th>
+                  <th>State</th>
+                  <th>LGA</th>
+                  <th>Ward</th>
+                  <th>Unique ID</th>
+                  <th>Facility Name</th>
+                  <th>Ownership</th>
+                  <th>Actions</th>
               </tr>
             </thead>
             <tbody>
            
               @foreach($imagings as $im)
               <tr>
-                <td>{{$im->unique_id}}</td>
-                <td>{{$im->facility_name}}</td>
-                <td>{{$im->state}}</td>
-                <td>{{$im->lga}}</td>
-                <td>{{$im->ownership}}</td>
-                @if ($im->category == 1)
-                    <td>Standalone</td>
-                 @else
-                    <td>Institution</td>
-                 @endif
-                <td>
-                        <a href="{{route('imaging.show',$im->id)}}">
-                          <button class="btn btn-success btn-sm"  type="button">View</button>
-                        </a>
-                        <a href="{{route('imaging.edit',$im->id)}}">
-                          <button class="btn btn-warning btn-sm"  type="button" >Edit</button>
-                        </a>
-                      </td>
+                  <td>{{$im->state}}</td>
+                  <td>{{$im->lga}}</td>
+                  <td>{{$im->ward}}</td>
+                  <td>{{$im->unique_id}}</td>
+                  <td>{{$im->facility_name}}</td>
+                  <td>{{$im->ownership}}</td>
+                  <td>
+                      <a href="{{route('imaging.show',$im->id)}}">
+                        <button class="btn btn-success btn-sm"  type="button">View</button>
+                      </a>
+                      <a href="{{route('imaging.edit',$im->id)}}">
+                        <button class="btn btn-warning btn-sm"  type="button" >Edit</button>
+                      </a>
+                  </td>
               </tr>
               @endforeach
               
@@ -56,6 +52,33 @@ Radiological Premises
           </table>
       
         </div>
+        <div class="box-footer">
+            <div class="row">
+              
+                  @php
+                    $perpage = $imagings->perpage();
+                    $currentpage = $imagings->currentpage();
+                    $from = ($currentpage-1)*$perpage+1;
+                    
+                    if ($imagings->currentpage() == $imagings->lastpage()) {
+                      $to = $imagings->total();
+                    } else {
+                      $to = $currentpage*$perpage;
+                    }
+                  @endphp
+             
+                  <div class="col-md-4">
+                      Showing {{$from}} to {{$to}} of {{$imagings->total()}} entries
+                     
+                  </div>
+                  <div class="col-md-8">
+                      <div class="pull-right">
+                          {{$imagings->links()}}                  
+                      </div>
+                  </div>
+  
+            </div>
+          </div>
         <!-- /.box-body -->
       </div>
       <!-- /.box -->
@@ -65,11 +88,7 @@ Radiological Premises
 @push("bk_script")
 <script>
   $(document).ready( function () {
-    $('#table1').DataTable( {
-      "paging":   true,
-      "ordering": true,
-      "info":     true
-    } );
+
   } );
 </script>
 @endpush

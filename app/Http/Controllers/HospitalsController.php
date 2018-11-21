@@ -277,7 +277,6 @@ class HospitalsController extends Controller
 
     public function search(Request $request)
     {
-        
         $state_id = $request->state_id;
         $lga_id = $request->lga_id;
         $facility_name = $request->facility_name;

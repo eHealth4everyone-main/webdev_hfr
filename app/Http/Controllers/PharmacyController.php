@@ -3,88 +3,43 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Pharma;
-use App\Signature;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
+
+use App\Pharmacie;
 
 
-class PharmaController extends Controller
+class PharmacyController extends Controller
 {
-     public function index()
+    public function index()
     {
-        $pharmas =DB::table('pharmacies')->get();
-        return view('pharma.index', compact("pharmas"));
+        $pharmacies = DB::table('pharmacy_details')
+            ->select('state','lga','ward','unique_id','facility_name','ownership','id')
+            ->orderByRaw('state','lga','facility_name')
+            ->paginate(15);
+        
+        //get state list
+        $lst_states = Cache::remember('lst_states', 60, function () {
+        return DB::table('ou_states')
+                ->select('id','name')
+                ->orderByRaw('name ASC')
+                ->get();
+        });
+        return view('pharmacy.index', compact('pharmacies','lst_states'));
     }
-    public function public_index()
-    {
-        $pharmas =DB::table('pharmacies')->get();
-        return view('public.pharmacyList', compact("pharmas"));
-    }
-
 
     public function create()
     {
-        return view('pharma.create');        
+        return view('pharmacy.create');        
     }
 
  
     public function store(Request $request)
     {
-        $rules = [
-            'sig_unique_id'=>'unique',
-            'cac_reg'=>'nullable',
-            'comm_date'=>'nullable|date',
-            'reg_fac_name'=>'required',
-            'alt_facility_name'=>'nullable',
-            'state'=>'required',
-            'lga'=>'required',
-            'ward'=>'nullable',
-            'house_no'=>'nullable',
-            'street_name'=>'nullable',
-            'longitude'=>'nullable',
-            'latitude'=>'nullable',
-            'postal_address'=>'nullable',
-            'phone_number'=>'nullable',
-            'email_address'=>'nullable|email',
-            'website'=>'nullable',
-            'operational_days'=>'nullable',
-            'hr_operation'=>'nullable',
-            'operational_hours'=>'nullable',
-            'hs_ownership'=>'required',
-            'hs_op_status'=>'required',
-            'standalone'=>'required',
-            'ph_num_pharmacist'=>'numeric',
-            'ph_num_pharm_tech'=>'numeric'
-        ];
-        $customMessages = [
-            'reg_fac_name.required' => 'The Facility name field is required',
-            'state.required' => 'The State field is required',
-            'lga.required' => 'The LGA field is required',
-            'hs_ownership.required' => 'The Ownership field is required',
-            'hs_op_status.required' => 'The Operation status field is required',
-            'standalone.required' => 'The Institution/Stand Alone field is required',
-            
-            'ph_num_pharm_tech.numeric' => 'The Number of Technicians field must be a number.',
-            'ph_num_pharmacist.numeric' => 'The Number of Pharmacists field must be a number.'
-        ];
-        
+      
         $this->validate($request, $rules, $customMessages);
         
-        $sign = new Signature;
-        $ph = new Pharma;
-        
-        $max = $sign::where('id','>', 1)->max('id');
-        $ids = $max + 1; //auto increment id
-
-        $num_of_fac = $sign::where('state',$request->state)
-        ->where('lga',$request->lga)
-        ->count();
-        $num_of_fac = $num_of_fac + 1; //get serial number of the next HF in LGA
-        
-        $UniqueID = $sign->makeID($request->state,$request->lga,"2",$request->hs_level,$request->hs_ownership,$num_of_fac);
-        
-        $regdate = date('Y-m-d', strtotime(str_replace('-', '/', $request->comm_date)));
-        
+     
         $opdays = $sign->arrayValuesTostring($request->operational_days);      
         
         $sign->id=$ids;
@@ -156,44 +111,7 @@ class PharmaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $rules = [
-            'sig_unique_id'=>'unique',
-            'cac_reg'=>'nullable',
-            'comm_date'=>'nullable|date',
-            'reg_fac_name'=>'required',
-            'alt_facility_name'=>'nullable',
-            'state'=>'required',
-            'lga'=>'required',
-            'ward'=>'nullable',
-            'house_no'=>'nullable',
-            'street_name'=>'nullable',
-            'longitude'=>'nullable',
-            'latitude'=>'nullable',
-            'postal_address'=>'nullable',
-            'phone_number'=>'nullable',
-            'email_address'=>'nullable|email',
-            'website'=>'nullable',
-            'operational_days'=>'nullable',
-            'hr_operation'=>'nullable',
-            'operational_hours'=>'nullable',
-            'hs_ownership'=>'required',
-            'hs_op_status'=>'required',
-            'standalone'=>'required',
-            'ph_num_pharmacist'=>'numeric',
-            'ph_num_pharm_tech'=>'numeric'
-        ];
-        $customMessages = [
-            'reg_fac_name.required' => 'The Facility name field is required',
-            'state.required' => 'The State field is required',
-            'lga.required' => 'The LGA field is required',
-            'hs_ownership.required' => 'The Ownership field is required',
-            'hs_op_status.required' => 'The Operation status field is required',
-            'standalone.required' => 'The Institution/Stand Alone field is required',
-            
-            'ph_num_pharm_tech.numeric' => 'The Number of Technicians field must be a number.',
-            'ph_num_pharmacist.numeric' => 'The Number of Pharmacists field must be a number.'
-        ];
-        
+    
         $this->validate($request, $rules, $customMessages);
         
         $sign = new Signature;

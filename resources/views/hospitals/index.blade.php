@@ -1,7 +1,6 @@
 @extends("layouts.master")
 
 
-
 @section('content-title')
 Hospitals and Clinics
 
@@ -51,16 +50,16 @@ Hospitals and Clinics
           
           <table id="table1" class="table table-bordered table-striped">
             <thead>
-              <tr>
-                <th>State</th>
-                <th>LGA</th>
-                <th>Ward</th>
-                <th>Unique ID</th>
-                <th>Facility Name</th>
-                <th>Facility Level</th>
-                <th>Ownership</th>
-                <th>Actions</th>
-              </tr>
+                <tr>
+                  <th>State</th>
+                  <th>LGA</th>
+                  <th>Ward</th>
+                  <th>Unique ID</th>
+                  <th>Facility Name</th>
+                  <th>Facility Level</th>
+                  <th>Ownership</th>
+                  <th>Actions</th>
+                </tr>
             </thead>
             <tbody>
            

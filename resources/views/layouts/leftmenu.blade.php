@@ -39,32 +39,32 @@
                     </a>
                 </li>
                 <li> 
-                    <a href="/pharma">
+                <a href="{{route('pharmacies.index')}}">
                         <i class="fa fa-medkit"></i>
                         <span>Pharmaceutical Premises</span>
                     </a>
                 </li>
                 <li> 
-                    <a href="/lab">
+                <a href="{{route('laboratory.index')}}">
                         <i class="fa fa-stethoscope"></i>
                         <span>Laboratory Premises</span>
                     </a>
                 </li>
                 <li> 
-                    <a href="/imaging">
+                    <a href="{{route('imaging.index')}}">
                         <i class="fa fa-hospital-o"></i>
                         <span>Radiological Premises</span>
                     </a>
                 </li>
 
                 <li> 
-                    <a href="/messages">
+                    <a href="{{route('messages')}}">
                         <i class="fa  fa-comments"></i>
                         <span>Messages</span>
                     </a>
                 </li>
                 <li> 
-                    <a href="/download/list">
+                    <a href="{{route('downloadList')}}">
                         <i class="fa  fa-download"></i>
                         <span>Downloads</span>
                     </a>
@@ -79,8 +79,8 @@
                         </span>
                     </a>
                     <ul class="treeview-menu">
-                            <li><a href="/roles"><i class="fa fa-user-secret"></i>Roles</a></li>
-                            <li><a href="/users"><i class="fa fa-user"></i>Users</a></li>
+                            <li><a href="{{route('roles.index')}}"><i class="fa fa-user-secret"></i>Roles</a></li>
+                            <li><a href="{{route('users.index')}}"><i class="fa fa-user"></i>Users</a></li>
                     </ul>
                 </li>
                 <li> 

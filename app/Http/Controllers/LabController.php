@@ -3,17 +3,28 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Lab;
-use App\Signature;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 class LabController extends Controller
 {
 
     public function index()
     {
-        $labs =DB::table('laboratory')->get();
-        return view('lab.index', compact("labs"));
+        $labs = DB::table('laboratory_details')
+            ->select('state','lga','ward','unique_id','facility_name','facility_level','ownership','id')
+            ->orderByRaw('state','lga','facility_name')
+            ->paginate(15);
+        //get state list
+        
+        $lst_states = Cache::remember('lst_states', 60, function () {
+        return DB::table('ou_states')
+                ->select('id','name')
+                ->orderByRaw('name ASC')
+                ->get();
+        });
+
+        return view('laboratory.index', compact("labs"));
     }
     public function public_index()
     {

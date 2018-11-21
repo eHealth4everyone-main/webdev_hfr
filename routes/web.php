@@ -46,19 +46,19 @@ Route::middleware(["auth"])->group(function(){
     Route::get('/equipments','EquipmentController@index');
 
     //roles
-    Route::get('/roles', 'RoleController@index');
-    Route::post('/roles/add', 'RoleController@store')->name('addrole');
-    Route::post('/roles/update', 'RoleController@update')->name('updaterole');
+    Route::get('admin/roles', 'RoleController@index')->name('roles.index');
+    Route::post('admin/roles/add', 'RoleController@store')->name('addrole');
+    Route::post('admin/roles/update', 'RoleController@update')->name('updaterole');
 
     //users
-    Route::get('/users', 'UserController@index')->name('users');
-    Route::get('/users/register', 'UserController@create');
-    Route::post('/users/register', 'UserController@store')->name("registeruser");
-    Route::post('/users/update', 'UserController@update')->name("updateuser");
-    Route::put('/users/del', 'UserController@deactivate')->name("delUser");
-    Route::post('/changePassword','UserController@changePassword')->name('changePassword');
-    Route::get('/profile','UserController@profile')->name('profile');
-    Route::post('/profile/update', 'UserController@updateProfile')->name("updateProfile");
+    Route::get('admin/users', 'UserController@index')->name('users.index');
+    Route::get('admin/users/register', 'UserController@create');
+    Route::post('admin/users/register', 'UserController@store')->name("registeruser");
+    Route::post('admin/users/update', 'UserController@update')->name("updateuser");
+    Route::put('admin/users/del', 'UserController@deactivate')->name("delUser");
+    Route::post('admin/changePassword','UserController@changePassword')->name('changePassword');
+    Route::get('admin/profile','UserController@profile')->name('profile');
+    Route::post('admin/profile/update', 'UserController@updateProfile')->name("updateProfile");
 
     //hospitals
     Route::resource('admin/hospitals','HospitalsController');
@@ -75,7 +75,7 @@ Route::middleware(["auth"])->group(function(){
    
    
     //laboratory
-    Route::resource('lab','LabController');
+    Route::resource('admin/laboratory','LabController');
     Route::post('/lab/equips', 'LabController@fetchEquips')->name('lab.fetchEquips');
     Route::post('/lab/cert', 'LabController@fetchCert')->name('lab.fetchCert');
 
@@ -87,16 +87,16 @@ Route::middleware(["auth"])->group(function(){
     Route::get('/states','StateController@index');
 
     //wards
-    Route::get('/wards','WardController@index');
-    Route::get('/wards/listwards','WardController@listWards')->name('wards.listwards');
+    Route::get('admin/wards','WardController@index');
+    Route::get('admin/wards/listwards','WardController@listWards')->name('wards.listwards');
 
     //Pharmacy
-    Route::resource('pharma','PharmaController');
+    Route::resource('admin/pharmacies','PharmacyController');
 
     //Imaging and Radiology premises
-    Route::resource('iservice','ImagingServiceController');
-    Route::resource('imaging','ImagingController');
-    Route::post('/imaging/services', 'ImagingController@fetchServices')->name('imaging.fetchServices');
+    Route::resource('admmin/imaging/service','ImagingServiceController');
+    Route::resource('admin/imaging','ImagingController');
+    Route::post('/admin/imaging/services', 'ImagingController@fetchServices')->name('imaging.fetchServices');
     
 
     //resources
@@ -107,10 +107,10 @@ Route::middleware(["auth"])->group(function(){
     Route::get('/resources/download/{file}', 'ResourceController@download')->name('downloadFile');
 
     //messages
-    Route::get('/messages', 'ContactController@index')->name('messages');
+    Route::get('admin/messages', 'ContactController@index')->name('messages');
 
     //download
-    Route::get('/download/list', 'DownloadController@adminIndex')->name('downloadList');
+    Route::get('admin/download/list', 'DownloadController@adminIndex')->name('downloadList');
 
 });
 
