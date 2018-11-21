@@ -249,11 +249,18 @@
                         </div>
                         <div class="row">
                             <label for="hs_no_env_health_officer" class="col-sm-3 " style="text-align: right;">Environmental Health Officers:</label>
-                            <div class="col-sm-3">
+                            <div class="col-sm-9">
                                 {{$hosp[0]->env_health_officers}}
                             </div>
                         </div>
-                        
+                        <div class="row">
+                                <label for="hs_no_env_health_officer" class="col-sm-3 " style="text-align: right;">Services Offered:</label>
+                                <div class="col-sm-9">
+                                        @foreach($services as $s)
+                                            <small class="label label-default">{{$s->name}}</small>
+                                        @endforeach
+                                </div>
+                        </div>
                     </div>
                 </div>
             </div>

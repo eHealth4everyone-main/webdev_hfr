@@ -6,18 +6,19 @@
     <title>Nigeria Health Facility Registry</title>
 
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
-    <link rel="stylesheet" href="{{ asset("dist/css/font-awesome/css/font-awesome.min.css")}}" >
-    <link rel="stylesheet" href="{{ asset("dist/css/ionicons/css/ionicons.min.css")}}">
-    <link rel="stylesheet" href="{{ asset("dist/css/AdminLTE.min.css")}}">
-    <link rel="stylesheet" href="{{ asset("dist/css/bootstrap-datepicker.min.css")}}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="{{ asset("dist/css/font-awesome/css/font-awesome.min.css")}}" />
+    <link rel="stylesheet" href="{{ asset("dist/css/ionicons/css/ionicons.min.css")}}"/>
+    <link rel="stylesheet" href="{{ asset("dist/css/AdminLTE.min.css")}}"/>
+    <link rel="stylesheet" href="{{ asset("dist/css/bootstrap-datepicker.min.css")}}"/>
     <!-- Select2 -->
-    <link rel="stylesheet" href="{{asset("/dist/css/select2.min.css")}}">
-    <link rel="stylesheet"   href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css">
-    <link rel="stylesheet" href="{{asset("dist/multiselect-master/css/bootstrap-multiselect.css")}}" type="text/css"/>
-    
-    <link rel="stylesheet" href="{{ asset("dist/css/skins/skin-green.min.css")}}">
+    <link rel="stylesheet" href="{{asset("/dist/css/select2.min.css")}}"/>
+    <link rel="stylesheet"   href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css"/>
+    <link rel="stylesheet" href="{{ asset("dist/multiselect-master/css/bootstrap-multiselect.css")}}" type="text/css"/>
+    <link rel="stylesheet" href="{{ asset("dist/css/skins/skin-green.min.css")}}"/>
+    {{-- <link rel="stylesheet" href="{{ asset("dist/MultiSelect/jquery.multiselect.css")}}"/> --}}
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+
     @yield("bk_css")
 </head>
         <body class="hold-transition skin-green sidebar-mini">
@@ -142,12 +143,15 @@
        
         <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-        <script src="{{ asset("dist/js/adminlte.min.js")}}"></script>
+        <script src="{{asset("dist/js/adminlte.min.js")}}"></script>
         <script src="{{asset("dist/js/bootstrap-datepicker.min.js")}}"></script>
         <script src="{{asset("dist/js/select2.full.min.js")}}"></script>
         <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
         <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script>
+       
         <script type="text/javascript" src="{{asset("dist/multiselect-master/js/bootstrap-multiselect.js")}}"></script>
+        {{-- <script type="text/javascript" src="{{asset("dist/MultiSelect/jquery.multiselect.js")}}"></script> --}}
+
         
         <script>
             $(document).ready(function () {
@@ -163,8 +167,6 @@
                     autoclose: true
                 })                                                   
             })
-
-
        
         </script>
         

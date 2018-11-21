@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 
 use App\hs_hospital;
+use App\hs_hospital_service;
 
 class HospitalsController extends Controller
 {
@@ -146,16 +147,19 @@ class HospitalsController extends Controller
         $hosp = DB::table('hospital_details')
         ->where('id',$id)
         ->get();
-     
-        return view('hospitals.show', compact("hosp"));   
+
+        $services = DB::select("SELECT s.name FROM lst_hosp_services s JOIN hs_hospital_services h on h.service_id = s.id
+                where h. hospital_id='".$id."'");
+      
+        return view('hospitals.show', compact("hosp",'services'));   
     }
     
     
     public function edit($id)
     {
-        $hosp =hs_hospital::findorfail($id);
-        //get state list
-        $lst_states = Cache::remember('lst_states', 60, function () {
+            $hosp =hs_hospital::findorfail($id);
+            //get state list
+            $lst_states = Cache::remember('lst_states', 60, function () {
             return DB::table('ou_states')
                     ->select('id','name')
                     ->orderByRaw('name ASC')
@@ -302,6 +306,49 @@ class HospitalsController extends Controller
         });
       
         return view('hospitals.index',compact('facilities','lst_states','state_id','facility_name'));       
+    }
+
+    public function services($id)
+    {
+        $hosp = DB::table('hospital_details')
+                ->select('unique_id','facility_name','id')
+                ->where('id',$id)
+                ->get();
+        
+        $categories = DB::select("select id,description category from lst_hosp_service_category");
+              
+        $hs_services = DB::select("SELECT id,service_category_id category_id,name service FROM lst_hosp_services");
+
+        $data = DB::select("select service_id id from hs_hospital_services where hospital_id='".$id."'");
+       
+        $available_services = [];
+        foreach ($data as $d) {
+            $available_services[] = $d->id;
+        }
+      
+        //dd($available_services);
+            
+        return view('hospitals.services',compact('hosp','hs_services','categories','available_services'));   
+    }
+
+    public function StoreServices(Request $request)
+    {
+        $data = $request->services;
+        //dd($data);
+
+        //delete existing records
+        $deleted = DB::delete("delete from hs_hospital_services where hospital_id ='".$request->hospital_id."' and id > 0");
+
+        foreach ($data as $id) {
+            $hosp_services = new hs_hospital_service;
+
+            $hosp_services->service_id = $id;
+            $hosp_services->hospital_id = $request->hospital_id; 
+            $hosp_services->save();
+        }
+       
+        session()->flash("alert-success", "Services added Successfully!");
+        return redirect()->back();
     }
 
 }

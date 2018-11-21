@@ -1,8 +1,6 @@
 @extends("layouts.master")
 
-@section('bk_css')
 
-@endsection
 
 @section('content-title')
 Hospitals and Clinics
@@ -81,6 +79,9 @@ Hospitals and Clinics
                           </a>
                           <a href="{{route('hospitals.edit',$fac->id)}}">
                             <button class="btn btn-warning btn-sm"  type="button" > Edit</button>
+                          </a>
+                          <a href="{{route('hospitals.services',$fac->id)}}">
+                              <button class="btn btn-primary btn-sm"  type="button" > Services</button>
                           </a>
                         </td>
                   </tr>

@@ -36,7 +36,7 @@
                                     <div class="input-group-addon">
                                         <i class="fa fa-calendar"></i>
                                     </div>
-                                <input type="text" class="form-control pull-right" id="datepicker" name="start_date" value="{{old('start_date')}}">
+                                    <input type="text" class="form-control pull-right" id="datepicker" name="start_date" value="{{old('start_date')}}">
                                 </div>
                             </div>
                         </div>
@@ -44,7 +44,7 @@
                         <div class="form-group">
                             <label for="reg_fac_name" class="col-sm-2 control-label">Registered Name: <font color="red">*</font> </label>
                             <div class="col-sm-4">
-                            <input type="text" class="form-control"  id="facility_name"  name="facility_name" value="{{old('facility_name')}}" placeholder="Registered Facility Name" required>
+                                <input type="text" class="form-control"  id="facility_name"  name="facility_name" value="{{old('facility_name')}}" placeholder="Registered Facility Name" required>
                             </div>
                             
                             <label for="alt_facility_name" class="col-sm-2 control-label">Alternate Name:</label> 
@@ -60,9 +60,9 @@
                                     <option value="">--Select State--</option>
                                     
                                     @foreach($lst_states as $st)
-                                        <option value="{{$st->id}}">{{$st->name}}</option>
+                                    <option value="{{$st->id}}">{{$st->name}}</option>
                                     @endforeach
-                           
+                                    
                                 </select>
                             </div>
                             
@@ -156,9 +156,9 @@
                         <div class="col-sm-4">
                             <select class="form-control select2" id="facility_level_id"  name="facility_level_id" style="width: 100%;" required>
                                 <option value="">--Select Level of Care--</option>
-                                 @foreach($lst_level_of_care as $st)
-                                    <option value="{{$st->id}}">{{$st->name}}</option>
-                                 @endforeach
+                                @foreach($lst_level_of_care as $st)
+                                <option value="{{$st->id}}">{{$st->name}}</option>
+                                @endforeach
                             </select>
                         </div>
                         <label id="level_option_label" class="col-sm-2 control-label" style="display:none">Facility Level Options:</label>
@@ -172,7 +172,7 @@
                         <label class="col-sm-2 control-label">Specialized Options:</label>
                         <div class="col-sm-4">
                             <select class="form-control select2" id="facility_level_options_category_id" name="facility_level_options_category_id" style="width: 100%;">
-                           
+                                
                             </select>
                         </div>
                     </div>
@@ -181,10 +181,10 @@
                         <label class="col-sm-2 control-label">Ownership:<font color="red">*</font> </label></label>
                         <div class="col-sm-4">
                             <select class="form-control select2" id="ownership_id"  name="ownership_id" style="width: 100%;" required>
-                                    <option value="">--Select Ownership--</option>
-                                    @foreach($lst_ownerships as $st)
-                                       <option value="{{$st->id}}">{{$st->name}}</option>
-                                    @endforeach
+                                <option value="">--Select Ownership--</option>
+                                @foreach($lst_ownerships as $st)
+                                <option value="{{$st->id}}">{{$st->name}}</option>
+                                @endforeach
                                 
                             </select>
                         </div>
@@ -199,7 +199,7 @@
                     <div class="form-group">
                         <label for="hs_ownership_details" class="col-sm-2 control-label">Ownership Details:</label>
                         <div class="col-sm-10">
-                        <input type="text" class="form-control"  id="ownership_details" name="ownership_details" value="{{old('ownership_details')}}">
+                            <input type="text" class="form-control"  id="ownership_details" name="ownership_details" value="{{old('ownership_details')}}">
                         </div>
                     </div>
                     
@@ -207,20 +207,20 @@
                         <label class="col-sm-2 control-label">Operation Status:<font color="red">*</font> </label></label>
                         <div class="col-sm-4">
                             <select class="form-control select2" id="operational_status_id" name="operational_status_id" style="width: 100%;" required>
-                                    <option value="">--Select Operation Status--</option>
-                                    @foreach($lst_oparational_status as $st)
-                                       <option value="{{$st->id}}">{{$st->status}}</option>
-                                    @endforeach
+                                <option value="">--Select Operation Status--</option>
+                                @foreach($lst_oparational_status as $st)
+                                <option value="{{$st->id}}">{{$st->status}}</option>
+                                @endforeach
                             </select>
-                           
+                            
                         </div>
                         <label class="col-sm-2 control-label">Regulatory Status:</label>
                         <div class="col-sm-4">
                             <select class="form-control select2" id="regulatory_status_id" name="regulatory_status_id" style="width: 100%;">
-                                    <option value="">--Select Regulatory Status--</option>
-                                    @foreach($lst_regulatory_status as $st)
-                                       <option value="{{$st->id}}">{{$st->status}}</option>
-                                    @endforeach
+                                <option value="">--Select Regulatory Status--</option>
+                                @foreach($lst_regulatory_status as $st)
+                                <option value="{{$st->id}}">{{$st->status}}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -228,10 +228,10 @@
                         <label class="col-sm-2 control-label">License Status:</label>
                         <div class="col-sm-4">
                             <select class="form-control select2" id="license_status_id" name="license_status_id" style="width: 100%;">
-                                    <option value="">--Select License Status--</option>
-                                    @foreach($lst_license_status as $st)
-                                       <option value="{{$st->id}}">{{$st->status}}</option>
-                                    @endforeach
+                                <option value="">--Select License Status--</option>
+                                @foreach($lst_license_status as $st)
+                                <option value="{{$st->id}}">{{$st->status}}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -256,84 +256,84 @@
                 <div class="form-group">
                     <label for="hs_no_doctors" class="col-sm-3 control-label">Medical Doctors:</label>
                     <div class="col-sm-3">
-                    <input type="text" class="form-control input-sm"  id="doctors" name="doctors"  value="{{old('doctors')}}">
+                        <input type="text" class="form-control input-sm"  id="doctors" name="doctors"  value="{{old('doctors')}}">
                     </div>
                     <label for="hs_no_pharm" class="col-sm-3 control-label">Pharmacists:</label>
                     <div class="col-sm-3">
-                    <input type="text" class="form-control input-sm"  id="pharmacists" name="pharmacists" value="{{old('pharmacists')}}">
+                        <input type="text" class="form-control input-sm"  id="pharmacists" name="pharmacists" value="{{old('pharmacists')}}">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="hs_no_dentist" class="col-sm-3 control-label">Dentists:</label>
                     <div class="col-sm-3">
-                    <input type="text" class="form-control input-sm"  id="dentist" name="dentist"  value="{{old('dentist')}}">
+                        <input type="text" class="form-control input-sm"  id="dentist" name="dentist"  value="{{old('dentist')}}">
                     </div>
                     <label for="hs_no_pharm_tech" class="col-sm-3 control-label">Pharmacy Technicians:</label>
                     <div class="col-sm-3">
-                    <input type="text" class="form-control input-sm"  id="pharmacy_technicians" name="pharmacy_technicians" value="{{old('pharmacy_technicians')}}">
+                        <input type="text" class="form-control input-sm"  id="pharmacy_technicians" name="pharmacy_technicians" value="{{old('pharmacy_technicians')}}">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="hs_no_single_qualified_nurses" class="col-sm-3 control-label">Nurses (Single):</label>
                     <div class="col-sm-3">
-                    <input type="text" class="form-control input-sm"  id="nurses" name="nurses"  value="{{old('nurses')}}">
+                        <input type="text" class="form-control input-sm"  id="nurses" name="nurses"  value="{{old('nurses')}}">
                     </div>
                     <label for="hs_no_lab_sc" class="col-sm-3 control-label">Laboratory Scientists:</label>
                     <div class="col-sm-3">
-                    <input type="text" class="form-control input-sm"  id="lab_scientists" name="lab_scientists" value="{{old('lab_scientists')}}">
+                        <input type="text" class="form-control input-sm"  id="lab_scientists" name="lab_scientists" value="{{old('lab_scientists')}}">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="hs_no_single_qualified_midwives" class="col-sm-3 control-label">Midwifes (Single):</label>
                     <div class="col-sm-3">
-                    <input type="text" class="form-control input-sm"  id="midwifes" name="midwifes"  value="{{old('midwifes')}}">
+                        <input type="text" class="form-control input-sm"  id="midwifes" name="midwifes"  value="{{old('midwifes')}}">
                     </div>
                     <label for="hs_no_lab_tech" class="col-sm-3 control-label">Laboratory Technicians:</label>
                     <div class="col-sm-3">
-                    <input type="text" class="form-control input-sm"  id="lab_technicians" name="lab_technicians" value="{{old('lab_technicians')}}">
+                        <input type="text" class="form-control input-sm"  id="lab_technicians" name="lab_technicians" value="{{old('lab_technicians')}}">
                     </div>
                 </div> 
                 
                 <div class="form-group">
                     <label for="hs_nurses_midwives" class="col-sm-3 control-label">Nurse/ Midwife (Double):</label>
                     <div class="col-sm-3">
-                    <input type="text" class="form-control input-sm"  id="nurse_midwife" name="nurse_midwife"  value="{{old('nurse_midwife')}}">
+                        <input type="text" class="form-control input-sm"  id="nurse_midwife" name="nurse_midwife"  value="{{old('nurse_midwife')}}">
                     </div>
                     <label for="hs_no_health_rec" class="col-sm-3 control-label">Health Records/HIM Officers:</label>
                     <div class="col-sm-3">
-                    <input type="text" class="form-control input-sm"  id="him_officers" name="him_officers" value="{{old('him_officers')}}">
+                        <input type="text" class="form-control input-sm"  id="him_officers" name="him_officers" value="{{old('him_officers')}}">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="hs_no_comm_health_officer" class="col-sm-3 control-label">Community Health Officer:</label>
                     <div class="col-sm-3">
-                    <input type="text" class="form-control input-sm"  id="community_health_officer" name="community_health_officer"  value="{{old('community_health_officer')}}">
+                        <input type="text" class="form-control input-sm"  id="community_health_officer" name="community_health_officer"  value="{{old('community_health_officer')}}">
                     </div>
                     <label for="hs_no_comm_health_ext_officer" class="col-sm-3 control-label">Community Health Extension Worker:</label>
                     <div class="col-sm-3">
-                    <input type="text" class="form-control input-sm"  id="community_extension_workers" name="community_extension_workers" value="{{old('community_extension_workers')}}">
+                        <input type="text" class="form-control input-sm"  id="community_extension_workers" name="community_extension_workers" value="{{old('community_extension_workers')}}">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="hs_no_jun_comm_health_ext_off" class="col-sm-3 control-label">Junior Com Health Extension Worker:</label>
                     <div class="col-sm-3">
-                    <input type="text" class="form-control input-sm"  id="jun_community_extension_worker" name="jun_community_extension_worker"  value="{{old('jun_community_extension_worker')}}">
+                        <input type="text" class="form-control input-sm"  id="jun_community_extension_worker" name="jun_community_extension_worker"  value="{{old('jun_community_extension_worker')}}">
                     </div>
                     <label for="hs_no_dental_tech" class="col-sm-3 control-label">Dental Technicians:</label>
                     <div class="col-sm-3">
-                    <input type="text" class="form-control input-sm"  id="dental_technicians" name="dental_technicians" value="{{old('dental_technicians')}}">
+                        <input type="text" class="form-control input-sm"  id="dental_technicians" name="dental_technicians" value="{{old('dental_technicians')}}">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="hs_no_env_health_officer" class="col-sm-3 control-label">Environmental Health Officers:</label>
                     <div class="col-sm-3">
-                    <input type="text" class="form-control input-sm"  id="env_health_officers" name="env_health_officers" value="{{old('env_health_officers')}}">
+                        <input type="text" class="form-control input-sm"  id="env_health_officers" name="env_health_officers" value="{{old('env_health_officers')}}">
                     </div>
                 </div>
             </div>
         </div>
     </div><!-- end here-->
-   
+    
 </div>
 
 <!-- /.box-body -->
@@ -349,83 +349,83 @@
 @endsection 
 
 @push('bk_script')
-    @include('partials.dynamic_state_script')
-    @include('partials.notification')
+@include('partials.dynamic_state_script')
+@include('partials.notification')
+
+<script>
     
-    <script>
-        
-        /* hospital level change */
-        $("#facility_level_id").change(function(){
-            if($(this).val()=="2") //if secondary
-            {    
-                $('#facility_level_option_id option').remove();
-                $('#level_option_label').hide();
-                $('#level_option_div').hide();
-                $('#facility_level_option_category_id option').remove();               
-                $('#specialized_div').hide();
-            }
-            else{ //primary or tertiary
-                $('#facility_level_option_id option').remove();               
-                $('#level_option_div').show();
-                $('#level_option_label').show();
-                $('#specialized_div').hide();
-                $('#facility_level_option_category_id option').remove();               
-               
-
-                var levelID= $('#facility_level_id').val();
-                var _token = $('input[name="_token"]').val();
-                $.ajax({
-                    url:"{{route('getFacilityLevelOption')}}",
-                    method:"POST",
-                    data:{id:levelID, _token:_token},
-                    success:function(result)
-                    {
-                        $('#facility_level_option_id').html(result);
-                    }         
-                })
-            }
-        });
-
-         /* hospital level option change */
-         $("#facility_level_option_id").change(function(){
-            if($(this).val()=="5") //if specialized 
-            {    
-                $('#specialized_div').show();
-
-                var _token = $('input[name="_token"]').val();
-                $.ajax({
-                    url:"{{route('getSpecializedOptions')}}",
-                    method:"POST",
-                    data:{_token:_token},
-                    success:function(result)
-                    {
-                        $('#facility_level_options_category_id').html(result);
-                    }         
-                })
-            }
-            else{ 
-                $('#facility_level_option_category_id option').remove();               
-                $('#specialized_div').hide();              
-            }
-        });
-        
-        //get ownership  type ownership_type_id
-        $("#ownership_id").change(function(){
-            if($(this).val() != "") //if specialized 
-            {    
-                var id= $('#ownership_id').val();
-                var _token = $('input[name="_token"]').val();
-                $.ajax({
-                    url:"{{route('getOwnershipType')}}",
-                    method:"POST",
-                    data:{ownership_id:id,_token:_token},
-                    success:function(result)
-                    {
-                        $('#ownership_type_id').html(result);
-                    }         
-                })            
-            }
-        });
-    </script>
+    /* hospital level change */
+    $("#facility_level_id").change(function(){
+        if($(this).val()=="2") //if secondary
+        {    
+            $('#facility_level_option_id option').remove();
+            $('#level_option_label').hide();
+            $('#level_option_div').hide();
+            $('#facility_level_option_category_id option').remove();               
+            $('#specialized_div').hide();
+        }
+        else{ //primary or tertiary
+            $('#facility_level_option_id option').remove();               
+            $('#level_option_div').show();
+            $('#level_option_label').show();
+            $('#specialized_div').hide();
+            $('#facility_level_option_category_id option').remove();               
+            
+            
+            var levelID= $('#facility_level_id').val();
+            var _token = $('input[name="_token"]').val();
+            $.ajax({
+                url:"{{route('getFacilityLevelOption')}}",
+                method:"POST",
+                data:{id:levelID, _token:_token},
+                success:function(result)
+                {
+                    $('#facility_level_option_id').html(result);
+                }         
+            })
+        }
+    });
+    
+    /* hospital level option change */
+    $("#facility_level_option_id").change(function(){
+        if($(this).val()=="5") //if specialized 
+        {    
+            $('#specialized_div').show();
+            
+            var _token = $('input[name="_token"]').val();
+            $.ajax({
+                url:"{{route('getSpecializedOptions')}}",
+                method:"POST",
+                data:{_token:_token},
+                success:function(result)
+                {
+                    $('#facility_level_options_category_id').html(result);
+                }         
+            })
+        }
+        else{ 
+            $('#facility_level_option_category_id option').remove();               
+            $('#specialized_div').hide();              
+        }
+    });
+    
+    //get ownership  type ownership_type_id
+    $("#ownership_id").change(function(){
+        if($(this).val() != "") //if specialized 
+        {    
+            var id= $('#ownership_id').val();
+            var _token = $('input[name="_token"]').val();
+            $.ajax({
+                url:"{{route('getOwnershipType')}}",
+                method:"POST",
+                data:{ownership_id:id,_token:_token},
+                success:function(result)
+                {
+                    $('#ownership_type_id').html(result);
+                }         
+            })            
+        }
+    });
+</script>
 
 @endpush
