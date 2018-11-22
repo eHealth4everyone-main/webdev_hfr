@@ -27,11 +27,15 @@
                     </div>
                     <div class="single-latest-item">      
                             <div id="ownership" style="min-width: 310px; height: 250px; margin: 0 auto"></div>
-
                     </div>
             </div>
-
-            
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                    <div class="single-latest-item">      
+                            <div id="geo"></div>
+                    </div>
+            </div>
         </div>
     </div>        
     
@@ -113,7 +117,7 @@
                 colorAxis: {
                     min: 0,
                     minColor: '#E6E7E8',
-                    maxColor: '#008000'
+                    maxColor: '#005645'
                 },
                 credits: {
                     enabled: false
@@ -191,7 +195,7 @@
                         colorAxis: {
                             min: 1,
                             minColor: '#E6E7E8',
-                            maxColor: '#418E41'
+                            maxColor: '#005645'
                         },
                         
                         mapNavigation: {
@@ -389,7 +393,53 @@
                     enabled: false
                 },
         });
-
+</script>
+{{-- geocoordinates summary --}}
+<script>
+     Highcharts.chart('geo', {
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Percent of Hospitals and Clinics with Geo Goordinates'
+        },
+        subtitle: {
+            text: ''
+        },
+        xAxis: {
+            type: 'category'
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: ''
+            }
+        },
+        tooltip: {
+            headerFormat: '<span style="font-size:10px">{point.key} State</span><table>',
+            pointFormat: '<tr><td style="color:{series.color};padding:0">Percent: </td>' +
+                '<td style="padding:0"><b>{point.y:.1f} </b></td></tr>',
+            footerFormat: '</table>',
+            shared: true,
+            useHTML: true
+        },
+        plotOptions: {
+            column: {
+                pointPadding: 0.2,
+                borderWidth: 0,
+                dataLabels: {
+                    enabled: false
+                }
+            }
+        },
+        credits: {
+            enabled: false
+        },
+        series: [{
+            name: 'States',
+            data: @json($geo_percent)
+        }]
+    });
 </script>
 
 @endpush

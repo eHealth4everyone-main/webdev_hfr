@@ -10,7 +10,7 @@
         
 		<!-- favicon
 		============================================ -->		
-        <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
+        <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
 		
 		<!-- Google Fonts
 		============================================ -->		
@@ -82,8 +82,8 @@
                         <div class="container">
                                 <div class="row">
                                         <div class="col-lg-7 col-md-6 col-sm-5 hidden-xs">
-                                            <a href=""><img src="/img/logo.png"  width="50" height="50" alt="FMOH"></a>
-                                            <span>    &nbsp;&nbsp; FEDERAL MINISTRY OF HEALTH</span>
+                                            {{-- <a href=""><img src="/img/logo.png"  width="50" height="50" alt="FMOH"></a> --}}
+                                            <span><h4> NIGERIA Health Facility Registry (HFR)</h4></span>
                                          
                                         </div>
                                         <div class="col-lg-5 col-md-6 col-sm-7 col-xs-12">
@@ -104,10 +104,8 @@
                             <div class="row">
                                 <div class="col-md-3 col-sm-12">
                                         <div class="logo">
-                                                {{-- <a href=""><img src="/img/nigeriahfr.png"  width="" height="50" alt="FMOH"></a> --}}
-                                                <h3 style="color:black">Nigeria</h3>
-                                                <h5 style="color:DarkGreen"> Health Facility Registry (HFR)</h5>
-                
+                                                {{-- <a href=""><img src="/img/nigeriahfr.png"  width="" height="50" alt="FMOH"></a> --}}                
+                                                <img src="{{asset('img/new_logo.png')}}"  alt="FMOH">
                                         </div>
                                         
                                 </div>
@@ -175,14 +173,50 @@
                     
                 
                 <!--End of Text Area-->
-              
+                           <!--Footer Widget Area Start-->
+                           <div class="footer-widget-area">
+                                <div class="container">
+                                    <div class="row">
+                                  
+                                        <div class="col-md-8">
+                                            <div class="single-footer-widget">
+                                                <h3>Nigeria HFR PARTNERS</h3>
+                                                <div class="instagram-image">
+                                                       
+                                                        <div class="footer-img">
+                                                            <img src="{{asset('img/nigeria_logo.jpg')}}" height="70" width="70" alt="FMOH">
+                                                        </div>
+                                                        <div class="footer-img">
+                                                                <img src="{{asset('img/usaid.png')}}" height="70" width="70" alt="USAID">
+                                                        </div>
+                                                        <div class="footer-img">
+                                                                <img src="{{asset('img/measure.jpg')}}" height="70" width="70" alt="MEASURE Evaluation">
+                                                        </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 hidden-sm">
+                                                <div class="single-footer-widget">
+                                                    <h3>Useful Links</h3>
+                                                    <ul class="footer-list">
+                                                        <li><a href="http://health.gov.ng/">Federal Ministry of Health</a></li>
+                                                        <li><a href="http://nphcda.gov.ng"> NPHCDA</a></li>
+                                                        <li><a href="https://dhis2nigeria.org.ng">Nigeria DHIS2</a></li>
+                                                        
+                                                    </ul>
+                                                </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                        </div>
               
                 <!--Footer Area Start-->
                 <footer class="footer-area">
                     <div class="container">
                         <div class="row">
                             <div class="col-md-6 col-sm-7">
-                                <span>Copyright &copy; FMOH 2018. All Right Reserved </span>
+                                <span>Copyright &copy; <a href="http://health.gov.ng/">FMOH</a> 2018. All Right Reserved </span>
                             </div>
                             <div class="col-md-4">
                                 

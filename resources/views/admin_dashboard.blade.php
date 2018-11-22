@@ -83,7 +83,7 @@
         },
         yAxis: {
             title: {
-                text: 'Downloads Requests'
+                text: 'Number of feedback'
             }
         },
 

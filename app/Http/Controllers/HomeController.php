@@ -27,8 +27,22 @@ class HomeController extends Controller
         $facilities_ownership_state = Cache::remember('facilities_ownership_home', 30, function () {
             return DB::select("SELECT ownership as name,COUNT(id) AS y FROM hospital_details GROUP BY ownership order by ownership");
         });
+
+        //facilities with geo codes
+        $geo_percent = Cache::remember('percent_facilities_geo', 30, function () {
+            return DB::select("SELECT state as name, cast(SUM(case when latitude <> '' then 1 else 0 end)/count(id)*100 as unsigned) as y
+                    FROM hospital_details group by state");
+         });
+         
+        //  $geo_states=array();
+        //  $geo_percent=array();
+ 
+        //  foreach ($population_index as $indx){
+        //      $geo_states[]=$indx->state;
+        //      $geo_percent[]=(int)$indx->ppf;
+        //  };
        
-        return view('public.home',compact('total_facilities_state','facilities_ownership_state','facilities_level_state'));
+        return view('public.home',compact('total_facilities_state','facilities_ownership_state','facilities_level_state','geo_percent'));
     }
 
 
