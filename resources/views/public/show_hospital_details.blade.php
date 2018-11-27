@@ -256,7 +256,8 @@
                                         @endforeach
                                 </div>
                         </div>
-                       
+                        <div id="gMap" style="height:300px; min-width: 100px; margin: 0 auto" async defer></div>
+
                         <div class="row">
                             <a href="{{route('listhosp')}}">
                                 <button type="button" class="btn btn-success pull-right">Return Back</button>
@@ -266,13 +267,51 @@
 
                 
             </div>
+
         </div> 
+        
     </div>
     
-
 @endsection 
 
 @push('custom_scripts')
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAF8UERyCqSP9JZ_HfvfPH2cM_6-slYd7Q"></script>
 
+<script>
+    jQuery(document).ready(function($) {
+        initMap();
+    });
+    function initMap() {
+        var lati,longi;
+        lati = {{$hosp[0]->latitude}};
+        longi = {{$hosp[0]->longitude}};
+
+       
+        var map = new google.maps.Map(document.getElementById('gMap'), {
+            zoom: 18,
+            center: new google.maps.LatLng(lati, longi),
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        });
+        
+        var infowindow = new google.maps.InfoWindow();
+        var marker;
+    
+        marker = new google.maps.Marker({
+            position: new google.maps.LatLng(lati, longi),
+            map: map
+        });
+        google.maps.event.addListener(marker, 'click', (function(marker) {
+        return function() {
+            infowindow.setContent("{{$hosp[0]->facility_name}}");
+            infowindow.open(map, marker);
+        }
+        })(marker));
+
+    }
+  
+   
+
+ 
+</script>
 
 @endpush
