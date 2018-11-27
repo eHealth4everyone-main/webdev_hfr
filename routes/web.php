@@ -16,6 +16,8 @@ Route::post('/contactus', 'ContactController@store')->name('storecontact');
 Route::get('/facilities/hospitals', 'FacilityListingController@index')->name('listhosp');
 Route::get('/facilities/searchlist', 'FacilityListingController@searchFacilities')->name('searchFacilities');
 Route::get('/facilities/hospitalssearch', 'FacilityListingController@searchHospitals')->name('searchHospitals');
+Route::get('/facilities/details/{id}/{facility_type_id}','FacilityLIstingController@showDetails')->name('facilitydetails');
+
 Route::get('/statistics/tables', 'SummaryTablesController@index')->name('statistics');
 Route::get('/statistics/tables/filter', 'SummaryTablesController@filter')->name('filterStatistics');
 

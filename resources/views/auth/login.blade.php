@@ -17,7 +17,7 @@
   <body class="hold-transition login-page">
     <div class="login-box">
       <div>
-        <img class="img-responsive center-block" src="/img/logo.png" title="Nigeria Health Facility Registry" />
+            <img class="img-responsive center-block" src="{{asset('img/logo_fmoh.png')}}" title="Nigeria Health Facility Registry" />
       </div>
       <div class="login-logo">
         <span class="text-center"><h3>Nigeria Health Facility Registry</h3></span>

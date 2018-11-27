@@ -27,7 +27,7 @@
                 
                 <header class="main-header">
                     <!-- Logo -->
-                    <a href="{{route('home')}}" class="logo">
+                    <a href="{{route('admin_home')}}" class="logo">
                         <!-- mini logo for sidebar mini 50x50 pixels -->
                         <span class="logo-mini"><b>H</b>FR</span>
                         <!-- logo for regular state and mobile devices -->
@@ -47,9 +47,8 @@
                             <ul class="nav navbar-nav">
                                 <!-- Messages: style can be found in dropdown.less-->
                                 <li class="dropdown messages-menu">
-                                        <a href="/messages">
-                                          <i class="fa fa-envelope-o"></i>
-                                          <span class="label label-primary">R</span>
+                                        <a href="{{route('home')}}">
+                                            <img src="{{asset('img/home.png')}}" width="15" height="15" class="user-image" alt="HFR Home">
                                         </a>
                                    
                                 </li>

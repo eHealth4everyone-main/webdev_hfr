@@ -11,7 +11,7 @@
 <div class="latest-area section-padding bg-white">
     <div class="container">
             <div class="box-header">
-            <form class="form-horizontal"  action="{{route("filterStatistics")}}" method="GET">
+                <form class="form-horizontal"  action="{{route("filterStatistics")}}" method="GET">
                             @csrf
                         <div class="form-group">
                                 <div class="col-sm-6">

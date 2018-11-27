@@ -29,15 +29,22 @@
                       <option value="">--Select LGA--</option>
                   </select>
               </div>
-              <div class="col-sm-3">
+              <div class="col-sm-2">
                     <select class="form-control select2" id="facility_type_id" name="facility_type_id">
                             @foreach($lst_facility_types as $ty)
                                 <option value="{{$ty->id}}">{{$ty->name}}</option>
                             @endforeach
                     </select>
                 </div>
+                <div class="col-sm-2">
+                    <select class="form-control select2" id="geo_codes" name="geo_codes">
+                        <option value="0">All Facilities</option>
+                        <option value="1">With Coordinates</option>
+                        <option value="2">Without Coordinates</option>                            
+                    </select>
+                </div>
 
-              <div class="col-sm-4" >
+              <div class="col-sm-3" >
                 <input class="form-control input-sm"type="text" name="facility_name" id="facility_name" class="form-control" placeholder="Facility name">
               </div>
 
@@ -68,32 +75,34 @@
                         @endif
 
                         <th>Ownership</th>
+                        <th>Details</th>
                     </tr>
                     </thead>
                     <tbody>
                 
                         @foreach($facilities as $fac)
-                        <tr>
-                        
-                        <td>{{$fac->state}}</td>
-                        <td>{{$fac->lga}}</td>
-                        <td>{{$fac->ward}}</td>
-                        <td>{{$fac->unique_id}}</td>
-                        <td>{{$fac->facility_name}}</td>
+                            <tr>
+                                <td>{{$fac->state}}</td>
+                                <td>{{$fac->lga}}</td>
+                                <td>{{$fac->ward}}</td>
+                                <td>{{$fac->unique_id}}</td>
+                                <td>{{$fac->facility_name}}</td>
 
-                        @if($facility_type_id == 1 OR $facility_type_id == 3)
-                            <td>{{$fac->facility_level}}</td>
-                        @endif
-                        
-                        <td>{{$fac->ownership}}</td>
-                    
-                        </tr>
+                                @if($facility_type_id == 1 OR $facility_type_id == 3)
+                                    <td>{{$fac->facility_level}}</td>
+                                @endif
+                                
+                                <td>{{$fac->ownership}}</td>
+                                <td>
+                                    <a href="{{route('facilitydetails',['id'=>$fac->id,'facility_type_id'=>$facility_type_id])}}"><button class="btn btn-success btn-xs" type="button">More</button> </a>
+                                </td>
+                            </tr>
                         @endforeach
                         
                     </tbody>
                 </table>
             
-            </div>
+        </div>
         <!-- /.box-body -->
         <div class="box-footer">
             <div class="row">
@@ -132,11 +141,12 @@
 
     <script>
         $(document).ready( function () {
+            $("#geo_codes").val({{$geo_codes}}).change();
             $("#state_id").val({{$state_id}}).change();
             $("#facility_type_id").val({{$facility_type_id}}).change();
             $("#facility_name").val("{{$facility_name}}");
             $("#lga_id").val({{$lga_id}}).change();
-                
+            console.log({{$geo_codes}});
         });
     </script>
 

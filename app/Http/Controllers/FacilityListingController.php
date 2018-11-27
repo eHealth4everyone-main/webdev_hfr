@@ -13,7 +13,7 @@ class FacilityListingController extends Controller
     {
       
         $facilities = DB::table('hospital_details')
-        ->select('state','lga','ward','unique_id','facility_name','facility_level','ownership')
+        ->select('state','lga','ward','unique_id','facility_name','facility_level','ownership','id')
         ->orderByRaw('state','lga','facility_name')
         ->paginate(20);
 
@@ -36,9 +36,10 @@ class FacilityListingController extends Controller
         $lga_id = "";
         $facility_type_id = 1;
         $facility_name = "";
-     
+        $geo_codes = 0;
+
         return view('public.hospitalList',compact("facilities",'lst_states','lst_facility_types',
-        'state_id','lga_id','facility_type_id','facility_name')); 
+        'state_id','lga_id','facility_type_id','facility_name','geo_codes')); 
     }
 
   
@@ -50,6 +51,7 @@ class FacilityListingController extends Controller
         $lga_id = $request->lga_id;
         $facility_type_id = $request->facility_type_id;
         $facility_name = $request->facility_name;
+        $geo_codes = $request->geo_codes;
       
         if ($state_id == 0){
             $state_id2 = "";
@@ -58,13 +60,28 @@ class FacilityListingController extends Controller
             $state_id2 = $state_id;
         }
 
+        if ($geo_codes == 0){
+            $cond = "<>";
+            $value = 'XXX';
+        }
+        if ($geo_codes == 1){
+            $cond = "<>";
+            $value = '';
+        }
+        if ($geo_codes == 2){
+            $cond = "=";
+            $value = '';
+        }
+      
+
         if ($facility_type_id==1){
 
             $facilities = DB::table('hospital_details')
-            ->select('state','lga','ward','unique_id','facility_name','facility_level','ownership')
+            ->select('state','lga','ward','unique_id','facility_name','facility_level','ownership','id')
             ->where('state_id','like','%'.$state_id2.'%')
             ->where('lga_id','like','%'.$lga_id.'%')
             ->Where('facility_name', 'like', '%' .  $facility_name . '%')
+            ->where('latitude',$cond,$value)
             ->orderByRaw('state','lga','facility_name')
             ->paginate(20);
 
@@ -73,16 +90,18 @@ class FacilityListingController extends Controller
                 'lga_id'=>$request->lga_id,
                 'facility_name'=>$request->facility_name,
                 'facility_type_id' => $request->facility_type_id,
+                'geo_codes' => $geo_codes,
             ]);
 
         }
 
         if ($facility_type_id==2){
             $facilities = DB::table('pharmacy_details')
-            ->select('state','lga','ward','unique_id','facility_name','ownership')
+            ->select('state','lga','ward','unique_id','facility_name','ownership','id')
             ->where('state_id','like','%'.$state_id2.'%')
             ->where('lga_id','like','%'.$lga_id.'%')
             ->Where('facility_name', 'like', '%' .  $facility_name . '%')
+            ->where('latitude',$cond,$value)
             ->orderByRaw('state','lga','facility_name')
             ->paginate(20);
 
@@ -91,15 +110,17 @@ class FacilityListingController extends Controller
                 'lga_id'=>$request->lga_id,
                 'facility_name'=>$request->facility_name,
                 'facility_type_id' => $request->facility_type_id,
+                'geo_codes' => $geo_codes,
             ]);
         }
         if ($facility_type_id==3){
 
             $facilities = DB::table('laboratory_details')
-            ->select('state','lga','ward','unique_id','facility_name','facility_level','ownership')
+            ->select('state','lga','ward','unique_id','facility_name','facility_level','ownership','id')
             ->where('state_id','like','%'.$state_id2.'%')
             ->where('lga_id','like','%'.$lga_id.'%')
             ->Where('facility_name', 'like', '%' .  $facility_name . '%')
+            ->where('latitude',$cond,$value)
             ->orderByRaw('state','lga','facility_name')
             ->paginate(20);
 
@@ -108,15 +129,17 @@ class FacilityListingController extends Controller
                 'lga_id'=>$request->lga_id,
                 'facility_name'=>$request->facility_name,
                 'facility_type_id' => $request->facility_type_id,
+                'geo_codes' => $geo_codes,
             ]);
            
         }
         if ($facility_type_id==4){
             $facilities = DB::table('imaging_details')
-            ->select('state','lga','ward','unique_id','facility_name','ownership')
+            ->select('state','lga','ward','unique_id','facility_name','ownership','id')
             ->where('state_id','like','%'.$state_id2.'%')
             ->where('lga_id','like','%'.$lga_id.'%')
             ->Where('facility_name', 'like', '%' .  $facility_name . '%')
+            ->where('latitude',$cond,$value)
             ->orderByRaw('state','lga','facility_name')
             ->paginate(20);
 
@@ -125,6 +148,7 @@ class FacilityListingController extends Controller
                 'lga_id'=>$request->lga_id,
                 'facility_name'=>$request->facility_name,
                 'facility_type_id' => $request->facility_type_id,
+                'geo_codes' => $geo_codes,
             ]);
         }
 
@@ -145,7 +169,7 @@ class FacilityListingController extends Controller
        
       
         return view('public.hospitalList',compact("facilities",'lst_states','lst_facility_types',
-        'state_id','lga_id','facility_type_id','facility_name'));       
+        'state_id','lga_id','facility_type_id','facility_name','geo_codes'));       
     }
 
 
@@ -155,7 +179,7 @@ class FacilityListingController extends Controller
         $facility_name = $request->facility_name;
 
         $facilities = DB::table('hospital_details')
-        ->select('state','lga','unique_id','facility_name','facility_level','ownership')
+        ->select('state','lga','unique_id','facility_name','facility_level','ownership','id')
         ->Where('facility_name', 'like', '%' .  $facility_name . '%')
         ->orderByRaw('state','lga','facility_name')
         ->paginate(20);
@@ -167,6 +191,19 @@ class FacilityListingController extends Controller
         return view('public.hospital_search',compact("facilities"));        
     }
 
-   
+    public function showDetails($id,$facility_type_id)
+    {
+        if($facility_type_id==1){
+            $hosp = DB::table('hospital_details')
+            ->where('id',$id)
+            ->get();
+    
+            $services = DB::select("SELECT s.name FROM lst_hosp_services s JOIN hs_hospital_services h on h.service_id = s.id
+                    where h. hospital_id='".$id."'");
+          
+            return view('public.show_hospital_details', compact("hosp",'services'));  
+        }
+            
+    }
 
 }
