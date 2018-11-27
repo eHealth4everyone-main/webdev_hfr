@@ -15,6 +15,7 @@ class ContactController extends Controller
         $messages = Contactus::paginate(10);
         return view('messages.index', compact("messages"));
     }
+    
     public function store(Request $request)
         {
             $request->validate([

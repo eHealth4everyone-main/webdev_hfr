@@ -1,34 +1,19 @@
 @extends("layouts.master")
 
-@section('content-title')
-<h4> <p class="text-aqua">Add Pharmaceutical Premises</p></h4>
-@endsection
 
 @section("content")
 
-<div class="box">
-    {{-- <div class="box-header with-border">
-        <h4> <p class="text-aqua">New Health Facility</p></h4>
-    </div> --}}
-    <!-- /.box-header -->
-    <!-- form start -->
-    
-</div>
-{{-- ** Erros and messages --}}
- 
-{{-- ***** end of error messages dispay --}}
 
-<form class="form-horizontal" action="/pharma" method="POST">
+<form class="form-horizontal" action="{{route('pharmacies.store')}}" method="POST">
     @csrf
-    
     
     <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
         {{-- Tab One   --}}
-        <div class="panel panel-primary">
+        <div class="panel panel-default">
             <div class="panel-heading" role="tab" id="headingOne">
                 <h4 class="panel-title">
                     <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                        New Pharmaceutical
+                        Pharmaceutical Information
                     </a>
                 </h4>
             </div>
@@ -39,90 +24,64 @@
                         <div class="form-group">
                             <label for="cac_reg" class="col-sm-2 control-label">Registration No:</label>
                             <div class="col-sm-4">
-                                <input type="text" class="form-control"  id="cac_reg" name="cac_reg" value="" placeholder="Corporate Affairs Registration Number">
+                                <input type="text" class="form-control"  id="registration_no" name="registration_no" value="{{old('registration_no')}}" placeholder="Corporate Affairs Registration Number">
                             </div>
                             
                             <label class="col-sm-2 control-label">Commencement Date:</label>
                             <div class="col-sm-4">
-                                <div class="input-group date">
+                                <div class="input-group date" >
                                     <div class="input-group-addon">
                                         <i class="fa fa-calendar"></i>
                                     </div>
-                                    <input type="text" class="form-control pull-right" id="datepicker" name="comm_date">
+                                    <input type="text" class="form-control pull-right" id="datepicker" name="start_date" value="{{old('start_date')}}">
                                 </div>
                             </div>
                         </div>
-                        
+                        <div class="form-group">
+                                <label for="cac_reg" class="col-sm-2 control-label">PCN Registration No:</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control"  id="pharmacists_reg_number" name="pharmacists_reg_number" value="{{old('pharmacists_reg_number')}}" placeholder="Pharmacists Council of Nigeria Reg No">
+                                </div>
+                        </div>
+                            
                         <div class="form-group">
                             <label for="reg_fac_name" class="col-sm-2 control-label">Registered Name: <font color="red">*</font> </label>
                             <div class="col-sm-4">
-                                <input type="text" class="form-control"  id="reg_fac_name"  name="reg_fac_name" value="" placeholder="Registered Facility Name">
+                                <input type="text" class="form-control"  id="facility_name"  name="facility_name" value="{{old('facility_name')}}" placeholder="Registered Facility Name" required>
                             </div>
                             
                             <label for="alt_facility_name" class="col-sm-2 control-label">Alternate Name:</label> 
                             <div class="col-sm-4">
-                                <input type="text" class="form-control"  id="alt_facility_name" name="alt_facility_name" value="" placeholder="Alternate Facility Name">
+                                <input type="text" class="form-control"  id="alt_facility_name" name="alt_facility_name" value="{{old('alt_facility_name')}}" placeholder="Alternate Facility Name">
                             </div>
                         </div>
                         
                         <div class="form-group">
                             <label class="col-sm-2 control-label">State:<font color="red">*</font> </label></label>
                             <div class="col-sm-4">
-                                <select class="form-control select2" id="state" name ="state">
-                                    <option value="">--Choose one--</option>
-                                    <option value='01' > Abia</option>
-                                    <option value='02' > Adamawa</option>
-                                    <option value='03' > Akwa Ibom</option>
-                                    <option value='04' > Anambra</option>
-                                    <option value='05' > Bauchi</option>
-                                    <option value='06' > Bayelsa</option>
-                                    <option value='07' > Benue</option>
-                                    <option value='08' > Borno</option>
-                                    <option value='09' > Cross River</option>
-                                    <option value='10' > Delta</option>
-                                    <option value='11' > Ebonyi</option>
-                                    <option value='12' > Edo</option>
-                                    <option value='13' > Ekiti</option>
-                                    <option value='14' > Enugu</option>
-                                    <option value='37' > FCT</option>
-                                    <option value='15' > Gombe</option>
-                                    <option value='16' > Imo</option>
-                                    <option value='17' > Jigawa</option>
-                                    <option value='18' > Kaduna</option>
-                                    <option value='19' > Kano</option>
-                                    <option value='20' > Katsina</option>
-                                    <option value='21' > Kebbi</option>
-                                    <option value='22' > Kogi</option>
-                                    <option value='23' > Kwara</option>
-                                    <option value='24' > Lagos</option>
-                                    <option value='25' > Nasarawa</option>
-                                    <option value='26' > Niger</option>
-                                    <option value='27' > Ogun</option>
-                                    <option value='28' > Ondo</option>
-                                    <option value='29' > Osun</option>
-                                    <option value='30' > Oyo</option>
-                                    <option value='31' > Plateau</option>
-                                    <option value='32' > Rivers</option>
-                                    <option value='33' > Sokoto</option>
-                                    <option value='34' > Taraba</option>
-                                    <option value='35' > Yobe</option>
-                                    <option value='36' > Zamfara</option>
+                                <select class="form-control select2 dynamic" id="state_id" name ="state_id" data-dependent="lga_id" required>
+                                    <option value="">--Select State--</option>
+                                    
+                                    @foreach($lst_states as $st)
+                                    <option value="{{$st->id}}">{{$st->name}}</option>
+                                    @endforeach
+                                    
                                 </select>
                             </div>
                             
                             <label class="col-sm-2 control-label">LGA:<font color="red">*</font> </label></label>
                             <div class="col-sm-4">
-                                <select class="form-control select2" id="lga" name="lga">
-                                    <option value="">--Select LGA--</option>
+                                <select class="form-control select2 dynamic" id="lga_id" name="lga_id" data-dependent="ward_id" required>
+                                    
                                 </select>
                             </div>
                             
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Ward:</label>
+                            <label class="col-sm-2 control-label">Ward:<font color="red">*</font> </label>
                             <div class="col-sm-10">
-                                <select class="form-control select2" id="ward" name="ward" style="width: 100%;">
-                                    <option value="">--Select Ward--</option>
+                                <select class="form-control select2" id="ward_id" name="ward_id" style="width: 100%;" required>
+                                    
                                 </select>
                             </div>
                         </div>
@@ -130,46 +89,46 @@
                         <div class="form-group">
                             <label for="house_no" class="col-sm-2 control-label">House Number:</label>
                             <div class="col-sm-4">
-                                <input type="text" class="form-control"  id="house_no" name="house_no" value="">
+                                <input type="text" class="form-control"  id="house_no" name="house_no" value="{{old('house_no')}}">
                             </div>
                             
                             <label for="street_name" class="col-sm-2 control-label">Street Name:</label>
                             <div class="col-sm-4">
-                                <input type="text" class="form-control"  id="street_name"  name="street_name" value="">
+                                <input type="text" class="form-control"  id="street_name"  name="street_name" value="{{old('street_name')}}">
                             </div>
                         </div>
                         
                         <div class="form-group">
                             <label for="latitude" class="col-sm-2 control-label">Latitude:</label>
                             <div class="col-sm-4">
-                                <input type="text" class="form-control"  id="latitude" name="latitude"  value="">
+                                <input type="text" class="form-control"  id="latitude" name="latitude"  value="{{old('latitude')}}">
                             </div>
                             
                             <label for="longitude" class="col-sm-2 control-label">Longitude:</label>
                             <div class="col-sm-4">
-                                <input type="text" class="form-control"  id="longitude" name="longitude" value="">
+                                <input type="text" class="form-control"  id="longitude" name="longitude" value="{{old('longitude')}}">
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="postal_address" class="col-sm-2 control-label">Postal Address:</label>
                             <div class="col-sm-4">
-                                <input type="text" class="form-control"  id="postal_address"  name="postal_address" value="">
+                                <input type="text" class="form-control"  id="postal_address"  name="postal_address" value="{{old('postal_address')}}">
                             </div>
                             
                             <label for="phone_number" class="col-sm-2 control-label">Phone Number:</label>
                             <div class="col-sm-4">
-                                <input type="text" class="form-control"  id="phone_number" name="phone_number"  value="">
+                                <input type="text" class="form-control"  id="phone_number" name="phone_number"  value="{{old('phone_number')}}">
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="email_address" class="col-sm-2 control-label">Email Address:</label>
                             <div class="col-sm-4">
-                                <input type="text" class="form-control"  id="email_address" name="email_address" value="">
+                                <input type="text" class="form-control"  id="email_address" name="email_address" value="{{old('email_address')}}">
                             </div>
                             
                             <label for="website" class="col-sm-2 control-label">Website:</label>
                             <div class="col-sm-4">
-                                <input type="text" class="form-control"  id="website" name="website" value="">
+                                <input type="text" class="form-control"  id="website" name="website" value="{{old('website')}}">
                             </div>
                         </div>
                         
@@ -192,31 +151,25 @@
                     <div class="form-group">
                         <label class="col-sm-2 control-label">Hours of Operation:</label>
                         <div class="col-sm-4">
-                            <select class="form-control select2" id="hr_operation" name="hr_operation" style="width: 100%;">
-                                <option value="">--Choose one--</option>
-                                <option value="24 hours">24 hours</option>
-                                <option value="Period Range">Period Range</option>
-                            </select>
-                        </div>
-                        <label class="col-sm-2 control-label">Period range:</label>
-                        <div class="col-sm-4">
-                            <input type="text" class="form-control"  id="operational_hours" name="operational_hours" value="" placeholder="08:00AM-06:00PM" disabled>
+                            <input type="text" class="form-control"  id="operational_hours" name="operational_hours" value="" placeholder="24hrs / 08:00AM-06:00PM" >
                         </div>
                     </div>
                     
                     <div class="form-group">
                         <label class="col-sm-2 control-label">Ownership:<font color="red">*</font> </label></label>
                         <div class="col-sm-4">
-                            <select class="form-control select2" id="hs_ownership"  name="hs_ownership" style="width: 100%;">
-                                <option value="">--Choose one--</option>
-                                <option value="1">Public</option>
-                                <option value="2">Private</option>
+                            <select class="form-control select2" id="ownership_id"  name="ownership_id" style="width: 100%;" required>
+                                <option value="">--Select Ownership--</option>
+                                @foreach($lst_ownerships as $st)
+                                <option value="{{$st->id}}">{{$st->name}}</option>
+                                @endforeach
+                                
                             </select>
                         </div>
-                        <label class="col-sm-2 control-label">Ownership Type:</label>
+                        <label class="col-sm-2 control-label">Ownership Type:<font color="red">*</font></label>
                         <div class="col-sm-4">
-                            <select class="form-control select2" id="hs_ownership_type" name="hs_ownership_type" style="width: 100%;">
-                                <option value="">--Choose one--</option>
+                            <select class="form-control select2" id="ownership_type_id" name="ownership_type_id" style="width: 100%;" required>
+                                
                             </select>
                         </div>
                     </div>
@@ -224,100 +177,86 @@
                     <div class="form-group">
                         <label for="hs_ownership_details" class="col-sm-2 control-label">Ownership Details:</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control"  id="hs_ownership_details" name="hs_ownership_details" value="">
+                            <input type="text" class="form-control"  id="ownership_details" name="ownership_details" value="{{old('ownership_details')}}">
                         </div>
                     </div>
                     
                     <div class="form-group">
                         <label class="col-sm-2 control-label">Operation Status:<font color="red">*</font> </label></label>
                         <div class="col-sm-4">
-                            <select class="form-control select2" id="hs_op_status" name="hs_op_status" style="width: 100%;">
-                                <option value="">--Choose one--</option>
-                                <option value="1">Operational</option>
-                                <option value="2">Pending Operation - Under construction</option>
-                                <option value="3">Pending Operation - Construction complete</option>
-                                <option value="4">Closed (Temporary)</option>
-                                <option value="5">Closed (Permanent)</option>
-                                <option value="6">Unknown</option>
+                            <select class="form-control select2" id="operational_status_id" name="operational_status_id" style="width: 100%;" required>
+                                <option value="">--Select Operation Status--</option>
+                                @foreach($lst_oparational_status as $st)
+                                <option value="{{$st->id}}">{{$st->status}}</option>
+                                @endforeach
                             </select>
+                            
                         </div>
                         <label class="col-sm-2 control-label">Regulatory Status:</label>
                         <div class="col-sm-4">
-                            <select class="form-control select2" id="hs_reg_status" name="hs_reg_status" style="width: 100%;">
-                                <option value="">--Choose one--</option>
-                                <option value="1">Provisionally Registered</option>
-                                <option value="2">Registered</option>
-                                <option value="3">Registration Suspended</option>
-                                <option value="4">Registration Cancelled</option>
-                                <option value="5">Unknown</option>
+                            <select class="form-control select2" id="regulatory_status_id" name="regulatory_status_id" style="width: 100%;">
+                                <option value="">--Select Regulatory Status--</option>
+                                @foreach($lst_regulatory_status as $st)
+                                <option value="{{$st->id}}">{{$st->status}}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-2 control-label">License Status:</label>
                         <div class="col-sm-4">
-                            <select class="form-control select2" id="hs_lic_status" name="hs_lic_status" style="width: 100%;">
-                                <option value="">--Choose one--</option>
-                                <option value="1">Licensed</option>
-                                <option value="2">Not Licensed</option>
-                                <option value="3">Unknown</option>
-                            </select>
-                        </div>
-                        <label class="col-sm-2 control-label">Category of Outlet:</label>
-                        <div class="col-sm-4">
-                            <select class="form-control select2" id="pharmacy_category" name="pharmacy_category" style="width: 100%;">
-                                <option value="">--Choose one--</option>
-                                <option value="Manufacturing">Manufacturing</option>
-                                <option value="Wholesale">Wholesale</option>
-                                <option value="Retail">Retail</option>
-                                <option value="Importation">Importation</option>
-                                <option value="PPMV">Patent and Proprietary Medicine Vendors</option>
-                                <option value="Hospital">Hospital</option>
-                                <option value="Distribution">Distribution</option>
+                            <select class="form-control select2" id="license_status_id" name="license_status_id" style="width: 100%;">
+                                <option value="">--Select License Status--</option>
+                                @foreach($lst_license_status as $st)
+                                <option value="{{$st->id}}">{{$st->status}}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
-                    
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">Institution/ Stand Alone Premises:<font color="red">*</font> </label>
+                        <label class="col-sm-2 control-label">Outlet Category:<font color="red">*</font> </label>
                         <div class="col-sm-4">
-                            <select class="form-control select2" id="standalone" name="standalone" style="width: 100%;">
-                                <option value="">--Choose one--</option>
-                                <option value="1">Standalone</option>
-                                <option value="0">Institution</option>
+                            <select class="form-control select2" id="outlet_category_id" name="outlet_category_id" style="width: 100%;" required>
+                                <option value="">--Select Outlet Category--</option>
+                                @foreach($lst_outlet_category as $st)
+                                    <option value="{{$st->id}}">{{$st->name}}</option>
+                                @endforeach
                             </select>
                         </div>
-                        <label class="col-sm-2 control-label">PCN Registration Number:</label>
+                        <label class="col-sm-2 control-label">Premises Type:<font color="red">*</font> </label>
                         <div class="col-sm-4">
-                            <input type="text" class="form-control"  id="ph_reg_no" name="ph_reg_no" value="" placeholder="Pharmacists Council of Nigeria Reg No">                        
+                            <select class="form-control select2" id="premises_type_id" name="premises_type_id" style="width: 100%;" required>
+                                <option value="">--Select Premises Type--</option>
+                                @foreach($lst_premises_type as $st)
+                                    <option value="{{$st->id}}">{{$st->name}}</option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
-
                     <div class="form-group">
-                        <label for="hs_no_single_qualified_nurses" class="col-sm-2 control-label">Number of Pharmacists:</label>
-                        <div class="col-sm-4">
-                            <input type="text" class="form-control input-sm"  id="ph_num_pharmacist" name="ph_num_pharmacist"  value="0">
-                        </div>
-                        <label for="hs_no_lab_sc" class="col-sm-2 control-label">Number of Pharmacy Technicians:</label>
-                        <div class="col-sm-4">
-                            <input type="text" class="form-control input-sm"  id="ph_num_pharm_tech" name="ph_num_pharm_tech" value="0">
-                        </div>
+                            <label for="pharmacy_technicians" class="col-sm-2 control-label">Pharmacy Technicians:</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control input-sm"  id="pharmacy_technicians" name="pharmacy_technicians"  value="{{old('pharmacy_technicians')}}">
+                            </div>
+                            <label class="col-sm-2 control-label">Pharmacists:</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control input-sm"  id="pharmacists" name="pharmacists" value="{{old('pharmacists')}}">
+                            </div>
                     </div>
-        
                     
                 </div>
             </div>
         </div>
     </div>
     
-
-
+   
+    
 </div>
 
 <!-- /.box-body -->
 <div class="box-footer">
-    <a href="/pharma">
-        <button type="button" class="btn btn-danger">Cancel</button>
+    <a href="{{route('pharmacies.index')}}">
+        <button type="button" class="btn btn-warning">Return Back</button>
     </a>
     <button type="submit" class="btn btn-primary pull-right">Submit Record</button>
 </div>
@@ -327,7 +266,29 @@
 @endsection 
 
 @push('bk_script')
-    @include('partials.dynamic_state_script')
-    @include('partials.notification')
-    @include('pharma.scripts')
+@include('partials.dynamic_state_script')
+@include('partials.notification')
+
+<script>
+    
+
+    //get ownership  type ownership_type_id
+    $("#ownership_id").change(function(){
+        if($(this).val() != "") //if specialized 
+        {    
+            var id= $('#ownership_id').val();
+            var _token = $('input[name="_token"]').val();
+            $.ajax({
+                url:"{{route('getOwnershipType')}}",
+                method:"POST",
+                data:{ownership_id:id,_token:_token},
+                success:function(result)
+                {
+                    $('#ownership_type_id').html(result);
+                }         
+            })            
+        }
+    });
+</script>
+
 @endpush

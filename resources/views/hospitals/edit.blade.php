@@ -1,7 +1,7 @@
 @extends("layouts.master")
 
 @section('content-title')
-<h4> <p class="text-aqua">New Health Hospital or Clinic</p></h4>
+{{-- <h4> <p class="text-aqua">New Health Hospital or Clinic</p></h4> --}}
 @endsection
 
 @section("content")

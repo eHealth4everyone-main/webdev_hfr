@@ -105,7 +105,7 @@ class HospitalsController extends Controller
             'regulatory_status_id'=>'nullable',
             'license_status_id'=>'nullable',
             'doctors'=>'nullable|numeric',
-            'pharmacists'=>'nullable',
+            'pharmacists'=>'nullable|numeric',
             'pharmacy_technicians'=>'nullable|numeric',
             'nurses'=>'nullable|numeric',
             'lab_scientists'=>'nullable|numeric',

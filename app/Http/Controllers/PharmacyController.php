@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 
 use App\Pharmacie;
+use App\hs_hospital;
 
 
 class PharmacyController extends Controller
@@ -30,147 +31,124 @@ class PharmacyController extends Controller
 
     public function create()
     {
-        return view('pharmacy.create');        
+            //get state list
+            $lst_states = Cache::remember('lst_states', 60, function () {
+                return DB::table('ou_states')
+                        ->select('id','name')
+                        ->orderByRaw('name ASC')
+                        ->get();
+                });
+        
+                //get ownership
+                $lst_ownerships= Cache::remember('lst_ownerships', 60, function () {
+                    return DB::table('lst_ownerships')
+                            ->select('id','name')
+                            ->get();
+                });
+                //get opertion statuss
+                $lst_oparational_status= Cache::remember('lst_oparational_status', 60, function () {
+                    return DB::table('lst_oparational_status')
+                            ->select('id','status')
+                            ->where('category','1')
+                            ->get();
+                });
+                //get regulatory status
+                $lst_regulatory_status= Cache::remember('lst_regulatory_status', 60, function () {
+                return DB::table('lst_regulatory_status')
+                        ->select('id','status')
+                        ->get();
+                });
+                //get license status
+                $lst_license_status= Cache::remember('lst_license_status', 60, function () {
+                    return DB::table('lst_license_status')
+                            ->select('id','status')
+                            ->get();
+                });
+                 //get outlet category
+                $lst_outlet_category= Cache::remember('lst_outlet_category', 60, function () {
+                    return DB::table('lst_outlet_category')
+                            ->select('id','name')
+                            ->get();
+                });
+                 //get premises types
+                 $lst_premises_type= Cache::remember('lst_premises_type', 60, function () {
+                    return DB::table('lst_premises_type')
+                            ->select('id','name')
+                            ->get();
+                });
+                
+
+                return view('pharmacy.create',compact('lst_states','lst_ownerships','lst_oparational_status',
+                'lst_regulatory_status','lst_license_status','lst_premises_type','lst_outlet_category'));        
     }
 
  
     public function store(Request $request)
     {
-      
-        $this->validate($request, $rules, $customMessages);
+        $request->validate([
+            'registration_no'=>'nullable',
+            'start_date'=>'nullable|date',
+            'pharmacists_reg_number'=>'nullable',
+            'facility_name'=>'required|max:200',
+            'alt_facility_name'=>'nullable|max:200',
+            'state_id'=>'required',
+            'lga_id'=>'required',
+            'ward_id'=>'required',
+            'ownership_id'=>'required',
+            'ownership_type_id'=>'required',
+            'ownership_details'=>'nullable',
+            'house_no'=>'nullable',
+            'street_name'=>'nullable',
+            'longitude'=>'nullable',
+            'latitude'=>'nullable',
+            'postal_address'=>'nullable',
+            'phone_number'=>'nullable',
+            'email_address'=>'nullable|email',
+            'website'=>'nullable',
+            'operational_days'=>'nullable',
+            'operational_hours'=>'nullable',
+            'operational_status_id'=>'required',
+            'regulatory_status_id'=>'nullable',
+            'license_status_id'=>'nullable',
+            'outlet_category_id'=>'nullable',
+            'premises_type_id'=>'nullable',
+            'pharmacists'=>'nullable|numeric',
+            'pharmacy_technicians'=>'nullable|numeric',
+        ]);
+    
         
-     
-        $opdays = $sign->arrayValuesTostring($request->operational_days);      
-        
-        $sign->id=$ids;
-        $sign->sig_unique_id=$UniqueID;
-        $sign->fac_tpye='2';
-        $sign->cac_reg= $request->cac_reg;
-        $sign->comm_date=$regdate;
-        $sign->reg_fac_name= strtoupper($request->reg_fac_name);
-        $sign->alt_facility_name = strtoupper($request->alt_facility_name);
-        $sign->state = $request->state;
-        $sign->lga = $request->lga;
-        $sign->ward = $request->ward;
-        $sign->house_no = $request->house_no;
-        $sign->street_name = $request->street_name;
-        $sign->longitude = $request->longitude;
-        $sign->latitude = $request->latitude;
-        $sign->postal_address = $request->postal_address;
-        $sign->phone_number = $request->phone_number;
-        $sign->email_address = $request->email_address;
-        $sign->website = $request->website;
-        $sign->operational_days = $opdays;
-        $sign->hr_operation = $request->hr_operation;
-        $sign->operational_hours = $request->operational_hours;
-        $sign->save();
-        
-        $ph->ph_id = $ids;
-        $ph->ph_hs_sig_id = "";
-        $ph->ph_sig_unique_id = $UniqueID;
-        $ph->standalone= $request->standalone;
-        $ph->pharmacy_category= $request->pharmacy_category;
-        $ph->ph_reg_no= $request->ph_reg_no;
-        $ph->ph_op_status= $request->hs_op_status;
-        $ph->ph_reg_status= $request->hs_reg_status;
-        $ph->ph_lic_status= $request->hs_lic_status;
-        $ph->ownership= $request->hs_ownership;
-        $ph->ownership_type= $request->hs_ownership_type;
-        $ph->ownership_detail= $request->hs_ownership_details;
-        $ph->ph_num_pharmacist= $request->ph_num_pharmacist;
-        $ph->ph_num_pharm_tech= $request->ph_num_pharm_tech;
-        $ph->statecode = $request->state;
-        $ph->ph_flag_old="No";
-        $ph->ph_flag="0";
+        $start_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->start_date)));
+
+        $hosp = new hs_hospital;
+        $ph = new Pharmacie;
+        $ph->fill($request->all());
+        $ph->unique_id = $hosp->generateUniqueID($request->lga_id,'2','0',$request->ownership_id);
+        $ph->start_date = $start_date;
+        $ph->operational_days = $hosp->arrayValuesTostring($request->operational_days);
         $ph->save();
-        
-        session()->flash("alert-success", "Facility Information Saved Successfully!");
+    
+        session()->flash("alert-success", "Information Saved Successfully!");
         return redirect()->back();
     }
 
     public function show($id)
     {
-        $pharma =Signature::findorfail($id);
-        return view('pharma.show', compact("pharma")); 
+        
     }
 
 
     public function edit($id)
     {
-        $pharma =Signature::findorfail($id);
-        //dd($pharma);
-        return view('pharma.edit', compact("pharma")); 
+      
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
     
-        $this->validate($request, $rules, $customMessages);
-        
-        $sign = new Signature;
-        $ph = new Pharma;
-        
-        $regdate = date('Y-m-d', strtotime(str_replace('-', '/', $request->comm_date)));
-        
-        $opdays = $sign->arrayValuesTostring($request->operational_days); 
-
-        $sign=Signature::findOrFail($id);
-        $sign->cac_reg= $request->cac_reg;
-        $sign->comm_date=$regdate;
-        $sign->reg_fac_name= strtoupper($request->reg_fac_name);
-        $sign->alt_facility_name = strtoupper($request->alt_facility_name);
-        $sign->state = $request->state;
-        $sign->lga = $request->lga;
-        $sign->ward = $request->ward;
-        $sign->house_no = $request->house_no;
-        $sign->street_name = $request->street_name;
-        $sign->longitude = $request->longitude;
-        $sign->latitude = $request->latitude;
-        $sign->postal_address = $request->postal_address;
-        $sign->phone_number = $request->phone_number;
-        $sign->email_address = $request->email_address;
-        $sign->website = $request->website;
-        $sign->operational_days = $opdays;
-        $sign->hr_operation = $request->hr_operation;
-        $sign->operational_hours = $request->operational_hours;
-        $sign->save();
-
-        $ph=Pharma::findOrFail($id);
-        $ph->ph_hs_sig_id = "";
-        $ph->standalone= $request->standalone;
-        $ph->pharmacy_category= $request->pharmacy_category;
-        $ph->ph_reg_no= $request->ph_reg_no;
-        $ph->ph_op_status= $request->hs_op_status;
-        $ph->ph_reg_status= $request->hs_reg_status;
-        $ph->ph_lic_status= $request->hs_lic_status;
-        $ph->ownership= $request->hs_ownership;
-        $ph->ownership_type= $request->hs_ownership_type;
-        $ph->ownership_detail= $request->hs_ownership_details;
-        $ph->ph_num_pharmacist= $request->ph_num_pharmacist;
-        $ph->ph_num_pharm_tech= $request->ph_num_pharm_tech;
-        $ph->statecode = $request->state;
-        $ph->ph_flag_old="No";
-        $ph->ph_flag="0";
-        $ph->save();
-        
-        session()->flash("alert-success", "Record Updated Successfully!");
-        return redirect()->back();
+     
 
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         //

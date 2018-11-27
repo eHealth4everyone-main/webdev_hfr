@@ -94,7 +94,7 @@
                                 
                                 <td>{{$fac->ownership}}</td>
                                 <td>
-                                    <a href="{{route('facilitydetails',['id'=>$fac->id,'facility_type_id'=>$facility_type_id])}}"><button class="btn btn-success btn-xs" type="button">More</button> </a>
+                                    <a href="{{route('facilitydetails',['id'=>$fac->id,'facility_type_id'=>$facility_type_id])}}"><button class="btn btn-success btn-xs" type="button">view</button> </a>
                                 </td>
                             </tr>
                         @endforeach

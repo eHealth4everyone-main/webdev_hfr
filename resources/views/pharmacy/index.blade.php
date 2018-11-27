@@ -6,7 +6,7 @@ Pharmaceutical Premises
 
 <a href="{{route('pharmacies.create')}}">
   <button type="button" class="btn btn-primary pull-right">
-    Add New Pharmacy
+    New Pharmacy
   </button>
 </a>
 @endsection
