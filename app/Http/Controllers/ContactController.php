@@ -12,8 +12,8 @@ class ContactController extends Controller
     }
 
     public function index(){
-        $messages = Contactus::paginate(10);
-        return view('messages.index', compact("messages"));
+        $message = Contactus::paginate(10);
+        return view('messages.index', compact("message"));
     }
     
     public function store(Request $request)

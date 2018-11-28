@@ -58,7 +58,7 @@
                 </li>
 
                 <li> 
-                    <a href="{{route('messages')}}">
+                    <a href="{{route('getMessages')}}">
                         <i class="fa  fa-comments"></i>
                         <span>Messages</span>
                     </a>

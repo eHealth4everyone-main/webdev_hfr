@@ -13,10 +13,10 @@ Inbox
               <h3 class="box-title"></h3>
 
               <div class="box-tools pull-right">
-                <div class="has-feedback">
+                {{-- <div class="has-feedback">
                   <input type="text" class="form-control input-sm" placeholder="Search Mail">
                   <span class="glyphicon glyphicon-search form-control-feedback"></span>
-                </div>
+                </div> --}}
               </div>
               <!-- /.box-tools -->
             </div>
@@ -31,19 +31,12 @@ Inbox
               <div class="table-responsive mailbox-messages">
                 <table class="table table-hover table-striped">
                   <tbody>
-                      @foreach($messages as $m)
+                      @foreach($message as $m)
                         <tr>
-                            <td><input type="checkbox"></td>
+                           
                             <td class="mailbox-name"><a href="">{{$m->full_name}}</a></td>
                             <td class="mailbox-name">{{$m->email}}</td>
                             <td class="mailbox-subject"><b>{{$m->subject}}</b> -  {{$truncated = str_limit($m->message, 30, ' ...')}}</td>
-                            {{-- <td class="mailbox-date">{{$m->created_at}}</td> --}}
-                            {{-- @php
-                             
-                              $now = Carbon\Carbon::now();
-                         
-                            
-                            @endphp --}}
                             <td> {{ $m->created_at->diffForHumans() }}</td>
                         </tr>
                     
@@ -60,24 +53,24 @@ Inbox
               <div class="row">
                 
                     @php
-                      $perpage = $messages->perpage();
-                      $currentpage = $messages->currentpage();
+                      $perpage = $message->perpage();
+                      $currentpage = $message->currentpage();
                       $from = ($currentpage-1)*$perpage+1;
                       
-                      if ($messages->currentpage() == $messages->lastpage()) {
-                        $to = $messages->total();
+                      if ($message->currentpage() == $message->lastpage()) {
+                        $to = $message->total();
                       } else {
                         $to = $currentpage*$perpage;
                       }
                     @endphp
                
                     <div class="col-md-6">
-                        Showing {{$from}} to {{$to}} of {{$messages->total()}} entries
+                        Showing {{$from}} to {{$to}} of {{$message->total()}} entries
                        
                     </div>
                     <div class="col-md-6">
                         <div class="pull-right">
-                            {{$messages->links()}}                  
+                            {{$message->links()}}                  
                         </div>
                     </div>
 
@@ -92,11 +85,8 @@ Inbox
 @push("bk_script")
 <script>
   $(document).ready( function () {
-    $('#table1').DataTable( {
-      "paging":   true,
-      "ordering": true,
-      "info":     true
-    } );
+ 
+
   } );
 </script>
 @endpush

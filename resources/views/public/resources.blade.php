@@ -23,13 +23,13 @@
               <tr>
                 <td>
                     @if($res->format=='pdf')
-                      <img class="center-block" src="/img/pdf.png"/>
+                      <img class="center-block" src="{{asset('img/pdf.png')}}"/>
                     @endif
                     @if(($res->format=='doc') or ($res->format=='docx'))
-                      <img class="center-block" src="/img/word.png"/>
+                      <img class="center-block" src="{{asset('img/word.png')}}"/>
                     @endif
                     @if(($res->format=='xls') or ($res->format=='xlsx'))
-                      <img class="center-block" src="/img/excel.png"/>
+                      <img class="center-block" src="{{asset('img/excel.png')}}"/>
                     @endif
                 </td>
                 <td>{{$res->description}}</td>

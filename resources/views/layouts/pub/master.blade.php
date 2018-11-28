@@ -199,9 +199,9 @@
                                                 <div class="single-footer-widget">
                                                     <h3>Useful Links</h3>
                                                     <ul class="footer-list">
-                                                        <li><a href="http://health.gov.ng/">Federal Ministry of Health</a></li>
-                                                        <li><a href="http://nphcda.gov.ng"> NPHCDA</a></li>
-                                                        <li><a href="https://dhis2nigeria.org.ng">Nigeria DHIS2</a></li>
+                                                        <li><a target="_blank" rel="noopener noreferrer" href="http://health.gov.ng/">Federal Ministry of Health</a></li>
+                                                        <li><a target="_blank" rel="noopener noreferrer" href="http://nphcda.gov.ng"> NPHCDA</a></li>
+                                                        <li><a target="_blank" rel="noopener noreferrer" href="https://dhis2nigeria.org.ng">Nigeria DHIS2</a></li>
                                                         
                                                     </ul>
                                                 </div>

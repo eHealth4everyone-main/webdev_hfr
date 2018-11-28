@@ -109,7 +109,7 @@ Route::middleware(["auth"])->group(function(){
     Route::get('/resources/download/{file}', 'ResourceController@download')->name('downloadFile');
 
     //messages
-    Route::get('admin/messages', 'ContactController@index')->name('messages');
+    Route::get('admin/messages', 'ContactController@index')->name('getMessages');
 
     //download
     Route::get('admin/download/list', 'DownloadController@adminIndex')->name('downloadList');
