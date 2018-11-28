@@ -47,9 +47,9 @@
                             <ul class="nav navbar-nav">
                                 <!-- Messages: style can be found in dropdown.less-->
                                 <li class="dropdown messages-menu">
-                                        <a href="{{route('home')}}">
+                                        {{-- <a href="{{route('home')}}">
                                             <img src="{{asset('img/home.png')}}" width="15" height="15" class="user-image" alt="HFR Home">
-                                        </a>
+                                        </a> --}}
                                    
                                 </li>
                                 
@@ -132,7 +132,7 @@
                 <div class="pull-right hidden-xs">
                     <b>Version</b> 2.0
                 </div>
-                <strong>Copyright &copy; 2017-2018 <a href="http://health.gov.ng/">MOH</a>.</strong> All rights
+                <strong>Copyright &copy; 2017-2018 <a target="_blank" rel="noopener noreferrer" href="http://health.gov.ng/">MOH</a>.</strong> All rights
                 reserved.
             </footer>           
             

@@ -8,7 +8,12 @@
             <!-- /.search form -->
             <!-- sidebar menu: : style can be found in sidebar.less -->
             <ul class="sidebar-menu" data-widget="tree">
-                
+                <li>
+                    <a target="_blank" rel="noopener noreferrer" href="{{route('home')}}">
+                        <i class="fa fa-home"></i> 
+                        <span>Public Home</span>
+                    </a>
+                </li>
                 <li>
                     <a href="{{route('admin_home')}}">
                         <i class="fa fa-dashboard"></i> 
