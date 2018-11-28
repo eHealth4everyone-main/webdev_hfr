@@ -36,7 +36,9 @@ Inbox
                            
                             <td class="mailbox-name"><a href="">{{$m->full_name}}</a></td>
                             <td class="mailbox-name">{{$m->email}}</td>
-                            <td class="mailbox-subject"><b>{{$m->subject}}</b> -  {{$truncated = str_limit($m->message, 30, ' ...')}}</td>
+                            <td class="mailbox-subject"><b>{{$m->subject}}</b> -  {{$m->message}}</td>
+                            {{-- <td class="mailbox-subject"><b>{{$m->subject}}</b> -  {{$truncated = str_limit($m->message, 30, ' ...')}}</td> --}}
+
                             <td> {{ $m->created_at->diffForHumans() }}</td>
                         </tr>
                     
