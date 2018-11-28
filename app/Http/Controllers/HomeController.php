@@ -56,13 +56,31 @@ class HomeController extends Controller
 
    
         $state = DB::table('ou_states')
-        ->select('name')
-        ->where('short_code', $request->state_code)
-        ->pluck('name');
+            ->select('name','id')
+            ->where('short_code', $request->state_code)
+            ->get();
+
+        $state_id = $state[0]->id;
+
+        //get by level of care
+        $by_level = DB::select("SELECT facility_level as name,COUNT(id) AS y FROM hospital_details 
+                WHERE state_id=". $state_id ." GROUP BY facility_level order by facility_level");
+
+        //by ownership
+        $by_ownership =  DB::select("SELECT ownership as name,COUNT(id) AS y FROM hospital_details 
+                WHERE state_id=". $state_id ."  GROUP BY ownership order by ownership");
+
+        //fac with Geo codes
+        $geo_codes =  DB::select("SELECT lga as name, cast(SUM(case when latitude <> '' then 1 else 0 end)/count(id)*100 as unsigned) as y 
+        FROM hospital_details WHERE state_id=". $state_id ."  GROUP BY lga");
+
 
         $result  = array();
-        $result['state'] = $state;
-        $result['facilities'] =  $total_facilities_lga ;
+        $result['state'] =  $state[0]->name;
+        $result['facilities'] =  $total_facilities_lga;
+        $result['by_ownership'] =  $by_ownership;
+        $result['by_level'] =  $by_level;
+        $result['geo_codes'] =  $geo_codes;
 
         return $result;
     }

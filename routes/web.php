@@ -8,7 +8,12 @@
 | routes are loaded by the RouteServiceProvider within a group which
 | contains the "web" middleware group. Now create something great!
 */
+
+//home
 Route::get('/', 'HomeController@index')->name('home');
+Route::post('/home/facilitiesbyLga', 'HomeController@getFacilitesByLGA')->name('getFacilitesByLGA');
+Route::post('/home/googlemap', 'HomeController@getFacilitesGMap')->name('getFacilitesGMap');
+
 Route::view('/about', 'public.about')->name('about');
 Route::get('/contactus', 'ContactController@openContactForm')->name('open_contact_form');
 Route::post('/contactus', 'ContactController@store')->name('storecontact');
@@ -35,8 +40,6 @@ Route::get('/downloads/excel/{type}/{state}/{format}', 'DownloadController@expor
 //routes to populate lgas and wards
 Route::post('/hosp/fetchLga', 'GeneralController@getLgaList')->name('getLgaList');
 Route::post('/hosp/fetctWards', 'GeneralController@getWardList')->name('getWardList');
-Route::post('/home/facilitiesbyLga', 'HomeController@getFacilitesByLGA')->name('getFacilitesByLGA');
-Route::post('/home/googlemap', 'HomeController@getFacilitesGMap')->name('getFacilitesGMap');
 
 Auth::routes();
 

@@ -13,9 +13,7 @@
         <div class="row">
            
             <div class="col-sm-8">
-                    <div id="backDiv" style="height: 30px">
-                            <button id="backbutton" style="display: none" class="btn btn-success btn-sm" type="button">Return Back</button>
-                    </div>
+                  
                 <div id="map1" style="height: 500px; min-width: 500px; max-width: 800px; margin: 0 auto" >
                     
                 </div>
@@ -34,6 +32,15 @@
             <div class="col-sm-12">
                     <div class="single-latest-item">      
                             <div id="geo"></div>
+                    </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                    <div id="backDiv" style="height: 30px">
+                        <a href="{{route('home')}}">
+                            <button id="backbutton" style="display: none" class="btn btn-success pull-right" type="button">Return Back</button>
+                        </a>
                     </div>
             </div>
         </div>
@@ -83,7 +90,7 @@
     
     $("#backbutton").click(function(){
         $('#backbutton').hide(0);
-        showAllStatesMap();
+        // showAllStatesMap();
     });
     
     
@@ -169,8 +176,12 @@
             data:{state_code:statecode, _token: "{{ csrf_token() }}"},
             success:function(result)
             {
-                var statename= result.state[0];
-                
+                var statename= result.state;
+
+                showFacilityByLevelSelectedState(result.by_level,statename);
+                showFacilityByOwnershipSelectedState(result.by_ownership,statename);
+                showFacilitywithGeoCodesState(result.geo_codes,statename);
+
                 //if success get and display the state map
                 $.getJSON(full_path, function (geojson) {
                     
@@ -244,11 +255,7 @@
         
     }//end show state
     
-    // Re-init map before show modal
-    $('#googleMapModal').on('show.bs.modal', function(event) {
-        // initializeGMap(button.data('lat'), button.data('lng'));
-    })
-    
+
     //on click of lga map, this function will load state map and get 
     //facilities with coordinates and display on google map
     function showGoogleMap(statecode,lgacode){
@@ -314,46 +321,173 @@
         
     }//end function
     
+    function showFacilityByLevelSelectedState(byLevel,statename){
+        Highcharts.chart('levels', {
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie'
+            },
+            title: {
+                text: "Hospitals and Clinics by Level of Care"
+            },
+            subtitle: {
+                text: statename.concat(" State")
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            plotOptions: {
+                pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                    style: {
+                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                    }
+                }
+                }
+            },
+            series: [{
+                name: 'Facilities',
+                colorByPoint: true,
+                data: byLevel
+            }],
+            credits: {
+                        enabled: false
+                    },
+        });
+    }
+
+    function showFacilityByOwnershipSelectedState(byOwnership,statename){
+        Highcharts.chart('ownership', {
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            type: 'pie'
+        },
+        title: {
+            text: "Hospitals and Clinics by Ownership"
+        },
+        subtitle: {
+            text: statename.concat(" State")
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+            pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels: {
+                enabled: true,
+                format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                style: {
+                color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                }
+            }
+            }
+        },
+        series: [{
+            name: 'Facilities',
+            colorByPoint: true,
+            data: byOwnership
+        }],
+        credits: {
+                    enabled: false
+                },
+        });
+    }
     
-    
+    function showFacilitywithGeoCodesState(geo_percent,statename){
+        Highcharts.chart('geo', {
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Percent of Hospitals and Clinics with Geo Goordinates'
+        },
+        subtitle: {
+            text: statename.concat(" State")
+        },
+        xAxis: {
+            type: 'category'
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: ''
+            }
+        },
+        tooltip: {
+            headerFormat: '<span style="font-size:10px">{point.key} State</span><table>',
+            pointFormat: '<tr><td style="color:{series.color};padding:0">Percent: </td>' +
+                '<td style="padding:0"><b>{point.y:.1f} </b></td></tr>',
+            footerFormat: '</table>',
+            shared: true,
+            useHTML: true
+        },
+        plotOptions: {
+            column: {
+                pointPadding: 0.2,
+                borderWidth: 0,
+                dataLabels: {
+                    enabled: false
+                }
+            }
+        },
+        credits: {
+            enabled: false
+        },
+        series: [{
+            name: 'LGAs',
+            data: geo_percent
+        }]
+    });
+    } 
+
 </script>
 {{-- show facility by leveles chart--}}
 <script> 
         Highcharts.chart('levels', {
-                chart: {
-                    plotBackgroundColor: null,
-                    plotBorderWidth: null,
-                    plotShadow: false,
-                    type: 'pie'
-                },
-                title: {
-                    text: "Hospitals and Clinics by Level of Care"
-                },
-                tooltip: {
-                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-                },
-                plotOptions: {
-                    pie: {
-                    allowPointSelect: true,
-                    cursor: 'pointer',
-                    dataLabels: {
-                        enabled: true,
-                        format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-                        style: {
-                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-                        }
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie'
+            },
+            title: {
+                text: "Hospitals and Clinics by Level of Care"
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            plotOptions: {
+                pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                    style: {
+                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
                     }
-                    }
-                },
-                series: [{
-                    name: 'Facilities',
-                    colorByPoint: true,
-                    data: @json($facilities_level_state)
-                }],
-                credits: {
-                            enabled: false
-                        },
-                });
+                }
+                }
+            },
+            series: [{
+                name: 'Facilities',
+                colorByPoint: true,
+                data: @json($facilities_level_state)
+            }],
+            credits: {
+                        enabled: false
+                    },
+        });
                 
 </script>
 {{-- show facilities by ownership sumary --}}
