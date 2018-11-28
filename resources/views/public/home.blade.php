@@ -112,7 +112,7 @@
                 },
                 
                 title: {
-                    text: 'Distribution of Hospitals and Clinics'
+                    text: 'Distribution of Hospitals and Clinics in Nigeria'
                 },
                 
                 mapNavigation: {
@@ -311,7 +311,7 @@
                         map: map
                     });
                     
-                    google.maps.event.addListener(marker, 'click', (function(marker, i) {
+                    google.maps.event.addListener(marker, 'mouseover', (function(marker, i) {
                         return function() {
                             infowindow.setContent(item.facility_name);
                             infowindow.open(map, marker);
