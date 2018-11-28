@@ -38,9 +38,9 @@
         <div class="row">
             <div class="col-sm-12">
                     <div id="backDiv" style="height: 30px">
-                        <a href="{{route('home')}}">
+                       
                             <button id="backbutton" style="display: none" class="btn btn-success pull-right" type="button">Return Back</button>
-                        </a>
+                        
                     </div>
             </div>
         </div>
@@ -74,7 +74,6 @@
 
 @push('custom_scripts')
     <script src="{{ asset("hcharts/chart/highcharts.js")}}"></script>
- 
     <script src="{{ asset("hcharts/map/exporting.js")}}"></script>
     <script src="{{ asset("hcharts/map/data.js")}}"></script>
     <script src="{{ asset("hcharts/map/map.js")}}"></script>
@@ -86,11 +85,17 @@
     window.onload = function() {
         $('#backbutton').hide(0);
         showAllStatesMap();
+        facilitybyLevel();
+        facilitybyOwnership();
+        facilitywithGeoCodes();
     };
     
     $("#backbutton").click(function(){
         $('#backbutton').hide(0);
-        // showAllStatesMap();
+        showAllStatesMap();
+        facilitybyLevel();
+        facilitybyOwnership();
+        facilitywithGeoCodes();
     });
     
     
@@ -451,9 +456,12 @@
     } 
 
 </script>
-{{-- show facility by leveles chart--}}
+
+
 <script> 
-        Highcharts.chart('levels', {
+//-- show facility by leveles chart--
+function facilitybyLevel(){
+    Highcharts.chart('levels', {
             chart: {
                 plotBackgroundColor: null,
                 plotBorderWidth: null,
@@ -487,12 +495,12 @@
             credits: {
                         enabled: false
                     },
-        });
-                
-</script>
-{{-- show facilities by ownership sumary --}}
-<script>
-        Highcharts.chart('ownership', {
+    });
+}  
+
+//show facilities by ownership sumary 
+function facilitybyOwnership(){
+    Highcharts.chart('ownership', {
         chart: {
             plotBackgroundColor: null,
             plotBorderWidth: null,
@@ -527,10 +535,11 @@
                     enabled: false
                 },
         });
-</script>
-{{-- geocoordinates summary --}}
-<script>
-     Highcharts.chart('geo', {
+}
+
+//-- geocoordinates summary --
+function facilitywithGeoCodes(){
+    Highcharts.chart('geo', {
         chart: {
             type: 'column'
         },
@@ -574,6 +583,10 @@
             data: @json($geo_percent)
         }]
     });
+}
+
 </script>
+
+
 
 @endpush
