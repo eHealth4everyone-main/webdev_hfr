@@ -17,10 +17,15 @@
   <body class="hold-transition login-page">
     <div class="login-box">
       <div>
-            <img class="img-responsive center-block" src="{{asset('img/logo_fmoh.png')}}" title="Nigeria Health Facility Registry" />
+            <a href="{{route('home')}}"> 
+                <img class="img-responsive center-block" src="{{asset('img/logo_fmoh.png')}}" width="80" height="80" title="Nigeria Health Facility Registry" />
+            </a>
       </div>
       <div class="login-logo">
-        <span class="text-center"><h3>Nigeria Health Facility Registry</h3></span>
+            <a href="{{route('home')}}"> 
+                    <span class="text-center"><h3>Nigeria Health Facility Registry</h3></span>
+            </a>
+        
       </div>
       <!-- /.login-logo -->
       <div class="panel">
