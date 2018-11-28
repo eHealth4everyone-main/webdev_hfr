@@ -50,7 +50,7 @@
 
 
 <!-- Goolge Map Modal -->
-<div class="modal fade" id="googleMapModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="googleMapModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"  >
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -69,7 +69,6 @@
 </div>
 
 
-
 @endsection 
 
 @push('custom_scripts')
@@ -81,7 +80,7 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAF8UERyCqSP9JZ_HfvfPH2cM_6-slYd7Q" async defer></script>
 
 <script>
-    
+  
     window.onload = function() {
         $('#backbutton').hide(0);
         showAllStatesMap();
@@ -183,10 +182,6 @@
             {
                 var statename= result.state;
 
-                showFacilityByLevelSelectedState(result.by_level,statename);
-                showFacilityByOwnershipSelectedState(result.by_ownership,statename);
-                showFacilitywithGeoCodesState(result.geo_codes,statename);
-
                 //if success get and display the state map
                 $.getJSON(full_path, function (geojson) {
                     
@@ -255,6 +250,10 @@
                     });//chart ends
                     
                 });
+
+                showFacilityByLevelSelectedState(result.by_level,statename);
+                showFacilityByOwnershipSelectedState(result.by_ownership,statename);
+                showFacilitywithGeoCodesState(result.geo_codes,statename);
             }//success ends         
         });//ajax ends
         
