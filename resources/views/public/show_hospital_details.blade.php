@@ -256,8 +256,10 @@
                                         @endforeach
                                 </div>
                         </div>
-                        <div id="gMap" style="height:300px; min-width: 100px; margin: 0 auto" async defer></div>
-
+                        @if($hosp[0]->latitude != "")
+                            <div id="gMap" style="height:300px; min-width: 100px; margin: 0 auto" async defer></div>
+                        @endif
+                      
                         <div class="row">
                             <a href="{{route('listhosp')}}">
                                 <button type="button" class="btn btn-success pull-right">Return Back</button>

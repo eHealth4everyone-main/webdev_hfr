@@ -41,6 +41,9 @@ Route::get('/downloads/excel/{type}/{state}/{format}', 'DownloadController@expor
 Route::post('/hosp/fetchLga', 'GeneralController@getLgaList')->name('getLgaList');
 Route::post('/hosp/fetctWards', 'GeneralController@getWardList')->name('getWardList');
 
+//resources
+Route::get('/resources/download/{file}', 'ResourceController@download')->name('downloadFile');
+
 Auth::routes();
 
 Route::middleware(["auth"])->group(function(){
@@ -109,7 +112,7 @@ Route::middleware(["auth"])->group(function(){
     Route::get('/resources/upload', 'ResourceController@upload')->name('upload');
     Route::post('/resources/uploads', 'ResourceController@store')->name('savefile');
     Route::post('/resources/delete/{file}', 'ResourceController@destroy')->name('deleteFile');
-    Route::get('/resources/download/{file}', 'ResourceController@download')->name('downloadFile');
+    
 
     //messages
     Route::get('admin/messages', 'ContactController@index')->name('getMessages');
