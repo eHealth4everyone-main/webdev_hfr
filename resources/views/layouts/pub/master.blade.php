@@ -84,7 +84,6 @@
                                         <div class="col-lg-7 col-md-6 col-sm-5 hidden-xs">
                                             {{-- <a href=""><img src="/img/logo.png"  width="50" height="50" alt="FMOH"></a> --}}
                                             <span><h4> NIGERIA Health Facility Registry (HFR)</h4></span>
-                                         
                                         </div>
                                         <div class="col-lg-5 col-md-6 col-sm-7 col-xs-12">
                                             <div class="header-top-right">
@@ -104,8 +103,9 @@
                             <div class="row">
                                 <div class="col-md-3 col-sm-12">
                                         <div class="logo">
-                                                {{-- <a href=""><img src="/img/nigeriahfr.png"  width="" height="50" alt="FMOH"></a> --}}                
-                                                <img src="{{asset('img/new_logo.png')}}"  alt="FMOH">
+                                                <a href="{{route('home')}}"> 
+                                                    <img src="{{asset('img/new_logo.png')}}"  alt="FMOH">
+                                                </a>               
                                         </div>
                                         
                                 </div>
