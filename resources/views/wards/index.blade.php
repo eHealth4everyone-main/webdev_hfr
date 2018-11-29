@@ -2,7 +2,7 @@
 
 
 @section('content-title')
-List of Wards	
+Wards	
 <a href="">
     <button type="button" class="btn btn-primary pull-right">
             Create Ward

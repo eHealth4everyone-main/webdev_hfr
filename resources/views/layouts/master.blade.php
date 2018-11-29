@@ -75,12 +75,12 @@
                                         <li class="user-footer">
                                             <div class="pull-left">
                                             <a  href="{{route('profile')}}">
-                                                    <button type="button" class="btn btn-default" >Profile</button>
+                                                    <button type="button" class="btn btn-primary" >My Profile</button>
                                                     
                                                 </a>
                                             </div>
                                             <div class="pull-right">
-                                                <a class="btn btn-default btn-flat" href="{{ route('logout') }}"
+                                                <a class="btn btn-danger btn-flat" href="{{ route('logout') }}"
                                                 onclick="event.preventDefault();
                                                 document.getElementById('logout-form').submit();">
                                                 Sign out

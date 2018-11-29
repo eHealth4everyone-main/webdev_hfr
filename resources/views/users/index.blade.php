@@ -1,10 +1,9 @@
 @extends("layouts.master")
 
 @section('content-title')
-User Management
+Users
 
 <button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#register">Register User</button>
-
 
 
 @endsection
