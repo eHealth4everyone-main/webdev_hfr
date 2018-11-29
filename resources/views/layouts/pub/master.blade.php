@@ -252,6 +252,211 @@
                     </div>
                 </div>
         </div>
+
+        <!-- Modal Facility Details-->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" style="overflow-y:scroll; height:600px;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Facility Details</h4>
+                    </div>
+                    <div class="modal-body">
+                                <div class="row">
+                                    <label class="col-sm-3 " style="text-align: right;">Unique ID:</label>                            
+                                    <div class="col-sm-3" id = "unique_id">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    
+                                    <label class="col-sm-3 " style="text-align: right;">Registered No:</label>                            
+                                    <div class="col-sm-3" id = "registration_no">
+                                    </div>
+                                    
+                                    <label class="col-sm-3 " style="text-align: right;">Commencement Date:</label>
+                                    <div class="col-sm-3" id = "start_date">
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <label class="col-sm-3" style="text-align: right;">Registered Name:</label>
+                                    <div class="col-sm-3" id = "facility_name">
+                                    </div>
+                                    
+                                    <label for="alt_facility_name" class="col-sm-3 " style="text-align: right;">Alternate Name:</label> 
+                                    <div class="col-sm-3" id = "alt_facility_name">
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <label class="col-sm-3 " style="text-align: right;">State: </label></label>
+                                    <div class="col-sm-3" id = "state">
+                                    </div>
+                                    
+                                    <label class="col-sm-3 " style="text-align: right;">LGA:</label></label>
+                                    <div class="col-sm-3" id = "lga">
+                                    </div>
+                                    
+                                </div>
+                                <div class="row">
+                                    <label class="col-sm-3 " style="text-align: right;">Ward:</label>
+                                    <div class="col-sm-9" id = "ward">
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <label for="house_no" class="col-sm-3 " style="text-align: right;">House Number:</label>
+                                    <div class="col-sm-3" id = "house_no">
+                                    </div>
+                                    
+                                    <label for="street_name" class="col-sm-3 " style="text-align: right;">Street Name:</label>
+                                    <div class="col-sm-3" id = "street_name">
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <label for="latitude" class="col-sm-3 " style="text-align: right;">Latitude:</label>
+                                    <div class="col-sm-3" id = "latitude">
+                                    </div>
+                                    
+                                    <label for="longitude" class="col-sm-3 " style="text-align: right;">Longitude:</label>
+                                    <div class="col-sm-3" id = "longitude">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <label for="postal_address" class="col-sm-3 " style="text-align: right;">Postal Address:</label>
+                                    <div class="col-sm-3" id = "postal_address">
+                                    </div>
+                                    
+                                    <label for="phone_number" class="col-sm-3 " style="text-align: right;">Phone Number:</label>
+                                    <div class="col-sm-3" id = "phone_number">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <label for="email_address" class="col-sm-3 " style="text-align: right;">Email Address:</label>
+                                    <div class="col-sm-3" id = "email_address">
+                                    </div>
+                                    
+                                    <label for="website" class="col-sm-3 " style="text-align: right;">Website:</label>
+                                    <div class="col-sm-3" id = "website">
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <label class="col-sm-3 " style="text-align: right;">Days of Operation:</label>
+                                    <div class="col-sm-3" id = "operational_days">
+                                    </div>
+                                    <label class="col-sm-3 " style="text-align: right;">Hours of Operation:</label>
+                                    <div class="col-sm-3" id = "operational_hours">
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <label class="col-sm-3 " style="text-align: right;">Hospital/ Clinic Level:</label></label>
+                                    <div class="col-sm-3" id = "facility_level">
+                                    </div>
+                                    <label id="level_option_label" class="col-sm-3 " style="text-align: right;" style="display:none">Facility Level Options:</label>
+                                    <div  class="col-sm-3" style="display:none" id = "facility_level_option">
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <label class="col-sm-3 " style="text-align: right;">Ownership: </label></label>
+                                    <div class="col-sm-3" id = "ownership">
+                                    </div>
+                                    <label class="col-sm-3 " style="text-align: right;">Ownership Type:</label>
+                                    <div class="col-sm-3" id = "ownership_type">
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <label for="hs_ownership_details" class="col-sm-3 " style="text-align: right;">Ownership Details:</label>
+                                    <div class="col-sm-9" id = "ownership_details">
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <label class="col-sm-3 " style="text-align: right;">Operation Status:</label></label>
+                                    <div class="col-sm-3" id = "operation_status">                           
+                                    </div>
+                                    <label class="col-sm-3 " style="text-align: right;">Regulatory Status:</label>
+                                    <div class="col-sm-3" id = "regulatory_status">                                                       
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <label class="col-sm-3 " style="text-align: right;">License Status:</label>
+                                    <div class="col-sm-3" id = "license_status">                           
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <label for="hs_no_doctors" class="col-sm-3 " style="text-align: right;">Medical Doctors:</label>
+                                    <div class="col-sm-3" id = "doctors">
+                                    </div>
+                                    <label for="hs_no_pharm" class="col-sm-3 " style="text-align: right;">Pharmacists:</label>
+                                    <div class="col-sm-3" id = "pharmacists">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <label for="hs_no_dentist" class="col-sm-3 " style="text-align: right;">Dentists:</label>
+                                    <div class="col-sm-3" id = "dentist">
+                                    </div>
+                                    <label for="hs_no_pharm_tech" class="col-sm-3 " style="text-align: right;">Pharmacy Technicians:</label>
+                                    <div class="col-sm-3" id = "pharmacy_technicians">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <label for="hs_no_single_qualified_nurses" class="col-sm-3 " style="text-align: right;">Nurses (Single):</label>
+                                    <div class="col-sm-3" id = "nurses">
+                                    </div>
+                                    <label for="hs_no_lab_sc" class="col-sm-3 " style="text-align: right;">Laboratory Scientists:</label>
+                                    <div class="col-sm-3" id = "lab_scientists">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <label for="hs_no_single_qualified_midwives" class="col-sm-3 " style="text-align: right;">Midwifes (Single):</label>
+                                    <div class="col-sm-3" id = "midwifes">
+                                    </div>
+                                    <label for="hs_no_lab_tech" class="col-sm-3 " style="text-align: right;">Laboratory Technicians:</label>
+                                    <div class="col-sm-3" id = "lab_technicians">
+                                    </div>
+                                </div> 
+                                
+                                <div class="row">
+                                    <label for="hs_nurses_midwives" class="col-sm-3 " style="text-align: right;">Nurse/ Midwife (Double):</label>
+                                    <div class="col-sm-3" id = "nurse_midwife">
+                                    </div>
+                                    <label for="hs_no_health_rec" class="col-sm-3 " style="text-align: right;">Health Records/HIM Officers:</label>
+                                    <div class="col-sm-3" id = "him_officers">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <label for="hs_no_comm_health_officer" class="col-sm-3 " style="text-align: right;">Community Health Officer:</label>
+                                    <div class="col-sm-3" id = "community_health_officer">
+                                    </div>
+                                    <label for="hs_no_comm_health_ext_officer" class="col-sm-3 " style="text-align: right;">Community Health Extension Worker:</label>
+                                    <div class="col-sm-3" id = "community_extension_workers">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <label for="hs_no_jun_comm_health_ext_off" class="col-sm-3 " style="text-align: right;">Junior Com Health Extension Worker:</label>
+                                    <div class="col-sm-3" id = "jun_community_extension_worker">
+                                    </div>
+                                    <label for="hs_no_dental_tech" class="col-sm-3 " style="text-align: right;">Dental Technicians:</label>
+                                    <div class="col-sm-3" id = "dental_technicians">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <label for="hs_no_env_health_officer" class="col-sm-3 " style="text-align: right;">Environmental Health Officers:</label>
+                                    <div class="col-sm-9" id = "env_health_officers">
+                                    </div>
+                                </div>
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                </div>
+        </div>
             
         
 		<!-- jquery

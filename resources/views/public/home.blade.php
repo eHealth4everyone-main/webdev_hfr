@@ -9,9 +9,8 @@
 @section("content")
 <div class="latest-area section-padding bg-white">
     <div class="container">
-        
         <div class="row">
-           
+               
             <div class="col-sm-8">
                   
                 <div id="map1" style="height: 500px; min-width: 500px; max-width: 800px; margin: 0 auto" >
@@ -38,16 +37,13 @@
         <div class="row">
             <div class="col-sm-12">
                     <div id="backDiv" style="height: 30px">
-                       
                             <button id="backbutton" style="display: none" class="btn btn-success pull-right" type="button">Return Back</button>
-                        
                     </div>
             </div>
         </div>
     </div>        
     
 </div>
-
 
 
 
@@ -62,7 +58,61 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAF8UERyCqSP9JZ_HfvfPH2cM_6-slYd7Q" async defer></script>
 
 <script>
-  
+     $("#openModal").click( function(){
+        $('#myModal').modal('show')
+      
+          //get facilities details
+          $.ajax({
+            url:"{{route('getFacilityDetails')}}",
+            method:"POST",
+            data:{id:"100001", _token: "{{ csrf_token() }}"},
+            success:function(result)
+            {
+                $('#unique_id').text(result[0].unique_id);
+                $('#facility_name').text(result[0].facility_name);
+                $('#registration_no').text(result[0].registration_no);
+                $('#start_date').text(result[0].start_date);
+                $('#alt_facility_name').text(result[0].alt_facility_name);
+                $('#state').text(result[0].state);
+                $('#lga').text(result[0].lga);
+                $('#ward').text(result[0].ward);
+                $('#house_no').text(result[0].house_no);
+                $('#street_name').text(result[0].street_name);
+                $('#latitude').text(result[0].latitude);
+                $('#longitude').text(result[0].longitude);
+                $('#postal_address').text(result[0].postal_address);
+                $('#phone_number').text(result[0].phone_number);
+                $('#email_address').text(result[0].email_address);
+                $('#website').text(result[0].website);
+                $('#operational_days').text(result[0].operational_days);
+                $('#operational_hours').text(result[0].operational_hours);
+                $('#facility_level').text(result[0].facility_level);
+                $('#ownership').text(result[0].ownership);
+                $('#ownership_type').text(result[0].ownership_type);
+                $('#ownership_details').text(result[0].ownership_details);
+                $('#operation_status').text(result[0].operation_status);
+                $('#regulatory_status').text(result[0].regulatory_status);
+                $('#license_status').text(result[0].license_status);
+                $('#pharmacists').text(result[0].pharmacists);
+                $('#dentist').text(result[0].dentist);
+                $('#pharmacy_technicians').text(result[0].pharmacy_technicians);
+                $('#nurses').text(result[0].nurses);
+                $('#lab_scientists').text(result[0].lab_scientists);
+                $('#midwifes').text(result[0].midwifes);
+                $('#lab_technicians').text(result[0].lab_technicians);
+                $('#nurse_midwife').text(result[0].nurse_midwife);
+                $('#him_officers').text(result[0].him_officers);
+                $('#community_health_officer').text(result[0].community_health_officer);
+                $('#community_extension_workers').text(result[0].community_extension_workers);
+                $('#jun_community_extension_worker').text(result[0].jun_community_extension_worker);
+                $('#dental_technicians').text(result[0].dental_technicians);
+                $('#env_health_officers').text(result[0].env_health_officers);
+              
+                
+            }//success ends         
+        });//ajax ends
+    });
+
     window.onload = function() {
         $('#backbutton').hide(0);
         showAllStatesMap();
@@ -299,6 +349,52 @@
                         }
                     })(marker, i));
                     
+                    //add facility details
+                    google.maps.event.addListener(marker, 'click', (function(marker, i) {
+                        return function() {
+                            $('#unique_id').text(item.unique_id);
+                            $('#facility_name').text(item.facility_name);
+                            $('#registration_no').text(item.registration_no == null ? "" : item.registration_no);
+                            $('#start_date').text(item.start_date == null ? "" :item.start_date );
+                            $('#alt_facility_name').text(item.alt_facility_name == null ? "" :item.alt_facility_name);
+                            $('#state').text(item.state);
+                            $('#lga').text(item.lga);
+                            $('#ward').text(item.ward);
+                            $('#house_no').text(item.house_no== null ? "" :item.house_no);
+                            $('#street_name').text(item.street_name== null ? "" :item.street_name);
+                            $('#latitude').text(item.latitude== null ? "" :item.latitude);
+                            $('#longitude').text(item.longitude== null ? "" :item.longitude);
+                            $('#postal_address').text(item.postal_address== null ? "" :item.postal_address);
+                            $('#phone_number').text(item.phone_number== null ? "" :item.phone_number);
+                            $('#email_address').text(item.email_address== null ? "" :item.email_address);
+                            $('#website').text(item.website== null ? "" :item.website);
+                            $('#operational_days').text(item.operational_days== null ? "" :item.operational_days);
+                            $('#operational_hours').text(item.operational_hours== null ? "" :item.operational_hours);
+                            $('#facility_level').text(item.facility_level);
+                            $('#ownership').text(item.ownership);
+                            $('#ownership_type').text(item.ownership_type== null ? "" :item.ownership_type);
+                            $('#ownership_details').text(item.ownership_details== null ? "" :item.ownership_details);
+                            $('#operation_status').text(item.operation_status== null ? "" :item.operation_status);
+                            $('#regulatory_status').text(item.regulatory_status== null ? "" :item.regulatory_status);
+                            $('#license_status').text(item.license_status== null ? "" :item.license_status);
+                            $('#pharmacists').text(item.pharmacists== null ? "" :item.pharmacists);
+                            $('#dentist').text(item.dentist == null ? "" :item.dentist);
+                            $('#pharmacy_technicians').text(item.pharmacy_technicians == null ? "" :item.pharmacy_technicians);
+                            $('#nurses').text(item.nurses== null ? "" :item.nurses);
+                            $('#lab_scientists').text(item.lab_scientists == null ? "" :item.lab_scientists);
+                            $('#midwifes').text(item.midwifes== null ? "" :item.midwifes);
+                            $('#lab_technicians').text(item.lab_technicians == null ? "" :item.lab_technicians);
+                            $('#nurse_midwife').text(item.nurse_midwife == null ? "" :item.nurse_midwife );
+                            $('#him_officers').text(item.him_officers == null ? "" :item.him_officers );
+                            $('#community_health_officer').text(item.community_health_officer == null ? "" :item.community_health_officer);
+                            $('#community_extension_workers').text(item.community_extension_workers == null ? "" :item.community_extension_workers);
+                            $('#jun_community_extension_worker').text(item.jun_community_extension_worker == null ? "" :item.jun_community_extension_worker);
+                            $('#dental_technicians').text(item.dental_technicians == null ? "" :item.dental_technicians);
+                            $('#env_health_officers').text(item.env_health_officers == null ? "" :item.env_health_officers);
+
+                            $('#myModal').modal('show')
+                        }
+                    })(marker, i));
                 });
                 
                 
@@ -436,6 +532,9 @@
     });
     } 
 
+    function showFacilityDetails(id){
+
+    }
 </script>
 
 

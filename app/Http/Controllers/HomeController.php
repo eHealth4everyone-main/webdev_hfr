@@ -101,8 +101,7 @@ class HomeController extends Controller
          };
 
      
-        $facilities = DB::select("SELECT id,unique_id,facility_name,latitude,longitude 
-                        FROM hospital_details where latitude != '' and 
+        $facilities = DB::select("SELECT * FROM hospital_details where latitude != '' and 
                         lga_id='". $lga_details[0] . "'");
        
         $lga_name =  $lga_details[1];
@@ -114,6 +113,12 @@ class HomeController extends Controller
         return  $result;
     }
 
-    
+    public function getFacilityDetails(Request $request){
+        $hosp = DB::table('hospital_details')
+        ->where('id',$request->id)
+        ->get();
+
+        return $hosp;
+    }
     
 }

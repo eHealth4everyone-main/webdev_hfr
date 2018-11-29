@@ -13,6 +13,8 @@
 Route::get('/', 'HomeController@index')->name('home');
 Route::post('/home/facilitiesbyLga', 'HomeController@getFacilitesByLGA')->name('getFacilitesByLGA');
 Route::post('/home/googlemap', 'HomeController@getFacilitesGMap')->name('getFacilitesGMap');
+Route::post('/home/googlemap/facilitydetails', 'HomeController@getFacilityDetails')->name('getFacilityDetails');
+
 
 Route::view('/about', 'public.about')->name('about');
 Route::get('/contactus', 'ContactController@openContactForm')->name('open_contact_form');
@@ -74,13 +76,10 @@ Route::middleware(["auth"])->group(function(){
     Route::get('admin/hospitals/services/{id}','HospitalsController@services')->name('hospitals.services');
     Route::post('admin/hospitals/services','HospitalsController@StoreServices')->name('hospitals.storeservices');
 
-
-    
     //general
     Route::post('admin/facilities/ownership','GeneralController@getOwnershipType')->name('getOwnershipType');
     Route::post('admin/facilities/facilityleveloption','GeneralController@getFacilityLevelOption')->name('getFacilityLevelOption');
     Route::post('admin/facilities/facilityspecializedoption','GeneralController@getSpecializedOptions')->name('getSpecializedOptions');
-   
    
     //laboratory
     Route::resource('admin/laboratory','LabController');
