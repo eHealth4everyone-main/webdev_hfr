@@ -3,16 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Certification;
+use App\lst_certificate;
 
 class CertificationController extends Controller
 {
 
     public function index()
     {
-        $cert =Certification::all();
-        //dd($cert);
-        return view('certification.index', compact("cert"));
+        $cert =lst_certificate::all();
+        
+        return view('laboratory.certificate.index', compact("cert"));
     }
 
 

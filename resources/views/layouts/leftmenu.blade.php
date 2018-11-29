@@ -25,16 +25,17 @@
                         <i class="fa fa-gears"></i>
                         <span>Masters</span>
                         <span class="pull-right-container">
-                            <span class="label label-success pull-right">6</span>
+                            <span class="label label-success pull-right">7</span>
                         </span>
                     </a>
                     <ul class="treeview-menu">
-                        <li><a href="/equipments"><i class="fa fa-gear"></i> Laboratory Equipments</a></li>
-                        <li><a href="/cert"><i class="fa fa-gear"></i> Laboratory Certification</a></li>
-                        <li><a href="/iservice"><i class="fa fa-gear"></i> Imaging Services</a></li>
-                        <li><a href="/states"><i class="fa fa-gear"></i> States</a></li>
-                        <li><a href="/lga"><i class="fa fa-gear"></i> LGAs</a></li>
-                        <li><a href="/wards"><i class="fa fa-gear"></i> Wards</a></li>
+                        <li><a href="{{route('states.index')}}"><i class="fa fa-gear"></i> States</a></li>
+                        <li><a href="{{route('lgas.index')}}"><i class="fa fa-gear"></i> LGAs</a></li>
+                        <li><a href="{{route('wards.index')}}"><i class="fa fa-gear"></i> Wards</a></li>
+                        <li><a href="{{route('hospServices.index')}}"><i class="fa fa-gear"></i> Hospital Services</a></li>
+                        <li><a href="{{route('service.index')}}"><i class="fa fa-gear"></i> Imaging Services</a></li>
+                        <li><a href="{{route('equip.index')}}"><i class="fa fa-gear"></i> Laboratory Equipments</a></li>
+                        <li><a href="{{route('certification.index')}}"><i class="fa fa-gear"></i> Laboratory Certification</a></li>
                     </ul>
                 </li>
                 <li> 

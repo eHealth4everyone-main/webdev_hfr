@@ -3,7 +3,7 @@
         <div class="modal-dialog modal-sm" role="document">
           <div class="modal-content">
            
-          <form action="{{route('iservice.destroy','id')}}" method="post">
+          <form action="{{route('service.destroy','id')}}" method="post">
               @csrf
               @method("DELETE")
               <div class="modal-body">

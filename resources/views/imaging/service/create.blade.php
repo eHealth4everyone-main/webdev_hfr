@@ -8,7 +8,7 @@
         </div>
   
           <div class="modal-body">
-              <form action="{{route('iservice.store')}}" method="post">
+              <form action="{{route('service.store')}}" method="post">
                   @csrf()
                   <div class="row">
                       <div class="col-md-12">

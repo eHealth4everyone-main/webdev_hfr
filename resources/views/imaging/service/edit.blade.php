@@ -6,7 +6,7 @@
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
           <h4 class="modal-title">Edit Service</h4>
         </div>
-        <form action="{{route('iservice.update','id')}}" method="post">
+        <form action="{{route('service.update','id')}}" method="post">
             @csrf
             @method("PUT")
           <div class="modal-body">

@@ -13,17 +13,17 @@ States
             <thead>
               <tr>
                 <th>State ID</th>
-                <th>State Code</th>
-                <th>State </th>
+                <th>Name</th>
+                <th>Code </th>
               </tr>
             </thead>
             <tbody>
            
               @foreach($states as $st)
               <tr>
-                <td>{{$st->state_id}}</td>
-                <td>{{$st->state}}</td>
-                <td>{{$st->code}}</td>
+                <td>{{$st->id}}</td>
+                <td>{{$st->name}}</td>
+                <td>{{$st->short_code}}</td>
               </tr>
               @endforeach
               

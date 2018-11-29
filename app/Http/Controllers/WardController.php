@@ -6,47 +6,31 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\Datatables\Datatables;
 
-use App\Ward_m;
+use App\ou_ward;
 
 class WardController extends Controller
 {
   
     public function index()
     {
-        // $wards = DB::table('tbl_ward')->get();
-        // return view('wards.index', compact("wards"));
-        
-        return view('wards.index');
+        $wards = DB::table('wards')
+            ->paginate(20);
 
+        return view('wards.index', compact("wards"));
     }
-    public function listWards()
-    {
-        $ward = Ward_m::query();
-        return Datatables::of($ward)->make(true);
-    }
+
 
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         //
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+   
     public function show($id)
     {
         //

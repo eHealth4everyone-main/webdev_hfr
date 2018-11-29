@@ -13,19 +13,19 @@ class FacilityListingController extends Controller
     {
       
         $facilities = DB::table('hospital_details')
-        ->select('state','lga','ward','unique_id','facility_name','facility_level','ownership','id')
-        ->orderByRaw('state','lga','facility_name')
-        ->paginate(20);
+            ->select('state','lga','ward','unique_id','facility_name','facility_level','ownership','id')
+            ->orderByRaw('state','lga','facility_name')
+            ->paginate(20);
 
         //get state list
-        $lst_states = Cache::remember('lst_states', 30, function () {
+        $lst_states = Cache::remember('lst_states', 60, function () {
             return DB::table('ou_states')
                     ->select('id','name')
                     ->orderByRaw('name ASC')
                     ->get();
         });
         //get facility types
-        $lst_facility_types = Cache::remember('lst_facility_types', 30, function () {
+        $lst_facility_types = Cache::remember('lst_facility_types', 60, function () {
             return DB::table('lst_facility_types')
                     ->select('id','name')
                     ->get();

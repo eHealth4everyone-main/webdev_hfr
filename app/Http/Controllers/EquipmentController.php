@@ -3,15 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Equip;
+use App\lst_equipment;
 
 class EquipmentController extends Controller
 {
  
     public function index()
     {
-        $equip =Equip::all();
-        return view('equipments.index', compact("equip"));
+        $equip =lst_equipment::all();
+        return view('laboratory.equipments.index', compact("equip"));
     }
 
     public function create()

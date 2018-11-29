@@ -14,8 +14,8 @@ Local Government Areas (LGAs)
             <thead>
               <tr>
                 <th>State</th>
+                <th>LGA ID</th>
                 <th>LGA Name</th>
-                <th>LGA Code</th>
               </tr>
             </thead>
             <tbody>
@@ -23,8 +23,8 @@ Local Government Areas (LGAs)
               @foreach($lgas as $lga)
               <tr>
                 <td>{{$lga->state}}</td>
+                <td>{{$lga->lgaid}}</td>
                 <td>{{$lga->lga}}</td>
-                <td>{{$lga->lga_id}}</td>
               </tr>
               @endforeach
               

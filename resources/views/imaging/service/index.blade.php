@@ -1,7 +1,7 @@
 @extends("layouts.master")
 
 @section('content-title')
-Imaging services
+Imaging Services
 
 <!-- Button trigger modal -->
 <button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#myModal">
@@ -13,7 +13,7 @@ Imaging services
 @section("content")
 <div class="box">
   <div class="box-body">
-    <table id="table1" class="table table-bordered table-striped">
+    <table id="table1" class="table table-striped table-bordered" style="width:100%">
       <thead>
         <tr>
           <th>Service name</th>
@@ -24,14 +24,14 @@ Imaging services
         
         @foreach($services as $service)
         <tr>
-          <td>{{$service->im_service_name}}</td>
+          <td>{{$service->name}}</td>
           
           <td>
             <a href="#">
-              <button class="btn btn-warning btn-sm" data-id="{{$service->im_service_id}}" data-service="{{$service->im_service_name}}" type="button" data-toggle="modal" data-target="#editModal">Edit</button>
+              <button class="btn btn-warning btn-sm" data-id="{{$service->id}}" data-service="{{$service->name}}" type="button" data-toggle="modal" data-target="#editModal">Edit</button>
             </a>
             <a href="#">
-              <button class="btn btn-danger btn-sm" data-id="{{$service->im_service_id}}" type="button" data-toggle="modal" data-target="#deleteModal" > Delete</button>
+              <button class="btn btn-danger btn-sm" data-id="{{$service->id}}" type="button" data-toggle="modal" data-target="#deleteModal" > Delete</button>
             </a>
           </td>
         </tr>
@@ -47,9 +47,9 @@ Imaging services
 @endsection 
 
 
-@include('iservice.create')
-@include('iservice.edit')
-@include('iservice.delete')
+@include('imaging.service.create')
+@include('imaging.service.edit')
+@include('imaging.service.delete')
 
 @push('bk_script')
 @include('partials.notification_md')
@@ -67,7 +67,7 @@ Imaging services
       $( '#service-error' ).html( "" );
 
       $.ajax({
-        url: "{{route('iservice.store')}}",
+        url: "{{route('service.store')}}",
         method: 'post',
         data: {service: $('#service').val(), _token:_token },
         

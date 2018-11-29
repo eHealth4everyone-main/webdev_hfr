@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\ImagingService;
+use App\lst_imaging_service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -11,17 +11,11 @@ class ImagingServiceController extends Controller
 
     public function index()
     {
-        //
-        $services =ImagingService::all();
-        return view('iservice.index', compact("services"));
+        $services =lst_imaging_service::all();
+        return view('imaging.service.index', compact("services"));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+
     public function store(Request $request)
     {              
         $validator = Validator::make($request->all(), [

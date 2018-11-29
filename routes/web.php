@@ -52,9 +52,6 @@ Route::middleware(["auth"])->group(function(){
 
     Route::get('/admin', 'AdminHomeController@adminhome')->name('admin_home');
 
-    //equipments
-    Route::get('/equipments','EquipmentController@index');
-
     //roles
     Route::get('admin/roles', 'RoleController@index')->name('roles.index');
     Route::post('admin/roles/add', 'RoleController@store')->name('addrole');
@@ -75,6 +72,8 @@ Route::middleware(["auth"])->group(function(){
     Route::post('admin/hospitals/search','HospitalsController@search')->name('searchHospitalsAdmin');
     Route::get('admin/hospitals/services/{id}','HospitalsController@services')->name('hospitals.services');
     Route::post('admin/hospitals/services','HospitalsController@StoreServices')->name('hospitals.storeservices');
+    Route::get('admin/hospitals/service/master','HospitalServiceController@Index')->name('hospServices.index');
+
 
     //general
     Route::post('admin/facilities/ownership','GeneralController@getOwnershipType')->name('getOwnershipType');
@@ -85,23 +84,25 @@ Route::middleware(["auth"])->group(function(){
     Route::resource('admin/laboratory','LabController');
     Route::post('/lab/equips', 'LabController@fetchEquips')->name('lab.fetchEquips');
     Route::post('/lab/cert', 'LabController@fetchCert')->name('lab.fetchCert');
+   //equipments
+    Route::get('admin/equipments','EquipmentController@index')->name('equip.index');
 
     //lab certification
-    Route::get('/cert','CertificationController@index');
+    Route::get('admin/cert','CertificationController@index')->name('certification.index');
 
     //LGA and States
-    Route::get('/lga','LgaController@index');
-    Route::get('/states','StateController@index');
+    Route::get('admin/lgas','LgaController@index')->name('lgas.index');
+    Route::get('admin/states','StateController@index')->name('states.index');
 
     //wards
-    Route::get('admin/wards','WardController@index');
-    Route::get('admin/wards/listwards','WardController@listWards')->name('wards.listwards');
+    Route::get('admin/wards','WardController@index')->name('wards.index');
+
 
     //Pharmacy
     Route::resource('admin/pharmacies','PharmacyController');
 
     //Imaging and Radiology premises
-    Route::resource('admmin/imaging/service','ImagingServiceController');
+    Route::resource('admin/imaging/service','ImagingServiceController');
     Route::resource('admin/imaging','ImagingController');
     Route::post('/admin/imaging/services', 'ImagingController@fetchServices')->name('imaging.fetchServices');
     

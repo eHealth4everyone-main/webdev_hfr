@@ -10,7 +10,7 @@ class LgaController extends Controller
  
     public function index()
     {
-        $lgas = DB::table('tbl_states_lgas')->get();
+        $lgas = DB::select("SELECT l.id lgaid,s.name state,l.name lga FROM ou_lgas l JOIN ou_states s ON s.id=l.state_id");
         return view('lga.index', compact("lgas"));
     }
 

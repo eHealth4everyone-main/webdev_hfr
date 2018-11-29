@@ -11,7 +11,7 @@ class StateController extends Controller
   
     public function index()
     {
-        $states = DB::table('tbl_state')->get();
+        $states = DB::table('ou_states')->get();
         return view('states.index', compact("states"));
     }
 
