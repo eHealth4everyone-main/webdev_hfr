@@ -277,7 +277,7 @@
 @endsection 
 
 @push('custom_scripts')
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAF8UERyCqSP9JZ_HfvfPH2cM_6-slYd7Q"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC5oMDI7RfiReQVCk3brQPcWrJJR7UYgjw"></script>
 
 <script>
     jQuery(document).ready(function($) {

@@ -55,7 +55,7 @@
     <script src="{{ asset("hcharts/map/data.js")}}"></script>
     <script src="{{ asset("hcharts/map/map.js")}}"></script>
    
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAF8UERyCqSP9JZ_HfvfPH2cM_6-slYd7Q" async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC5oMDI7RfiReQVCk3brQPcWrJJR7UYgjw" async defer></script>
 
 <script>
      $("#openModal").click( function(){
