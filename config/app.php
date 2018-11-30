@@ -150,6 +150,7 @@ return [
         Spatie\Permission\PermissionServiceProvider::class,
         Anhskohbo\NoCaptcha\NoCaptchaServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
+        Spatie\Analytics\AnalyticsServiceProvider::class,
          
     
         /*
@@ -216,6 +217,7 @@ return [
         'DataTables' => Yajra\DataTables\Facades\DataTables::class,
         'NoCaptcha' => Anhskohbo\NoCaptcha\Facades\NoCaptcha::class,
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+        'Analytics' => Spatie\Analytics\AnalyticsFacade::class,
     ],
 
 ];
