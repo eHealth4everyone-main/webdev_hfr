@@ -72,7 +72,7 @@
                 <li> 
                     <a href="{{route('downloadList')}}">
                         <i class="fa  fa-download"></i>
-                        <span>Downloads</span>
+                        <span>Download Requests</span>
                     </a>
                 </li>
             

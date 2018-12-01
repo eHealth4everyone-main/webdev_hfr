@@ -23,11 +23,12 @@ class ContactController extends Controller
                 'message' => 'required|string|max:500',
                 'subject' => 'required|string|max:20',
                 'email' => 'required|string|email|max:100',
+                'g-recaptcha-response' => 'required|captcha',
             ]);
 
             Contactus::create($request->all());
 
-            session()->flash("alert-success", "Thanks ". $request->name ." for contacting us!'");
+            session()->flash("alert-success", "Thanks ". $request->name ." for your message/feedback. We will get back to you!");
             return back();
     }
     

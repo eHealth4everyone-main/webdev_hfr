@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\DB;
 
 class RoleController extends Controller
 {
@@ -14,8 +15,14 @@ class RoleController extends Controller
         $roles=Role::get();
         $permissions=Permission::get();
 
-        return view("/roles/index",compact("roles","permissions"));
+        return view("roles.index",compact("roles","permissions"));
     }
+
+    public function create()
+    {       
+        return view("roles.create");
+    }
+
 
     public function store(Request $request)
     {
@@ -24,50 +31,61 @@ class RoleController extends Controller
         $request->validate([
             'role' => 'required|string|max:50',
             'description' => 'required|string|max:100',
-            'perm' => 'required',
+            'permissions' => 'required',
         ]);
 
-        
+        // dd($request->permissions);
+
         $role = Role::create([
             'name' => $request->role,
             'description' => $request->description
             ]);
-        $role->givePermissionTo($request->perm);
+        $role->givePermissionTo($request->permissions);
 
         session()->flash("alert-success", "Role created successfully!");
         return back();
     }
 
-  
-    public function show($id)
-    {
-        //
-    }
-
 
     public function edit($id)
     {
-        //
+        $roles=Role::where('id',$id)
+                ->get();
+
+        $permissionz = DB::select("SELECT permission_id id FROM role_has_permissions where role_id = ".$id."");
+        
+        foreach ($roles as $rol) {
+            $role = $rol;
+        }
+
+        $permission =[];
+        foreach ($permissionz as $p) {
+            $permission[] = $p->id;
+        }
+       
+        return view("roles.edit",compact('role','permission'));
     }
 
 
     public function update(Request $request)
     {
         $request->validate([
-            'role1' => 'required|string|max:50',
-            'description1' => 'required|string|max:100',
-            'perm1' => 'required',
+            'role' => 'required|string|max:50',
+            'description' => 'required|string|max:100',
+            'permissions' => 'required',
         ]);
 
-        $role = Role::findOrfail($request->RoleID);
-        $role->name = $request->role1;
-        $role->description = $request->description1;
+        // dd($request->all());
+
+        $role = Role::findOrfail($request->id);
+        $role->name = $request->role;
+        $role->description = $request->description;
         $role->save();
 
-        $role->syncPermissions($request->perm1);
+        $role->syncPermissions($request->permissions);
 
         session()->flash("alert-success", "Role updated successfully!");
-        return back();
+        return redirect()->back();
     }
     
     public function destroy($id)

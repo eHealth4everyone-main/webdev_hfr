@@ -1,7 +1,7 @@
 @extends("layouts.pub.master")
 
 @section('custom_css')
-
+<link href="https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
 @endsection
 
 
@@ -12,10 +12,13 @@
         <div class="row">
                
             <div class="col-sm-8">
-                  
+                    <div id="loading" style="text-align: center;" >
+                            {{-- <img src="{{asset('img/loading.gif')}}" width="80" height="80" >                     --}}
+                    </div>
                 <div id="map1" style="height: 500px; min-width: 500px; max-width: 800px; margin: 0 auto" >
                     
                 </div>
+                
             </div> 
             <div class="col-sm-4">
                     <div class="single-latest-item">      
@@ -52,69 +55,18 @@
 @push('custom_scripts')
     <script src="{{ asset("hcharts/chart/highcharts.js")}}"></script>
     <script src="{{ asset("hcharts/map/exporting.js")}}"></script>
-    <script src="{{ asset("hcharts/map/data.js")}}"></script>
+    {{-- <script src="{{ asset("hcharts/map/data.js")}}"></script> --}}
     <script src="{{ asset("hcharts/map/map.js")}}"></script>
-   
+    {{-- <script src="{{ asset("hcharts/map/drilldown.js")}}"></script>
+    --}}
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC5oMDI7RfiReQVCk3brQPcWrJJR7UYgjw" async defer></script>
 
 <script>
-     $("#openModal").click( function(){
-        $('#myModal').modal('show')
-      
-          //get facilities details
-          $.ajax({
-            url:"{{route('getFacilityDetails')}}",
-            method:"POST",
-            data:{id:"100001", _token: "{{ csrf_token() }}"},
-            success:function(result)
-            {
-                $('#unique_id').text(result[0].unique_id);
-                $('#facility_name').text(result[0].facility_name);
-                $('#registration_no').text(result[0].registration_no);
-                $('#start_date').text(result[0].start_date);
-                $('#alt_facility_name').text(result[0].alt_facility_name);
-                $('#state').text(result[0].state);
-                $('#lga').text(result[0].lga);
-                $('#ward').text(result[0].ward);
-                $('#house_no').text(result[0].house_no);
-                $('#street_name').text(result[0].street_name);
-                $('#latitude').text(result[0].latitude);
-                $('#longitude').text(result[0].longitude);
-                $('#postal_address').text(result[0].postal_address);
-                $('#phone_number').text(result[0].phone_number);
-                $('#email_address').text(result[0].email_address);
-                $('#website').text(result[0].website);
-                $('#operational_days').text(result[0].operational_days);
-                $('#operational_hours').text(result[0].operational_hours);
-                $('#facility_level').text(result[0].facility_level);
-                $('#ownership').text(result[0].ownership);
-                $('#ownership_type').text(result[0].ownership_type);
-                $('#ownership_details').text(result[0].ownership_details);
-                $('#operation_status').text(result[0].operation_status);
-                $('#regulatory_status').text(result[0].regulatory_status);
-                $('#license_status').text(result[0].license_status);
-                $('#pharmacists').text(result[0].pharmacists);
-                $('#dentist').text(result[0].dentist);
-                $('#pharmacy_technicians').text(result[0].pharmacy_technicians);
-                $('#nurses').text(result[0].nurses);
-                $('#lab_scientists').text(result[0].lab_scientists);
-                $('#midwifes').text(result[0].midwifes);
-                $('#lab_technicians').text(result[0].lab_technicians);
-                $('#nurse_midwife').text(result[0].nurse_midwife);
-                $('#him_officers').text(result[0].him_officers);
-                $('#community_health_officer').text(result[0].community_health_officer);
-                $('#community_extension_workers').text(result[0].community_extension_workers);
-                $('#jun_community_extension_worker').text(result[0].jun_community_extension_worker);
-                $('#dental_technicians').text(result[0].dental_technicians);
-                $('#env_health_officers').text(result[0].env_health_officers);
-              
-                
-            }//success ends         
-        });//ajax ends
-    });
-
+  
     window.onload = function() {
         $('#backbutton').hide(0);
+        $('#loading').hide();
+
         showAllStatesMap();
         facilitybyLevel();
         facilitybyOwnership();
@@ -185,8 +137,13 @@
                     point:{
                         events:{
                             click: function(){
+                                // $('#map1').hide(10);
+                                // $('#loading').show();
+                                 // Show the spinner
+                
                                 showSelectedState(this.statecode);
-                            }
+                            },
+                   
                         }
                     }
                 }]
@@ -199,8 +156,7 @@
     
     //load state map
     function showSelectedState(statecode){
-        $('#backbutton').show();
-        
+       
         var path = "geo/";
         file = statecode.concat(".geojson");
         full_path = path.concat(file);
@@ -282,6 +238,10 @@
                     });//chart ends
                     
                 });
+                
+                $('#backbutton').show();
+                // $('#map1').show();
+                // $('#loading').hide();
 
                 showFacilityByLevelSelectedState(result.by_level,statename);
                 showFacilityByOwnershipSelectedState(result.by_ownership,statename);

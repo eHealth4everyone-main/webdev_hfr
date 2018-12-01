@@ -1,104 +1,221 @@
-  <div class="modal fade" id="createrole" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-              <h4 class="modal-title">Create Role</h4>
-              <div class='notifications top-right'></div>
+@extends("layouts.master")
+
+@section('bk_css')
+
+@endsection
+
+@section('content-title')
+
+@endsection
+
+@section("content")
+
+
+<form class="form-horizontal" action="{{route('roles.store')}}" method="POST">
+    @csrf
+       
+    <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="headingOne">
+                <h4 class="panel-title">
+                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        User Role
+                    </a>
+                </h4>
             </div>
-            <div class="modal-body">
-              
-                <div class="panel-body">
-                    <form method="POST" action="{{ route('addrole') }}">
-                        @csrf             
-    
-                        <div class="form-group row">
-                                <label for="role" class="col-md-2 col-form-label text-md-right">{{ __('Role') }}</label>
-                                <div class="col-md-10">
-                                        <input id="role" type="text" class="form-control" name="role" required autofocus>
-                                <span class="text-danger">
-                                    <strong id="role-error"></strong>
-                                </span>
-                                </div>
-                        </div>      
-                        <div class="form-group row">
-                            <label for="descr" class="col-md-2 col-form-label text-md-right">Description</label>
-                            <div class="col-md-10">
-                                    <input id="descr" type="text" class="form-control" name="description" required>
-                            <span class="text-danger">
-                                <strong id="descr-error"></strong>
-                            </span>
-                            </div>
-                         </div>  
-                        <div class="form-group row">
-                                <label for="perm" class="col-md-2 col-form-label text-md-right">{{ __('Permissions') }}</label>
-                                <div class="col-md-10">
-                                <select class="form-control" id="perm" name="perm[]" multiple="multiple" data-placeholder="Select Permissions" style="width: 100%;" required>
-                                    {{-- @foreach($permissions as $perms)
-                                        <option value="{{$perms->name}}">{{$perms->name}}</option>
-                                    @endforeach --}}
-                                    <optgroup label="Hospitals Module" id="hosp">
-                                        <option value="1">View-Hospital</option>
-                                        <option value="2">Edit-Hospital</option>
-                                        <option value="3">Add-Hospital</option>
-                                        <option value="4">Delete-Hospital</option>
-                                    </optgroup>
-                                    <optgroup label="Laboratory Module" id="lab">
-                                         <option value="5">View-Laboratory</option>
-                                        <option value="6">Edit-Laboratory</option>
-                                        <option value="7">Add-Laboratory</option>
-                                        <option value="8">Delete-Laboratory</option>
-                                    </optgroup>
-                                    <optgroup label="Pharmacys Module" id="pharm">
-                                         <option value="9">View-Pharmacy</option>
-                                        <option value="10">Edit-Pharmacy</option>
-                                        <option value="11">Add-Pharmacy</option>
-                                        <option value="12">Delete-Pharmacy</option>
-                                    </optgroup>
-                                    <optgroup label="Radiology Module" id="rad">
-                                         <option value="13">View-Radiology</option>
-                                        <option value="14">Edit-Radiology</option>
-                                        <option value="15">Add-Radiology</option>
-                                        <option value="16">Delete-Radiology</option>
-                                    </optgroup>
-                                    <optgroup label="Roles & Users" id="user">
-                                        <option value="21">View-Role</option>
-                                        <option value="22">Edit-Role</option>
-                                        <option value="23">Add-Role</option>
-                                        <option value="24">Delete-Role</option>
-                                        <option value="17">View-User</option>
-                                        <option value="18">Edit-User</option>
-                                        <option value="19">Add-User</option>
-                                        <option value="20">Delete-User</option>
-                                    </optgroup>
-                                    <optgroup label="Resources Module" id="resources">
-                                         <option value="25">View-Resources</option>
-                                        <option value="26">Add-Resources</option>
-                                        <option value="27">Delete-Resources</option>
-                                    </optgroup>
-                                </select>
-                                </div>
-                                <span class="text-danger">
-                                    <strong id="perm-error"></strong>
-                                </span>
-                        </div>
-                        <div class="pull-right">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <button type="submit" id="save" class="btn btn-primary">Save</button>
-                        </div>
-                    </form>
-                </div>      
-                                              
-                   
-            </div>
-    
-              
-            </div>
+           
+            <div class="panel-body">
+                    <div class="box-body">
                
-            <div class="modal-footer">
-              
+                            <div class="form-group row">
+                                    <label style="text-align: right;" class="col-md-2 col-form-label text-md-right">Role:<font color="red">*</font> </label>
+                                    <div class="col-md-8">
+                                            <input id="role" type="text" class="form-control" name="role" required autofocus>
+                                    <span class="text-danger">
+                                        <strong id="role-error"></strong>
+                                    </span>
+                                    </div>
+                            </div>      
+                            <div class="form-group row">
+                                <label style="text-align: right;" class="col-md-2 col-form-label text-md-right">Description:<font color="red">*</font> </label>
+                                <div class="col-md-8">
+                                        <input id="description" type="text" class="form-control" name="description" required>
+                                <span class="text-danger">
+                                    <strong id="descr-error"></strong>
+                                </span>
+                                </div>
+                             </div> 
+                     
+                            <div class="form-group row">
+                                <label class="col-sm-2" style="text-align: right;">Permissions:<font color="red">*</font></label>
+                                <div class="col-sm-2">                               
+                                        <input type='checkbox' id='check_all'> Check All                                                  
+                                </div>
+                                                            
+                            </div>
+                            <div class="form-group row">
+                                    <label class="col-sm-2"></label>
+                                    <div class="col-sm-2">                               
+                                        <input type='checkbox'name='permissions[]' value='1'> View Hospitals                                                    
+                                    </div>
+                                    <div class="col-sm-2">                               
+                                        <input type='checkbox'name='permissions[]' value='2'> Add Hospitals                                                   
+                                    </div>
+                                    <div class="col-sm-2">                               
+                                        <input type='checkbox'name='permissions[]' value='3'> Update Hospitals                                                
+                                    </div>
+                                    <div class="col-sm-2">                               
+                                        <input type='checkbox'name='permissions[]' value='4'> Delete Hospitals                                                       
+                                    </div>
+                                    <div class="col-sm-2"></div>                              
+                                </div>
+                            <div class="form-group row">
+                                <div class="col-sm-2"></div>   
+                                <div class="col-sm-2">                               
+                                    <input type='checkbox'name='permissions[]' value='5'> View Laboratories 
+                                </div>
+                                <div class="col-sm-2">                               
+                                    <input type='checkbox'name='permissions[]' value='6'> Add Laboratories
+                                </div>
+                                <div class="col-sm-2">                               
+                                        <input type='checkbox'name='permissions[]' value='7'> Update Laboratories  
+                                </div>
+                                <div class="col-sm-2">                               
+                                        <input type='checkbox'name='permissions[]' value='8'> Delete Laboratories
+                                </div>
+                                <div class="col-sm-2"></div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-2"></div>   
+                                <div class="col-sm-2">                               
+                                        <input type='checkbox'name='permissions[]' value='9'> View Pharmacies
+                                </div>
+                                <div class="col-sm-2">                               
+                                        <input type='checkbox'name='permissions[]' value='10'> Add Pharmacies
+                                </div>
+                                <div class="col-sm-2">                               
+                                        <input type='checkbox'name='permissions[]' value='11'> Update Pharmacies  
+                                </div>
+                                <div class="col-sm-2">                               
+                                        <input type='checkbox'name='permissions[]' value='12'> Delete Pharmacies  
+                                </div>
+                                <div class="col-sm-2"></div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-2"></div>   
+                                <div class="col-sm-2">                               
+                                    <input type='checkbox'name='permissions[]' value='13'> View Radiologies
+                                </div>
+                                <div class="col-sm-2">                               
+                                    <input type='checkbox'name='permissions[]' value='14'> Add Radiologies
+                                </div>
+                                <div class="col-sm-2">                               
+                                    <input type='checkbox'name='permissions[]' value='15'> Update Radiologies
+                                </div>
+                                <div class="col-sm-2">                               
+                                        <input type='checkbox'name='permissions[]' value='16'> Delete Radiologies
+                                </div>
+                                <div class="col-sm-2"></div>
+                            </div>
+                            <div class="form-group row">
+                                    <div class="col-sm-2"></div>   
+                                    <div class="col-sm-2">                               
+                                            <input type='checkbox'name='permissions[]' value='17'> View Users
+                                    </div>
+                                    <div class="col-sm-2">                               
+                                            <input type='checkbox'name='permissions[]' value='18'> Add Users
+                                    </div>
+                                    <div class="col-sm-2">                               
+                                            <input type='checkbox'name='permissions[]' value='19'> Update Users
+                                    </div>
+                                    <div class="col-sm-2">                               
+                                            <input type='checkbox'name='permissions[]' value='20'> Delete Users
+                                    </div>
+                                    <div class="col-sm-2"></div>
+                            </div>
+                            <div class="form-group row">
+                                    <div class="col-sm-2"></div>   
+                                    <div class="col-sm-2">                               
+                                            <input type='checkbox'name='permissions[]' value='21'> View Roles
+                                    </div>
+                                    <div class="col-sm-2">                               
+                                            <input type='checkbox'name='permissions[]' value='22'> Add Roles
+                                    </div>
+                                    <div class="col-sm-2">                               
+                                            <input type='checkbox'name='permissions[]' value='23'> Update Roles
+                                    </div>
+                                    <div class="col-sm-2">                               
+                                            <input type='checkbox'name='permissions[]' value='24'> Delete Roles
+                                    </div>
+                                    <div class="col-sm-2"></div>
+                            </div>
+  
+                            <div class="form-group row">
+                                    <div class="col-sm-2"></div>   
+                                    <div class="col-sm-2">                               
+                                            <input type='checkbox'name='permissions[]' value='25'> View Resources
+                                    </div>
+                                    <div class="col-sm-2">                               
+                                            <input type='checkbox'name='permissions[]' value='26'> Add Resources
+                                    </div>
+                                    <div class="col-sm-2">                               
+                                            <input type='checkbox'name='permissions[]' value='27'> Update Resources
+                                    </div>
+                                    <div class="col-sm-2">                               
+                                            <input type='checkbox'name='permissions[]' value='28'> Delete Resources
+                                    </div>
+                                    <div class="col-sm-2"></div>
+                            </div>
+                            <div class="form-group row">
+                                    <div class="col-sm-2"></div>   
+                                    <div class="col-sm-2">                               
+                                            <input type='checkbox'name='permissions[]' value='29'> View Feedbacks
+                                    </div>
+                                    <div class="col-sm-3">                               
+                                            <input type='checkbox'name='permissions[]' value='30'> View Download Request
+                                    </div>
+                                    <div class="col-sm-2">                               
+                                            
+                                    </div>
+                                    <div class="col-sm-2">                               
+                                            
+                                    </div>
+                                    <div class="col-sm-2"></div>
+                            </div>
+                        {{-- <input type="hidden"  name="hospital_id" value="{{$hosp[0]->id}}"> --}}
+                
+                
+                            
+                    </div>
             </div>
-          </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-      </div><!-- /.modal -->
-   
+        
+    </div>
+    
+<!-- /.box-body -->
+<div class="box-footer">
+    <a href="{{route('roles.index')}}">
+        <button type="button" class="btn btn-warning">Return Back</button>
+    </a>
+    <button type="submit" class="btn btn-primary pull-right">Save Record</button>
+</div>
+<!-- /.box-footer -->
+</form>
+
+@endsection 
+
+
+
+@push('bk_script')
+    @include('partials.notification')
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#check_all').click(function() {
+                var c = this.checked;
+                $(':checkbox').prop('checked',c);
+            });
+        });
+
+    </script>
+
+
+@endpush

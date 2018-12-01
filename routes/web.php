@@ -54,8 +54,11 @@ Route::middleware(["auth"])->group(function(){
 
     //roles
     Route::get('admin/roles', 'RoleController@index')->name('roles.index');
-    Route::post('admin/roles/add', 'RoleController@store')->name('addrole');
-    Route::post('admin/roles/update', 'RoleController@update')->name('updaterole');
+    Route::get('admin/roles/create', 'RoleController@create')->name('roles.create');
+    Route::post('admin/roles', 'RoleController@store')->name('roles.store');
+    Route::get('admin/roles/{id}/edit', 'RoleController@edit')->name('roles.edit');
+    Route::post('admin/roles/update', 'RoleController@update')->name('roles.update');
+
 
     //users
     Route::get('admin/users', 'UserController@index')->name('users.index');

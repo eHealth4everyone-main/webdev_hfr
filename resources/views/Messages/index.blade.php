@@ -2,7 +2,7 @@
 
 
 @section('content-title')
-Inbox
+Messages & Feedbacks
 @endsection
 
 @section("content")
