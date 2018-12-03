@@ -492,9 +492,7 @@
     });
     } 
 
-    function showFacilityDetails(id){
 
-    }
 </script>
 
 
