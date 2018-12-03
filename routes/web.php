@@ -11,46 +11,46 @@
 
 //home
 Route::get('/', 'HomeController@index')->name('home');
-Route::post('/home/facilitiesbyLga', 'HomeController@getFacilitesByLGA')->name('getFacilitesByLGA');
-Route::post('/home/googlemap', 'HomeController@getFacilitesGMap')->name('getFacilitesGMap');
-Route::post('/home/googlemap/facilitydetails', 'HomeController@getFacilityDetails')->name('getFacilityDetails');
+Route::post('home/facilitiesbyLga', 'HomeController@getFacilitesByLGA')->name('getFacilitesByLGA');
+Route::post('home/googlemap', 'HomeController@getFacilitesGMap')->name('getFacilitesGMap');
+Route::post('home/googlemap/facilitydetails', 'HomeController@getFacilityDetails')->name('getFacilityDetails');
 
 
-Route::view('/about', 'public.about')->name('about');
-Route::get('/contactus', 'ContactController@openContactForm')->name('open_contact_form');
-Route::post('/contactus', 'ContactController@store')->name('storecontact');
+Route::view('about', 'public.about')->name('about');
+Route::get('contactus', 'ContactController@openContactForm')->name('open_contact_form');
+Route::post('contactus', 'ContactController@store')->name('storecontact');
 
-Route::get('/facilities/hospitals', 'FacilityListingController@index')->name('listhosp');
-Route::get('/facilities/searchlist', 'FacilityListingController@searchFacilities')->name('searchFacilities');
-Route::get('/facilities/hospitalssearch', 'FacilityListingController@searchHospitals')->name('searchHospitals');
-Route::post('/facilities/details','FacilityListingController@showDetails')->name('facilitydetails');
+Route::get('facilities/hospitals', 'FacilityListingController@index')->name('listhosp');
+Route::get('facilities/searchlist', 'FacilityListingController@searchFacilities')->name('searchFacilities');
+Route::get('facilities/hospitalssearch', 'FacilityListingController@searchHospitals')->name('searchHospitals');
+Route::post('facilities/details','FacilityListingController@showDetails')->name('facilitydetails');
 
-Route::get('/statistics/tables', 'SummaryTablesController@index')->name('statistics');
-Route::get('/statistics/tables/filter', 'SummaryTablesController@filter')->name('filterStatistics');
+Route::get('statistics/tables', 'SummaryTablesController@index')->name('statistics');
+Route::get('statistics/tables/filter', 'SummaryTablesController@filter')->name('filterStatistics');
 
-Route::get('/statistics/charts', 'SummaryChartsController@index')->name('statistics_charts');
-Route::get('/statistics/charts/filter', 'SummaryChartsController@filter')->name('filterStatisticsCharts');
-Route::get('/statistics/populationindex', 'SummaryChartsController@population_index')->name('population_index');
+Route::get('statistics/charts', 'SummaryChartsController@index')->name('statistics_charts');
+Route::get('statistics/charts/filter', 'SummaryChartsController@filter')->name('filterStatisticsCharts');
+Route::get('statistics/populationindex', 'SummaryChartsController@population_index')->name('population_index');
 
-Route::get('/hfrresources', 'ResourceController@public_index')->name('public_resources');
-Route::get('/download/facilities', 'DownloadController@openRegistrationForm')->name('openRegistrationForm');
-Route::post('/download/facilities', 'DownloadController@store')->name('saveDownloadUserRecords');
-Route::get('/download/facilitylist', 'DownloadController@index')->name('downloadFacilitiesList');
-Route::get('/download/filter', 'DownloadController@filter')->name('downloadFacilityFilter');
-Route::get('/downloads/excel/{type}/{state}/{format}', 'DownloadController@export')->name('export');
+Route::get('hfrresources', 'ResourceController@public_index')->name('public_resources');
+Route::get('download/facilities', 'DownloadController@openRegistrationForm')->name('openRegistrationForm');
+Route::post('download/facilities', 'DownloadController@store')->name('saveDownloadUserRecords');
+Route::get('download/facilitylist', 'DownloadController@index')->name('downloadFacilitiesList');
+Route::get('download/filter', 'DownloadController@filter')->name('downloadFacilityFilter');
+Route::get('downloads/excel/{type}/{state}/{format}', 'DownloadController@export')->name('export');
 
 //routes to populate lgas and wards
-Route::post('/hosp/fetchLga', 'GeneralController@getLgaList')->name('getLgaList');
-Route::post('/hosp/fetctWards', 'GeneralController@getWardList')->name('getWardList');
+Route::post('hosp/fetchLga', 'GeneralController@getLgaList')->name('getLgaList');
+Route::post('hosp/fetctWards', 'GeneralController@getWardList')->name('getWardList');
 
 //resources
-Route::get('/resources/download/{file}', 'ResourceController@download')->name('downloadFile');
+Route::get('resources/download/{file}', 'ResourceController@download')->name('downloadFile');
 
 Auth::routes();
 
 Route::middleware(["auth"])->group(function(){
 
-    Route::get('/administrator', 'AdminHomeController@index')->name('admin_home');
+    Route::get('administrator', 'AdminHomeController@index')->name('admin_home');
 
     //roles
     Route::get('admin/roles', 'RoleController@index')->name('roles.index');
@@ -85,8 +85,8 @@ Route::middleware(["auth"])->group(function(){
    
     //laboratory
     Route::resource('admin/laboratory','LabController');
-    Route::post('/lab/equips', 'LabController@fetchEquips')->name('lab.fetchEquips');
-    Route::post('/lab/cert', 'LabController@fetchCert')->name('lab.fetchCert');
+    Route::post('lab/equips', 'LabController@fetchEquips')->name('lab.fetchEquips');
+    Route::post('lab/cert', 'LabController@fetchCert')->name('lab.fetchCert');
    //equipments
     Route::get('admin/equipments','EquipmentController@index')->name('equip.index');
 
@@ -107,14 +107,14 @@ Route::middleware(["auth"])->group(function(){
     //Imaging and Radiology premises
     Route::resource('admin/imaging/service','ImagingServiceController');
     Route::resource('admin/imaging','ImagingController');
-    Route::post('/admin/imaging/services', 'ImagingController@fetchServices')->name('imaging.fetchServices');
+    Route::post('admin/imaging/services', 'ImagingController@fetchServices')->name('imaging.fetchServices');
     
 
     //resources
-    Route::get('/resources', 'ResourceController@index')->name('resources');
-    Route::get('/resources/upload', 'ResourceController@upload')->name('upload');
-    Route::post('/resources/uploads', 'ResourceController@store')->name('savefile');
-    Route::post('/resources/delete/{file}', 'ResourceController@destroy')->name('deleteFile');
+    Route::get('resources', 'ResourceController@index')->name('resources');
+    Route::get('resources/upload', 'ResourceController@upload')->name('upload');
+    Route::post('resources/uploads', 'ResourceController@store')->name('savefile');
+    Route::post('resources/delete/{file}', 'ResourceController@destroy')->name('deleteFile');
     
 
     //messages
