@@ -99,7 +99,7 @@
                                             <div class="header-top-right">
                                                     <div class="content"><a href="{{route('about')}}"> About</a></div>
                                                     <div class="content"><a href="{{route('open_contact_form')}}"> Contact Us</a></div>
-                                                <div class="content"><a href="{{route('admin_home')}}"><i class="zmdi zmdi-account"></i> My Account</a>
+                                                <div class="content"><a href="/login"><i class="zmdi zmdi-account"></i> My Account</a>
                                 
                                                 </div>
                                                
