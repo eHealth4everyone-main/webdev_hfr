@@ -99,6 +99,7 @@
 -
     <script src="{{ asset("dist/js/jquery.min.js")}}"></script>
     <script src="{{ asset("dist/js/bootstrap.min.js")}}"></script>
+    <script src='https://www.google.com/recaptcha/api.js'></script>
     <script>
       
     </script>
