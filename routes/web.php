@@ -15,8 +15,8 @@ Route::post('home/facilitiesbyLga', 'HomeController@getFacilitesByLGA')->name('g
 Route::post('home/googlemap', 'HomeController@getFacilitesGMap')->name('getFacilitesGMap');
 Route::post('home/googlemap/facilitydetails', 'HomeController@getFacilityDetails')->name('getFacilityDetails');
 
+Route::get('about', 'HomeController@about')->name('about');
 
-Route::view('about', 'public.about')->name('about');
 Route::get('contactus', 'ContactController@openContactForm')->name('open_contact_form');
 Route::post('contactus', 'ContactController@store')->name('storecontact');
 

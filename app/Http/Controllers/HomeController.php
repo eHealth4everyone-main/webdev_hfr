@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Cache;
 
 class HomeController extends Controller
 {
+    public function about(){
+        return view('public.about');
+    }
 
     public function index()
     {
