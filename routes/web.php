@@ -32,7 +32,7 @@ Route::get('statistics/charts', 'SummaryChartsController@index')->name('statisti
 Route::get('statistics/charts/filter', 'SummaryChartsController@filter')->name('filterStatisticsCharts');
 Route::get('statistics/populationindex', 'SummaryChartsController@population_index')->name('population_index');
 
-Route::get('hfrresources', 'ResourceController@public_index')->name('public_resources');
+
 Route::get('download/facilities', 'DownloadController@openRegistrationForm')->name('openRegistrationForm');
 Route::post('download/facilities', 'DownloadController@store')->name('saveDownloadUserRecords');
 Route::get('download/facilitylist', 'DownloadController@index')->name('downloadFacilitiesList');
@@ -45,6 +45,7 @@ Route::post('hosp/fetctWards', 'GeneralController@getWardList')->name('getWardLi
 
 //resources
 Route::get('resources/download/{file}', 'ResourceController@download')->name('downloadFile');
+Route::get('resources', 'ResourceController@public_index')->name('public_resources');
 
 Auth::routes();
 
@@ -58,7 +59,6 @@ Route::middleware(["auth"])->group(function(){
     Route::post('admin/roles', 'RoleController@store')->name('roles.store');
     Route::get('admin/roles/{id}/edit', 'RoleController@edit')->name('roles.edit');
     Route::post('admin/roles/update', 'RoleController@update')->name('roles.update');
-
 
     //users
     Route::get('admin/users', 'UserController@index')->name('users.index');
@@ -111,10 +111,10 @@ Route::middleware(["auth"])->group(function(){
     
 
     //resources
-    Route::get('resources', 'ResourceController@index')->name('resources');
-    Route::get('resources/upload', 'ResourceController@upload')->name('upload');
-    Route::post('resources/uploads', 'ResourceController@store')->name('savefile');
-    Route::post('resources/delete/{file}', 'ResourceController@destroy')->name('deleteFile');
+    Route::get('admin/resources', 'ResourceController@index')->name('resources');
+    Route::get('admin/resources/upload', 'ResourceController@upload')->name('upload');
+    Route::post('admin/resources/uploads', 'ResourceController@store')->name('savefile');
+    Route::post('admin/resources/delete/{file}', 'ResourceController@destroy')->name('deleteFile');
     
 
     //messages
