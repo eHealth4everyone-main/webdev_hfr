@@ -13,7 +13,7 @@ class AdminHomeController extends Controller
         $this->middleware('auth');
     }
 
-    public function adminhome(){
+    public function index(){
         $num_downloads = DB::select("SELECT date_format(created_at,'%b %y') as name,month(created_at) mon,COUNT(id) y 
         FROM downloads group by name,mon order by mon limit 12");
 

@@ -50,7 +50,7 @@ Auth::routes();
 
 Route::middleware(["auth"])->group(function(){
 
-    Route::get('/admin', 'AdminHomeController@adminhome')->name('admin_home');
+    Route::get('/administrator', 'AdminHomeController@index')->name('admin_home');
 
     //roles
     Route::get('admin/roles', 'RoleController@index')->name('roles.index');
