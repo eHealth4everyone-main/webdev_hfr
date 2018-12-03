@@ -89,9 +89,9 @@ class HomeController extends Controller
     {   
         //get lga id and name
         $lga = DB::table('ou_lgas')
-        ->select('id','name')
-        ->where('map_code', $request->lga_code)
-        ->get();
+            ->select('id','name')
+            ->where('map_code', $request->lga_code)
+            ->get();
         
          $lga_details = array();
  

@@ -191,17 +191,29 @@ class FacilityListingController extends Controller
         return view('public.hospital_search',compact("facilities"));        
     }
 
-    public function showDetails($id,$facility_type_id)
+    // public function showDetails($id,$facility_type_id)
+    public function showDetails(Request $request)
     {
-        if($facility_type_id==1){
-            $hosp = DB::table('hospital_details')
-            ->where('id',$id)
+        if($request->facility_type_id==1){
+            $details = DB::table('hospital_details')
+            ->where('id',$request->id)
             ->get();
     
-            $services = DB::select("SELECT s.name FROM lst_hosp_services s JOIN hs_hospital_services h on h.service_id = s.id
-                    where h. hospital_id='".$id."'");
-          
-            return view('public.show_hospital_details', compact("hosp",'services'));  
+            $serv = DB::select("SELECT s.name FROM lst_hosp_services s JOIN hs_hospital_services h on h.service_id = s.id
+                    where h. hospital_id='".$request->id."'");
+           
+            $services = array();
+            
+            foreach ($serv as $s){
+                $services[] = $s->name;
+            };
+
+            $result  = array();
+            $result['details'] = $details;
+            $result['services'] =  $services;
+
+            return  $result;
+            // return view('public.show_hospital_details', compact("hosp",'services'));  
         }
             
     }
