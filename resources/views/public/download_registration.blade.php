@@ -160,6 +160,7 @@
         $('.select2').select2()                                         
     })
 
+console.log("{{env('NOCAPTCHA_SITEKEY')}}");
 </script>
 
 @endpush
