@@ -191,7 +191,7 @@ class FacilityListingController extends Controller
         return view('public.hospital_search',compact("facilities"));        
     }
 
-    // public function showDetails($id,$facility_type_id)
+ 
     public function showDetails(Request $request)
     {
         if($request->facility_type_id==1){
@@ -213,7 +213,7 @@ class FacilityListingController extends Controller
             $result['services'] =  $services;
 
             return  $result;
-            // return view('public.show_hospital_details', compact("hosp",'services'));  
+           
         }
             
     }
