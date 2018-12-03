@@ -153,7 +153,6 @@
 
 @push('custom_scripts')
 <script src="{{asset("dist/js/select2.full.min.js")}}"></script>
-<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 @include('partials.notification')
     
 <script>
