@@ -59,6 +59,17 @@
                             </div>
                         </div>
                         <div class="form-group row">
+                                <label for="mobile1" class="col-md-4 col-form-label text-md-right">{{ __('Mobile Number') }}</label>
+        
+                                <div class="col-md-8">
+                                    <input id="mobile1" type="text" class="form-control{{ $errors->has('mobile1') ? ' is-invalid' : '' }}" name="mobile1" value="{{ old('mobile1') }}" required>
+        
+                                    <span class="text-danger">
+                                         <strong id="mobile-error1"></strong>
+                                    </span>
+                                </div>
+                        </div>
+                        <div class="form-group row">
                                 <label for="job1" class="col-md-4 col-form-label text-md-right">{{ __('Job Title') }}</label>
         
                                 <div class="col-md-8">
@@ -83,7 +94,7 @@
                         <div class="form-group row">
                                 <label for="role1" class="col-md-4 col-form-label text-md-right">{{ __('User Role') }}</label>
                                 <div class="col-md-8">
-                                        <select class="form-control select2"  class="form-control" id="role1" name="role1" data-placeholder="Select Role" required data-width="100%">
+                                        <select class="form-control select2"  class="form-control" id="role1" name="role1[]" multiple="multiple" data-placeholder="Select Role" required data-width="100%">
                                             @foreach($roles as $role)
                                                 <option value="{{$role->name}}">{{$role->name}}</option>
                                             @endforeach
@@ -93,6 +104,20 @@
                                 </span>
                                 </div>
                                 <input id="UserID" name="UserID" type="hidden">
+                        </div> 
+                        <div class="form-group row">
+                                <label for="state_id1" class="col-md-4 col-form-label text-md-right">{{ __('State Permission') }}</label>
+                                <div class="col-md-8">
+                                        <select class="form-control select2"  class="form-control" id="state_id1" name="state_id1" data-placeholder="Select State" required data-width="100%">
+                                            <option value="1">All States</option>    
+                                            @foreach($lst_states as $s)
+                                                    <option value="{{$s->id}}">{{$s->name}}</option>
+                                                @endforeach
+                                        </select>
+                                <span class="text-danger">
+                                    <strong id="state-id"></strong>
+                                </span>
+                                </div>
                         </div>           
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

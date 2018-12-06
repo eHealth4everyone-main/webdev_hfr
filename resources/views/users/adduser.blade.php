@@ -59,6 +59,17 @@
                             </div>
                         </div>
                         <div class="form-group row">
+                                <label for="mobile" class="col-md-4 col-form-label text-md-right">{{ __('Mobile Number') }}</label>
+        
+                                <div class="col-md-8">
+                                    <input id="mobile" type="text" class="form-control{{ $errors->has('mobile') ? ' is-invalid' : '' }}" name="mobile" value="{{ old('mobile') }}" required>
+        
+                                    <span class="text-danger">
+                                         <strong id="email-error"></strong>
+                                    </span>
+                                </div>
+                        </div>
+                        <div class="form-group row">
                                 <label for="job" class="col-md-4 col-form-label text-md-right">{{ __('Job Title') }}</label>
         
                                 <div class="col-md-8">
@@ -84,13 +95,27 @@
                         <div class="form-group row">
                                 <label for="role" class="col-md-4 col-form-label text-md-right">{{ __('User Role') }}</label>
                                 <div class="col-md-8">
-                                        <select class="form-control select2"  class="form-control" id="role" name="role" data-placeholder="Select Role" required data-width="100%">
+                                        <select class="form-control select2"  class="form-control" id="role" name="role[]" multiple="multiple" data-placeholder="Select Role" required data-width="100%">
                                                 @foreach($roles as $role)
                                                     <option value="{{$role->name}}">{{$role->name}}</option>
                                                 @endforeach
                                         </select>
                                 <span class="text-danger">
                                     <strong id="role-error"></strong>
+                                </span>
+                                </div>
+                        </div>
+                        <div class="form-group row">
+                                <label for="state_id" class="col-md-4 col-form-label text-md-right">{{ __('State Permission') }}</label>
+                                <div class="col-md-8">
+                                        <select class="form-control select2"  class="form-control" id="state_id" name="state_id" data-placeholder="Select State" required data-width="100%">
+                                            <option value="1">All States</option>    
+                                            @foreach($lst_states as $s)
+                                                    <option value="{{$s->id}}">{{$s->name}}</option>
+                                                @endforeach
+                                        </select>
+                                <span class="text-danger">
+                                    <strong id="state-id"></strong>
                                 </span>
                                 </div>
                         </div>          

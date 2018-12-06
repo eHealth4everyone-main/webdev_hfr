@@ -39,13 +39,13 @@ Users
             <a href="#">
               <button class="btn btn-success btn-sm" data-fname="{{$user->firstname}}" data-lname="{{$user->lastname}}"
                   data-username="{{$user->username}}" data-email="{{$user->email}}" data-role="{{$user->getRoleNames()}}"
-                   data-job="{{$user->job_title}}" data-org="{{$user->organisation}}"
-                   type="button" data-toggle="modal" data-target="#view">View</button>
+                   data-job="{{$user->job_title}}" data-org="{{$user->organisation}}" data-mobile="{{$user->mobile}}"  data-state_id="{{$user->state_id}}"
+                   type="button" data-toggle="modal" data-target="#view">More</button>
             </a>
             <a href="#">
               <button class="btn btn-warning btn-sm" data-fname="{{$user->firstname}}" data-lname="{{$user->lastname}}"
                   data-username="{{$user->username}}" data-email="{{$user->email}}" data-id="{{$user->id}}" data-role="{{$user->getRoleNames()}}"
-                   data-job="{{$user->job_title}}" data-org="{{$user->organisation}}"
+                   data-job="{{$user->job_title}}" data-org="{{$user->organisation}}" data-mobile="{{$user->mobile}}" data-state_id="{{$user->state_id}}"
                    type="button" data-toggle="modal" data-target="#editUser">Edit</button>
             </a>
             
@@ -99,6 +99,8 @@ Users
         var lname=button.data('lname')
         var username=button.data('username')
         var email=button.data('email')
+        var mobile=button.data('mobile')
+        var state_id=button.data('state_id')
         var job=button.data('job') 
         var org=button.data('org')   
         var role=button.data('role')  
@@ -112,6 +114,8 @@ Users
         modal.find('.modal-body #job1').val(job);
         modal.find('.modal-body #organisation1').val(org);
         modal.find('.modal-body #role1').val(role).change();
+        modal.find('.modal-body #state_id1').val(state_id).change();
+        modal.find('.modal-body #mobile1').val(mobile).change();
         modal.find('.modal-body #UserID').val(id);
       });//end edit
 
@@ -137,8 +141,19 @@ Users
       var role=button.data('role')
       var job=button.data('job') 
       var org=button.data('org')      
+      var mobile=button.data('mobile')
+      var state_id=button.data('state_id')
       var modal = $(this)
-   
+      var state
+
+      $.each(@json($lst_states), function( index, value ){
+        if(state_id = value.id){
+          state = value.name;
+          return false;
+        }
+      });
+      
+
       modal.find('.modal-body #firstname').text(fname);
       modal.find('.modal-body #lastname').text(lname);
       modal.find('.modal-body #username').text(username);
@@ -146,6 +161,8 @@ Users
       modal.find('.modal-body #job').text(job);
       modal.find('.modal-body #organisation').text(org);
       modal.find('.modal-body #userrole').text(role);
+      modal.find('.modal-body #state').text(state);
+      modal.find('.modal-body #mobile').text(mobile);
     });//end
 
 

@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Traits\HasRoles;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+
 use Auth;
 
 class UserController extends Controller
@@ -18,7 +21,13 @@ class UserController extends Controller
         {
             $users =User::get();
             $roles=Role::get();
-            return view('users.index', compact("users","roles"));  
+            $lst_states = Cache::remember('lst_states', 60, function () {
+                return DB::table('ou_states')
+                        ->select('id','name')
+                        ->orderByRaw('name ASC')
+                        ->get();
+            });
+            return view('users.index', compact("users","roles","lst_states"));  
         }
         
     public function store(Request $request)
@@ -30,6 +39,7 @@ class UserController extends Controller
                 'job' => 'nullable|string|max:50',
                 'organisation' => 'nullable|string|max:50',
                 'username' => 'required|string|max:50|unique:users',
+                'mobile' => 'string|max:40',
                 'role' => 'required',
                 'email' => 'required|string|email|max:255|unique:users',
             ]);
@@ -39,6 +49,8 @@ class UserController extends Controller
                 'lastname' => $data['lastname'],
                 'username' => $data['username'],
                 'email' => $data['email'],
+                'mobile' => $data['mobile'],
+                'state_id' => $data['state_id'],
                 'job_title' => $data['job'],
                 'status'=>'Active',
                 'organisation' => $data['organisation'],
@@ -61,16 +73,19 @@ class UserController extends Controller
             'lastname1' => 'required|string|max:255',
             'role1' => 'required',
             'job1' => 'nullable|string|max:50',
+            'mobile1' => 'string|max:40',
             'organisation1' => 'nullable|string|max:50',
         ]);
 
         $data = $request->all();
-        
+       
         $user = User::findOrFail($request->UserID);
         $user->firstname = $data['firstname1'];
         $user->lastname = $data['lastname1'];
         $user->job_title = $data['job1'];
         $user->organisation = $data['organisation1'];
+        $user->mobile = $data['mobile1'];
+        $user->state_id = $data['state_id1'];
         $user->save();
 
         $user->syncRoles($data['role1']);

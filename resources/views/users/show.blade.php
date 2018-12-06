@@ -1,5 +1,5 @@
 <div class="modal fade" id="view" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-dialog " role="document">
           <div class="modal-content">
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -9,7 +9,7 @@
             <div class="modal-body">
               
                 <div class="panel-body">
-                        <div class="row">
+                        {{-- <div class="row">
                                 <label class="col-md-4">Firstname:</label>
                                 <div class="col-md-8" id="firstname"></div>
                         </div>
@@ -24,8 +24,11 @@
                         <div class="row">
                                 <label class="col-md-4 text-md-right">E-Mail:</label>
                                 <div class="col-md-8" id="email">    </div>
+                        </div> --}}
+                        <div class="row">
+                                <label class="col-md-4 text-md-right">Mobile:</label>
+                                <div class="col-md-8" id="mobile">    </div>
                         </div>
-              
                         <div class="row">
                                 <label class="col-md-4 text-md-right">Job Title:</label>
                                 <div class="col-md-8" id="job">    </div>
@@ -38,6 +41,11 @@
                                 <label class="col-md-4">Role:</label>
                                 <div class="col-md-8" id="userrole"></div>
                         </div>
+                        <div class="row">
+                                <label class="col-md-4">State:</label>
+                                <div class="col-md-8" id="state"></div>
+                        </div>
+              
                 </div>
              
 
