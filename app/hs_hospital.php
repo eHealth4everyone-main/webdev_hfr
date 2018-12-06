@@ -4,10 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class hs_hospital extends Model
+class hs_hospital extends Model implements Auditable 
 {
-    protected $guarded = ["unique_id","start_date","operational_days"];
+    use \OwenIt\Auditing\Auditable;
+    
+    protected $guarded = ["unique_id","start_date","operational_days","status_id","created_by"];
 
 
     public function arrayValuesTostring($val)

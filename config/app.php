@@ -151,6 +151,8 @@ return [
         Anhskohbo\NoCaptcha\NoCaptchaServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
         Spatie\Analytics\AnalyticsServiceProvider::class,
+        OwenIt\Auditing\AuditingServiceProvider::class,
+
          
     
         /*
