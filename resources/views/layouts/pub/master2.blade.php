@@ -245,186 +245,285 @@
         </div>    
         <!--End of Main Wrapper Area--> 
         
-      <!-- Goolge Map Modal -->
-        <div class="modal fade" id="googleMapModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"  >
-                <div class="modal-dialog modal-lg" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title" id="myModalLabel">Facilities in LGA</h4>
-                        </div>
-                        <div class="modal-body">
-                            <div id="googleMap" style="height: 500px; min-width: 500px; max-width: 800px; margin: 0 auto"></div>
-                            
-                        </div>
-                        <div class="modal-footer">
-                          
-                            <div class="row">
-                                <div class="col-md-2">
-                                    <img src="http://maps.google.com/mapfiles/ms/micons/green.png" alt="Public">Public
-                                </div>
-                                <div class="col-md-2">
-                                        <img src="http://maps.google.com/mapfiles/ms/micons/blue.png" alt="Private">Private
-                                </div>
-                                <label class="col-md-2">P: Primary</label>
-                                <label class="col-md-2">S: Secondary</label>
-                                <label class="col-md-2">T: Tertiary</label>
 
-                            </div>
-                           
-                            
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        </div>
-                    </div>
-                </div>
-        </div>
-
-<!-- Modal Facility Details on google map-->
-<div class="modal fade" id="details_onGmap" tabindex="-1" role="dialog" aria-labelledby="details_Title">
+<!-- Show facility details on view click public facility list -->
+<div class="modal fade" id="view_details" tabindex="-1" role="dialog">
         <div class="modal-dialog " role="document">
           <div class="modal-content">
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-              <h4 class="modal-title" id="details_Title"></h4>
+              <h4 class="modal-title">Facility Details</h4>
               <div class='notifications top-right'></div>
             </div>
             <div class="modal-body">
               
                 <div class="panel-body">
                    
-                        <div class="panel-group" id="accordion1">
-                             {{-- panel one --}}
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                  <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion1" href="#collapse1">Status</a>
-                                  </h4>
-                                </div>
-                                <div id="collapse1" class="panel-collapse collapse in">
-                                  <div class="panel-body">
-                                      <div class="row">
-                                          <label class="col-md-4">Operational Status:</label>
-                                          <div class="col-md-8" id="operation_status1"></div>
-                                      </div>
-                                      <div class="row">
-                                          <label class="col-md-4">Regulatory Status:</label>
-                                          <div class="col-md-8" id="regulatory_status1"></div>
-                                      </div>
-                                      <div class="row">
-                                          <label class="col-md-4">License Status:</label>
-                                          <div class="col-md-8" id="license_status1"></div>
-                                      </div>
-                                  </div>
-                                </div>
-                            </div>
-                                  {{-- pane two --}}
-                                  <div class="panel panel-default">
-                                        <div class="panel-heading">
-                                          <h4 class="panel-title">
-                                            <a data-toggle="collapse" data-parent="#accordion1" href="#collapse2">Services</a>
-                                          </h4>
-                                        </div>
-                                        <div id="collapse2" class="panel-collapse collapse">
-                                          <div class="panel-body">
-                                            
-                                              <div class="row">
-                                                  <label class="col-md-8">Bed Capacity for Accidents and Emergency:</label>
-                                                  <div class="col-md-4" id="beds_accidents_emerg1"></div>
-                                              </div>
-                                              <div class="row">
-                                                  <label class="col-md-8">Bed Capacity for Admissions:</label>
-                                                  <div class="col-md-4" id="beds_adminission1"></div>
-                                              </div>
-                                              <div class="row">
-                                                  <label class="col-md-8">Bed Capacity for Intensive Care:</label>
-                                                  <div class="col-md-4" id="beds_icu1"></div>
-                                              </div>
-                                          </div>
-                                        </div>
-                                  </div>
-
-                          {{-- panel three --}}
+                        <div class="panel-group" id="accordion">
+                          {{-- panel one --}}
                           <div class="panel panel-default">
                             <div class="panel-heading">
                               <h4 class="panel-title">
-                                <a data-toggle="collapse" data-parent="#accordion1" href="#collapse3">Days of Operation</a>
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">Identity</a>
+                              </h4>
+                            </div>
+                            <div id="collapse1" class="panel-collapse collapse in">
+                              <div class="panel-body">
+                                  <div class="row">
+                                      <label class="col-md-4">Unique_id:</label>
+                                      <div class="col-md-8" id="unique_id"></div>
+                                  </div>
+                                  <div class="row">
+                                      <label class="col-md-4">Registration No:</label>
+                                      <div class="col-md-8" id="registration_no"></div>
+                                  </div>
+                                  <div class="row">
+                                    <label class="col-md-4 text-md-right">Facility Name:</label>
+                                    <div class="col-md-8" id="facility_name">    </div>
+                                  </div>
+                                  <div class="row">
+                                      <label class="col-md-4 text-md-right">Alternate Name:</label>
+                                      <div class="col-md-8" id="alt_facility_name">    </div>
+                                  </div>
+                                  <div class="row">
+                                      <label class="col-md-4 text-md-right">Start Date:</label>
+                                      <div class="col-md-8" id="start_date">    </div>
+                                  </div>
+                                  <div class="row">
+                                      <label class="col-md-4 text-md-right">Ownership:</label>
+                                      <div class="col-md-8" id="ownership">    </div>
+                                  </div>
+                                  <div class="row">
+                                      <label class="col-md-4 text-md-right">Ownership Type:</label>
+                                      <div class="col-md-8" id="ownership_type">    </div>
+                                  </div>
+                                  <div class="row">
+                                      <label class="col-md-4 text-md-right">Ownership Details:</label>
+                                      <div class="col-md-8" id="ownership_details">    </div>
+                                  </div>
+                                  <div class="row">
+                                      <label class="col-md-4 text-md-right">Facility Level:</label>
+                                      <div class="col-md-8" id="facility_level">    </div>
+                                  </div>
+                                  <div class="row">
+                                      <label class="col-md-4 text-md-right">Facility Level Option:</label>
+                                      <div class="col-md-8" id="facility_level_option">    </div>
+                                  </div>
+                                  <div class="row">
+                                      <label class="col-md-4 text-md-right">Days of Operation:</label>
+                                      <div class="col-md-8" id="operational_days">   </div>
+                                  </div>
+                                  <div class="row">
+                                      <label class="col-md-4 text-md-right">Hours of Operation:</label>
+                                      <div class="col-md-8" id="operational_hours">   </div>
+                                  </div>
+                            </div>
+                            </div>
+                          </div>
+                          {{-- panel two --}}
+                          <div class="panel panel-default">
+                            <div class="panel-heading">
+                              <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">Location</a>
+                              </h4>
+                            </div>
+                            <div id="collapse2" class="panel-collapse collapse">
+                              <div class="panel-body">
+                                  <div class="row">
+                                      <label class="col-md-4">State:</label>
+                                      <div class="col-md-8" id="state"></div>
+                                  </div>
+                                  <div class="row">
+                                      <label class="col-md-4">LGA:</label>
+                                      <div class="col-md-8" id="lga"></div>
+                                  </div>
+                                  <div class="row">
+                                      <label class="col-md-4">Ward:</label>
+                                      <div class="col-md-8" id="ward"></div>
+                                  </div>
+                                  <div class="row">
+                                      <label class="col-md-4">House No:</label>
+                                      <div class="col-md-8" id="house_no"></div>
+                                  </div>      
+                                  <div class="row">
+                                      <label class="col-md-4">Street Name:</label>
+                                      <div class="col-md-8" id="street_name"></div>
+                                  </div>
+                                  <div class="row">
+                                      <label class="col-md-4">Longitude:</label>
+                                      <div class="col-md-8" id="longitude"></div>
+                                  </div>
+                                  <div class="row">
+                                      <label class="col-md-4">Latitude:</label>
+                                      <div class="col-md-8" id="latitude"></div>
+                                  </div>
+                                  <div class="row">
+                                      <label class="col-md-4">Address:</label>
+                                      <div class="col-md-8" id="postal_address"></div>
+                                  </div>
+                              </div>
+                            </div>
+                          </div>
+                          {{-- panel 3 --}}
+                          <div class="panel panel-default">
+                            <div class="panel-heading">
+                              <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">Contacts</a>
                               </h4>
                             </div>
                             <div id="collapse3" class="panel-collapse collapse">
                               <div class="panel-body">
                                   <div class="row">
-                                      <label class="col-md-4 text-md-right">Days of Operation:</label>
-                                      <div class="col-md-8" id="operational_days1">   </div>
-                                  </div>
-                                  <div class="row">
-                                      <label class="col-md-4 text-md-right">Hours of Operation:</label>
-                                      <div class="col-md-8" id="operational_hours1">   </div>
-                                  </div>
-                            </div>
-                            </div>
-                          </div>
-                        
-                          {{-- panel four --}}
-                          <div class="panel panel-default">
-                            <div class="panel-heading">
-                              <h4 class="panel-title">
-                                <a data-toggle="collapse" data-parent="#accordion1" href="#collapse4">Contacts</a>
-                              </h4>
-                            </div>
-                            <div id="collapse4" class="panel-collapse collapse">
-                              <div class="panel-body">
-                                  <div class="row">
                                       <label class="col-md-4">Phone Number:</label>
-                                      <div class="col-md-8" id="phone_number1"></div>
+                                      <div class="col-md-8" id="phone_number"></div>
                                   </div>
                                   <div class="row">
-                                      <label class="col-md-4">Email Address:</label>
-                                      <div class="col-md-8" id="email_address1"></div>
+                                      <label class="col-md-4">Emai Address:</label>
+                                      <div class="col-md-8" id="email_address"></div>
                                   </div>
                                   <div class="row">
                                       <label class="col-md-4">Website:</label>
-                                      <div class="col-md-8" id="website1"></div>
+                                      <div class="col-md-8" id="website"></div>
                                   </div>
                               </div>
                             </div>
                           </div>
-                         
+                          {{-- panel four --}}
+                          <div class="panel panel-default">
+                              <div class="panel-heading">
+                                <h4 class="panel-title">
+                                  <a data-toggle="collapse" data-parent="#accordion" href="#collapse4">Status</a>
+                                </h4>
+                              </div>
+                              <div id="collapse4" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <label class="col-md-4">Operational Status:</label>
+                                        <div class="col-md-8" id="operation_status"></div>
+                                    </div>
+                                    <div class="row">
+                                        <label class="col-md-4">Regulatory Status:</label>
+                                        <div class="col-md-8" id="regulatory_status"></div>
+                                    </div>
+                                    <div class="row">
+                                        <label class="col-md-4">License Status:</label>
+                                        <div class="col-md-8" id="license_status"></div>
+                                    </div>
+                                </div>
+                              </div>
+                            </div>
                             {{-- panel five --}}
                             <div class="panel panel-default">
                                 <div class="panel-heading">
                                   <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion1" href="#collapse5">Personnel</a>
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse5">Personnel</a>
                                   </h4>
                                 </div>
                                 <div id="collapse5" class="panel-collapse collapse">
                                   <div class="panel-body">
                                       <div class="row">
-                                          <label class="col-md-6">Number of Doctors:</label>
-                                          <div class="col-md-6" id="doctors1"></div>
-                                      </div>
-                                    
-                                      <div class="row">
-                                          <label class="col-md-6">Number of Dentists:</label>
-                                          <div class="col-md-6" id="dentist1"></div>
-                                      </div>
-                                    
-                                      <div class="row">
-                                          <label class="col-md-6">Number of Nurses:</label>
-                                          <div class="col-md-6" id="nurses1"></div>
+                                          <label class="col-md-6">No. of Doctors:</label>
+                                          <div class="col-md-6" id="doctors"></div>
                                       </div>
                                       <div class="row">
-                                          <label class="col-md-6">Number of Midwifes:</label>
-                                          <div class="col-md-6" id="midwifes1"></div>
+                                          <label class="col-md-6">No. of Pharmacists:</label>
+                                          <div class="col-md-6" id="pharmacists"></div>
                                       </div>
                                       <div class="row">
-                                          <label class="col-md-6">Number of Nurses/Midwifes:</label>
-                                          <div class="col-md-6" id="nurse_midwife1"></div>
+                                          <label class="col-md-6">No. of Dentists:</label>
+                                          <div class="col-md-6" id="dentist"></div>
                                       </div>
-                                    
+                                      <div class="row">
+                                          <label class="col-md-6">No. Pharmacy Technicians:</label>
+                                          <div class="col-md-6" id="pharmacy_technicians"></div>
+                                      </div>
+                                      <div class="row">
+                                          <label class="col-md-6">No. of Nurses:</label>
+                                          <div class="col-md-6" id="nurses"></div>
+                                      </div>
+                                      <div class="row">
+                                          <label class="col-md-6">No. of Midwifes:</label>
+                                          <div class="col-md-6" id="midwifes"></div>
+                                      </div>
+                                      <div class="row">
+                                          <label class="col-md-6">No. of Nurses/Midwifes:</label>
+                                          <div class="col-md-6" id="nurse_midwife"></div>
+                                      </div>
+                                      <div class="row">
+                                          <label class="col-md-6">No. of Lab Technicians:</label>
+                                          <div class="col-md-6" id="lab_technicians"></div>
+                                      </div>
+                                      <div class="row">
+                                          <label class="col-md-6">No. of Lab Scientits:</label>
+                                          <div class="col-md-6" id="lab_scientists"></div>
+                                      </div>
+                                      <div class="row">
+                                          <label class="col-md-6">Health Records/HIM Officers:</label>
+                                          <div class="col-md-6" id="him_officers"></div>
+                                      </div>
+                                      <div class="row">
+                                          <label class="col-md-6">No. of Community Health Officer:</label>
+                                          <div class="col-md-6" id="community_health_officer"></div>
+                                      </div>
+                                      <div class="row">
+                                          <label class="col-md-6">No. of Community Health Extension Worker:</label>
+                                          <div class="col-md-6" id="community_extension_workers"></div>
+                                      </div>
+                                      <div class="row">
+                                          <label class="col-md-6">No. of Junior Com Health Extension Worker:</label>
+                                          <div class="col-md-6" id="jun_community_extension_worker"></div>
+                                      </div>
+                                      <div class="row">
+                                          <label class="col-md-6">No. of Dental Technicians:</label>
+                                          <div class="col-md-6" id="dental_technicians"></div>
+                                      </div>
+                                      <div class="row">
+                                          <label class="col-md-6">No. of Environmental Health Officers:</label>
+                                          <div class="col-md-6" id="env_health_officers"></div>
+                                      </div>
                                   </div>
                                 </div>
                               </div>
-                        
+                              {{-- pane six --}}
+                              <div class="panel panel-default">
+                                  <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                      <a data-toggle="collapse" data-parent="#accordion" href="#collapse6">Services</a>
+                                    </h4>
+                                  </div>
+                                  <div id="collapse6" class="panel-collapse collapse">
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            <label class="col-md-6">Onsite Laboratory:</label>
+                                            <div class="col-md-6" id="onsite_laboratory"></div>
+                                        </div>
+                                        <div class="row">
+                                            <label class="col-md-6">Onsite Imaging:</label>
+                                            <div class="col-md-6" id="onsite_imaging"></div>
+                                        </div>
+                                        <div class="row">
+                                            <label class="col-md-6">Onsite Pharmacy:</label>
+                                            <div class="col-md-6" id="onsite_pharmarcy"></div>
+                                        </div>
+                                        <div class="row">
+                                            <label class="col-md-6">Mortuary Services:</label>
+                                            <div class="col-md-6" id="mortuary_services"></div>
+                                        </div>
+                                        <div class="row">
+                                            <label class="col-md-6">Beds Accidents and Emergency:</label>
+                                            <div class="col-md-6" id="beds_accidents_emerg"></div>
+                                        </div>
+                                        <div class="row">
+                                            <label class="col-md-6">Beds Admission Facilities:</label>
+                                            <div class="col-md-6" id="beds_adminission"></div>
+                                        </div>
+                                        <div class="row">
+                                            <label class="col-md-6">Beds ICU:</label>
+                                            <div class="col-md-6" id="beds_icu"></div>
+                                        </div>
+                                    </div>
+                                  </div>
+                                </div>
                         </div> 
                      
 

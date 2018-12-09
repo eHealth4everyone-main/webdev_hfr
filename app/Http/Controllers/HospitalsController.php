@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Cache;
 
 use App\hs_hospital;
 use App\hs_hospital_service;
+use Auth;
 
 class HospitalsController extends Controller
 {
@@ -79,7 +80,7 @@ class HospitalsController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'registration_no'=>'nullable',
+            'registration_no'=>'nullable|max:20',
             'start_date'=>'nullable|date',
             'facility_name'=>'required|max:200',
             'alt_facility_name'=>'nullable|max:200',
@@ -129,11 +130,13 @@ class HospitalsController extends Controller
     
         
         $start_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->start_date)));
-
+        
         $hosp = new hs_hospital;
         $hosp->fill($request->all());
         $hosp->unique_id = $hosp->generateUniqueID($request->lga_id,'1',$request->facility_level_id,$request->ownership_id);
         $hosp->start_date = $start_date;
+        $hosp->status_id = 1;
+        $hosp->created_by = Auth::user()->id;
         $hosp->operational_days = $hosp->arrayValuesTostring($request->operational_days);
         $hosp->save();
     
@@ -165,7 +168,7 @@ class HospitalsController extends Controller
                     ->orderByRaw('name ASC')
                     ->get();
             });
-    
+
             //get facility types
             $lst_level_of_care = Cache::remember('lst_level_of_care', 60, function () {
                 return DB::table('lst_level_of_care')
@@ -325,8 +328,7 @@ class HospitalsController extends Controller
             $available_services[] = $d->id;
         }
       
-        //dd($available_services);
-            
+        //dd($available_services);  
         return view('hospitals.services',compact('hosp','hs_services','categories','available_services'));   
     }
 

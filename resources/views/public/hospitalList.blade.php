@@ -1,12 +1,12 @@
-@extends("layouts.pub.master")
+@extends("layouts.pub.master2")
 
 @section('custom_css')
 
 @endsection
 
 
+@section("content")  
 
-@section("content")   
 <div class="latest-area section-padding bg-white">
     <div class="container">
 
@@ -94,13 +94,28 @@
                                 
                                 <td>{{$fac->ownership}}</td>
                                 <td>
-                                 
-                                    <a href="#">
-                                    <button class="btn btn-success btn-sm" id="btnDetails" data-id="{{$fac->id}}" data-type_id="{{$facility_type_id}}" type="button" data-toggle="modal"  data-target="#showFacDetails">View</button>
-                                    </a>
-                                    {{-- <a href="#">
-                                            <button class="btn btn-warning btn-sm" id="btnOnMap" data-id="{{$fac->id}}"  type="button" data-toggle="modal"  data-target="#showFaconMap">View on Map</button>
-                                    </a> --}}
+                                  
+                                    <a href="#view_details" data-toggle="modal" >
+                                        <button class="btn btn-success btn-sm"  type="button" 
+                                            data-unique_id="{{$fac->unique_id}}" data-registration_no="{{$fac->registration_no}}" data-start_date="{{$fac->start_date}}"
+                                            data-facility_name="{{$fac->facility_name}}" data-alt_facility_name="{{$fac->alt_facility_name}}" data-state="{{$fac->state}}"
+                                            data-lga="{{$fac->lga}}" data-ward="{{$fac->ward}}" data-ownership="{{$fac->ownership}}" data-ownership_type="{{$fac->ownership_type}}"
+                                            data-ownership_details="{{$fac->ownership_details}}" data-facility_level="{{$fac->facility_level}}" data-facility_level_option="{{$fac->facility_level_option}}"
+                                            data-house_no="{{$fac->house_no}}" data-street_name="{{$fac->street_name}}" data-longitude="{{$fac->longitude}}" data-latitude="{{$fac->latitude}}"
+                                            data-postal_address="{{$fac->postal_address}}" data-phone_number="{{$fac->phone_number}}" data-email_address="{{$fac->email_address}}"
+                                            data-website="{{$fac->website}}" data-operational_days="{{$fac->operational_days}}" data-operational_hours="{{$fac->operational_hours}}"
+                                            data-operation_status="{{$fac->operation_status}}" data-regulatory_status="{{$fac->regulatory_status}}" data-license_status="{{$fac->license_status}}"
+                                            data-doctors="{{$fac->doctors}}" data-pharmacists="{{$fac->pharmacists}}" data-dentist="{{$fac->dentist}}" data-pharmacy_technicians="{{$fac->pharmacy_technicians}}"
+                                            data-nurses="{{$fac->nurses}}" data-lab_scientists="{{$fac->lab_scientists}}" data-midwifes="{{$fac->midwifes}}" data-lab_technicians="{{$fac->lab_technicians}}"
+                                            data-nurse_midwife="{{$fac->nurse_midwife}}" data-him_officers="{{$fac->him_officers}}" data-community_health_officer="{{$fac->community_health_officer}}"
+                                            data-community_extension_workers="{{$fac->community_extension_workers}}" data-jun_community_extension_worker="{{$fac->jun_community_extension_worker}}"
+                                            data-dental_technicians="{{$fac->dental_technicians}}" data-env_health_officers="{{$fac->env_health_officers}}" data-beds_accidents_emerg="{{$fac->beds_accidents_emerg}}"
+                                            data-beds_adminission="{{$fac->beds_adminission}}" data-beds_icu="{{$fac->beds_icu}}" data-onsite_laboratory="{{$fac->onsite_laboratory}}"
+                                            data-onsite_imaging="{{$fac->onsite_imaging}}" data-onsite_pharmarcy="{{$fac->onsite_pharmarcy}}" data-mortuary_services="{{$fac->mortuary_services}}">
+                                            View
+                                        </button>
+                                    </a> 
+                                   
                                 </td>
                             </tr>
                         @endforeach
@@ -139,7 +154,9 @@
           </div>
     </div> <!-- /contanier-->
 </div> <!-- / -->
-      
+
+
+
 @endsection 
 
 @push('custom_scripts')
@@ -154,80 +171,63 @@
             // $("#lga_id").val({{$lga_id}}).change();
            
 
-            $("#btnDetails1").click(function () {
+           $('#view_details').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget)
+                var modal = $(this)
+
+                modal.find('.modal-body #unique_id').text(button.data('unique_id'));
+                modal.find('.modal-body #registration_no').text(button.data('registration_no'));
+                modal.find('.modal-body #start_date').text(button.data('start_date'));
+                modal.find('.modal-body #facility_name').text(button.data('facility_name'));
+                modal.find('.modal-body #alt_facility_name').text(button.data('alt_facility_name'));
+                modal.find('.modal-body #state').text(button.data('state'));
+                modal.find('.modal-body #lga').text(button.data('lga'));
+                modal.find('.modal-body #ward').text(button.data('ward'));
+                modal.find('.modal-body #ownership').text(button.data('ownership'));
+                modal.find('.modal-body #ownership_type').text(button.data('ownership_type'));
+                modal.find('.modal-body #ownership_details').text(button.data('ownership_details'));
+                modal.find('.modal-body #facility_level').text(button.data('facility_level'));
+                modal.find('.modal-body #facility_level_option').text(button.data('facility_level_option'));
+                modal.find('.modal-body #house_no').text(button.data('house_no'));
+                modal.find('.modal-body #street_name').text(button.data('street_name'));
+                modal.find('.modal-body #longitude').text(button.data('longitude'));
+                modal.find('.modal-body #latitude').text(button.data('latitude'));
+                modal.find('.modal-body #postal_address').text(button.data('postal_address'));
+                modal.find('.modal-body #phone_number').text(button.data('phone_number'));
+                modal.find('.modal-body #email_address').text(button.data('email_address'));
+                modal.find('.modal-body #website').text(button.data('website'));
+                modal.find('.modal-body #operational_days').text(button.data('operational_days'));
+                modal.find('.modal-body #operational_hours').text(button.data('operational_hours'));
+                modal.find('.modal-body #operation_status').text(button.data('operation_status'));
+                modal.find('.modal-body #regulatory_status').text(button.data('regulatory_status'));
+                modal.find('.modal-body #license_status').text(button.data('license_status'));
+                modal.find('.modal-body #doctors').text(button.data('doctors'));
+                modal.find('.modal-body #pharmacists').text(button.data('pharmacists'));
+                modal.find('.modal-body #dentist').text(button.data('dentist'));
+                modal.find('.modal-body #pharmacy_technicians').text(button.data('pharmacy_technicians'));
+                modal.find('.modal-body #nurses').text(button.data('nurses'));
+                modal.find('.modal-body #lab_scientists').text(button.data('lab_scientists'));
+                modal.find('.modal-body #midwifes').text(button.data('midwifes'));
+                modal.find('.modal-body #lab_technicians').text(button.data('lab_technicians'));
+                modal.find('.modal-body #nurse_midwife').text(button.data('nurse_midwife'));
+                modal.find('.modal-body #him_officers').text(button.data('him_officers'));
+                modal.find('.modal-body #community_health_officer').text(button.data('community_health_officer'));
+                modal.find('.modal-body #community_extension_workers').text(button.data('community_extension_workers'));
+                modal.find('.modal-body #jun_community_extension_worker').text(button.data('jun_community_extension_worker'));
+                modal.find('.modal-body #dental_technicians').text(button.data('dental_technicians'));
+                modal.find('.modal-body #env_health_officers').text(button.data('env_health_officers'));
+                modal.find('.modal-body #beds_accidents_emerg').text(button.data('beds_accidents_emerg'));
+                modal.find('.modal-body #beds_adminission').text(button.data('beds_adminission'));
+                modal.find('.modal-body #beds_icu').text(button.data('beds_icu'));
+                modal.find('.modal-body #onsite_laboratory').text(button.data('onsite_laboratory'));
+                modal.find('.modal-body #onsite_imaging').text(button.data('onsite_imaging'));
+                modal.find('.modal-body #onsite_pharmarcy').text(button.data('onsite_pharmarcy'));
+                modal.find('.modal-body #mortuary_services').text(button.data('mortuary_services'));
+
+            });//end
                 
-                var id = $(this).data('id');
-                var fac_type_id= $(this).data('type_id');
-
-              
-            });
-                
-             $('#showFacDetails').on('show.bs.modal', function (event) {
-                var button = $(event.relatedTarget) // Button that triggered the modal
-                
-                var id = button.data('id')
-                var fac_type_id = button.data('type_id')
-                console.log(id);
-
-                $.ajax({
-                    url:"{{route('facilitydetails')}}",
-                    method:"POST",
-                    data:{id:id,facility_type_id:fac_type_id, _token: "{{ csrf_token() }}"},
-                    success:function(result)
-                    {
-                        $('#unique_id1').text(result.details[0].unique_id);
-                        $('#facility_name1').text(result.details[0].facility_name);
-                        $('#registration_no1').text(result.details[0].registration_no == null ? "" : result.details[0].registration_no);
-                        $('#start_date1').text(result.details[0].start_date == null ? "" :result.details[0].start_date );
-                        $('#alt_facility_name1').text(result.details[0].alt_facility_name == null ? "" :result.details[0].alt_facility_name);
-                        $('#state1').text(result.details[0].state);
-                        $('#lga1').text(result.details[0].lga);
-                        $('#ward1').text(result.details[0].ward);
-                        $('#house_no1').text(result.details[0].house_no== null ? "" :result.details[0].house_no);
-                        $('#street_name1').text(result.details[0].street_name== null ? "" :result.details[0].street_name);
-                        $('#latitude1').text(result.details[0].latitude== null ? "" :result.details[0].latitude);
-                        $('#longitude1').text(result.details[0].longitude== null ? "" :result.details[0].longitude);
-                        $('#postal_address1').text(result.details[0].postal_address== null ? "" :result.details[0].postal_address);
-                        $('#phone_number1').text(result.details[0].phone_number== null ? "" :result.details[0].phone_number);
-                        $('#email_address1').text(result.details[0].email_address== null ? "" :result.details[0].email_address);
-                        $('#website1').text(result.details[0].website== null ? "" :result.details[0].website);
-                        $('#operational_days1').text(result.details[0].operational_days== null ? "" :result.details[0].operational_days);
-                        $('#operational_hours1').text(result.details[0].operational_hours== null ? "" :result.details[0].operational_hours);
-                        $('#facility_level1').text(result.details[0].facility_level);
-                        $('#ownership1').text(result.details[0].ownership);
-                        $('#ownership_type1').text(result.details[0].ownership_type== null ? "" :result.details[0].ownership_type);
-                        $('#ownership_details1').text(result.details[0].ownership_details== null ? "" :result.details[0].ownership_details);
-                        $('#operation_status1').text(result.details[0].operation_status== null ? "" :result.details[0].operation_status);
-                        $('#regulatory_status1').text(result.details[0].regulatory_status== null ? "" :result.details[0].regulatory_status);
-                        $('#license_status1').text(result.details[0].license_status== null ? "" :result.details[0].license_status);
-                        $('#pharmacists1').text(result.details[0].pharmacists== null ? "" :result.details[0].pharmacists);
-                        $('#dentist1').text(result.details[0].dentist == null ? "" :result.details[0].dentist);
-                        $('#pharmacy_technicians1').text(result.details[0].pharmacy_technicians == null ? "" :result.details[0].pharmacy_technicians);
-                        $('#nurses1').text(result.details[0].nurses== null ? "" :result.details[0].nurses);
-                        $('#lab_scientists1').text(result.details[0].lab_scientists == null ? "" :result.details[0].lab_scientists);
-                        $('#midwifes1').text(result.details[0].midwifes== null ? "" :result.details[0].midwifes);
-                        $('#lab_technicians1').text(result.details[0].lab_technicians == null ? "" :result.details[0].lab_technicians);
-                        $('#nurse_midwife1').text(result.details[0].nurse_midwife == null ? "" :result.details[0].nurse_midwife );
-                        $('#him_officers1').text(result.details[0].him_officers == null ? "" :result.details[0].him_officers );
-                        $('#community_health_officer1').text(result.details[0].community_health_officer == null ? "" :result.details[0].community_health_officer);
-                        $('#community_extension_workers1').text(result.details[0].community_extension_workers == null ? "" :result.details[0].community_extension_workers);
-                        $('#jun_community_extension_worker1').text(result.details[0].jun_community_extension_worker == null ? "" :result.details[0].jun_community_extension_worker);
-                        $('#dental_technicians1').text(result.details[0].dental_technicians == null ? "" :result.details[0].dental_technicians);
-                        $('#env_health_officers1').text(result.details[0].env_health_officers == null ? "" :result.details[0].env_health_officers);
-                        
-                        // var services = result.services[0];
-                        var serv = result.services.toString();
-                        
-                        $('#services1').text(serv == null ? "" :serv);
-
-                        $('#showFacDetails').modal('show')
-                        
-                    }//success ends         
-                });//ajax ends
-             
-            })
-
+       
         });
-    </script>
+</script>
 
 @endpush

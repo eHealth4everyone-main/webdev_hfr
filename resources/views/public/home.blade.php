@@ -49,7 +49,6 @@
 </div>
 
 
-
 @endsection 
 
 @push('custom_scripts')
@@ -296,9 +295,34 @@
                 
                 var marker;
                 $.each(locations, function(i, item) {
-                    
+                    //add labels for different fac types
+                    if (item.facility_level=="Primary"){
+                        var labels="P";
+                    }
+                    if (item.facility_level=="Secondary"){
+                        var labels="S";
+                    }
+                    if (item.facility_level=="Tertiary"){
+                        var labels="T";
+                    }
+                    //icon ownership
+                    if (item.ownership=="Public"){
+                        var icon = {
+                            url: "http://maps.google.com/mapfiles/ms/micons/green.png", 
+                            scaledSize: new google.maps.Size(40, 40), 
+                        };
+                    }
+                    if (item.ownership=="Private"){
+                        var icon = {
+                            url: "http://maps.google.com/mapfiles/ms/micons/blue.png", 
+                            scaledSize: new google.maps.Size(40, 40), 
+                        };
+                    }
+
                     marker = new google.maps.Marker({
                         position: new google.maps.LatLng(item.latitude, item.longitude),
+                        label: labels,
+                        icon: icon,
                         map: map
                     });
                     
@@ -312,47 +336,23 @@
                     //add facility details
                     google.maps.event.addListener(marker, 'click', (function(marker, i) {
                         return function() {
-                            $('#unique_id').text(item.unique_id);
-                            $('#facility_name').text(item.facility_name);
-                            $('#registration_no').text(item.registration_no == null ? "" : item.registration_no);
-                            $('#start_date').text(item.start_date == null ? "" :item.start_date );
-                            $('#alt_facility_name').text(item.alt_facility_name == null ? "" :item.alt_facility_name);
-                            $('#state').text(item.state);
-                            $('#lga').text(item.lga);
-                            $('#ward').text(item.ward);
-                            $('#house_no').text(item.house_no== null ? "" :item.house_no);
-                            $('#street_name').text(item.street_name== null ? "" :item.street_name);
-                            $('#latitude').text(item.latitude== null ? "" :item.latitude);
-                            $('#longitude').text(item.longitude== null ? "" :item.longitude);
-                            $('#postal_address').text(item.postal_address== null ? "" :item.postal_address);
-                            $('#phone_number').text(item.phone_number== null ? "" :item.phone_number);
-                            $('#email_address').text(item.email_address== null ? "" :item.email_address);
-                            $('#website').text(item.website== null ? "" :item.website);
-                            $('#operational_days').text(item.operational_days== null ? "" :item.operational_days);
-                            $('#operational_hours').text(item.operational_hours== null ? "" :item.operational_hours);
-                            $('#facility_level').text(item.facility_level);
-                            $('#ownership').text(item.ownership);
-                            $('#ownership_type').text(item.ownership_type== null ? "" :item.ownership_type);
-                            $('#ownership_details').text(item.ownership_details== null ? "" :item.ownership_details);
-                            $('#operation_status').text(item.operation_status== null ? "" :item.operation_status);
-                            $('#regulatory_status').text(item.regulatory_status== null ? "" :item.regulatory_status);
-                            $('#license_status').text(item.license_status== null ? "" :item.license_status);
-                            $('#pharmacists').text(item.pharmacists== null ? "" :item.pharmacists);
-                            $('#dentist').text(item.dentist == null ? "" :item.dentist);
-                            $('#pharmacy_technicians').text(item.pharmacy_technicians == null ? "" :item.pharmacy_technicians);
-                            $('#nurses').text(item.nurses== null ? "" :item.nurses);
-                            $('#lab_scientists').text(item.lab_scientists == null ? "" :item.lab_scientists);
-                            $('#midwifes').text(item.midwifes== null ? "" :item.midwifes);
-                            $('#lab_technicians').text(item.lab_technicians == null ? "" :item.lab_technicians);
-                            $('#nurse_midwife').text(item.nurse_midwife == null ? "" :item.nurse_midwife );
-                            $('#him_officers').text(item.him_officers == null ? "" :item.him_officers );
-                            $('#community_health_officer').text(item.community_health_officer == null ? "" :item.community_health_officer);
-                            $('#community_extension_workers').text(item.community_extension_workers == null ? "" :item.community_extension_workers);
-                            $('#jun_community_extension_worker').text(item.jun_community_extension_worker == null ? "" :item.jun_community_extension_worker);
-                            $('#dental_technicians').text(item.dental_technicians == null ? "" :item.dental_technicians);
-                            $('#env_health_officers').text(item.env_health_officers == null ? "" :item.env_health_officers);
+                            $('#phone_number1').text(item.phone_number== null ? "" :item.phone_number);
+                            $('#email_address1').text(item.email_address== null ? "" :item.email_address);
+                            $('#website1').text(item.website== null ? "" :item.website);
+                            $('#operational_days1').text(item.operational_days== null ? "" :item.operational_days);
+                            $('#operational_hours1').text(item.operational_hours== null ? "" :item.operational_hours);
+                            $('#operation_status1').text(item.operation_status== null ? "" :item.operation_status);
+                            $('#regulatory_status1').text(item.regulatory_status== null ? "" :item.regulatory_status);
+                            $('#license_status1').text(item.license_status== null ? "" :item.license_status);
+                            $('#doctors1').text(item.doctors== null ? "" :item.doctors);
+                            $('#dentist1').text(item.dentist == null ? "" :item.dentist);
+                            $('#nurses1').text(item.nurses== null ? "" :item.nurses);
+                            $('#midwifes1').text(item.midwifes== null ? "" :item.midwifes);
+                            $('#nurse_midwife1').text(item.nurse_midwife == null ? "" :item.nurse_midwife );
 
-                            $('#myModal').modal('show')
+                            $('#details_Title').text(item.facility_name);
+                            
+                            $('#details_onGmap').modal('show')
                         }
                     })(marker, i));
                 });
