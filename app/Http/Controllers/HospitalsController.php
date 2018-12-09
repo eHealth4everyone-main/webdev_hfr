@@ -16,11 +16,11 @@ class HospitalsController extends Controller
     public function index()
     {
         $facilities = DB::table('hospital_details')
-        ->select('state','lga','ward','unique_id','facility_name','facility_level','ownership','id')
-        ->orderByRaw('state','lga','facility_name')
-        ->paginate(15);
+            ->Where('state_id', 'like', '%' .  Auth::user()->state_id . '%')
+            ->orderByRaw('state','lga','facility_name')
+            ->paginate(15);
+            
         //get state list
-        
         $lst_states = Cache::remember('lst_states', 60, function () {
         return DB::table('ou_states')
                 ->select('id','name')
@@ -144,18 +144,6 @@ class HospitalsController extends Controller
         return redirect()->back();
     }
     
-    
-    public function show($id)
-    {
-        $hosp = DB::table('hospital_details')
-        ->where('id',$id)
-        ->get();
-
-        $services = DB::select("SELECT s.name FROM lst_hosp_services s JOIN hs_hospital_services h on h.service_id = s.id
-                where h. hospital_id='".$id."'");
-      
-        return view('hospitals.show', compact("hosp",'services'));   
-    }
     
     
     public function edit($id)
