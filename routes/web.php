@@ -76,7 +76,15 @@ Route::middleware(["auth"])->group(function(){
     Route::get('admin/hospitals/services/{id}','HospitalsController@services')->name('hospitals.services');
     Route::post('admin/hospitals/services','HospitalsController@StoreServices')->name('hospitals.storeservices');
     Route::get('admin/hospitals/service/master','HospitalServiceController@Index')->name('hospServices.index');
-
+    
+    //approvals
+    Route::get('admin/hospitals/approvals/myrequest','ApprovalController@myRequest')->name('view.myrequest');
+    Route::get('admin/hospitals/approvals/pendingapproval','ApprovalController@pendingApproval')->name('view.pendingapproval');
+    Route::post('admin/hospitals/approvals/','ApprovalController@storeApproval')->name('store.approval');
+    Route::get('admin/hospitals/approvals/verification','ApprovalController@pendingVerification1')->name('view.pendingverification1');
+    Route::post('admin/hospitals/approvals/verification','ApprovalController@storeVerification1')->name('store.verify1');
+    Route::get('admin/hospitals/approvals/verification2','ApprovalController@pendingVerification2')->name('view.pendingverification2');
+    Route::post('admin/hospitals/approvals/verification2','ApprovalController@storeVerification2')->name('store.verify2');
 
     //general
     Route::post('admin/facilities/ownership','GeneralController@getOwnershipType')->name('getOwnershipType');

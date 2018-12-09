@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 
 use App\hs_hospital;
+use App\hs_hospital_history;
 use App\hs_hospital_service;
 use Auth;
 
@@ -131,7 +132,7 @@ class HospitalsController extends Controller
         
         $start_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->start_date)));
         
-        $hosp = new hs_hospital;
+        $hosp = new hs_hospital_history;
         $hosp->fill($request->all());
         $hosp->unique_id = $hosp->generateUniqueID($request->lga_id,'1',$request->facility_level_id,$request->ownership_id);
         $hosp->start_date = $start_date;
@@ -140,7 +141,7 @@ class HospitalsController extends Controller
         $hosp->operational_days = $hosp->arrayValuesTostring($request->operational_days);
         $hosp->save();
     
-        session()->flash("alert-success", "Hospital/Clinic Saved Successfully!");
+        session()->flash("alert-success", "Request Sent Successfully!");
         return redirect()->back();
     }
     
