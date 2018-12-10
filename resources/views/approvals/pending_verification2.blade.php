@@ -2,67 +2,102 @@
 
 
 @section('content-title')
-My Pending Verification
+Pending Level II Verification
 
 @endsection
 
 @section("content")
-<div class="box">
- 
-    <div class="box-body">
-          
-          <table id="table1" class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                  <th>Facility Name</th>
-                  <th>Request Type</th>
-                  <th>Status</th>
-                  <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-           
-              @foreach($pending as $p)
-              <tr>
-                  <td>{{$p->facility_name}}</td>
-                  <td>{{$p->action}}</td>
-                  <td>{{$p->status}} </td>
-      
-                  <td>
-                      <a href="#">
-                          <button class="btn btn-success btn-sm"  type="button" data-toggle="modal" data-target="#view_details" data-id="{{$p->id}}"
-                            data-unique_id="{{$p->unique_id}}" data-registration_no="{{$p->registration_no}}" data-start_date="{{$p->start_date}}"
-                            data-facility_name="{{$p->facility_name}}" data-alt_facility_name="{{$p->alt_facility_name}}" data-state="{{$p->state}}"
-                            data-lga="{{$p->lga}}" data-ward="{{$p->ward}}" data-ownership="{{$p->ownership}}" data-ownership_type="{{$p->ownership_type}}"
-                            data-ownership_details="{{$p->ownership_details}}" data-facility_level="{{$p->facility_level}}" data-facility_level_option="{{$p->facility_level_option}}"
-                            data-house_no="{{$p->house_no}}" data-street_name="{{$p->street_name}}" data-longitude="{{$p->longitude}}" data-latitude="{{$p->latitude}}"
-                            data-postal_address="{{$p->postal_address}}" data-phone_number="{{$p->phone_number}}" data-email_address="{{$p->email_address}}"
-                            data-website="{{$p->website}}" data-operational_days="{{$p->operational_days}}" data-operational_hours="{{$p->operational_hours}}"
-                            data-operation_status="{{$p->operation_status}}" data-regulatory_status="{{$p->regulatory_status}}" data-license_status="{{$p->license_status}}"
-                            data-doctors="{{$p->doctors}}" data-pharmacists="{{$p->pharmacists}}" data-dentist="{{$p->dentist}}" data-pharmacy_technicians="{{$p->pharmacy_technicians}}"
-                            data-nurses="{{$p->nurses}}" data-lab_scientists="{{$p->lab_scientists}}" data-midwifes="{{$p->midwifes}}" data-lab_technicians="{{$p->lab_technicians}}"
-                            data-nurse_midwife="{{$p->nurse_midwife}}" data-him_officers="{{$p->him_officers}}" data-community_health_officer="{{$p->community_health_officer}}"
-                            data-community_extension_workers="{{$p->community_extension_workers}}" data-jun_community_extension_worker="{{$p->jun_community_extension_worker}}"
-                            data-dental_technicians="{{$p->dental_technicians}}" data-env_health_officers="{{$p->env_health_officers}}" data-beds_accidents_emerg="{{$p->beds_accidents_emerg}}"
-                            data-beds_adminission="{{$p->beds_adminission}}" data-beds_icu="{{$p->beds_icu}}" data-onsite_laboratory="{{$p->onsite_laboratory}}"
-                            data-onsite_imaging="{{$p->onsite_imaging}}" data-onsite_pharmarcy="{{$p->onsite_pharmarcy}}" data-mortuary_services="{{$p->mortuary_services}}">
-                            Verify
-                          </button>
-                        </a>  
-                  </td>     
-                
-              </tr>
-              @endforeach
-              
-            </tbody>
-          </table>
-       
-          
-      </div>
-        <!-- /.box-body -->
-
+@if($pending->isEmpty())
+    <div class="callout callout-success">
+        <h4>Congrats!</h4>
+        <p>No Pending Verifications</p>
   </div>
-      <!-- /.box -->
+@endif
+
+@foreach($pending as $p)
+
+    <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title">
+            Facility Name: <span class="label label-default"> {{$p->facility_name}}</span> 
+
+            @if ($p->action === "CREATE")
+            Request Type: <span class="label label-info"> {{$p->action}}</span>
+            @elseif ($p->action === "UPDATE")
+                Request Type: <span class="label label-primary"> {{$p->action}}</span>
+            @else
+                Request Type: <span class="label label-danger"> {{$p->action}}</span>                
+            @endif
+
+            @if (($p->status_id === 1) or ($p->status_id ===8))
+            Status: <span class="label label-warning"> {{$p->status}}</span> 
+            @elseif (($p->status_id === 3) or ($p->status_id ===5) or ($p->status_id ===7) or ($p->status_id===10) or ($p->status_id ===12 or ($p->status_id ===12)))
+            Status: <span class="label label-danger"> {{$p->status}}</span> 
+            @else
+            Status: <span class="label label-success"> {{$p->status}}</span>                 
+            @endif
+          </h3>
+      
+          <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+            </button>
+          </div>
+          <!-- /.box-tools -->
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                      <th>Action</th>
+                      <th>Date</th>
+                      <th>Action By</th>
+                      <th>Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+               
+                  @foreach($status as $s)
+                  <tr>
+                      @if(($p->id == $s->hospital_id) and ($p->action == $s->action_type))
+                        <td>{{$s->action}}</td>
+                        <td>{{$s->created_at}}</td>
+                        <td>
+                            <Strong>Name: </Strong>{{$s->user}} <br>
+                            <Strong>Position: </Strong>{{$s->position}} <br>
+                            <Strong>E-mail: </Strong>{{$s->email}} <br>
+                            <Strong>Mobile: </Strong>{{$s->mobile}}
+                        </td>
+                        <td>{{$s->note}}</td>
+                      @endif
+                  </tr>
+                  @endforeach
+                </tbody>
+              </table>
+              <a href="#">
+                <button class="btn btn-success btn-sm"  type="button" data-toggle="modal" data-target="#view_details" data-id="{{$p->id}}"
+                  data-unique_id="{{$p->unique_id}}" data-registration_no="{{$p->registration_no}}" data-start_date="{{$p->start_date}}"
+                  data-facility_name="{{$p->facility_name}}" data-alt_facility_name="{{$p->alt_facility_name}}" data-state="{{$p->state}}"
+                  data-lga="{{$p->lga}}" data-ward="{{$p->ward}}" data-ownership="{{$p->ownership}}" data-ownership_type="{{$p->ownership_type}}"
+                  data-ownership_details="{{$p->ownership_details}}" data-facility_level="{{$p->facility_level}}" data-facility_level_option="{{$p->facility_level_option}}"
+                  data-house_no="{{$p->house_no}}" data-street_name="{{$p->street_name}}" data-longitude="{{$p->longitude}}" data-latitude="{{$p->latitude}}"
+                  data-postal_address="{{$p->postal_address}}" data-phone_number="{{$p->phone_number}}" data-email_address="{{$p->email_address}}"
+                  data-website="{{$p->website}}" data-operational_days="{{$p->operational_days}}" data-operational_hours="{{$p->operational_hours}}"
+                  data-operation_status="{{$p->operation_status}}" data-regulatory_status="{{$p->regulatory_status}}" data-license_status="{{$p->license_status}}"
+                  data-doctors="{{$p->doctors}}" data-pharmacists="{{$p->pharmacists}}" data-dentist="{{$p->dentist}}" data-pharmacy_technicians="{{$p->pharmacy_technicians}}"
+                  data-nurses="{{$p->nurses}}" data-lab_scientists="{{$p->lab_scientists}}" data-midwifes="{{$p->midwifes}}" data-lab_technicians="{{$p->lab_technicians}}"
+                  data-nurse_midwife="{{$p->nurse_midwife}}" data-him_officers="{{$p->him_officers}}" data-community_health_officer="{{$p->community_health_officer}}"
+                  data-community_extension_workers="{{$p->community_extension_workers}}" data-jun_community_extension_worker="{{$p->jun_community_extension_worker}}"
+                  data-dental_technicians="{{$p->dental_technicians}}" data-env_health_officers="{{$p->env_health_officers}}" data-beds_accidents_emerg="{{$p->beds_accidents_emerg}}"
+                  data-beds_adminission="{{$p->beds_adminission}}" data-beds_icu="{{$p->beds_icu}}" data-onsite_laboratory="{{$p->onsite_laboratory}}"
+                  data-onsite_imaging="{{$p->onsite_imaging}}" data-onsite_pharmarcy="{{$p->onsite_pharmarcy}}" data-mortuary_services="{{$p->mortuary_services}}">
+                  Verify
+                </button>
+              </a>  
+        </div>
+    </div>
+
+@endforeach
 
 {{-- modal facility details --}}
 <div class="modal fade" id="view_details" tabindex="-1" role="dialog">

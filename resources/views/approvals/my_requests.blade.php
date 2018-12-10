@@ -7,15 +7,34 @@ My Recent Requests
 @endsection
 
 @section("content")
+@if($myrequests->isEmpty())
+    <div class="callout callout-success">
+        <p>You do not have recent requests..</p>
+  </div>
+@endif
 
 @foreach($myrequests as $r)
 
     <div class="box box-primary">
         <div class="box-header with-border">
           <h3 class="box-title">
-            Facility Name: <span class="label label-default"> {{$r->facility_name}}</span> 
-            Request Type: <span class="label label-default"> {{$r->action}}</span> 
-            Status: <span class="label label-default"> {{$r->status}}</span> 
+              Facility Name: <span class="label label-default"> {{$r->facility_name}}</span> 
+             
+              @if ($r->action === "CREATE")
+                  Request Type: <span class="label label-info"> {{$r->action}}</span>
+              @elseif ($r->action === "UPDATE")
+                  Request Type: <span class="label label-primary"> {{$r->action}}</span>
+              @else
+                  Request Type: <span class="label label-danger"> {{$r->action}}</span>                
+              @endif
+
+              @if (($r->status_id === 1) or ($r->status_id ===8))
+                Status: <span class="label label-warning"> {{$r->status}}</span> 
+              @elseif (($r->status_id === 3) or ($r->status_id ===5) or ($r->status_id ===7) or ($r->status_id===10) or ($r->status_id ===12 or ($r->status_id ===12)))
+                Status: <span class="label label-danger"> {{$r->status}}</span> 
+              @else
+                Status: <span class="label label-success"> {{$r->status}}</span>                 
+              @endif
           </h3>
       
           <div class="box-tools pull-right">
@@ -31,7 +50,8 @@ My Recent Requests
                     <tr>
                       <th>Action</th>
                       <th>Date</th>
-                      <th>Action By</th>      
+                      <th>Action By</th>
+                      <th>Remarks</th>      
                     </tr>
                 </thead>
                 <tbody>
@@ -47,6 +67,7 @@ My Recent Requests
                             <Strong>E-mail: </Strong>{{$s->email}} <br>
                             <Strong>Mobile: </Strong>{{$s->mobile}}
                         </td>
+                      <td>{{$s->note}}</td>
                       @endif
                   </tr>
                   @endforeach

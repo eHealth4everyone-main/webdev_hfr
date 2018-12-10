@@ -20,7 +20,7 @@ class ApprovalController extends Controller
             ->paginate(15);
 
         $status = DB::table('hospital_status_tracking')
-            ->Where('user_id', '=', Auth::user()->id)
+            ->where('state_id', '=', Auth::user()->state_id)
             ->get();
 
         return view('approvals.my_requests',compact('myrequests','status')); 
@@ -31,10 +31,14 @@ class ApprovalController extends Controller
             ->where('state_id', '=',Auth::user()->state_id)
             ->where('status_id','=','1')
             ->orwhere('status_id','=','5')
-            ->paginate(15);
-        
+            ->get();
+
+        $status = DB::table('hospital_status_tracking')
+            ->where('state_id', '=', Auth::user()->state_id)
+            ->orwhere('status_id','=','1')
+            ->get();
      
-        return view('approvals.pending_approval',compact('pending')); 
+        return view('approvals.pending_approval',compact('pending','status')); 
     }
 
     public function storeApproval(Request $request)
@@ -75,13 +79,17 @@ class ApprovalController extends Controller
     public function pendingVerification1()
     {
         $pending  = DB::table('hospital_details_history')
-        ->where('state_id', '=',Auth::user()->state_id)
-        ->where('status_id','=','2')
-        ->orwhere('status_id','=','7')
-        ->paginate(15);
-    
-        
-        return view('approvals.pending_Verification1',compact('pending'));
+            ->where('state_id', '=',Auth::user()->state_id)
+            ->where('status_id','=','2')
+            ->orwhere('status_id','=','7')
+            ->get();
+
+        $status = DB::table('hospital_status_tracking')
+            ->where('state_id', '=', Auth::user()->state_id)
+            ->orwhere('status_id','=','2')
+            ->get();
+            
+        return view('approvals.pending_Verification1',compact('pending','status'));
     }
 
     public function storeVerification1(Request $request)
@@ -124,10 +132,15 @@ class ApprovalController extends Controller
         $pending  = DB::table('hospital_details_history')
             ->where('state_id', '=',Auth::user()->state_id)
             ->where('status_id','=','4')
-            ->paginate(15);
+            ->get();
+
+        $status = DB::table('hospital_status_tracking')
+            ->where('state_id', '=', Auth::user()->state_id)
+            ->orwhere('status_id','=','4')
+            ->get();
+            
         
-        
-        return view('approvals.pending_Verification2',compact('pending'));
+        return view('approvals.pending_Verification2',compact('pending','status'));
     }
     
     public function storeVerification2(Request $request)
