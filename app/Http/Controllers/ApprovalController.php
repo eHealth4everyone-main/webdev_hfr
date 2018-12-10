@@ -89,7 +89,7 @@ class ApprovalController extends Controller
             ->orwhere('status_id','=','2')
             ->get();
             
-        return view('approvals.pending_Verification1',compact('pending','status'));
+        return view('approvals.pending_verification1',compact('pending','status'));
     }
 
     public function storeVerification1(Request $request)
@@ -140,7 +140,7 @@ class ApprovalController extends Controller
             ->get();
             
         
-        return view('approvals.pending_Verification2',compact('pending','status'));
+        return view('approvals.pending_verification2',compact('pending','status'));
     }
     
     public function storeVerification2(Request $request)
