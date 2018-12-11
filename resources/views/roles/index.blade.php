@@ -3,21 +3,19 @@
 @section('content-title')
 User Roles
 
-{{-- <button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#createrole">Add Role</button> --}}
-<a href="{{route('roles.create')}}">
-    <button type="button" class="btn btn-primary pull-right">
-            Add Role
-    </button>
-</a>
+@if(auth()->user()->hasPermissionTo(22))
+  <a href="{{route('roles.create')}}">
+      <button type="button" class="btn btn-primary pull-right">
+              Create Role
+      </button>
+  </a>
+@endif
 
 @endsection
 
 @section("content")
 <div class="box">
   <div class="box-body">
-    {{-- {{auth()->user()->getRoleNames()}}<br>
-    
-    {{auth()->user()->hasPermissionTo(5)}} --}}
     
     <table id="table1" class="table table-bordered table-striped">
       <thead>
@@ -35,17 +33,17 @@ User Roles
           <td>{{$role->description}}</td>
          
           <td>
-            {{-- @if(auth()->user()->hasPermissionTo(21)) --}}
-            <a href="#">
-              <button class="btn btn-success btn-sm"   type="button" data-toggle="modal" data-target="#showrole"
-              data-permissions={{$role->permissions->pluck('name')}}>View</button>
-            </a>
-            {{-- @endif --}}
-            {{-- @if(auth()->user()->hasPermissionTo(22)) --}}
+         
+            @if(auth()->user()->hasPermissionTo(23))
               <a href="{{route('roles.edit',$role->id)}}">
-                  <button class="btn btn-warning btn-sm"  type="button" > Edit</button>
+                  <button class="btn btn-warning btn-sm"  type="button">Edit</button>
               </a>
-            {{-- @endif --}}
+            @endif
+            @if(auth()->user()->hasPermissionTo(24))
+              <a href="">
+                  <button class="btn btn-danger btn-sm"  type="button">Delete</button>
+              </a>
+            @endif
               
             </td>
           </tr>

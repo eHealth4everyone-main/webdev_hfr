@@ -3,11 +3,15 @@
 
 @section('content-title')
 Resources	
-<a href="{{route('upload')}}">
-    <button type="button" class="btn btn-primary pull-right">
-            Upload Document
-    </button>
-</a>
+
+@if(auth()->user()->hasPermissionTo(26))
+  <a href="{{route('upload')}}">
+      <button type="button" class="btn btn-primary pull-right">
+              Upload Document
+      </button>
+  </a>
+@endif
+
 @endsection
 
 @section("content")
@@ -39,12 +43,18 @@ Resources
                 <td>{{$res->description}}</td>
                 <td>
                     <a href="{{route('downloadFile',$res->filename)}}">
-                      <button class="btn btn-success btn-sm" type="button"> Download</button>
+                      <button class="btn btn-success btn-sm" type="button">Download</button>
                     </a>
-                    <a href="{{route('deleteFile',$res->filename)}}">
-                      <button class="btn btn-danger btn-sm" type="button" 
-                        > Delete</button>
-                    </a>
+                    @if(auth()->user()->hasPermissionTo(27))
+                        <a href="">
+                          <button class="btn btn-danger btn-sm" type="button"> Edit</button>
+                        </a>
+                    @endif
+                    @if(auth()->user()->hasPermissionTo(28))
+                        <a href="{{route('deleteFile',$res->filename)}}">
+                          <button class="btn btn-danger btn-sm" type="button"> Delete</button>
+                        </a>
+                    @endif
                   </td>
               </tr>
               @endforeach

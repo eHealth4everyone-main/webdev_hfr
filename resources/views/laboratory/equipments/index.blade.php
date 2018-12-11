@@ -3,10 +3,11 @@
 @section('content-title')
 Laboratory Equipments
 
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-info pull-right" data-toggle="modal" data-target="#myModal">
-  New Equipment
-</button>  
+@if(auth()->user()->hasPermissionTo(40))
+  <button type="button" class="btn btn-info pull-right" data-toggle="modal" data-target="#myModal">
+    New Equipment
+  </button>  
+@endif
 
 @endsection
 
@@ -28,12 +29,16 @@ Laboratory Equipments
           <td>{{$eq->id}}</td>
           <td>{{$eq->name}}</td>
           <td>
-            <a href="#">
-              <button class="btn btn-warning btn-sm" data-id="{{$eq->id}}" data-service="" type="button" data-toggle="modal" data-target="#editModal">Edit</button>
-            </a>
-            <a href="#">
-              <button class="btn btn-danger btn-sm" data-id="{{$eq->id}}" type="button" data-toggle="modal" data-target="#deleteModal" > Delete</button>
-            </a>
+              @if(auth()->user()->hasPermissionTo(41))
+                <a href="#">
+                  <button class="btn btn-warning btn-sm" data-id="{{$eq->id}}" data-service="" type="button" data-toggle="modal" data-target="#editModal">Edit</button>
+                </a>
+              @endif
+              @if(auth()->user()->hasPermissionTo(42))
+                <a href="#">
+                  <button class="btn btn-danger btn-sm" data-id="{{$eq->id}}" type="button" data-toggle="modal" data-target="#deleteModal" > Delete</button>
+                </a>
+              @endif
           </td>
         </tr>
         @endforeach

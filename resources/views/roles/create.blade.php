@@ -55,19 +55,131 @@
                             <div class="form-group row">
                                     <label class="col-sm-2"></label>
                                     <div class="col-sm-2">                               
-                                        <input type='checkbox'name='permissions[]' value='1'> View Hospitals                                                    
+                                        <input type='checkbox'name='permissions[]' value='47'> View States                                                    
                                     </div>
                                     <div class="col-sm-2">                               
-                                        <input type='checkbox'name='permissions[]' value='2'> Add Hospitals                                                   
+                                        <input type='checkbox'name='permissions[]' value='48'> Add States                                                   
                                     </div>
                                     <div class="col-sm-2">                               
-                                        <input type='checkbox'name='permissions[]' value='3'> Update Hospitals                                                
+                                        <input type='checkbox'name='permissions[]' value='49'> Update States                                                
                                     </div>
                                     <div class="col-sm-2">                               
-                                        <input type='checkbox'name='permissions[]' value='4'> Delete Hospitals                                                       
+                                        <input type='checkbox'name='permissions[]' value='50'> Delete States                                                       
                                     </div>
                                     <div class="col-sm-2"></div>                              
+                           </div>
+                           <div class="form-group row">
+                                <label class="col-sm-2"></label>
+                                <div class="col-sm-2">                               
+                                        <input type='checkbox'name='permissions[]' value='51'> View LGA                                                    
                                 </div>
+                                <div class="col-sm-2">                               
+                                        <input type='checkbox'name='permissions[]' value='52'> Add LGA                                                   
+                                </div>
+                                <div class="col-sm-2">                               
+                                        <input type='checkbox'name='permissions[]' value='53'> Update LGA                                              
+                                </div>
+                                <div class="col-sm-2">                               
+                                        <input type='checkbox'name='permissions[]' value='54'> Delete LGA                                                       
+                                </div>
+                                <div class="col-sm-2"></div>                              
+                        </div>
+                        <div class="form-group row">
+                                <label class="col-sm-2"></label>
+                                <div class="col-sm-2">                               
+                                        <input type='checkbox'name='permissions[]' value='55'> View Wards                                                    
+                                </div>
+                                <div class="col-sm-2">                               
+                                        <input type='checkbox'name='permissions[]' value='56'> Add Wards                                                   
+                                </div>
+                                <div class="col-sm-2">                               
+                                        <input type='checkbox'name='permissions[]' value='57'> Update Wards                                               
+                                </div>
+                                <div class="col-sm-2">                               
+                                        <input type='checkbox'name='permissions[]' value='58'> Delete Wards                                                       
+                                </div>
+                                <div class="col-sm-2"></div>                              
+                        </div>
+                        <div class="form-group row">
+                                <label class="col-sm-2"></label>
+                                <div class="col-sm-2">                               
+                                        <input type='checkbox'name='permissions[]' value='31'> View Hospital Services                                                    
+                                </div>
+                                <div class="col-sm-2">                               
+                                        <input type='checkbox'name='permissions[]' value='32'> Add Hospital Services                                                 
+                                </div>
+                                <div class="col-sm-2">                               
+                                        <input type='checkbox'name='permissions[]' value='33'> Update Hospital Services                                               
+                                </div>
+                                <div class="col-sm-2">                               
+                                        <input type='checkbox'name='permissions[]' value='34'> Delete Hospital Services                                                      
+                                </div>
+                                <div class="col-sm-2"></div>                              
+                        </div>
+                        <div class="form-group row">
+                                        <label class="col-sm-2"></label>
+                                        <div class="col-sm-2">                               
+                                                <input type='checkbox'name='permissions[]' value='35'> View Imaging Services                                                    
+                                        </div>
+                                        <div class="col-sm-2">                               
+                                                <input type='checkbox'name='permissions[]' value='36'> Add Imaging Services                                                 
+                                        </div>
+                                        <div class="col-sm-2">                               
+                                                <input type='checkbox'name='permissions[]' value='37'> Update Imaging Services                                               
+                                        </div>
+                                        <div class="col-sm-2">                               
+                                                <input type='checkbox'name='permissions[]' value='38'> Delete Imaging Services                                                      
+                                        </div>
+                                        <div class="col-sm-2"></div>                              
+                                </div>
+                                <div class="form-group row">
+                                        <label class="col-sm-2"></label>
+                                        <div class="col-sm-2">                               
+                                                <input type='checkbox'name='permissions[]' value='39'> View Lab Equipments                                                    
+                                        </div>
+                                        <div class="col-sm-2">                               
+                                                <input type='checkbox'name='permissions[]' value='40'> Add Lab Equipments                                                 
+                                        </div>
+                                        <div class="col-sm-2">                               
+                                                <input type='checkbox'name='permissions[]' value='41'> Update Lab Equipments                                               
+                                        </div>
+                                        <div class="col-sm-2">                               
+                                                <input type='checkbox'name='permissions[]' value='42'> Delete Lab Equipments                                                      
+                                        </div>
+                                        <div class="col-sm-2"></div>                              
+                                </div>
+                                <div class="form-group row">
+                                        <label class="col-sm-2"></label>
+                                        <div class="col-sm-2">                               
+                                                <input type='checkbox'name='permissions[]' value='43'> View Lab Certification                                                    
+                                        </div>
+                                        <div class="col-sm-2">                               
+                                                <input type='checkbox'name='permissions[]' value='44'> Add Lab Certification                                                
+                                        </div>
+                                        <div class="col-sm-2">                               
+                                                <input type='checkbox'name='permissions[]' value='45'> Update Lab Certification                                              
+                                        </div>
+                                        <div class="col-sm-2">                               
+                                                <input type='checkbox'name='permissions[]' value='46'> Delete Lab Certification                                                     
+                                        </div>
+                                        <div class="col-sm-2"></div>                              
+                                </div>
+                           <div class="form-group row">
+                                        <label class="col-sm-2"></label>
+                                        <div class="col-sm-2">                               
+                                            <input type='checkbox'name='permissions[]' value='1'> View Hospitals                                                    
+                                        </div>
+                                        <div class="col-sm-2">                               
+                                            <input type='checkbox'name='permissions[]' value='2'> Add Hospitals                                                   
+                                        </div>
+                                        <div class="col-sm-2">                               
+                                            <input type='checkbox'name='permissions[]' value='3'> Update Hospitals                                                
+                                        </div>
+                                        <div class="col-sm-2">                               
+                                            <input type='checkbox'name='permissions[]' value='4'> Delete Hospitals                                                       
+                                        </div>
+                                        <div class="col-sm-2"></div>                              
+                               </div>
                             <div class="form-group row">
                                 <div class="col-sm-2"></div>   
                                 <div class="col-sm-2">                               
@@ -170,17 +282,30 @@
                                     <div class="col-sm-2">                               
                                             <input type='checkbox'name='permissions[]' value='29'> View Feedbacks
                                     </div>
-                                    <div class="col-sm-3">                               
+                                    <div class="col-sm-2">                               
                                             <input type='checkbox'name='permissions[]' value='30'> View Download Request
                                     </div>
                                     <div class="col-sm-2">                               
-                                            
+                                                <input type='checkbox'name='permissions[]' value='62'> View Masters                                            
                                     </div>
                                     <div class="col-sm-2">                               
-                                            
+                                                <input type='checkbox'name='permissions[]' value='59'> Approve Facility
                                     </div>
                                     <div class="col-sm-2"></div>
                             </div>
+                            <div class="form-group row">
+                                        <label class="col-sm-2"></label>
+                                        <div class="col-sm-2">                               
+                                            <input type='checkbox'name='permissions[]' value='60'> Verify Facility (Level I)                                                   
+                                        </div>
+                                        <div class="col-sm-2">                               
+                                            <input type='checkbox'name='permissions[]' value='61'> Verify Facility (Level II)                                               
+                                        </div>
+                                        <div class="col-sm-2">                               
+                                                                                                   
+                                        </div>
+                                        <div class="col-sm-2"></div>                              
+                               </div>
                         {{-- <input type="hidden"  name="hospital_id" value="{{$hosp[0]->id}}"> --}}
                 
                 

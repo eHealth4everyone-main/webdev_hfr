@@ -3,10 +3,11 @@
 @section('content-title')
 Imaging Services
 
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#myModal">
-  Add Service
-</button>
+@if(auth()->user()->hasPermissionTo(36))
+    <button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#myModal">
+      Add Service
+    </button>
+@endif
 
 @endsection
 
@@ -27,12 +28,16 @@ Imaging Services
           <td>{{$service->name}}</td>
           
           <td>
-            <a href="#">
-              <button class="btn btn-warning btn-sm" data-id="{{$service->id}}" data-service="{{$service->name}}" type="button" data-toggle="modal" data-target="#editModal">Edit</button>
-            </a>
-            <a href="#">
-              <button class="btn btn-danger btn-sm" data-id="{{$service->id}}" type="button" data-toggle="modal" data-target="#deleteModal" > Delete</button>
-            </a>
+            @if(auth()->user()->hasPermissionTo(37))
+              <a href="#">
+                <button class="btn btn-warning btn-sm" data-id="{{$service->id}}" data-service="{{$service->name}}" type="button" data-toggle="modal" data-target="#editModal">Edit</button>
+              </a>
+            @endif
+            @if(auth()->user()->hasPermissionTo(38))
+              <a href="#">
+                <button class="btn btn-danger btn-sm" data-id="{{$service->id}}" type="button" data-toggle="modal" data-target="#deleteModal" > Delete</button>
+              </a>
+            @endif
           </td>
         </tr>
         @endforeach

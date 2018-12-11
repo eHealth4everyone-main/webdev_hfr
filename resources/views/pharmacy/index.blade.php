@@ -4,11 +4,13 @@
 @section('content-title')
 Pharmaceutical Premises	
 
-<a href="{{route('pharmacies.create')}}">
-  <button type="button" class="btn btn-primary pull-right">
-    New Pharmacy
-  </button>
-</a>
+@if(auth()->user()->hasPermissionTo(10))
+  <a href="{{route('pharmacies.create')}}">
+    <button type="button" class="btn btn-primary pull-right">
+      Create Pharmacy
+    </button>
+  </a>
+@endif
 @endsection
 
 @section("content")
@@ -40,12 +42,21 @@ Pharmaceutical Premises
             <td>{{$ph->ownership}}</td>
 
           <td>
-            <a href="{{route('pharmacies.show',$ph->id)}}">
-              <button class="btn btn-success btn-sm"  type="button">View</button>
-            </a>
-            <a href="{{route('pharmacies.edit',$ph->id)}}">
-              <button class="btn btn-warning btn-sm"  type="button" > Edit</button>
-            </a>
+            @if(auth()->user()->hasPermissionTo(9))
+              <a href="{{route('pharmacies.show',$ph->id)}}">
+                <button class="btn btn-success btn-sm"  type="button">View</button>
+              </a>
+            @endif
+            @if(auth()->user()->hasPermissionTo(11))
+              <a href="{{route('pharmacies.edit',$ph->id)}}">
+                <button class="btn btn-warning btn-sm"  type="button" > Edit</button>
+              </a>
+            @endif
+            @if(auth()->user()->hasPermissionTo(12))
+              <a href="">
+                <button class="btn btn-danger btn-sm"  type="button" > Delete</button>
+              </a>
+            @endif
           </td>
         </tr>
         @endforeach

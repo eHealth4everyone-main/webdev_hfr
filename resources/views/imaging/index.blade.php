@@ -4,11 +4,14 @@
 @section('content-title')
 Radiological Premises
 
-<a href="{{route('imaging.index')}}">
+@if(auth()->user()->hasPermissionTo(14))
+    <a href="{{route('imaging.index')}}">
         <button type="button" class="btn btn-primary pull-right">
-                Add Radiological Facility
+                Create Radiological Facility
         </button>
     </a>
+@endif
+
 @endsection
 
 @section("content")
@@ -38,12 +41,22 @@ Radiological Premises
                   <td>{{$im->facility_name}}</td>
                   <td>{{$im->ownership}}</td>
                   <td>
+                    @if(auth()->user()->hasPermissionTo(13))
                       <a href="{{route('imaging.show',$im->id)}}">
                         <button class="btn btn-success btn-sm"  type="button">View</button>
                       </a>
+                    @endif
+                    @if(auth()->user()->hasPermissionTo(15))
                       <a href="{{route('imaging.edit',$im->id)}}">
                         <button class="btn btn-warning btn-sm"  type="button" >Edit</button>
                       </a>
+                    @endif
+                    @if(auth()->user()->hasPermissionTo(16))
+                      <a href="">
+                        <button class="btn btn-danger btn-sm"  type="button" >Delete</button>
+                      </a>
+                    @endif
+
                   </td>
               </tr>
               @endforeach

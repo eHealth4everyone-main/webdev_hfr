@@ -4,11 +4,14 @@
 @section('content-title')
 Laboratory Premises
 
-<a href="{{'laboratory.index'}}">
+@if(auth()->user()->hasPermissionTo(6))
+    <a href="{{'laboratory.index'}}">
         <button type="button" class="btn btn-primary pull-right">
                 Add New Laboratory
         </button>
     </a>
+@endif
+
 @endsection
 
 @section("content")
@@ -41,13 +44,22 @@ Laboratory Premises
                   <td>{{$lab->facility_level}}</td>
                   <td>{{$lab->ownership}}</td>
                 <td>
+                    @if(auth()->user()->hasPermissionTo(5))
                         <a href="{{route('laboratory.show',$lab->id)}}">
                             <button class="btn btn-success btn-sm"  type="button">View</button>
                         </a>
+                    @endif
+                    @if(auth()->user()->hasPermissionTo(7))
                         <a href="{{route('laboratory.edit',$lab->id)}}">
                             <button class="btn btn-warning btn-sm"  type="button" > Edit</button>
                         </a>
-                      </td>
+                    @endif
+                    @if(auth()->user()->hasPermissionTo(8))
+                        <a href="">
+                            <button class="btn btn-danger btn-sm"  type="button" > Delete</button>
+                        </a>
+                    @endif
+                  </td>
               </tr>
               @endforeach
               

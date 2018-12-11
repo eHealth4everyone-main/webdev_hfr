@@ -2,9 +2,9 @@
 
 @section('content-title')
 Users
-
-<button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#register">Register User</button>
-
+@if(auth()->user()->hasPermissionTo(18))
+  <button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#register">Register User</button>
+@endif
 
 @endsection
 
@@ -42,24 +42,26 @@ Users
                    data-job="{{$user->job_title}}" data-org="{{$user->organisation}}" data-mobile="{{$user->mobile}}"  data-state_id="{{$user->state_id}}"
                    type="button" data-toggle="modal" data-target="#view">More</button>
             </a>
-            <a href="#">
-              <button class="btn btn-warning btn-sm" data-fname="{{$user->firstname}}" data-lname="{{$user->lastname}}"
-                  data-username="{{$user->username}}" data-email="{{$user->email}}" data-id="{{$user->id}}" data-role="{{$user->getRoleNames()}}"
-                   data-job="{{$user->job_title}}" data-org="{{$user->organisation}}" data-mobile="{{$user->mobile}}" data-state_id="{{$user->state_id}}"
-                   type="button" data-toggle="modal" data-target="#editUser">Edit</button>
-            </a>
-            
-              @if ($user->status === "Active")
-                <a href="#">
-                  <button class="btn btn-danger btn-sm"  type="button" data-toggle="modal" data-target="#disableUser" data-id="{{$user->id}}" data-status="{{$user->status}}">Deactive</button>
-                </a>
-              @endif
-              @if ($user->status === "De-Activated")
+            @if(auth()->user()->hasPermissionTo(19))
               <a href="#">
-                <button class="btn btn-primary btn-sm"  type="button" data-toggle="modal" data-target="#disableUser" data-id="{{$user->id}}" data-status="{{$user->status}}">Activate</button>
+                <button class="btn btn-warning btn-sm" data-fname="{{$user->firstname}}" data-lname="{{$user->lastname}}"
+                    data-username="{{$user->username}}" data-email="{{$user->email}}" data-id="{{$user->id}}" data-role="{{$user->getRoleNames()}}"
+                    data-job="{{$user->job_title}}" data-org="{{$user->organisation}}" data-mobile="{{$user->mobile}}" data-state_id="{{$user->state_id}}"
+                    type="button" data-toggle="modal" data-target="#editUser">Edit</button>
               </a>
-              @endif
-
+            @endif
+            @if(auth()->user()->hasPermissionTo(20))
+                @if ($user->status === "Active")
+                  <a href="#">
+                    <button class="btn btn-danger btn-sm"  type="button" data-toggle="modal" data-target="#disableUser" data-id="{{$user->id}}" data-status="{{$user->status}}">Deactive</button>
+                  </a>
+                @endif
+                @if ($user->status === "De-Activated")
+                <a href="#">
+                  <button class="btn btn-primary btn-sm"  type="button" data-toggle="modal" data-target="#disableUser" data-id="{{$user->id}}" data-status="{{$user->status}}">Activate</button>
+                </a>
+                @endif
+            @endif
             </td>
           </tr>
           @endforeach

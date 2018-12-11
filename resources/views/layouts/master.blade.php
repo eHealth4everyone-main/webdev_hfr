@@ -53,7 +53,8 @@
                                    
                                 </li>
                                 <!-- Notifications: style can be found in dropdown.less -->
-                                <li class="dropdown notifications-menu">
+                                @if(auth()->user()->hasPermissionTo(59) or auth()->user()->hasPermissionTo(61) or auth()->user()->hasPermissionTo(60))
+                                    <li class="dropdown notifications-menu">
                                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                         <i class="fa fa-bell-o"></i>
                                         <span class="label label-warning">0</span>
@@ -63,35 +64,41 @@
                                         <li>
                                             <!-- inner menu: contains the actual data -->
                                             <ul class="menu">
-                                            <li>
-                                                <a href="{{route('view.myrequest')}}">
-                                                <i class="fa fa-user-secret text-orange"></i>My Requests
-                                                </a>
-                                            </li>
-                                            
-                                          
-                                            <li>
-                                                <a href="{{route('view.pendingapproval')}}">
-                                                <i class="fa fa-check-square text-green"></i>Pending Approvals
-                                                </a>
-                                            </li>
-                                            <li>
-                                            <a href="{{route('view.pendingverification1')}}">
-                                                <i class="fa fa-check-square text-aqua"></i>Pending Level I Verifications
-                                                </a>
-                                            </li>
-                                            <li>
-                                            <a href="{{route('view.pendingverification2')}}">
-                                                <i class="fa fa-check-square text-orange"></i>Pending Level II Verifications
-                                                </a>
-                                            </li>
-                                            
+                                            @if(auth()->user()->hasPermissionTo(2) or auth()->user()->hasPermissionTo(3) or auth()->user()->hasPermissionTo(4))
+                                                <li>
+                                                    <a href="{{route('view.myrequest')}}">
+                                                    <i class="fa fa-user-secret text-orange"></i>My Requests
+                                                    </a>
+                                                </li>
+                                            @endif
+
+                                            @if(auth()->user()->hasPermissionTo(59))                                          
+                                                <li>
+                                                    <a href="{{route('view.pendingapproval')}}">
+                                                    <i class="fa fa-check-square text-green"></i>Pending Approvals
+                                                    </a>
+                                                </li>
+                                            @endif
+                                            @if(auth()->user()->hasPermissionTo(60))
+                                                <li>
+                                                    <a href="{{route('view.pendingverification1')}}">
+                                                    <i class="fa fa-check-square text-aqua"></i>Pending Level I Verifications
+                                                    </a>
+                                                </li>
+                                            @endif
+                                            @if(auth()->user()->hasPermissionTo(61))
+                                                <li>
+                                                <a href="{{route('view.pendingverification2')}}">
+                                                    <i class="fa fa-check-square text-orange"></i>Pending Level II Verifications
+                                                    </a>
+                                                </li>
+                                            @endif
                                             </ul>
                                         </li>
                                         
                                         </ul>
                                     </li>
-                                
+                                @endif
                                 <!-- User Account: style can be found in dropdown.less -->
                                 <li class="dropdown user user-menu">
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">

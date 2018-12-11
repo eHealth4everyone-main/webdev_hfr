@@ -3,12 +3,13 @@
 
 @section('content-title')
 Hospitals and Clinics
-
-<a href="{{route('hospitals.create')}}">
+@if(auth()->user()->hasPermissionTo(2))
+    <a href="{{route('hospitals.create')}}">
         <button type="button" class="btn btn-primary pull-right">
                 Create Hospital or Clinic
         </button>
     </a>
+@endif
 @endsection
 
 @section("content")
@@ -94,12 +95,20 @@ Hospitals and Clinics
                                 View
                             </button>
                         </a> 
-                          <a href="{{route('hospitals.edit',$fac->id)}}">
-                            <button class="btn btn-warning btn-sm"  type="button" > Edit</button>
-                          </a>
+                          @if(auth()->user()->hasPermissionTo(3))
+                                <a href="{{route('hospitals.edit',$fac->id)}}">
+                                    <button class="btn btn-warning btn-sm"  type="button" > Edit</button>
+                                </a>
+                          @endif
                           <a href="{{route('hospitals.services',$fac->id)}}">
                               <button class="btn btn-primary btn-sm"  type="button" > Services</button>
                           </a>
+                          @if(auth()->user()->hasPermissionTo(4))
+                                <a href="">
+                                    <button class="btn btn-danger btn-sm"  type="button" > Delete</button>
+                                </a>
+                          @endif
+                          
                         </td>
                   </tr>
               @endforeach
