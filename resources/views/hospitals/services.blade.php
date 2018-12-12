@@ -173,50 +173,7 @@
             includeSelectAllOption: true
         });
 
-        // $(function () {
-        //     $('select[multiple]').multiselect({
-        //         columns: 4,
-        //         search: true,
-        //         selectAll: true,
-        //         selectGroup: true,
-        //         texts    : {
-        //             placeholder: 'Select Service',
-        //             search     : 'Search Service'
-        //         }
-               
-        //      });
-
-        // });
-        
-        
-        // var data = @json($hs_services);
-        // //console.log(data);
-        
-        // var category = "";
-        // var options = [];
-        // $.each(data, function(i, item) {
-          
-        //     if(category != item.category){
-        //         category = item.category;
-        //     }
-            
-        //     var opt = {
-        //         label  : category,
-        //         options: [{
-        //             name   : item.service,
-        //             value  : item.id,
-        //             checked: false
-        //         }]
-        //     };
-        //     options.push(opt);
-        // });
-        // console.log(options);
- 
-        // $('#services').multiselect( 'loadOptions', options);
-       
-
-        // $('#services').multiselect( 'reload' );
-
+    
     </script>
 
 @endpush

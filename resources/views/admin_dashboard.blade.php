@@ -90,8 +90,6 @@ Highcharts.chart('visitors', {
     },
 });
 
-console.log(@json($visitors));
-
 //downloads
     Highcharts.chart('no_downloads', {
         title: {

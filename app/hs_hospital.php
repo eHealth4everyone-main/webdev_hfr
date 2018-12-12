@@ -10,7 +10,7 @@ class hs_hospital extends Model implements Auditable
 {
     use \OwenIt\Auditing\Auditable;
     
-    protected $guarded = ["unique_id","start_date","operational_days","status_id","created_by"];
+    protected $guarded = ["unique_id","start_date","operational_days","status_id","created_by","services"];
 
 
     public function arrayValuesTostring($val)
@@ -51,5 +51,12 @@ class hs_hospital extends Model implements Auditable
         }
 
         return $id;
+    }
+
+    public function getNextHospitalID(){
+        $id = DB::select("SELECT current_id+1 as next_id FROM hs_hospital_id");
+      
+        $nextID = $id[0]->next_id; //get serial number of the next id
+        return $nextID;
     }
 }

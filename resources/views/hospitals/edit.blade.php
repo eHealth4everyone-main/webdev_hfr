@@ -17,7 +17,7 @@
             <div class="panel-heading" role="tab" id="headingOne">
                 <h4 class="panel-title">
                     <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                        Signature Information
+                        Signature Elements
                     </a>
                 </h4>
             </div>
@@ -57,14 +57,15 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">State:<font color="red">*</font> </label></label>
                             <div class="col-sm-4">
-                                <select class="form-control select2 dynamic" id="state_id" name ="state_id" data-dependent="lga_id" required>
+                                <select class="form-control select2 dynamic" id="state_id" name ="state_id" data-dependent="lga_id" disabled required>
                                     <option value="">--Select State--</option>
                                     
                                     @foreach($lst_states as $st)
-                                    <option value="{{$st->id}}">{{$st->name}}</option>
+                                        <option value="{{$st->id}}">{{$st->name}}</option>
                                     @endforeach
                                     
                                 </select>
+                                <input type="hidden" name="state_id" value="{{$hosp->state_id}}">
                             </div>
                             
                             <label class="col-sm-2 control-label">LGA:<font color="red">*</font> </label></label>
@@ -231,7 +232,7 @@
                             <select class="form-control select2" id="license_status_id" name="license_status_id" style="width: 100%;">
                                 <option value="">--Select License Status--</option>
                                 @foreach($lst_license_status as $st)
-                                <option value="{{$st->id}}">{{$st->status}}</option>
+                                    <option value="{{$st->id}}">{{$st->status}}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -241,17 +242,144 @@
             </div>
         </div>
     </div>
-    
+       {{-- Tab twoServices --}}
+       <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="heading2">
+                <h4 class="panel-title">
+                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse2" aria-expanded="false" aria-controls="collapse2">
+                        Services
+                    </a>
+                </h4>
+            </div>
+            <div id="collapse2" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading2">
+                <div class="panel-body">
+                        <div class="form-group">
+                                <label class="col-sm-3 control-label">Medical:</label>
+                                <div class="col-sm-9">
+                                    <select class="form-control select2" name="services[]" multiple="multiple" data-placeholder="Select Service" style="width: 100%;">
+                                            @foreach($lst_services as $s)      
+                                                @if($s->service_category_id == 1)
+                                                    @if(in_array($s->id,$current_services, TRUE))
+                                                        <option value="{{$s->id}}" selected="selected">{{$s->name}}</option>
+                                                    @else
+                                                        <option value="{{$s->id}}">{{$s->name}}</option>
+                                                    @endif
+                                                @endif                                       
+                                            @endforeach
+                                    </select>
+                                </div>
+                        </div>
+                        <div class="form-group">
+                                <label class="col-sm-3 control-label">Surgical:</label>
+                                <div class="col-sm-9">
+                                        <select class="form-control select2" name="services[]" multiple="multiple" data-placeholder="Select Service" style="width: 100%;">
+                                                @foreach($lst_services as $s)      
+                                                    @if($s->service_category_id == 2)
+                                                        @if(in_array($s->id,$current_services, TRUE))
+                                                            <option value="{{$s->id}}" selected="selected">{{$s->name}}</option>
+                                                        @else
+                                                            <option value="{{$s->id}}">{{$s->name}}</option>
+                                                        @endif
+                                                    @endif                                       
+                                                @endforeach
+                                        </select>
+                                    
+                            </div>
+                        </div>
+                        <div class="form-group">
+                                <label class="col-sm-3 control-label">Obstetrics and Gynecology:</label>
+                                <div class="col-sm-9">
+                                        <select class="form-control select2" name="services[]" multiple="multiple" data-placeholder="Select Service" style="width: 100%;">
+                                                @foreach($lst_services as $s)      
+                                                    @if($s->service_category_id == 3)
+                                                        @if(in_array($s->id,$current_services, TRUE))
+                                                            <option value="{{$s->id}}" selected="selected">{{$s->name}}</option>
+                                                        @else
+                                                            <option value="{{$s->id}}">{{$s->name}}</option>
+                                                        @endif
+                                                    @endif                                       
+                                                @endforeach
+                                        </select>    
+                            </div>
+                        </div>
+                        <div class="form-group">
+                                <label class="col-sm-3 control-label">Pediatrics:</label>
+                                <div class="col-sm-9">
+                                        <select class="form-control select2" name="services[]" multiple="multiple" data-placeholder="Select Service" style="width: 100%;">
+                                                @foreach($lst_services as $s)      
+                                                    @if($s->service_category_id == 4)
+                                                        @if(in_array($s->id,$current_services, TRUE))
+                                                            <option value="{{$s->id}}" selected="selected">{{$s->name}}</option>
+                                                        @else
+                                                            <option value="{{$s->id}}">{{$s->name}}</option>
+                                                        @endif
+                                                    @endif                                       
+                                                @endforeach
+                                        </select>
+                                    
+                            </div>
+                        </div>
+                        <div class="form-group">
+                                <label class="col-sm-3 control-label">Dental:</label>
+                                <div class="col-sm-9">
+                                        <select class="form-control select2" name="services[]" multiple="multiple" data-placeholder="Select Service" style="width: 100%;">
+                                                @foreach($lst_services as $s)      
+                                                    @if($s->service_category_id == 5)
+                                                        @if(in_array($s->id,$current_services, TRUE))
+                                                            <option value="{{$s->id}}" selected="selected">{{$s->name}}</option>
+                                                        @else
+                                                            <option value="{{$s->id}}">{{$s->name}}</option>
+                                                        @endif
+                                                    @endif                                       
+                                                @endforeach
+                                        </select>   
+                            </div>
+                        </div>
+                        <div class="form-group">
+                                <label class="col-sm-3 control-label">Specific Clinical Service:</label>
+                                <div class="col-sm-9">
+                                        <select class="form-control select2" name="services[]" multiple="multiple" data-placeholder="Select Service" style="width: 100%;">
+                                                @foreach($lst_services as $s)      
+                                                    @if($s->service_category_id == 6)
+                                                        @if(in_array($s->id,$current_services, TRUE))
+                                                            <option value="{{$s->id}}" selected="selected">{{$s->name}}</option>
+                                                        @else
+                                                            <option value="{{$s->id}}">{{$s->name}}</option>
+                                                        @endif
+                                                    @endif                                       
+                                                @endforeach
+                                        </select>   
+                            </div>
+                        </div>
+                        <div class="form-group">
+                                <label for="hs_no_doctors" class="col-sm-3 control-label">Accidents and Emergency (Number of Beds):</label>
+                                <div class="col-sm-3">
+                                    <input type="text" class="form-control input-sm"  id="beds_accidents_emerg" name="beds_accidents_emerg"  value="{{$hosp->beds_accidents_emerg}}">
+                                </div>
+                                <label for="hs_no_pharm" class="col-sm-3 control-label">Admission Facilities (Number of Beds) :</label>
+                                <div class="col-sm-3">
+                                    <input type="text" class="form-control input-sm"  id="beds_adminission" name="beds_adminission" value="{{$hosp->beds_adminission}}">
+                                </div>
+                        </div>
+                        <div class="form-group">
+                                <label for="hs_no_doctors" class="col-sm-3 control-label">Intensive Care Unit (Number of Beds):</label>
+                                <div class="col-sm-3">
+                                    <input type="text" class="form-control input-sm"  id="beds_icu" name="beds_icu"  value="{{$hosp->beds_icu}}">
+                                </div>
+                        </div>
+                </div>
+            </div>
+        </div><!-- end here-->
     {{-- Tab Four- HR --}}
     <div class="panel panel-default">
-        <div class="panel-heading" role="tab" id="headingThree">
+        <div class="panel-heading" role="tab" id="heading3">
             <h4 class="panel-title">
-                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseFour" aria-expanded="false" aria-controls="collapseThree">
-                    Human Resource Information
+                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse3" aria-expanded="false" aria-controls="collapse3">
+                    Human Resources
                 </a>
             </h4>
         </div>
-        <div id="collapseFour" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+        <div id="collapse3" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading3">
             <div class="panel-body">
                 
                 <div class="form-group">
@@ -335,6 +463,51 @@
         </div>
     </div><!-- end here-->
     
+           {{-- Tab four- Other Services --}}
+           <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="heading4">
+                    <h4 class="panel-title">
+                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse4" aria-expanded="false" aria-controls="collapse4">
+                            Other Services
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapse4" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading4">
+                    <div class="panel-body">
+                            <div class="form-group">
+                                    <div class="col-sm-1">  </div>                                        
+                                    <div class="col-sm-3">            
+                                            <input  type='hidden' value='' name='onsite_pharmarcy'>  
+                                            <input type='checkbox' id='onsite_pharmarcy' name='onsite_pharmarcy' value='Yes'> Onsite Pharmacy
+                                    </div>   
+                                               
+                            </div>
+                            <div class="form-group">
+                                    <div class="col-sm-1">  </div> 
+                                    <div class="col-sm-3">   
+                                            <input  type='hidden' value='' name='onsite_laboratory'>                
+                                            <input type='checkbox' id='onsite_laboratory' name='onsite_laboratory'  value='Yes'> Onsite Laboratory
+                                    </div>
+                            </div>
+                            <div class="form-group">
+                                    <div class="col-sm-1">  </div> 
+                                    <div class="col-sm-3"> 
+                                            <input  type='hidden' value='' name='onsite_imaging'>  
+                                            <input type='checkbox' id='onsite_imaging' name='onsite_imaging' value='Yes'> Onsite Imaging/ Radio-Diagnostics Center
+                                    </div>
+                            </div>
+                            <div class="form-group">
+                                    <div class="col-sm-1">  </div> 
+                                    <div class="col-sm-3">  
+                                        <input  type='hidden' value='' name='mortuary_services'> 
+                                        <input type='checkbox' id='mortuary_services' name='mortuary_services' value='Yes'> Mortuary Services
+                                            
+                                    </div> 
+                            </div>
+                    </div>
+                </div>
+            </div><!-- end here-->
+
 </div>
 
 <!-- /.box-body -->
@@ -354,6 +527,21 @@
 @include('partials.notification')
 
 <script>
+    if ("{{$hosp->onsite_pharmarcy}}"=="Yes") {
+            $(onsite_pharmarcy).prop('checked', true);
+    };
+    if ("{{$hosp->onsite_imaging}}"=="Yes") {
+            $(onsite_imaging).prop('checked', true);
+    };
+    if ("{{$hosp->onsite_laboratory}}"=="Yes") {
+            $(onsite_laboratory).prop('checked', true);
+    };
+    if ("{{$hosp->mortuary_services}}"=="Yes") {
+            $(mortuary_services).prop('checked', true);
+    };
+
+
+
     //*********binding drop down values ****************************
     $("#state_id").val({{$hosp->state_id}}).change();
     $("#facility_level_id").val({{$hosp->facility_level_id}}).change();

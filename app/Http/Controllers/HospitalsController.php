@@ -73,9 +73,12 @@ class HospitalsController extends Controller
                     ->select('id','status')
                     ->get();
         });
+        //get hospital services
+        $lst_services = DB::table('lst_hosp_services')
+                    ->get();
         
         return view('hospitals.create',compact('lst_level_of_care','lst_states','lst_ownerships','lst_oparational_status',
-        'lst_regulatory_status','lst_license_status')); 
+        'lst_regulatory_status','lst_license_status','lst_services')); 
     }
     
     public function store(Request $request)
@@ -127,13 +130,24 @@ class HospitalsController extends Controller
             'onsite_imaging'=>'nullable',
             'onsite_pharmarcy'=>'nullable',
             'mortuary_services'=>'nullable',
+            'beds_accidents_emerg'=>'nullable|numeric',
+            'beds_adminission'=>'nullable|numeric',
+            'beds_icu'=>'nullable|numeric',
+            'onsite_pharmarcy'=>'nullable',
+            'onsite_laboratory'=>'nullable',
+            'onsite_imaging'=>'nullable',
+            'mortuary_services'=>'nullable',
         ]);
     
-        
+       
         $start_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->start_date)));
         
+        $hos = new hs_hospital;        
+        $nextID = $hos->getNextHospitalID();
+       
         $hosp = new hs_hospital_history;
         $hosp->fill($request->all());
+        $hosp->id = $nextID;
         $hosp->unique_id = $hosp->generateUniqueID($request->lga_id,'1',$request->facility_level_id,$request->ownership_id);
         $hosp->start_date = $start_date;
         $hosp->status_id = 1;
@@ -141,6 +155,15 @@ class HospitalsController extends Controller
         $hosp->operational_days = $hosp->arrayValuesTostring($request->operational_days);
         $hosp->save();
     
+         //insert services
+         $data = $request->services;
+         foreach ($data as $id){
+             $hosp_services = new hs_hospital_service;
+             $hosp_services->service_id = $id;
+             $hosp_services->hospital_id = $nextID; 
+             $hosp_services->save();
+         }
+        
         session()->flash("alert-success", "Request Sent Successfully!");
         return redirect()->back();
     }
@@ -150,6 +173,17 @@ class HospitalsController extends Controller
     public function edit($id)
     {
             $hosp =hs_hospital::findorfail($id);
+
+            $services = DB::table('hs_hospital_services')
+                    ->select('service_id')
+                    ->where('hospital_id','=',$id)
+                    ->get();
+
+            $current_services = [];
+            foreach ($services as $s) {
+                $current_services[] = $s->service_id;
+            }
+                 
             //get state list
             $lst_states = Cache::remember('lst_states', 60, function () {
             return DB::table('ou_states')
@@ -189,9 +223,11 @@ class HospitalsController extends Controller
                         ->select('id','status')
                         ->get();
             });
-            
-            return view('hospitals.edit',compact('hosp','lst_level_of_care','lst_states','lst_ownerships','lst_oparational_status',
-            'lst_regulatory_status','lst_license_status')); 
+             //get hospital services
+            $lst_services = DB::table('lst_hosp_services')->get();
+                        
+            return view('hospitals.edit',compact('hosp','current_services','lst_level_of_care','lst_states','lst_ownerships','lst_oparational_status',
+            'lst_regulatory_status','lst_license_status','lst_services')); 
     }
     
   
@@ -244,6 +280,13 @@ class HospitalsController extends Controller
             'onsite_imaging'=>'nullable',
             'onsite_pharmarcy'=>'nullable',
             'mortuary_services'=>'nullable',
+            'beds_accidents_emerg'=>'nullable|numeric',
+            'beds_adminission'=>'nullable|numeric',
+            'beds_icu'=>'nullable|numeric',
+            'onsite_pharmarcy'=>'nullable',
+            'onsite_laboratory'=>'nullable',
+            'onsite_imaging'=>'nullable',
+            'mortuary_services'=>'nullable',
         ]);
     
         
@@ -257,6 +300,17 @@ class HospitalsController extends Controller
         $hosp->operational_days = $hosp->arrayValuesTostring($request->operational_days);
         $hosp->save();
     
+
+        $deleted = DB::delete("delete from hs_hospital_services where hospital_id ='".$id."' and id > 0");
+
+        //insert services
+        $data = $request->services;
+        foreach ($data as $service_id){
+            $hosp_services = new hs_hospital_service;
+            $hosp_services->service_id = $service_id;
+            $hosp_services->hospital_id = $id; 
+            $hosp_services->save();
+        }
         session()->flash("alert-success", "Record Updated Successfully!");
         return redirect()->back();
     }
@@ -299,46 +353,14 @@ class HospitalsController extends Controller
         return view('hospitals.index',compact('facilities','lst_states','state_id','facility_name'));       
     }
 
-    public function services($id)
+    public function getServices(Request $request)
     {
-        $hosp = DB::table('hospital_details')
-                ->select('unique_id','facility_name','id')
-                ->where('id',$id)
-                ->get();
-        
-        $categories = DB::select("select id,description category from lst_hosp_service_category");
-              
-        $hs_services = DB::select("SELECT id,service_category_id category_id,name service FROM lst_hosp_services");
+        $services = DB::select("select s.service_category_id category_id,s.name from hs_hospital_services hs
+            join lst_hosp_services s on hs.service_id=s.id
+            where hospital_id='".$request->hosp_id."'");
 
-        $data = DB::select("select service_id id from hs_hospital_services where hospital_id='".$id."'");
-       
-        $available_services = [];
-        foreach ($data as $d) {
-            $available_services[] = $d->id;
-        }
-      
-        //dd($available_services);  
-        return view('hospitals.services',compact('hosp','hs_services','categories','available_services'));   
+      return $services;
     }
 
-    public function StoreServices(Request $request)
-    {
-        $data = $request->services;
-        //dd($data);
-
-        //delete existing records
-        $deleted = DB::delete("delete from hs_hospital_services where hospital_id ='".$request->hospital_id."' and id > 0");
-
-        foreach ($data as $id) {
-            $hosp_services = new hs_hospital_service;
-
-            $hosp_services->service_id = $id;
-            $hosp_services->hospital_id = $request->hospital_id; 
-            $hosp_services->save();
-        }
-       
-        session()->flash("alert-success", "Services added Successfully!");
-        return redirect()->back();
-    }
 
 }

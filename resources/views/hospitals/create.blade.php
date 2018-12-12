@@ -13,7 +13,7 @@
             <div class="panel-heading" role="tab" id="headingOne">
                 <h4 class="panel-title">
                     <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                        Signature Information
+                        Signature Elements
                     </a>
                 </h4>
             </div>
@@ -53,14 +53,15 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">State:<font color="red">*</font> </label></label>
                             <div class="col-sm-4">
-                                <select class="form-control select2 dynamic" id="state_id" name ="state_id" data-dependent="lga_id" required>
+                                <select class="form-control select2 dynamic" id="state_id" name ="state_id" data-dependent="lga_id" disabled required>
                                     <option value="">--Select State--</option>
                                     
                                     @foreach($lst_states as $st)
-                                    <option value="{{$st->id}}">{{$st->name}}</option>
+                                        <option value="{{$st->id}}">{{$st->name}}</option>
                                     @endforeach
                                     
                                 </select>
+                                <input type="hidden" name="state_id" value="{{Auth::user()->state_id}}" />
                             </div>
                             
                             <label class="col-sm-2 control-label">LGA:<font color="red">*</font> </label></label>
@@ -127,7 +128,7 @@
                         </div>
                         
                         
-                        <div class="form-group">
+                    <div class="form-group">
                             <label class="col-sm-2 control-label">Days of Operation:</label>
                             <div class="col-sm-10">
                                 <select class="form-control select2" name="operational_days[]" multiple="multiple" data-placeholder="Select days of operation"
@@ -238,99 +239,243 @@
         </div>
     </div>
     
-    {{-- Tab Four- HR --}}
+  
+     {{-- Tab twoServices --}}
+     <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="heading2">
+                <h4 class="panel-title">
+                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse2" aria-expanded="false" aria-controls="collapse2">
+                        Services
+                    </a>
+                </h4>
+            </div>
+            <div id="collapse2" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading2">
+                <div class="panel-body">
+                        <div class="form-group">
+                                <label class="col-sm-3 control-label">Medical:</label>
+                                <div class="col-sm-9">
+                                    <select class="form-control select2" name="services[]" multiple="multiple" data-placeholder="Select Service" style="width: 100%;">
+                                            @foreach($lst_services as $s)      
+                                                @if($s->service_category_id == 1)
+                                                        <option value="{{$s->id}}">{{$s->name}}</option>
+                                                @endif                                       
+                                            @endforeach
+                                    </select>
+                                </div>
+                        </div>
+                        <div class="form-group">
+                                <label class="col-sm-3 control-label">Surgical:</label>
+                                <div class="col-sm-9">
+                                        <select class="form-control select2" name="services[]" multiple="multiple" data-placeholder="Select Service" style="width: 100%;">
+                                                @foreach($lst_services as $s)      
+                                                    @if($s->service_category_id == 2)
+                                                            <option value="{{$s->id}}">{{$s->name}}</option>
+                                                    @endif                                       
+                                                @endforeach
+                                        </select>
+                                    
+                            </div>
+                        </div>
+                        <div class="form-group">
+                                <label class="col-sm-3 control-label">Obstetrics and Gynecology:</label>
+                                <div class="col-sm-9">
+                                        <select class="form-control select2" name="services[]" multiple="multiple" data-placeholder="Select Service" style="width: 100%;">
+                                                @foreach($lst_services as $s)      
+                                                    @if($s->service_category_id == 3)
+                                                            <option value="{{$s->id}}">{{$s->name}}</option>
+                                                    @endif                                       
+                                                @endforeach
+                                        </select>    
+                            </div>
+                        </div>
+                        <div class="form-group">
+                                <label class="col-sm-3 control-label">Pediatrics:</label>
+                                <div class="col-sm-9">
+                                        <select class="form-control select2" name="services[]" multiple="multiple" data-placeholder="Select Service" style="width: 100%;">
+                                                @foreach($lst_services as $s)      
+                                                    @if($s->service_category_id == 4)
+                                                            <option value="{{$s->id}}">{{$s->name}}</option>
+                                                    @endif                                       
+                                                @endforeach
+                                        </select>
+                                    
+                            </div>
+                        </div>
+                        <div class="form-group">
+                                <label class="col-sm-3 control-label">Dental:</label>
+                                <div class="col-sm-9">
+                                        <select class="form-control select2" name="services[]" multiple="multiple" data-placeholder="Select Service" style="width: 100%;">
+                                                @foreach($lst_services as $s)      
+                                                    @if($s->service_category_id == 5)
+                                                            <option value="{{$s->id}}">{{$s->name}}</option>
+                                                    @endif                                       
+                                                @endforeach
+                                        </select>   
+                            </div>
+                        </div>
+                        <div class="form-group">
+                                <label class="col-sm-3 control-label">Specific Clinical Service:</label>
+                                <div class="col-sm-9">
+                                        <select class="form-control select2" name="services[]" multiple="multiple" data-placeholder="Select Service" style="width: 100%;">
+                                                @foreach($lst_services as $s)      
+                                                    @if($s->service_category_id == 6)
+                                                            <option value="{{$s->id}}">{{$s->name}}</option>
+                                                    @endif                                       
+                                                @endforeach
+                                        </select>   
+                            </div>
+                        </div>
+                        <div class="form-group">
+                                <label for="hs_no_doctors" class="col-sm-3 control-label">Accidents and Emergency (Number of Beds):</label>
+                                <div class="col-sm-3">
+                                    <input type="text" class="form-control input-sm"  id="beds_accidents_emerg" name="beds_accidents_emerg"  value="{{old('beds_accidents_emerg')}}">
+                                </div>
+                                <label for="hs_no_pharm" class="col-sm-3 control-label">Admission Facilities (Number of Beds) :</label>
+                                <div class="col-sm-3">
+                                    <input type="text" class="form-control input-sm"  id="beds_adminission" name="beds_adminission" value="{{old('beds_adminission')}}">
+                                </div>
+                        </div>
+                        <div class="form-group">
+                                <label for="hs_no_doctors" class="col-sm-3 control-label">Intensive Care Unit (Number of Beds):</label>
+                                <div class="col-sm-3">
+                                    <input type="text" class="form-control input-sm"  id="beds_icu" name="beds_icu"  value="{{old('beds_icu')}}">
+                                </div>
+                        </div>
+                </div>
+            </div>
+        </div><!-- end here-->
+
+          {{-- Tab three- HR --}}
     <div class="panel panel-default">
-        <div class="panel-heading" role="tab" id="headingThree">
-            <h4 class="panel-title">
-                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseFour" aria-expanded="false" aria-controls="collapseThree">
-                    Human Resource Information
-                </a>
-            </h4>
-        </div>
-        <div id="collapseFour" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
-            <div class="panel-body">
-                
-                <div class="form-group">
-                    <label for="hs_no_doctors" class="col-sm-3 control-label">Medical Doctors:</label>
-                    <div class="col-sm-3">
-                        <input type="text" class="form-control input-sm"  id="doctors" name="doctors"  value="{{old('doctors')}}">
+            <div class="panel-heading" role="tab" id="heading3">
+                <h4 class="panel-title">
+                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse3" aria-expanded="false" aria-controls="collapse3">
+                        Human Resources
+                    </a>
+                </h4>
+            </div>
+            <div id="collapse3" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading3">
+                <div class="panel-body">
+                    
+                    <div class="form-group">
+                        <label for="hs_no_doctors" class="col-sm-3 control-label">Medical Doctors:</label>
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control input-sm"  id="doctors" name="doctors"  value="{{old('doctors')}}">
+                        </div>
+                        <label for="hs_no_pharm" class="col-sm-3 control-label">Pharmacists:</label>
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control input-sm"  id="pharmacists" name="pharmacists" value="{{old('pharmacists')}}">
+                        </div>
                     </div>
-                    <label for="hs_no_pharm" class="col-sm-3 control-label">Pharmacists:</label>
-                    <div class="col-sm-3">
-                        <input type="text" class="form-control input-sm"  id="pharmacists" name="pharmacists" value="{{old('pharmacists')}}">
+                    <div class="form-group">
+                        <label for="hs_no_dentist" class="col-sm-3 control-label">Dentists:</label>
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control input-sm"  id="dentist" name="dentist"  value="{{old('dentist')}}">
+                        </div>
+                        <label for="hs_no_pharm_tech" class="col-sm-3 control-label">Pharmacy Technicians:</label>
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control input-sm"  id="pharmacy_technicians" name="pharmacy_technicians" value="{{old('pharmacy_technicians')}}">
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label for="hs_no_dentist" class="col-sm-3 control-label">Dentists:</label>
-                    <div class="col-sm-3">
-                        <input type="text" class="form-control input-sm"  id="dentist" name="dentist"  value="{{old('dentist')}}">
+                    <div class="form-group">
+                        <label for="hs_no_single_qualified_nurses" class="col-sm-3 control-label">Nurses (Single):</label>
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control input-sm"  id="nurses" name="nurses"  value="{{old('nurses')}}">
+                        </div>
+                        <label for="hs_no_lab_sc" class="col-sm-3 control-label">Laboratory Scientists:</label>
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control input-sm"  id="lab_scientists" name="lab_scientists" value="{{old('lab_scientists')}}">
+                        </div>
                     </div>
-                    <label for="hs_no_pharm_tech" class="col-sm-3 control-label">Pharmacy Technicians:</label>
-                    <div class="col-sm-3">
-                        <input type="text" class="form-control input-sm"  id="pharmacy_technicians" name="pharmacy_technicians" value="{{old('pharmacy_technicians')}}">
+                    <div class="form-group">
+                        <label for="hs_no_single_qualified_midwives" class="col-sm-3 control-label">Midwifes (Single):</label>
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control input-sm"  id="midwifes" name="midwifes"  value="{{old('midwifes')}}">
+                        </div>
+                        <label for="hs_no_lab_tech" class="col-sm-3 control-label">Laboratory Technicians:</label>
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control input-sm"  id="lab_technicians" name="lab_technicians" value="{{old('lab_technicians')}}">
+                        </div>
+                    </div> 
+                    
+                    <div class="form-group">
+                        <label for="hs_nurses_midwives" class="col-sm-3 control-label">Nurse/ Midwife (Double):</label>
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control input-sm"  id="nurse_midwife" name="nurse_midwife"  value="{{old('nurse_midwife')}}">
+                        </div>
+                        <label for="hs_no_health_rec" class="col-sm-3 control-label">Health Records/HIM Officers:</label>
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control input-sm"  id="him_officers" name="him_officers" value="{{old('him_officers')}}">
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label for="hs_no_single_qualified_nurses" class="col-sm-3 control-label">Nurses (Single):</label>
-                    <div class="col-sm-3">
-                        <input type="text" class="form-control input-sm"  id="nurses" name="nurses"  value="{{old('nurses')}}">
+                    <div class="form-group">
+                        <label for="hs_no_comm_health_officer" class="col-sm-3 control-label">Community Health Officer:</label>
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control input-sm"  id="community_health_officer" name="community_health_officer"  value="{{old('community_health_officer')}}">
+                        </div>
+                        <label for="hs_no_comm_health_ext_officer" class="col-sm-3 control-label">Community Health Extension Worker:</label>
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control input-sm"  id="community_extension_workers" name="community_extension_workers" value="{{old('community_extension_workers')}}">
+                        </div>
                     </div>
-                    <label for="hs_no_lab_sc" class="col-sm-3 control-label">Laboratory Scientists:</label>
-                    <div class="col-sm-3">
-                        <input type="text" class="form-control input-sm"  id="lab_scientists" name="lab_scientists" value="{{old('lab_scientists')}}">
+                    <div class="form-group">
+                        <label for="hs_no_jun_comm_health_ext_off" class="col-sm-3 control-label">Junior Com Health Extension Worker:</label>
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control input-sm"  id="jun_community_extension_worker" name="jun_community_extension_worker"  value="{{old('jun_community_extension_worker')}}">
+                        </div>
+                        <label for="hs_no_dental_tech" class="col-sm-3 control-label">Dental Technicians:</label>
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control input-sm"  id="dental_technicians" name="dental_technicians" value="{{old('dental_technicians')}}">
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label for="hs_no_single_qualified_midwives" class="col-sm-3 control-label">Midwifes (Single):</label>
-                    <div class="col-sm-3">
-                        <input type="text" class="form-control input-sm"  id="midwifes" name="midwifes"  value="{{old('midwifes')}}">
-                    </div>
-                    <label for="hs_no_lab_tech" class="col-sm-3 control-label">Laboratory Technicians:</label>
-                    <div class="col-sm-3">
-                        <input type="text" class="form-control input-sm"  id="lab_technicians" name="lab_technicians" value="{{old('lab_technicians')}}">
-                    </div>
-                </div> 
-                
-                <div class="form-group">
-                    <label for="hs_nurses_midwives" class="col-sm-3 control-label">Nurse/ Midwife (Double):</label>
-                    <div class="col-sm-3">
-                        <input type="text" class="form-control input-sm"  id="nurse_midwife" name="nurse_midwife"  value="{{old('nurse_midwife')}}">
-                    </div>
-                    <label for="hs_no_health_rec" class="col-sm-3 control-label">Health Records/HIM Officers:</label>
-                    <div class="col-sm-3">
-                        <input type="text" class="form-control input-sm"  id="him_officers" name="him_officers" value="{{old('him_officers')}}">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="hs_no_comm_health_officer" class="col-sm-3 control-label">Community Health Officer:</label>
-                    <div class="col-sm-3">
-                        <input type="text" class="form-control input-sm"  id="community_health_officer" name="community_health_officer"  value="{{old('community_health_officer')}}">
-                    </div>
-                    <label for="hs_no_comm_health_ext_officer" class="col-sm-3 control-label">Community Health Extension Worker:</label>
-                    <div class="col-sm-3">
-                        <input type="text" class="form-control input-sm"  id="community_extension_workers" name="community_extension_workers" value="{{old('community_extension_workers')}}">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="hs_no_jun_comm_health_ext_off" class="col-sm-3 control-label">Junior Com Health Extension Worker:</label>
-                    <div class="col-sm-3">
-                        <input type="text" class="form-control input-sm"  id="jun_community_extension_worker" name="jun_community_extension_worker"  value="{{old('jun_community_extension_worker')}}">
-                    </div>
-                    <label for="hs_no_dental_tech" class="col-sm-3 control-label">Dental Technicians:</label>
-                    <div class="col-sm-3">
-                        <input type="text" class="form-control input-sm"  id="dental_technicians" name="dental_technicians" value="{{old('dental_technicians')}}">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="hs_no_env_health_officer" class="col-sm-3 control-label">Environmental Health Officers:</label>
-                    <div class="col-sm-3">
-                        <input type="text" class="form-control input-sm"  id="env_health_officers" name="env_health_officers" value="{{old('env_health_officers')}}">
+                    <div class="form-group">
+                        <label for="hs_no_env_health_officer" class="col-sm-3 control-label">Environmental Health Officers:</label>
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control input-sm"  id="env_health_officers" name="env_health_officers" value="{{old('env_health_officers')}}">
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div><!-- end here-->
-    
+        </div><!-- end here-->
+
+              {{-- Tab four- Other Services --}}
+              <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="heading4">
+                        <h4 class="panel-title">
+                            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse4" aria-expanded="false" aria-controls="collapse4">
+                                Other Services
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapse4" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading4">
+                        <div class="panel-body">
+                                <div class="form-group">
+                                        <div class="col-sm-1">  </div>                                        
+                                        <div class="col-sm-3">                               
+                                                <input type='checkbox'name='onsite_pharmarcy' value='Yes'> Onsite Pharmacy
+                                        </div>
+                                </div>
+                                <div class="form-group">
+                                        <div class="col-sm-1">  </div> 
+                                        <div class="col-sm-3">                               
+                                                <input type='checkbox'name='onsite_laboratory' value='Yes'> Onsite Laboratory
+                                        </div>
+                                </div>
+                                <div class="form-group">
+                                        <div class="col-sm-1">  </div> 
+                                        <div class="col-sm-3">                               
+                                                <input type='checkbox'name='onsite_imaging' value='Yes'> Onsite Imaging/ Radio-Diagnostics Center
+                                        </div>
+                                </div>
+                                <div class="form-group">
+                                        <div class="col-sm-1">  </div> 
+                                        <div class="col-sm-3">                               
+                                                <input type='checkbox'name='mortuary_services' value='Yes'> Mortuary Services
+                                        </div> 
+                                </div>
+                        </div>
+                    </div>
+                </div><!-- end here-->
 </div>
 
 <!-- /.box-body -->
@@ -350,7 +495,20 @@
 @include('partials.notification')
 
 <script>
-    
+    $("#state_id").val({{Auth::user()->state_id}}).change();
+
+    //get lgas
+    var stateID= {{Auth::user()->state_id}};
+    var _token = $('input[name="_token"]').val();
+    $.ajax({
+        url:"{{route('getLgaList')}}",
+        method:"POST",
+        data:{id:stateID, _token:_token},
+        success:function(result)
+        {
+            $('#lga_id').html(result);
+        }         
+    })
     /* hospital level change */
     $("#facility_level_id").change(function(){
         if($(this).val()=="2") //if secondary

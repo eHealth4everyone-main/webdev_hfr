@@ -12,7 +12,7 @@ class hs_hospital_history extends Model implements Auditable
     use \OwenIt\Auditing\Auditable;
     
     protected $table = 'hs_hospitals_history';
-    protected $guarded = ["unique_id","start_date","operational_days","status_id","created_by"];
+    protected $guarded = ["unique_id","start_date","operational_days","status_id","created_by","services"];
 
     public function arrayValuesTostring($val)
     {

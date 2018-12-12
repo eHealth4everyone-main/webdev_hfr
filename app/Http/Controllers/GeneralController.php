@@ -36,7 +36,7 @@ class GeneralController extends Controller
         }
         return $output;
     }
-
+   
     public function getOwnershipType(Request $request){
         $data = DB::table('lst_ownership_types')
                 ->select('id','type')
