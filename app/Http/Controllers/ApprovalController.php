@@ -9,6 +9,7 @@ use App\hs_status_tracking;
 use Auth;
 use Carbon\Carbon;
 use App\hs_hospital_history;
+use App\audit;
 
 class ApprovalController extends Controller
 {
@@ -17,7 +18,9 @@ class ApprovalController extends Controller
     {
         $myrequests = DB::table('hospital_details_history')
             ->Where('created_by', '=',Auth::user()->id)
-            ->paginate(15);
+            ->orWhere('requested_by', '=',Auth::user()->id)
+            ->orderby('updated_at','desc')
+            ->paginate(20);
 
         $status = DB::table('hospital_status_tracking')
             ->where('state_id', '=', Auth::user()->state_id)
@@ -27,10 +30,13 @@ class ApprovalController extends Controller
     }
     public function pendingApproval()
     {
-        $pending  = DB::table('hospital_details_history')
+        $pending = DB::table('hospital_details_history')
             ->where('state_id', '=',Auth::user()->state_id)
             ->where('status_id','=','1')
             ->orwhere('status_id','=','5')
+            ->orwhere('status_id','=','8')
+            ->orwhere('status_id','=','12')
+            ->orderby('updated_at','desc')
             ->get();
 
         $status = DB::table('hospital_status_tracking')
@@ -176,5 +182,70 @@ class ApprovalController extends Controller
     
         session()->flash("alert-success", $message);
         return redirect()->back();
+    }
+    public function getUpdatedRecords($id)
+    {
+        $audit_id = DB::table('audits')
+            ->select('id')
+            ->where('event', '=', 'updated')
+            ->where('auditable_type','=','App\hs_hospital_history')
+            ->where('auditable_id','=',$id)
+            ->orderBy('id', 'DESC')
+            ->first();
+    
+        $hosp = hs_hospital_history::find($id);
+      
+        $audit = $hosp->audits()->find($audit_id->id);
+        $audits= $audit->getModified();
+
+        // $lookup_ids=array("state"=>"state_id","lga"=>"lga_id","ward"=>"ward_id","ownership"=>"ownership_id",
+        //     "ownership_type"=>"ownership_type_id","facility_level"=>"facility_level_id",
+        //     "facility_level_option"=>"facility_level_option_id","operation_status"=>"operational_status_id",
+        //     "regulatory_status"=>"regulatory_status_id","license_status"=>"license_status_id");
+
+        // $id_array=array("state_id","lga_id","ward_id","ownership_id","ownership_type_id","facility_level_id","facility_level_option_id",
+        //     "operational_status_id","regulatory_status_id","license_status_id");
+
+        // $fields = array();
+        // foreach ($audits as $attr=>$audit){
+        //     if(in_array($attr,$id_array)){    
+        //         $fields[]=array_search($attr,$lookup_ids);
+        //     }
+        //     else{
+        //         $fields[]=$attr;
+        //     }
+        // };
+
+        // //new values
+        // $new_values = DB::table('hospital_details_history')
+        //     ->select($fields)
+        //     ->where('id','=',$id)
+        //     ->orderBy('id', 'DESC')
+        //     ->first();
+
+        // //old values
+        // $old_values = DB::table('hospital_details')
+        //     ->select($fields)
+        //     ->where('id','=',$id)
+        //     ->first(); 
+        
+        // dd($old_values->start_date,$new_values);
+        
+        
+        //create loolup array to display in view
+        $lookup=array("Registration No"=>"registration_no","Commencement Date"=>"start_date","Facility Name"=>"facility_name","Alternate Facility Name"=>"alt_facility_name",
+            "State"=>"state_id","LGA"=>"lga_id","Wad"=>"ward_id","Ownership"=>"ownership_id","Ownership Type"=>"ownership_type_id","Ownership Details"=>"ownership_details",
+            "Hospital/ Clinic Level"=>"facility_level_id","Facility Level Options"=>"facility_level_option_id","Specialized Options"=>"facility_level_options_category_id",
+            "House Number"=>"house_no","Street Name"=>"street_name","Latitude"=>"longitude","Longitude"=>"latitude","Postal Address"=>"postal_address","Phone Number"=>"phone_number",
+            "Email Address"=>"email_address","Website"=>"website","Days of Operation"=>"operational_days","Hours of Operation"=>"operational_hours","Operation Status"=>"operational_status_id",
+            "Regulatory Status"=>"regulatory_status_id","License Status"=>"license_status_id","Medical Doctors"=>"doctors","Pharmacists"=>"pharmacists",
+            "Dentists"=>"dentist","Pharmacy Technicians"=>"pharmacy_technicians","Nurses (Single)"=>"nurses","Laboratory Scientists"=>"lab_scientists",
+            "Midwifes (Single)"=>"midwifes","Laboratory Technicians"=>"lab_technicians","Nurse/ Midwife (Double)"=>"nurse_midwife","Health Records/HIM Officers"=>"him_officers",
+            "Community Health Officer"=>"community_health_officer","Community Health Extension Worker"=>"community_extension_workers","Junior Com Health Extension Worker"=>"jun_community_extension_worker",
+            "Dental Technicians"=>"dental_technicians","Environmental Health Officers"=>"env_health_officers","Accidents and Emergency (Number of Beds)"=>"beds_accidents_emerg",
+            "Admission Facilities (Number of Beds) "=>"beds_adminission","Intensive Care Unit (Number of Beds)"=>"beds_icu"," Onsite Pharmacy"=>"onsite_laboratory"," Onsite Laboratory"=>"onsite_imaging",
+            " Onsite Imaging/ Radio-Diagnostics Center"=>"onsite_pharmarcy"," Mortuary Services"=>"mortuary_services");
+
+        return view('approvals.updates',compact('audits','lookup'));      
     }
 }

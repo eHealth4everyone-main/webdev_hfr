@@ -326,19 +326,43 @@
                                         </div>
                                         <div id="collapse2" class="panel-collapse collapse">
                                           <div class="panel-body">
-                                            
-                                              <div class="row">
-                                                  <label class="col-md-8">Bed Capacity for Accidents and Emergency:</label>
-                                                  <div class="col-md-4" id="beds_accidents_emerg1"></div>
-                                              </div>
-                                              <div class="row">
-                                                  <label class="col-md-8">Bed Capacity for Admissions:</label>
-                                                  <div class="col-md-4" id="beds_adminission1"></div>
-                                              </div>
-                                              <div class="row">
-                                                  <label class="col-md-8">Bed Capacity for Intensive Care:</label>
-                                                  <div class="col-md-4" id="beds_icu1"></div>
-                                              </div>
+                                                <div class="row">
+                                                        <label class="col-md-6">Medical Services:</label>
+                                                        <div class="col-md-6" id="medical"></div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <label class="col-md-6">Surgical Services:</label>
+                                                        <div class="col-md-6" id="surgical"></div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <label class="col-md-6">Obsterics Services:</label>
+                                                        <div class="col-md-6" id="gyn"></div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <label class="col-md-6">Pediatrics Services:</label>
+                                                        <div class="col-md-6" id="pediatrics"></div>   
+                                                    </div>
+                                                    <div class="row">
+                                                        <label class="col-md-6">Dental Services:</label>
+                                                        <div class="col-md-6" id="dental"></div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <label class="col-md-6">Specific Clinical Services:</label>
+                                                        <div class="col-md-6" id="specialservice"></div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <label class="col-md-6">Capacity for Accidents and Emergency Services (Beds):</label>
+                                                        <div class="col-md-6" id="beds_accidents_emerg"></div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <label class="col-md-6">Capacity for Admission Services (Beds):</label>
+                                                        <div class="col-md-6" id="beds_adminission"></div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <label class="col-md-6">Capacity for ICU Services (Beds):</label>
+                                                        <div class="col-md-6" id="beds_icu"></div>
+                                                    </div>
+                                           
                                           </div>
                                         </div>
                                   </div>

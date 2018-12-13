@@ -315,7 +315,7 @@ Hospitals and Clinics
                                 </div>
                             </div>
                         </div>
-                        {{-- panel five --}}
+                        {{-- panel five HFR--}}
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h4 class="panel-title">
@@ -387,7 +387,7 @@ Hospitals and Clinics
                                 </div>
                             </div>
                         </div>
-                        {{-- pane six --}}
+                        {{-- pane six Services--}}
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h4 class="panel-title">

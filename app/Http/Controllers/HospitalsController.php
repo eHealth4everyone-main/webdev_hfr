@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Cache;
 use App\hs_hospital;
 use App\hs_hospital_history;
 use App\hs_hospital_service;
+use App\hs_status_tracking;
+use Carbon\Carbon;
 use Auth;
 
 class HospitalsController extends Controller
@@ -19,7 +21,7 @@ class HospitalsController extends Controller
         $facilities = DB::table('hospital_details')
             ->Where('state_id', 'like', '%' .  Auth::user()->state_id . '%')
             ->orderByRaw('state','lga','facility_name')
-            ->paginate(15);
+            ->paginate(20);
             
         //get state list
         $lst_states = Cache::remember('lst_states', 60, function () {
@@ -288,30 +290,59 @@ class HospitalsController extends Controller
             'onsite_imaging'=>'nullable',
             'mortuary_services'=>'nullable',
         ]);
-    
-        
-        $start_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->start_date)));
 
-        $hosp = new hs_hospital;
+        //copy original data to history table if does not exist
+        $hospitalid = hs_hospital_history::where('id', '=', $id)->first();
+        if($hospitalid===null){
+            $hospital = new hs_hospital;
+            $hospital = hs_hospital::findOrFail($id);
+            $data = $hospital->attributesToArray();
 
-        $hosp = hs_hospital::findOrFail($id);
+            $hosp = new hs_hospital_history;
+            $hosp->fill($data);
+            $hosp->id = $hospital->id;
+            $hosp->unique_id = $hospital->unique_id;
+            $hosp->start_date = $hospital->start_date;
+            $hosp->status_id = 8;
+            $hosp->created_by =$hospital->created_by;
+            $hosp->requested_by =Auth::user()->id;
+            $hosp->operational_days = $hospital->operational_days;
+            $hosp->save();
+        }else{ //update history table
+
+        }
+     
+        //update records in history with new changes
+        $hosp = new hs_hospital_history;
+        $hosp = hs_hospital_history::findOrFail($id);
         $hosp->fill($request->all());
-        $hosp->start_date = $start_date;
+        $hosp->start_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->start_date))); 
         $hosp->operational_days = $hosp->arrayValuesTostring($request->operational_days);
         $hosp->save();
-    
+        
+        //insert in status tracking
+        $status = new hs_status_tracking;
+        $status->hospital_id = $id;
+        $status->action = 'Update Request';
+        $status->user_id = Auth::user()->id;
+        $status->status_id = 8;
+        $status->created_at = Carbon::now()->format('Y-m-d H:i:s');
+        $status->save();
 
+        //update services
         $deleted = DB::delete("delete from hs_hospital_services where hospital_id ='".$id."' and id > 0");
 
-        //insert services
         $data = $request->services;
-        foreach ($data as $service_id){
-            $hosp_services = new hs_hospital_service;
-            $hosp_services->service_id = $service_id;
-            $hosp_services->hospital_id = $id; 
-            $hosp_services->save();
+        if(!empty($data)){
+            foreach ($data as $service_id){
+                $hosp_services = new hs_hospital_service;
+                $hosp_services->service_id = $service_id;
+                $hosp_services->hospital_id = $id; 
+                $hosp_services->save();
+            }
         }
-        session()->flash("alert-success", "Record Updated Successfully!");
+ 
+        session()->flash("alert-success", "Request Sent Successfully!");
         return redirect()->back();
     }
     
@@ -326,15 +357,15 @@ class HospitalsController extends Controller
         $state_id = $request->state_id;
         $lga_id = $request->lga_id;
         $facility_name = $request->facility_name;
-      
+
 
          $facilities = DB::table('hospital_details')
-        ->select('state','lga','ward','unique_id','facility_name','facility_level','ownership','id')
-        ->where('state_id','like','%'.$state_id.'%')
-        ->where('lga_id','like','%'.$lga_id.'%')
-        ->Where('facility_name', 'like', '%' .  $facility_name . '%')
-        ->orderByRaw('state','lga','facility_name')
-        ->paginate(20);
+            ->where('state_id','like','%'.$state_id.'%')
+            ->where('lga_id','like','%'.$lga_id.'%')
+            ->Where('facility_name', 'like', '%' .  $facility_name . '%')
+            ->Where('state_id', 'like', '%' .  Auth::user()->state_id . '%')
+            ->orderByRaw('state','lga','facility_name')
+            ->paginate(20);
 
         $facilities->appends([
             'state_id'=>$request->state_id,

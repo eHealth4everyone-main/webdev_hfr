@@ -95,9 +95,9 @@
                                 <td>{{$fac->ownership}}</td>
                                 <td>
                                   
-                                    <a href="#view_details" data-toggle="modal" >
-                                        <button class="btn btn-success btn-sm"  type="button" 
-                                            data-unique_id="{{$fac->unique_id}}" data-registration_no="{{$fac->registration_no}}" data-start_date="{{$fac->start_date}}"
+                                    <a href="#">
+                                        <button class="btn btn-success btn-sm"  type="button" data-toggle="modal" data-target="#view_details"
+                                            data-id="{{$fac->id}}" data-unique_id="{{$fac->unique_id}}" data-registration_no="{{$fac->registration_no}}" data-start_date="{{$fac->start_date}}"
                                             data-facility_name="{{$fac->facility_name}}" data-alt_facility_name="{{$fac->alt_facility_name}}" data-state="{{$fac->state}}"
                                             data-lga="{{$fac->lga}}" data-ward="{{$fac->ward}}" data-ownership="{{$fac->ownership}}" data-ownership_type="{{$fac->ownership_type}}"
                                             data-ownership_details="{{$fac->ownership_details}}" data-facility_level="{{$fac->facility_level}}" data-facility_level_option="{{$fac->facility_level_option}}"
@@ -174,6 +174,12 @@
            $('#view_details').on('show.bs.modal', function (event) {
                 var button = $(event.relatedTarget)
                 var modal = $(this)
+                $("#specialservice").empty();
+                $("#medical").empty();
+                $("#surgical").empty();
+                $("#gyn").empty();
+                $("#pediatrics").empty();
+                $("#dental").empty();
 
                 modal.find('.modal-body #unique_id').text(button.data('unique_id'));
                 modal.find('.modal-body #registration_no').text(button.data('registration_no'));
@@ -223,6 +229,39 @@
                 modal.find('.modal-body #onsite_imaging').text(button.data('onsite_imaging'));
                 modal.find('.modal-body #onsite_pharmarcy').text(button.data('onsite_pharmarcy'));
                 modal.find('.modal-body #mortuary_services').text(button.data('mortuary_services'));
+
+                    
+                var hosp_id = button.data('id');
+                var _token = $('input[name="_token"]').val();
+                $.ajax({
+                    url:"{{route('hospitals.getServices')}}",
+                    method:"POST",
+                    data:{hosp_id:hosp_id,_token:_token},
+                    success:function(result)
+                    {
+                        $.each(result, function(i, item) {   
+                            if (item.category_id=="1"){
+                                $("#medical").append("<span class='label label-default'>" + item.name + "</span> ");
+                            }
+                            if (item.category_id=="2"){
+                                $("#surgical").append("<span class='label label-default'>" + item.name + "</span> ");
+                            }
+                            if (item.category_id=="3"){
+                                $("#gyn").append("<span class='label label-default'>" + item.name + "</span> ");
+                            }
+                            if (item.category_id=="4"){
+                                $("#pediatrics").append("<span class='label label-default'>" + item.name + "</span> ");
+                            }
+                            if (item.category_id=="5"){
+                                $("#dental").append("<span class='label label-default'>" + item.name + "</span> ");
+                            }
+                            if (item.category_id=="6"){
+                                $("#specialservice").append("<span class='label label-default'>" + item.name + "</span> ");
+                            }
+                        });     
+                    
+                    }         
+                })
 
             });//end
                 

@@ -174,10 +174,9 @@ class FacilityListingController extends Controller
         $facility_name = $request->facility_name;
 
         $facilities = DB::table('hospital_details')
-        ->select('state','lga','unique_id','facility_name','facility_level','ownership','id')
-        ->Where('facility_name', 'like', '%' .  $facility_name . '%')
-        ->orderByRaw('state','lga','facility_name')
-        ->paginate(20);
+            ->Where('facility_name', 'like', '%' .  $facility_name . '%')
+            ->orderByRaw('state','lga','facility_name')
+            ->paginate(20);
 
         $facilities->appends([
             'facility_name'=>$request->facility_name,

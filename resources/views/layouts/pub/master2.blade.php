@@ -493,34 +493,58 @@
                                   </div>
                                   <div id="collapse6" class="panel-collapse collapse">
                                     <div class="panel-body">
-                                        <div class="row">
-                                            <label class="col-md-6">Onsite Laboratory:</label>
-                                            <div class="col-md-6" id="onsite_laboratory"></div>
-                                        </div>
-                                        <div class="row">
-                                            <label class="col-md-6">Onsite Imaging:</label>
-                                            <div class="col-md-6" id="onsite_imaging"></div>
-                                        </div>
-                                        <div class="row">
-                                            <label class="col-md-6">Onsite Pharmacy:</label>
-                                            <div class="col-md-6" id="onsite_pharmarcy"></div>
-                                        </div>
-                                        <div class="row">
-                                            <label class="col-md-6">Mortuary Services:</label>
-                                            <div class="col-md-6" id="mortuary_services"></div>
-                                        </div>
-                                        <div class="row">
-                                            <label class="col-md-6">Beds Accidents and Emergency:</label>
-                                            <div class="col-md-6" id="beds_accidents_emerg"></div>
-                                        </div>
-                                        <div class="row">
-                                            <label class="col-md-6">Beds Admission Facilities:</label>
-                                            <div class="col-md-6" id="beds_adminission"></div>
-                                        </div>
-                                        <div class="row">
-                                            <label class="col-md-6">Beds ICU:</label>
-                                            <div class="col-md-6" id="beds_icu"></div>
-                                        </div>
+                                            <div class="row">
+                                                    <label class="col-md-6">Medical Services:</label>
+                                                    <div class="col-md-6" id="medical"></div>
+                                                </div>
+                                                <div class="row">
+                                                    <label class="col-md-6">Surgical Services:</label>
+                                                    <div class="col-md-6" id="surgical"></div>
+                                                </div>
+                                                <div class="row">
+                                                    <label class="col-md-6">Obsterics Services:</label>
+                                                    <div class="col-md-6" id="gyn"></div>
+                                                </div>
+                                                <div class="row">
+                                                    <label class="col-md-6">Pediatrics Services:</label>
+                                                    <div class="col-md-6" id="pediatrics"></div>   
+                                                </div>
+                                                <div class="row">
+                                                    <label class="col-md-6">Dental Services:</label>
+                                                    <div class="col-md-6" id="dental"></div>
+                                                </div>
+                                                <div class="row">
+                                                    <label class="col-md-6">Specific Clinical Services:</label>
+                                                    <div class="col-md-6" id="specialservice"></div>
+                                                </div>
+                                                <div class="row">
+                                                    <label class="col-md-6">Capacity for Accidents and Emergency Services (Beds):</label>
+                                                    <div class="col-md-6" id="beds_accidents_emerg"></div>
+                                                </div>
+                                                <div class="row">
+                                                    <label class="col-md-6">Capacity for Admission Services (Beds):</label>
+                                                    <div class="col-md-6" id="beds_adminission"></div>
+                                                </div>
+                                                <div class="row">
+                                                    <label class="col-md-6">Capacity for ICU Services (Beds):</label>
+                                                    <div class="col-md-6" id="beds_icu"></div>
+                                                </div>
+                                                <div class="row">
+                                                    <label class="col-md-6">Onsite Laboratory:</label>
+                                                    <div class="col-md-6" id="onsite_laboratory"></div>
+                                                </div>
+                                                <div class="row">
+                                                    <label class="col-md-6">Onsite Imaging:</label>
+                                                    <div class="col-md-6" id="onsite_imaging"></div>
+                                                </div>
+                                                <div class="row">
+                                                    <label class="col-md-6">Onsite Pharmacy:</label>
+                                                    <div class="col-md-6" id="onsite_pharmarcy"></div>
+                                                </div>
+                                                <div class="row">
+                                                    <label class="col-md-6">Mortuary Services:</label>
+                                                    <div class="col-md-6" id="mortuary_services"></div>
+                                                </div>
                                     </div>
                                   </div>
                                 </div>

@@ -43,6 +43,8 @@ Route::get('downloads/excel/{type}/{state}/{format}', 'DownloadController@export
 Route::post('hosp/fetchLga', 'GeneralController@getLgaList')->name('getLgaList');
 Route::post('hosp/fetctWards', 'GeneralController@getWardList')->name('getWardList');
 
+Route::post('hospitals/servicesavailable','HospitalsController@getservices')->name('hospitals.getServices');
+
 //resources
 Route::get('resources/download/{file}', 'ResourceController@download')->name('downloadFile');
 Route::get('resources', 'ResourceController@public_index')->name('public_resources');
@@ -73,7 +75,6 @@ Route::middleware(["auth"])->group(function(){
     //hospitals
     Route::resource('admin/hospitals','HospitalsController');
     Route::post('admin/hospitals/search','HospitalsController@search')->name('searchHospitalsAdmin');
-    Route::post('admin/hospitals/services/','HospitalsController@getservices')->name('hospitals.getServices');
     Route::get('admin/hospitals/service/master','HospitalServiceController@Index')->name('hospServices.index');
     
     //approvals
@@ -84,6 +85,8 @@ Route::middleware(["auth"])->group(function(){
     Route::post('admin/hospitals/approvals/verification','ApprovalController@storeVerification1')->name('store.verify1');
     Route::get('admin/hospitals/approvals/verification2','ApprovalController@pendingVerification2')->name('view.pendingverification2');
     Route::post('admin/hospitals/approvals/verification2','ApprovalController@storeVerification2')->name('store.verify2');
+    Route::get('admin/hospitals/approvals/update/{id}','ApprovalController@getUpdatedRecords')->name('view.updated_records');
+    Route::post('admin/hospitals/approvals/update','ApprovalController@storeUpdatedApproval')->name('store.updated_approval');
 
     //general
     Route::post('admin/facilities/ownership','GeneralController@getOwnershipType')->name('getOwnershipType');
