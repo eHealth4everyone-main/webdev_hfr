@@ -19,7 +19,7 @@ Pending Approvals
 <div class="box box-primary">
     <div class="box-header with-border">
         <h3 class="box-title">
-            Facility Name: <span class="label label-default"> {{$p->facility_name}}</span> 
+            Facility Name: <span class="label label-default"> {{ $p->facility_name }}</span> 
             
             @if ($p->action === "CREATE")
             Request Type: <span class="label label-info"> {{$p->action}}</span>
@@ -51,7 +51,7 @@ Pending Approvals
                 <tr>
                     <th>Action</th>
                     <th>Date</th>
-                    <th>Action By</th>     
+                    <th>Done By</th>     
                 </tr>
             </thead>
             <tbody>
@@ -94,7 +94,7 @@ Pending Approvals
             </button>
         </a>  
         @elseif ($p->action === "UPDATE") 
-            <a href="{{route('view.updated_records',$p->id)}}">
+            <a href="{{route('view.updated_records',['id'=>$p->id,'stage'=>'approve'])}}">
                 <button class="btn btn-success btn-sm"  type="button" > Approve</button>
             </a>
         @else
@@ -108,7 +108,7 @@ Pending Approvals
 
 
 
-{{-- modal facility details --}}
+{{-- modal facility details for new Facility  --}}
 <div class="modal fade" id="view_details" tabindex="-1" role="dialog">
     <div class="modal-dialog " role="document">
         <div class="modal-content">

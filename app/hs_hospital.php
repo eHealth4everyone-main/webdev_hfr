@@ -53,10 +53,4 @@ class hs_hospital extends Model implements Auditable
         return $id;
     }
 
-    public function getNextHospitalID(){
-        $id = DB::select("SELECT current_id+1 as next_id FROM hs_hospital_id");
-      
-        $nextID = $id[0]->next_id; //get serial number of the next id
-        return $nextID;
-    }
 }

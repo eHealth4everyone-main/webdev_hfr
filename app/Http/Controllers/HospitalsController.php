@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Cache;
 
 use App\hs_hospital;
 use App\hs_hospital_history;
-use App\hs_hospital_service;
+use App\hs_hospital_service_history;
 use App\hs_status_tracking;
 use Carbon\Carbon;
 use Auth;
@@ -140,31 +140,32 @@ class HospitalsController extends Controller
             'onsite_imaging'=>'nullable',
             'mortuary_services'=>'nullable',
         ]);
-    
-       
-        $start_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->start_date)));
         
-        $hos = new hs_hospital;        
-        $nextID = $hos->getNextHospitalID();
-       
+        $start_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->start_date)));
+     
         $hosp = new hs_hospital_history;
         $hosp->fill($request->all());
-        $hosp->id = $nextID;
         $hosp->unique_id = $hosp->generateUniqueID($request->lga_id,'1',$request->facility_level_id,$request->ownership_id);
         $hosp->start_date = $start_date;
         $hosp->status_id = 1;
         $hosp->created_by = Auth::user()->id;
         $hosp->operational_days = $hosp->arrayValuesTostring($request->operational_days);
         $hosp->save();
-    
+        
+        //get id of inserted record
+        $hosp_id = $hosp->id;
+        
          //insert services
-         $data = $request->services;
-         foreach ($data as $id){
-             $hosp_services = new hs_hospital_service;
-             $hosp_services->service_id = $id;
-             $hosp_services->hospital_id = $nextID; 
-             $hosp_services->save();
+         $services = $request->services;
+         if ($services){
+            foreach ($services as $id){
+                $hosp_services = new hs_hospital_service;
+                $hosp_services->service_id = $id;
+                $hosp_services->hospital_id = $hosp_id; 
+                $hosp_services->save();
+            }            
          }
+        
         
         session()->flash("alert-success", "Request Sent Successfully!");
         return redirect()->back();
@@ -290,32 +291,13 @@ class HospitalsController extends Controller
             'onsite_imaging'=>'nullable',
             'mortuary_services'=>'nullable',
         ]);
-
-        //copy original data to history table if does not exist
-        $hospitalid = hs_hospital_history::where('id', '=', $id)->first();
-        if($hospitalid===null){
-            $hospital = new hs_hospital;
-            $hospital = hs_hospital::findOrFail($id);
-            $data = $hospital->attributesToArray();
-
-            $hosp = new hs_hospital_history;
-            $hosp->fill($data);
-            $hosp->id = $hospital->id;
-            $hosp->unique_id = $hospital->unique_id;
-            $hosp->start_date = $hospital->start_date;
-            $hosp->status_id = 8;
-            $hosp->created_by =$hospital->created_by;
-            $hosp->requested_by =Auth::user()->id;
-            $hosp->operational_days = $hospital->operational_days;
-            $hosp->save();
-        }else{ //update history table
-
-        }
      
         //update records in history with new changes
         $hosp = new hs_hospital_history;
         $hosp = hs_hospital_history::findOrFail($id);
         $hosp->fill($request->all());
+        $hosp->status_id = 8;
+        $hosp->requested_by = Auth::user()->id;
         $hosp->start_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->start_date))); 
         $hosp->operational_days = $hosp->arrayValuesTostring($request->operational_days);
         $hosp->save();
@@ -329,19 +311,19 @@ class HospitalsController extends Controller
         $status->created_at = Carbon::now()->format('Y-m-d H:i:s');
         $status->save();
 
-        //update services
-        $deleted = DB::delete("delete from hs_hospital_services where hospital_id ='".$id."' and id > 0");
+        //update hospital services
+        $deleted = DB::delete("delete from hs_hospital_services_history where hospital_id ='".$id."' and id > 0");
 
-        $data = $request->services;
-        if(!empty($data)){
-            foreach ($data as $service_id){
-                $hosp_services = new hs_hospital_service;
+        $services = $request->services;
+        if(!empty($services)){
+            foreach ($services as $service_id){
+                $hosp_services = new hs_hospital_service_history;
                 $hosp_services->service_id = $service_id;
                 $hosp_services->hospital_id = $id; 
                 $hosp_services->save();
             }
         }
- 
+
         session()->flash("alert-success", "Request Sent Successfully!");
         return redirect()->back();
     }
@@ -357,7 +339,6 @@ class HospitalsController extends Controller
         $state_id = $request->state_id;
         $lga_id = $request->lga_id;
         $facility_name = $request->facility_name;
-
 
          $facilities = DB::table('hospital_details')
             ->where('state_id','like','%'.$state_id.'%')

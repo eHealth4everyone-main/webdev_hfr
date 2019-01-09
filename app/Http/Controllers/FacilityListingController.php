@@ -51,7 +51,7 @@ class FacilityListingController extends Controller
         $facility_type_id = $request->facility_type_id;
         $facility_name = $request->facility_name;
         $geo_codes = $request->geo_codes;
-      
+    
         if ($state_id == 0){
             $state_id2 = "";
         }
