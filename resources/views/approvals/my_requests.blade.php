@@ -2,16 +2,16 @@
 
 
 @section('content-title')
-My Recent Requests
+My Pending Requests
 
 @endsection
 
 @section("content")
-@if($myrequests->isEmpty())
+{{-- @if($myrequests->isEmpty())
     <div class="callout callout-success">
         <p>You do not have recent requests..</p>
   </div>
-@endif
+@endif --}}
 
 @foreach($myrequests as $r)
 

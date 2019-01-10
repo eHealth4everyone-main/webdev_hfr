@@ -76,7 +76,8 @@ Route::middleware(["auth"])->group(function(){
     Route::resource('admin/hospitals','HospitalsController');
     Route::post('admin/hospitals/search','HospitalsController@search')->name('searchHospitalsAdmin');
     Route::get('admin/hospitals/service/master','HospitalServiceController@Index')->name('hospServices.index');
-    
+    Route::post('admin/hospitals/delete','HospitalsController@InitiateDelete')->name('hospitals.InitiateDelete');
+
     //approvals
     Route::get('admin/hospitals/approvals/myrequest','ApprovalController@myRequest')->name('view.myrequest');
     Route::get('admin/hospitals/approvals/pendingapproval','ApprovalController@pendingApproval')->name('view.pendingapproval');
@@ -86,9 +87,6 @@ Route::middleware(["auth"])->group(function(){
     Route::get('admin/hospitals/approvals/verification2','ApprovalController@pendingVerification2')->name('view.pendingverification2');
     Route::post('admin/hospitals/approvals/verification2','ApprovalController@storeVerification2')->name('store.verify2');
     Route::get('admin/hospitals/approvals/update/{id}/{stage}','ApprovalController@getUpdatedRecords')->name('view.updated_records');
-    Route::post('admin/hospitals/approvals/update','ApprovalController@storeUpdatedApproval')->name('store.updated_approval');
-    Route::post('admin/hospitals/approvals/update/verify1','ApprovalController@storeUpdatedVerification1')->name('store.updated_verify1');
-    Route::post('admin/hospitals/approvals/update/verify2','ApprovalController@storeUpdatedVerification2')->name('store.updated_verify2');
 
     //general
     Route::post('admin/facilities/ownership','GeneralController@getOwnershipType')->name('getOwnershipType');

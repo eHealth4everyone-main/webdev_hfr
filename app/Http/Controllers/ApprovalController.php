@@ -8,8 +8,10 @@ use Illuminate\Support\Facades\Cache;
 use App\hs_status_tracking;
 use Auth;
 use Carbon\Carbon;
+use App\hs_hospital;
 use App\hs_hospital_history;
 use App\hs_hospital_service;
+use App\hs_hospital_service_history;
 use App\audit;
 
 class ApprovalController extends Controller
@@ -17,14 +19,21 @@ class ApprovalController extends Controller
         
     public function myRequest()
     {
-        $myrequests = DB::table('hospital_details_history')
-            ->orWhere('created_by', '=',Auth::user()->id)
-            ->orWhere('requested_by', '=',Auth::user()->id)
-            ->orderby('updated_at','desc')
-            ->paginate(20);
+        // $myrequests = DB::table('hospital_details_history')
+        //     ->where('created_by',Auth::user()->id)
+        //     ->orWhere('requested_by',Auth::user()->id)
+        //     ->whereNotIn('status_id', [6, 13, 20])
+        //     ->orderby('updated_at','desc')
+        //     ->paginate(20);
 
+        $user = Auth::user()->id;
+        $myrequests = DB::select("SELECT * FROM hospital_details_history WHERE 
+        (created_by = ". $user ." OR requested_by = ". $user .") AND status_id NOT IN (6,13,20)");
+
+    
         $status = DB::table('hospital_status_tracking')
-            ->where('state_id', '=', Auth::user()->state_id)
+            ->whereNotIn('status_id', [6, 13, 20])
+            ->where('state_id', Auth::user()->state_id)
             ->get();
 
         return view('approvals.my_requests',compact('myrequests','status')); 
@@ -33,16 +42,13 @@ class ApprovalController extends Controller
     {
         $pending = DB::table('hospital_details_history')
             ->where('state_id', '=',Auth::user()->state_id)
-            ->where('status_id','=','1')
-            ->orwhere('status_id','=','5')
-            ->orwhere('status_id','=','8')
-            ->orwhere('status_id','=','12')
+            ->whereIn('status_id',[1,5,8,12,15,17])
             ->orderby('updated_at','desc')
             ->get();
 
         $status = DB::table('hospital_status_tracking')
             ->where('state_id', '=', Auth::user()->state_id)
-            ->orwhere('status_id','=','1')
+            ->whereIn('status_id',[1,5,8,12,15,17])
             ->get();
      
         return view('approvals.pending_approval',compact('pending','status')); 
@@ -50,21 +56,48 @@ class ApprovalController extends Controller
 
     public function storeApproval(Request $request)
     {
-        if($request->action == "approve"){
-            $status_id = 2;
-            $notes = $request->notes;
-            $action="Create Approved";
-            $message = "New Facility Creation Approved";
+          if($request->action == "approve"){
+            if($request->requested_action == "CREATE"){
+                $status_id = 2;
+                $notes = $request->notes;
+                $action="Create Approved";
+                $message = "Facility Creation Approved";
+            }
+            elseif($request->requested_action == "UPDATE"){
+                $status_id = 9;
+                $notes = $request->notes;
+                $action="Update Approved";
+                $message = "Facility Update Approved";
+            }
+            else{
+                $status_id = 16;
+                $notes = $request->notes;
+                $action="Delete Approved";
+                $message = "Facility Deletion Approved";
+            }
         }
+
         if($request->action == "reject"){
-            $status_id = 3;
-            $notes = $request->notes;
-            $action="Create Rejected";
-            $message = "New Facility Creation Rejected";
+            if($request->requested_action == "CREATE"){
+                $status_id = 3;
+                $notes = $request->notes;
+                $action="Create Rejected";
+                $message = "Facility Creation Rejected";
+            }
+            elseif($request->requested_action == "UPDATE"){
+                $status_id = 10;
+                $notes = $request->notes;
+                $action="Update Rejected";
+                $message = "Facility Update Rejected";
+            }
+            else{
+                $status_id = 17;
+                $notes = $request->notes;
+                $action="Delete Rejected";
+                $message = "Facility Deletion Rejected";
+            }
         }
        
-        $time = Carbon::now()->format('Y-m-d H:i:s');
-      
         $hosp = new hs_hospital_history;
         $hosp = hs_hospital_history::findOrFail($request->id);
         $hosp->status_id = $status_id;
@@ -76,25 +109,23 @@ class ApprovalController extends Controller
         $status->user_id = Auth::user()->id;
         $status->status_id = $status_id;
         $status->note = $notes;
-        $status->created_at = $time;
+        $status->created_at =  Carbon::now()->format('Y-m-d H:i:s');
         $status->save();
     
         session()->flash("alert-success", $message);
-        return redirect()->back();
+        return redirect()->route('view.pendingapproval');
     }
 
     public function pendingVerification1()
     {
         $pending  = DB::table('hospital_details_history')
             ->where('state_id', '=',Auth::user()->state_id)
-            ->where('status_id','=','2')
-            ->orwhere('status_id','=','7')
-            ->orwhere('status_id','=','9')
+            ->whereIn('status_id',[2,7,9,14,16,21])
             ->get();
 
         $status = DB::table('hospital_status_tracking')
             ->where('state_id', '=', Auth::user()->state_id)
-            ->orwhere('status_id','=','2')
+            // ->whereIn('status_id',[2,7,9,14,16,21])
             ->get();
             
         return view('approvals.pending_verification1',compact('pending','status'));
@@ -103,20 +134,47 @@ class ApprovalController extends Controller
     public function storeVerification1(Request $request)
     {
         if($request->action == "approve"){
-            $status_id = 4;
-            $notes = $request->notes;
-            $message = "Facility Creation Verified";
-            $action="Create Verified (Lv1)";
+            if($request->requested_action == "CREATE"){
+                $status_id = 4;
+                $notes = $request->notes;
+                $message = "Facility Creation Verified";
+                $action="Create Verified (Lv1)";
+            }
+            elseif($request->requested_action == "UPDATE"){
+                $status_id = 11;
+                $notes = $request->notes;
+                $message = "Facility Update Verified";
+                $action="Update Verified (Lv1)";
+            }
+            else{
+                $status_id = 18;
+                $notes = $request->notes;
+                $action="Delete Verified(Lv1)";
+                $message = "Facility Deletion Verified";
+            }
         }
+
         if($request->action == "reject"){
-            $status_id = 5;
-            $notes = $request->notes;
-            $message = "Facility Verification Rejected";
-            $action="Create Rejected (Lv1)";
+            if($request->requested_action == "CREATE"){
+                $status_id = 5;
+                $notes = $request->notes;
+                $message = "Facility Verification Rejected";
+                $action="Create Rejected (Lv1)";
+            }
+            elseif($request->requested_action == "UPDATE"){
+                $status_id = 12;
+                $notes = $request->notes;
+                $message = "Facility Verification Rejected";
+                $action="Update Rejected (Lv1)";
+            }
+            else{
+                $status_id = 19;
+                $notes = $request->notes;
+                $message = "Facility Verification Rejected";
+                $action="Delete Rejected (Lv1)";                
+            }
         }
-       
-        $time = Carbon::now()->format('Y-m-d H:i:s');
-      
+            
         $hosp = new hs_hospital_history();
         $hosp = hs_hospital_history::findOrFail($request->id);
         $hosp->status_id = $status_id;
@@ -128,25 +186,24 @@ class ApprovalController extends Controller
         $status->user_id = Auth::user()->id;
         $status->status_id = $status_id;
         $status->note = $notes;
-        $status->created_at = $time;
+        $status->created_at = Carbon::now()->format('Y-m-d H:i:s');
         $status->save();
     
         session()->flash("alert-success", $message);
-        return redirect()->back();
+        return redirect()->route('view.pendingverification1');
+
     }
 
     public function pendingVerification2()
     {
         $pending  = DB::table('hospital_details_history')
             ->where('state_id', '=',Auth::user()->state_id)
-            ->where('status_id','=','4')
-            ->orwhere('status_id','=','11')
+            ->whereIn('status_id',[4,11,18])
             ->get();
 
         $status = DB::table('hospital_status_tracking')
             ->where('state_id', '=', Auth::user()->state_id)
-            ->orwhere('status_id','=','4')
-            ->orwhere('status_id','=','11')
+            // ->whereIn('status_id',[4,11,18])
             ->get();
             
         
@@ -154,21 +211,48 @@ class ApprovalController extends Controller
     }
     
     public function storeVerification2(Request $request)
-    {
+    {                 
         if($request->action == "approve"){
-            $status_id = 6;
-            $notes = $request->notes;
-            $message = "Facility Creation Verified";
-            $action="Create Verified (Lv2)";
+            if($request->requested_action == "CREATE"){
+                $status_id = 6;
+                $notes = $request->notes;
+                $message = "Facility Creation Verified";
+                $action="Create Verified (Lv2)";
+            }
+            elseif($request->requested_action == "UPDATE"){
+                $status_id = 13;
+                $notes = $request->notes;
+                $message = "Facility Update Verified";
+                $action="Update Verified (Lv2)";
+            }
+            else{
+                $status_id = 20;
+                $notes = $request->notes;
+                $message = "Facility Deletion Verified";
+                $action="Delete Verified (Lv2)";
+            }
         }
+
         if($request->action == "reject"){
-            $status_id = 7;
-            $notes = $request->notes;
-            $message = "Facility Verification Rejected";
-            $action="Create Rejected (Lv2)";
+            if($request->requested_action == "CREATE"){
+                $status_id = 7;
+                $notes = $request->notes;
+                $message = "Facility Verification Rejected";
+                $action="Create Rejected (Lv2)";
+            }
+            elseif($request->requested_action == "UPDATE"){
+                $status_id = 14;
+                $notes = $request->notes;
+                $message = "Facility Verification Rejected";
+                $action="Update Rejected (Lv2)";
+            }
+            else{
+                $status_id = 21;
+                $notes = $request->notes;
+                $message = "Facility Verification Rejected";
+                $action="Delete Rejected (Lv2)";              
+            }
         }
-       
-        $time = Carbon::now()->format('Y-m-d H:i:s');
       
         $hosp = new hs_hospital_history();
         $hosp = hs_hospital_history::findOrFail($request->id);
@@ -181,11 +265,42 @@ class ApprovalController extends Controller
         $status->user_id = Auth::user()->id;
         $status->status_id = $status_id;
         $status->note = $notes;
-        $status->created_at = $time;
+        $status->created_at = Carbon::now()->format('Y-m-d H:i:s');
         $status->save();
     
+         //update hospital services to main table
+        if($request->requested_action == "UPDATE"){
+            if($status_id == 13){
+                //get new hospital services
+                $services = DB::select("SELECT service_id FROM hs_hospital_services_history WHERE hospital_id = ". $request->id . ""); 
+    
+                if(!empty($services)){
+                    // remove current services in main table
+                    $deleted = DB::delete("delete from hs_hospital_services where hospital_id ='". $request->id ."' and id > 0");
+    
+                    foreach ($services as $service){
+                        $hosp_services = new hs_hospital_service;
+                        $hosp_services->service_id = $service->service_id;
+                        $hosp_services->hospital_id = $request->id; 
+                        $hosp_services->save();
+                    }
+                }
+            }
+        }
+
+        //Delete facility after final verification
+        if($request->requested_action == "DELETE"){
+            if($status_id == 20){
+                // hs_hospital_service_history::where('hospital_id', $request->id)->delete();
+                // hs_hospital_history::destroy($request->id);
+
+                hs_hospital_service::where('hospital_id', $request->id)->delete();
+                hs_hospital::destroy($request->id);
+            }
+        }
+
         session()->flash("alert-success", $message);
-        return redirect()->back();
+        return redirect()->route('view.pendingverification2');
     }
     
     public function getUpdatedRecords($id,$stage)
@@ -227,8 +342,6 @@ class ApprovalController extends Controller
         JOIN lst_hosp_services s ON s.id = h.service_id where h.hospital_id = ". $id . "");
 
 
-        //dd($old_services, $new_services);
-
        //create loolup array to display in view
        $lookup=array("Registration No"=>"registration_no","Commencement Date"=>"start_date","Facility Name"=>"facility_name","Alternate Facility Name"=>"alt_facility_name",
         "State"=>"state_id","LGA"=>"lga_id","Ward"=>"ward_id","Ownership"=>"ownership_id","Ownership Type"=>"ownership_type_id","Ownership Details"=>"ownership_details",
@@ -257,131 +370,5 @@ class ApprovalController extends Controller
         }
     }
     
-    public function storeUpdatedApproval(Request $request)
-    {
-       // dd($request->all());
-
-        if($request->action == "approve"){
-            $status_id = 9;
-            $notes = $request->notes;
-            $action="Update Approved";
-            $message = "Facility Update Approved";
-        }
-        if($request->action == "reject"){
-            $status_id = 10;
-            $notes = $request->notes;
-            $action="Update Rejected";
-            $message = "Facility Update Rejected";
-        }
-      
-        $time = Carbon::now()->format('Y-m-d H:i:s');
-
-        $hosp = new hs_hospital_history;
-        $hosp = hs_hospital_history::findOrFail($request->id);
-        $hosp->status_id = $status_id;
-        $hosp->save();
-
-        $status = new hs_status_tracking;
-        $status->hospital_id = $request->id;
-        $status->action = $action;
-        $status->user_id = Auth::user()->id;
-        $status->status_id = $status_id;
-        $status->note = $notes;
-        $status->created_at = $time;
-        $status->save();
-    
-        session()->flash("alert-success", $message);
-        return redirect()->route('view.pendingapproval');
-    }
-
   
-    public function storeUpdatedVerification1(Request $request)
-    {
-        if($request->action == "approve"){
-            $status_id = 11;
-            $notes = $request->notes;
-            $message = "Facility Update Verified";
-            $action="Update Verified (Lv1)";
-        }
-        if($request->action == "reject"){
-            $status_id = 12;
-            $notes = $request->notes;
-            $message = "Facility Update Verification Rejected";
-            $action="Update Rejected (Lv1)";
-        }
-       
-        $time = Carbon::now()->format('Y-m-d H:i:s');
-      
-        $hosp = new hs_hospital_history();
-        $hosp = hs_hospital_history::findOrFail($request->id);
-        $hosp->status_id = $status_id;
-        $hosp->save();
-    
-        $status = new hs_status_tracking;
-        $status->hospital_id = $request->id;
-        $status->action = $action;
-        $status->user_id = Auth::user()->id;
-        $status->status_id = $status_id;
-        $status->note = $notes;
-        $status->created_at = $time;
-        $status->save();
-    
-        session()->flash("alert-success", $message);
-        return redirect()->route('view.pendingverification1');
-
-    }
-
-    public function storeUpdatedVerification2(Request $request)
-    {
-        if($request->action == "approve"){
-            $status_id = 13;
-            $notes = $request->notes;
-            $message = "Facility Update Verified";
-            $action="Update Verified (Lv2)";
-        }
-        if($request->action == "reject"){
-            $status_id = 14;
-            $notes = $request->notes;
-            $message = "Facility Update Verification Rejected";
-            $action="Update Rejected (Lv2)";
-        }
-       
-        $time = Carbon::now()->format('Y-m-d H:i:s');
-      
-        $hosp = new hs_hospital_history();
-        $hosp = hs_hospital_history::findOrFail($request->id);
-        $hosp->status_id = $status_id;
-        $hosp->save();
-    
-        $status = new hs_status_tracking;
-        $status->hospital_id = $request->id;
-        $status->action = $action;
-        $status->user_id = Auth::user()->id;
-        $status->status_id = $status_id;
-        $status->note = $notes;
-        $status->created_at = $time;
-        $status->save();
-
-        //update hospital services to main table
-        if($status_id == 13){
-            //get new hospital services
-            $services = DB::select("SELECT service_id FROM hs_hospital_services_history WHERE hospital_id = ". $request->id . ""); 
-
-            if(!empty($services)){
-                // remove current services in main table
-                $deleted = DB::delete("delete from hs_hospital_services where hospital_id ='". $request->id ."' and id > 0");
-
-                foreach ($services as $service){
-                    $hosp_services = new hs_hospital_service;
-                    $hosp_services->service_id = $service->service_id;
-                    $hosp_services->hospital_id = $request->id; 
-                    $hosp_services->save();
-                }
-            }
-        }
-    
-        session()->flash("alert-success", $message);
-        return redirect()->route('view.pendingverification2');
-
-    }
 }

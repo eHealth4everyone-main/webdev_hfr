@@ -16,7 +16,7 @@
     <!-- /.box-tools -->
   </div>
   <!-- /.box-header -->
-  <form method="POST" action="{{route('store.updated_approval')}}">
+  <form method="POST" action="{{route('store.approval')}}">
     @csrf
     
     <div class="box-body">
@@ -116,6 +116,7 @@
       
 
       <input type="hidden" id="id" name="id" value="{{ $hosp_id }}">
+      <input type="hidden" name="requested_action" value="UPDATE">
       
       <div class="row">
         <label class="col-md-2">Approval Note <font color="red">*</font></label>

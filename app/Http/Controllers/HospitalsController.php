@@ -226,11 +226,31 @@ class HospitalsController extends Controller
                         ->select('id','status')
                         ->get();
             });
+
              //get hospital services
             $lst_services = DB::table('lst_hosp_services')->get();
-                        
+
+            //get status to check if the facility is being updated
+            $update_status = DB::table('hospital_status_tracking')
+                ->select('status_id')
+                ->where('hospital_id',$id)   
+                ->where('action_type','UPDATE')     
+                ->orderBy('created_at', 'DESC')
+                ->first();
+
+            if(is_null($update_status)){
+                $updating=FALSE;
+            }
+            else{
+                if($update_status->status_id == 13){
+                    $updating=FALSE;
+                }else{
+                    $updating=TRUE;
+                }
+            }
+           
             return view('hospitals.edit',compact('hosp','current_services','lst_level_of_care','lst_states','lst_ownerships','lst_oparational_status',
-            'lst_regulatory_status','lst_license_status','lst_services')); 
+            'lst_regulatory_status','lst_license_status','lst_services','updating')); 
     }
     
   
@@ -311,12 +331,26 @@ class HospitalsController extends Controller
         $status->created_at = Carbon::now()->format('Y-m-d H:i:s');
         $status->save();
 
+        //get services before update
+        $services = DB::table('hs_hospital_services')
+                ->select('service_id')
+                ->where('hospital_id','=',$id)
+                ->get();
+
+        $services_before = [];
+        foreach ($services as $s) {
+            $services_before[] = $s->service_id;
+        }
+
+        $services_update = $request->services;
+
+        $diff = array_diff($services_before, $services_update);
+
         //update hospital services
         $deleted = DB::delete("delete from hs_hospital_services_history where hospital_id ='".$id."' and id > 0");
-
-        $services = $request->services;
-        if(!empty($services)){
-            foreach ($services as $service_id){
+                
+        if(!empty($services_update) and count($diff) > 0){ //if diff > 0 services are updated 
+            foreach ($services_update as $service_id){
                 $hosp_services = new hs_hospital_service_history;
                 $hosp_services->service_id = $service_id;
                 $hosp_services->hospital_id = $id; 
@@ -328,7 +362,29 @@ class HospitalsController extends Controller
         return redirect()->back();
     }
     
-  
+    public function InitiateDelete(Request $request){ 
+     
+        $hs_tracking = new hs_status_tracking;
+        $hs_tracking->action = "Delete Request"; 
+        $hs_tracking->hospital_id = $request->facility_id;
+        $hs_tracking->user_id = Auth::user()->id;
+        $hs_tracking->status_id = '15';
+        $hs_tracking->note = $request->reason;
+       
+        $hs_tracking->save();
+
+        $hosp = new hs_hospital_history;
+      
+        $hosp = hs_hospital_history::findOrFail($request->facility_id); 
+        $hosp->status_id = '15';
+        $status->created_at = Carbon::now()->format('Y-m-d H:i:s');
+        $hosp->requested_by = Auth::user()->id; 
+        $hosp->save();
+        
+        session()->flash("alert-success", "Delete request initiated successfully!");
+        return redirect()->back();
+    }
+
     public function destroy($id)
     {
         //

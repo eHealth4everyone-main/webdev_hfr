@@ -21,9 +21,9 @@ Hospitals and Clinics
                 
                 <div class="col-sm-4">
                     <select class="form-control select2" id="state_id" name ="state_id">
-                        <option value="">--Select State--<option>
+                        <option value="">--Select State--</option>
                             @foreach($lst_states as $st)
-                            <option value="{{$st->id}}">{{$st->name}}</option>
+                                <option value="{{$st->id}}">{{$st->name}}</option>
                             @endforeach
                         </select>
                     </div>
@@ -33,10 +33,9 @@ Hospitals and Clinics
                             
                         </select>
                     </div>
-                    
-                    
+                                  
                     <div class="col-sm-4" >
-                        <input class="form-control input-sm" type="text" name="facility_name" id="facility_name" class="form-control" placeholder="hospital/clinic name">
+                        <input class="form-control input-sm" type="text" name="facility_name" id="facility_name" class="form-control" placeholder="Hospital or Clinic Name">
                     </div>
                     
                     <div class="col-sm-1">
@@ -100,12 +99,13 @@ Hospitals and Clinics
                             <button class="btn btn-warning btn-sm"  type="button" > Edit</button>
                         </a>
                         @endif
-                        {{-- <a href="{{route('hospitals.services',$fac->id)}}">
-                            <button class="btn btn-primary btn-sm"  type="button" > Services</button>
-                        </a> --}}
+                  
                         @if(auth()->user()->hasPermissionTo(4))
-                        <a href="">
-                            <button class="btn btn-danger btn-sm"  type="button" > Delete</button>
+                        <a href="#">
+                            <button class="btn btn-danger btn-sm"  type="button"  data-toggle="modal" data-target="#delete"
+                                data-id_del="{{$fac->id}}" data-unique_id_del="{{$fac->unique_id}}" data-facility_name_del="{{$fac->facility_name}}"> 
+                                Delete
+                            </button>
                         </a>
                         @endif
                         
@@ -461,14 +461,72 @@ Hospitals and Clinics
                 </div>
             </div><!-- /.modal-content -->
         </div><!--/.modal-dialog -->
-    </div><!--/.modal -->
+    </div>
+</div><!--/.modal -->
+
+
+{{-- modal deletation  --}}
+<div class="modal fade" id="delete" tabindex="-1" role="dialog">
+    <div class="modal-dialog " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Delete Facility</h4>
+                <div class='notifications top-right'></div>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{{route('hospitals.InitiateDelete')}}">
+                    @csrf
+                    <input type="hidden" id="facility_id" name="facility_id">
+                    <div class="panel-body">
+                        
+                        <div class="panel-group" id="accordion_d">
+                            {{-- panel one --}}
+                            <div class="panel panel-default">
+                              
+                                <div id="collapse1d" class="panel-collapse collapse in">
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            <label class="col-md-4">Unique_id:</label>
+                                            <div class="col-md-8" id="unique_id_del"></div>
+                                        </div>
+                                        <div class="row">
+                                            <label class="col-md-4 text-md-right">Facility Name:</label>
+                                            <div class="col-md-8" id="facility_name_del">    </div>
+                                        </div>
+                                      
+                                        <div class="row">
+                                            <label class="col-md-4">Reason for Delete:<font color="red">*</font></label>
+                                            <div class="col-md-8">
+                                                <textarea class="form-control" rows="3" name="reason" placeholder="Please enter reason" required></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                           
+                        </div> 
+                        
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Send Delete Request</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+                
+            </div><!--modal body ends -->
+        </div><!--/.modal-content -->
+    </div>
+</div> <!--/.modal -->
+    
+@endsection 
     
     
-    @endsection 
-    
-    
-    @push('bk_script')
+@push('bk_script')
     @include('partials.dynamic_state_script')
+    @include('partials.notification')
     
     <script>
         $(document).ready( function () {
@@ -567,7 +625,17 @@ Hospitals and Clinics
                 }         
             })
         });//end
+
+        $('#delete').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget)
+            var modal = $(this)
+        
+            modal.find('.modal-body #unique_id_del').text(button.data('unique_id_del'));
+            modal.find('.modal-body #facility_name_del').text(button.data('facility_name_del'));
+            modal.find('.modal-body #facility_id').val(button.data('id_del'));            
+          
+        });//end
         
     </script>
     
-    @endpush
+@endpush

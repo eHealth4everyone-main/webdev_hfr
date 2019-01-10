@@ -91,7 +91,7 @@ Pending Level II Verification
                     data-community_extension_workers="{{$p->community_extension_workers}}" data-jun_community_extension_worker="{{$p->jun_community_extension_worker}}"
                     data-dental_technicians="{{$p->dental_technicians}}" data-env_health_officers="{{$p->env_health_officers}}" data-beds_accidents_emerg="{{$p->beds_accidents_emerg}}"
                     data-beds_adminission="{{$p->beds_adminission}}" data-beds_icu="{{$p->beds_icu}}" data-onsite_laboratory="{{$p->onsite_laboratory}}"
-                    data-onsite_imaging="{{$p->onsite_imaging}}" data-onsite_pharmarcy="{{$p->onsite_pharmarcy}}" data-mortuary_services="{{$p->mortuary_services}}">
+                    data-onsite_imaging="{{$p->onsite_imaging}}" data-onsite_pharmarcy="{{$p->onsite_pharmarcy}}" data-mortuary_services="{{$p->mortuary_services}}" data-action="{{$p->action}}">
                     Verify
                 </button>
             </a>  
@@ -100,7 +100,26 @@ Pending Level II Verification
                 <button class="btn btn-success btn-sm"  type="button" >Verify</button>
             </a>
         @else
-        
+        <a href="#">
+                <button class="btn btn-success btn-sm"  type="button" data-toggle="modal" data-target="#view_details" data-id="{{$p->id}}"
+                    data-unique_id="{{$p->unique_id}}" data-registration_no="{{$p->registration_no}}" data-start_date="{{$p->start_date}}"
+                    data-facility_name="{{$p->facility_name}}" data-alt_facility_name="{{$p->alt_facility_name}}" data-state="{{$p->state}}"
+                    data-lga="{{$p->lga}}" data-ward="{{$p->ward}}" data-ownership="{{$p->ownership}}" data-ownership_type="{{$p->ownership_type}}"
+                    data-ownership_details="{{$p->ownership_details}}" data-facility_level="{{$p->facility_level}}" data-facility_level_option="{{$p->facility_level_option}}"
+                    data-house_no="{{$p->house_no}}" data-street_name="{{$p->street_name}}" data-longitude="{{$p->longitude}}" data-latitude="{{$p->latitude}}"
+                    data-postal_address="{{$p->postal_address}}" data-phone_number="{{$p->phone_number}}" data-email_address="{{$p->email_address}}"
+                    data-website="{{$p->website}}" data-operational_days="{{$p->operational_days}}" data-operational_hours="{{$p->operational_hours}}"
+                    data-operation_status="{{$p->operation_status}}" data-regulatory_status="{{$p->regulatory_status}}" data-license_status="{{$p->license_status}}"
+                    data-doctors="{{$p->doctors}}" data-pharmacists="{{$p->pharmacists}}" data-dentist="{{$p->dentist}}" data-pharmacy_technicians="{{$p->pharmacy_technicians}}"
+                    data-nurses="{{$p->nurses}}" data-lab_scientists="{{$p->lab_scientists}}" data-midwifes="{{$p->midwifes}}" data-lab_technicians="{{$p->lab_technicians}}"
+                    data-nurse_midwife="{{$p->nurse_midwife}}" data-him_officers="{{$p->him_officers}}" data-community_health_officer="{{$p->community_health_officer}}"
+                    data-community_extension_workers="{{$p->community_extension_workers}}" data-jun_community_extension_worker="{{$p->jun_community_extension_worker}}"
+                    data-dental_technicians="{{$p->dental_technicians}}" data-env_health_officers="{{$p->env_health_officers}}" data-beds_accidents_emerg="{{$p->beds_accidents_emerg}}"
+                    data-beds_adminission="{{$p->beds_adminission}}" data-beds_icu="{{$p->beds_icu}}" data-onsite_laboratory="{{$p->onsite_laboratory}}"
+                    data-onsite_imaging="{{$p->onsite_imaging}}" data-onsite_pharmarcy="{{$p->onsite_pharmarcy}}" data-mortuary_services="{{$p->mortuary_services}}" data-action="{{$p->action}}">
+                    Approve
+                </button>
+            </a>
         @endif
     </div>
 </div>
@@ -120,6 +139,8 @@ Pending Level II Verification
                 <form method="POST" action="{{route('store.verify2')}}">
                     @csrf
                     <input type="hidden" id="id" name="id">
+                    <input type="hidden" id="requested_action" name="requested_action">
+
                     <div class="panel-body">
                         
                         <div class="panel-group" id="accordion">
@@ -420,7 +441,8 @@ Pending Level II Verification
                 
             </div><!--modal body ends -->
         </div><!--/.modal-content -->
-    </div><!--/.modal -->
+    </div>
+</div><!--/.modal -->
     @endsection 
     
     
@@ -487,6 +509,8 @@ Pending Level II Verification
             modal.find('.modal-body #onsite_imaging').text(button.data('onsite_imaging'));
             modal.find('.modal-body #onsite_pharmarcy').text(button.data('onsite_pharmarcy'));
             modal.find('.modal-body #mortuary_services').text(button.data('mortuary_services'));
+            modal.find('.modal-body #requested_action').val(button.data('action')); 
+
             
         });//end
     </script>

@@ -16,7 +16,7 @@
     <!-- /.box-tools -->
   </div>
   <!-- /.box-header -->
-  <form method="POST" action="{{route('store.updated_verify1')}}">
+  <form method="POST" action="{{route('store.verify1')}}">
     @csrf
     
     <div class="box-body">
@@ -114,6 +114,7 @@
     @endif
 
       <input type="hidden" id="id" name="id" value="{{ $hosp_id }}">
+      <input type="hidden" name="requested_action" value="UPDATE">
       
       <div class="row">
         <label class="col-md-2">Verification Note <font color="red">*</font></label>

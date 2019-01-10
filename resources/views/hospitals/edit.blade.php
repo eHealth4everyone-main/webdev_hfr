@@ -24,7 +24,13 @@
             <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
                 <div class="panel-body">
                     <div class="box-body">
-                        
+                            @if($updating)
+                                <div class="callout callout-warning">
+                                    <h4>Alert</h4>
+                                    <p>This facility has pending updates waiting for approval. Wait for changes to be approved to proceed!</p>
+                                </div>
+                            @endif
+
                         <div class="form-group">
                             <label for="cac_reg" class="col-sm-2 control-label">Registration No:</label>
                             <div class="col-sm-4">
@@ -515,7 +521,10 @@
     <a href="{{route('hospitals.index')}}">
         <button type="button" class="btn btn-warning">Return Back</button>
     </a>
-    <button type="submit" class="btn btn-primary pull-right">Send Update Request</button>
+    @if(!$updating)
+        <button type="submit" class="btn btn-primary pull-right">Send Update Request</button>
+    @endif
+    
 </div>
 <!-- /.box-footer -->
 </form>

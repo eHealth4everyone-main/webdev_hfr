@@ -7,6 +7,7 @@ Pending Approvals
 @endsection
 
 @section("content")
+
 @if($pending->isEmpty())
 <div class="callout callout-success">
     <h4>Congrats!</h4>
@@ -73,32 +74,51 @@ Pending Approvals
             </tbody>
         </table>
         @if ($p->action === "CREATE")
-        <a href="#">
-            <button class="btn btn-success btn-sm"  type="button" data-toggle="modal" data-target="#view_details" data-id="{{$p->id}}"
-                data-unique_id="{{$p->unique_id}}" data-registration_no="{{$p->registration_no}}" data-start_date="{{$p->start_date}}"
-                data-facility_name="{{$p->facility_name}}" data-alt_facility_name="{{$p->alt_facility_name}}" data-state="{{$p->state}}"
-                data-lga="{{$p->lga}}" data-ward="{{$p->ward}}" data-ownership="{{$p->ownership}}" data-ownership_type="{{$p->ownership_type}}"
-                data-ownership_details="{{$p->ownership_details}}" data-facility_level="{{$p->facility_level}}" data-facility_level_option="{{$p->facility_level_option}}"
-                data-house_no="{{$p->house_no}}" data-street_name="{{$p->street_name}}" data-longitude="{{$p->longitude}}" data-latitude="{{$p->latitude}}"
-                data-postal_address="{{$p->postal_address}}" data-phone_number="{{$p->phone_number}}" data-email_address="{{$p->email_address}}"
-                data-website="{{$p->website}}" data-operational_days="{{$p->operational_days}}" data-operational_hours="{{$p->operational_hours}}"
-                data-operation_status="{{$p->operation_status}}" data-regulatory_status="{{$p->regulatory_status}}" data-license_status="{{$p->license_status}}"
-                data-doctors="{{$p->doctors}}" data-pharmacists="{{$p->pharmacists}}" data-dentist="{{$p->dentist}}" data-pharmacy_technicians="{{$p->pharmacy_technicians}}"
-                data-nurses="{{$p->nurses}}" data-lab_scientists="{{$p->lab_scientists}}" data-midwifes="{{$p->midwifes}}" data-lab_technicians="{{$p->lab_technicians}}"
-                data-nurse_midwife="{{$p->nurse_midwife}}" data-him_officers="{{$p->him_officers}}" data-community_health_officer="{{$p->community_health_officer}}"
-                data-community_extension_workers="{{$p->community_extension_workers}}" data-jun_community_extension_worker="{{$p->jun_community_extension_worker}}"
-                data-dental_technicians="{{$p->dental_technicians}}" data-env_health_officers="{{$p->env_health_officers}}" data-beds_accidents_emerg="{{$p->beds_accidents_emerg}}"
-                data-beds_adminission="{{$p->beds_adminission}}" data-beds_icu="{{$p->beds_icu}}" data-onsite_laboratory="{{$p->onsite_laboratory}}"
-                data-onsite_imaging="{{$p->onsite_imaging}}" data-onsite_pharmarcy="{{$p->onsite_pharmarcy}}" data-mortuary_services="{{$p->mortuary_services}}">
-                Approve
-            </button>
-        </a>  
+            <a href="#">
+                <button class="btn btn-success btn-sm"  type="button" data-toggle="modal" data-target="#view_details" data-id="{{$p->id}}"
+                    data-unique_id="{{$p->unique_id}}" data-registration_no="{{$p->registration_no}}" data-start_date="{{$p->start_date}}"
+                    data-facility_name="{{$p->facility_name}}" data-alt_facility_name="{{$p->alt_facility_name}}" data-state="{{$p->state}}"
+                    data-lga="{{$p->lga}}" data-ward="{{$p->ward}}" data-ownership="{{$p->ownership}}" data-ownership_type="{{$p->ownership_type}}"
+                    data-ownership_details="{{$p->ownership_details}}" data-facility_level="{{$p->facility_level}}" data-facility_level_option="{{$p->facility_level_option}}"
+                    data-house_no="{{$p->house_no}}" data-street_name="{{$p->street_name}}" data-longitude="{{$p->longitude}}" data-latitude="{{$p->latitude}}"
+                    data-postal_address="{{$p->postal_address}}" data-phone_number="{{$p->phone_number}}" data-email_address="{{$p->email_address}}"
+                    data-website="{{$p->website}}" data-operational_days="{{$p->operational_days}}" data-operational_hours="{{$p->operational_hours}}"
+                    data-operation_status="{{$p->operation_status}}" data-regulatory_status="{{$p->regulatory_status}}" data-license_status="{{$p->license_status}}"
+                    data-doctors="{{$p->doctors}}" data-pharmacists="{{$p->pharmacists}}" data-dentist="{{$p->dentist}}" data-pharmacy_technicians="{{$p->pharmacy_technicians}}"
+                    data-nurses="{{$p->nurses}}" data-lab_scientists="{{$p->lab_scientists}}" data-midwifes="{{$p->midwifes}}" data-lab_technicians="{{$p->lab_technicians}}"
+                    data-nurse_midwife="{{$p->nurse_midwife}}" data-him_officers="{{$p->him_officers}}" data-community_health_officer="{{$p->community_health_officer}}"
+                    data-community_extension_workers="{{$p->community_extension_workers}}" data-jun_community_extension_worker="{{$p->jun_community_extension_worker}}"
+                    data-dental_technicians="{{$p->dental_technicians}}" data-env_health_officers="{{$p->env_health_officers}}" data-beds_accidents_emerg="{{$p->beds_accidents_emerg}}"
+                    data-beds_adminission="{{$p->beds_adminission}}" data-beds_icu="{{$p->beds_icu}}" data-onsite_laboratory="{{$p->onsite_laboratory}}"
+                    data-onsite_imaging="{{$p->onsite_imaging}}" data-onsite_pharmarcy="{{$p->onsite_pharmarcy}}" data-mortuary_services="{{$p->mortuary_services}}" data-action="{{$p->action}}">
+                    Approve
+                </button>
+            </a>  
         @elseif ($p->action === "UPDATE") 
             <a href="{{route('view.updated_records',['id'=>$p->id,'stage'=>'approve'])}}">
                 <button class="btn btn-success btn-sm"  type="button" > Approve</button>
             </a>
         @else
-        
+        <a href="#">
+                <button class="btn btn-success btn-sm"  type="button" data-toggle="modal" data-target="#view_details" data-id="{{$p->id}}"
+                    data-unique_id="{{$p->unique_id}}" data-registration_no="{{$p->registration_no}}" data-start_date="{{$p->start_date}}"
+                    data-facility_name="{{$p->facility_name}}" data-alt_facility_name="{{$p->alt_facility_name}}" data-state="{{$p->state}}"
+                    data-lga="{{$p->lga}}" data-ward="{{$p->ward}}" data-ownership="{{$p->ownership}}" data-ownership_type="{{$p->ownership_type}}"
+                    data-ownership_details="{{$p->ownership_details}}" data-facility_level="{{$p->facility_level}}" data-facility_level_option="{{$p->facility_level_option}}"
+                    data-house_no="{{$p->house_no}}" data-street_name="{{$p->street_name}}" data-longitude="{{$p->longitude}}" data-latitude="{{$p->latitude}}"
+                    data-postal_address="{{$p->postal_address}}" data-phone_number="{{$p->phone_number}}" data-email_address="{{$p->email_address}}"
+                    data-website="{{$p->website}}" data-operational_days="{{$p->operational_days}}" data-operational_hours="{{$p->operational_hours}}"
+                    data-operation_status="{{$p->operation_status}}" data-regulatory_status="{{$p->regulatory_status}}" data-license_status="{{$p->license_status}}"
+                    data-doctors="{{$p->doctors}}" data-pharmacists="{{$p->pharmacists}}" data-dentist="{{$p->dentist}}" data-pharmacy_technicians="{{$p->pharmacy_technicians}}"
+                    data-nurses="{{$p->nurses}}" data-lab_scientists="{{$p->lab_scientists}}" data-midwifes="{{$p->midwifes}}" data-lab_technicians="{{$p->lab_technicians}}"
+                    data-nurse_midwife="{{$p->nurse_midwife}}" data-him_officers="{{$p->him_officers}}" data-community_health_officer="{{$p->community_health_officer}}"
+                    data-community_extension_workers="{{$p->community_extension_workers}}" data-jun_community_extension_worker="{{$p->jun_community_extension_worker}}"
+                    data-dental_technicians="{{$p->dental_technicians}}" data-env_health_officers="{{$p->env_health_officers}}" data-beds_accidents_emerg="{{$p->beds_accidents_emerg}}"
+                    data-beds_adminission="{{$p->beds_adminission}}" data-beds_icu="{{$p->beds_icu}}" data-onsite_laboratory="{{$p->onsite_laboratory}}"
+                    data-onsite_imaging="{{$p->onsite_imaging}}" data-onsite_pharmarcy="{{$p->onsite_pharmarcy}}" data-mortuary_services="{{$p->mortuary_services}}" data-action="{{$p->action}}">
+                    Approve
+                </button>
+            </a>  
         @endif
         
     </div>
@@ -121,6 +141,8 @@ Pending Approvals
                 <form method="POST" action="{{route('store.approval')}}">
                     @csrf
                     <input type="hidden" id="id" name="id">
+                    <input type="hidden" id="requested_action" name="requested_action">
+
                     <div class="panel-body">
                         
                         <div class="panel-group" id="accordion">
@@ -398,7 +420,7 @@ Pending Approvals
                                 <div id="collapse7" class="panel-collapse">
                                     <div class="panel-body">
                                         <div class="row">
-                                            <label class="col-md-2">Note:<font color="red">*</font></label>
+                                            <label class="col-md-2">Approval Note:<font color="red">*</font></label>
                                             <div class="col-md-10">
                                                 <textarea class="form-control" rows="3" name="notes" placeholder="Please enter notes ..." required></textarea>
                                             </div>
@@ -421,60 +443,10 @@ Pending Approvals
                 
             </div><!--modal body ends -->
         </div><!--/.modal-content -->
-    </div><!--/.modal -->
-    
-    {{-- modal show updated records --}}
-    <div class="modal fade" id="view_updated" tabindex="-1" role="dialog">
-        <div class="modal-dialog " role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">Facility Details</h4>
-                    <div class='notifications top-right'></div>
-                </div>
-                <div class="modal-body">
-                    <form method="POST" action="{{route('store.updated_approval')}}">
-                        @csrf
-                        <input type="hidden" id="id" name="id">
-                        <div class="panel-body">
-                            
-                            <div class="panel-group" id="accordion">
-                                {{-- panel one --}}
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title">
-                                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">Identity</a>
-                                        </h4>
-                                    </div>
-                                    <div id="collapse1" class="panel-collapse collapse in">
-                                        <div class="panel-body">
-                                            
-                                            <div class="row">
-                                                <label class="col-md-4 text-md-right">Facility Level Option:</label>
-                                                <div class="col-md-8" id="">    </div>
-                                            </div>
-                                         
-                                        </div>
-                                    </div>
-                                </div>
-         
-                            </div> 
-                            
-                            
-                        </div>
-                        
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-danger" name="action" value="reject">Reject</button>
-                            <button type="submit" class="btn btn-success" name="action" value="approve">Approve</button>
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        </div>
-                    </form>
-                    
-                </div><!--modal body ends -->
-            </div><!--/.modal-content -->
-        </div><!--/.modal -->
-        
-        @endsection 
+    </div>
+</div> <!--/.modal -->
+ 
+@endsection 
         
         
         @push('bk_script')
@@ -540,6 +512,7 @@ Pending Approvals
                 modal.find('.modal-body #onsite_imaging').text(button.data('onsite_imaging'));
                 modal.find('.modal-body #onsite_pharmarcy').text(button.data('onsite_pharmarcy'));
                 modal.find('.modal-body #mortuary_services').text(button.data('mortuary_services'));
+                modal.find('.modal-body #requested_action').val(button.data('action')); //added by tadeo 
                 
             });//end
             

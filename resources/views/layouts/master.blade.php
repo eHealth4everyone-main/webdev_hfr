@@ -67,7 +67,7 @@
                                             @if(auth()->user()->hasPermissionTo(2) or auth()->user()->hasPermissionTo(3) or auth()->user()->hasPermissionTo(4))
                                                 <li>
                                                     <a href="{{route('view.myrequest')}}">
-                                                    <i class="fa fa-user-secret text-orange"></i>My Requests
+                                                    <i class="fa fa-user-secret text-orange"></i>My Pending Requests
                                                     </a>
                                                 </li>
                                             @endif
@@ -178,7 +178,7 @@
                 <div class="pull-right hidden-xs">
                     <b>Version</b> 2.0
                 </div>
-                <strong>Copyright &copy; 2017-2018 <a target="_blank" rel="noopener noreferrer" href="http://health.gov.ng/">MOH</a>.</strong> All rights
+                <strong>Copyright &copy; 2017-2018 <a target="_blank" rel="noopener noreferrer" href="http://health.gov.ng/">FMOH</a>.</strong> All rights
                 reserved.
             </footer>           
             
