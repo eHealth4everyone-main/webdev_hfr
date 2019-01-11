@@ -359,7 +359,7 @@ class HospitalsController extends Controller
         }
 
         session()->flash("alert-success", "Request Sent Successfully!");
-        return redirect()->back();
+        return redirect()->route('hospitals.index');
     }
     
     public function InitiateDelete(Request $request){ 
