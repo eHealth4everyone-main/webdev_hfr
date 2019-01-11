@@ -311,7 +311,7 @@ class HospitalsController extends Controller
             'onsite_imaging'=>'nullable',
             'mortuary_services'=>'nullable',
         ]);
-     
+       
         //update records in history with new changes
         $hosp = new hs_hospital_history;
         $hosp = hs_hospital_history::findOrFail($id);
@@ -342,7 +342,7 @@ class HospitalsController extends Controller
             $services_before[] = $s->service_id;
         }
 
-        $services_update = $request->services;
+        $services_update[] = $request->services;
 
         $diff = array_diff($services_before, $services_update);
 
