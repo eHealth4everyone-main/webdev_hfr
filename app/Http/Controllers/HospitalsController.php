@@ -363,21 +363,19 @@ class HospitalsController extends Controller
     }
     
     public function InitiateDelete(Request $request){ 
-     
+        // dd($request->all());
         $hs_tracking = new hs_status_tracking;
         $hs_tracking->action = "Delete Request"; 
         $hs_tracking->hospital_id = $request->facility_id;
         $hs_tracking->user_id = Auth::user()->id;
         $hs_tracking->status_id = '15';
         $hs_tracking->note = $request->reason;
-       
         $hs_tracking->save();
 
         $hosp = new hs_hospital_history;
-      
         $hosp = hs_hospital_history::findOrFail($request->facility_id); 
         $hosp->status_id = '15';
-        $status->created_at = Carbon::now()->format('Y-m-d H:i:s');
+        $hosp->created_at = Carbon::now()->format('Y-m-d H:i:s');
         $hosp->requested_by = Auth::user()->id; 
         $hosp->save();
         
