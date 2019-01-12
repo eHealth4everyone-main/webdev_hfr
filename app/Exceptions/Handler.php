@@ -47,12 +47,12 @@ class Handler extends ExceptionHandler
     public function render($request, Exception $exception)
     {
          // Otherwise display internal error message
-        if(!env('APP_DEBUG', false)){
-            return view('errors.500');
-        } else {
-            return parent::render($request, $exception);
-        }
-       
+        // if(!env('APP_DEBUG', false)){
+        //     return view('errors.500');
+        // } else {
+           
+        // }
+        return parent::render($request, $exception);
     }
 
 }

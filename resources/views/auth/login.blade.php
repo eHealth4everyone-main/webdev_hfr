@@ -61,14 +61,16 @@
                         </span>
                      @endif
                 </div>
-                <div class="form-group">
+                <div class="form-group {{ $errors->has('g-recaptcha-response') ? ' has-error' : '' }}">
                    
                     <div class="input-group">
-                        <div class="g-recaptcha" data-sitekey="{{env('NOCAPTCHA_SITEKEY')}}"></div>
+                        {{-- <div class="g-recaptcha" data-sitekey="{{env('NOCAPTCHA_SITEKEY')}}"></div> --}}
+                        {!! NoCaptcha::renderJs() !!}
+                        {!! NoCaptcha::display() !!}
                     </div>
                     @if ($errors->has('g-recaptcha-response'))
                         <span class="help-block">
-                            <strong>{{ $errors->first('g-recaptcha-response') }}</strong>
+                            {{ $errors->first('g-recaptcha-response') }}
                         </span>
                     @endif
                </div>
@@ -83,7 +85,7 @@
                 </div>
 
                 <div class="form-group">
-                    <a href="#">I forgot my password</a><br>
+                    <a href="{{route('password.request')}}">Forgot password?</a><br>
                 </div>
               </form>
         </div>
@@ -96,13 +98,10 @@
       <!-- /.login-box-body -->
     </div>
     <!-- /.login-box -->
--
+
     <script src="{{ asset("dist/js/jquery.min.js")}}"></script>
     <script src="{{ asset("dist/js/bootstrap.min.js")}}"></script>
-    <script src='https://www.google.com/recaptcha/api.js'></script>
-    <script>
-      
-    </script>
+    {{-- <script src='https://www.google.com/recaptcha/api.js'></script> --}}
   </body>
   </html>
   

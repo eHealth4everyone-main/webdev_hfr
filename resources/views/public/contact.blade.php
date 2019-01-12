@@ -77,17 +77,20 @@
                             
                                     </div>
                             </div>
-                            <div class="form-group row">
+                            <div class="form-group {{ $errors->has('g-recaptcha-response') ? ' has-error' : '' }}">
                                     <div class="col-md-2">
                                     </div>
                                     <div class="col-md-10">
-                                        <div class="g-recaptcha" data-sitekey="{{env('NOCAPTCHA_SITEKEY')}}"></div>
+                                            {!! NoCaptcha::renderJs() !!}
+                                            {!! NoCaptcha::display() !!}
+
+                                            @if ($errors->has('g-recaptcha-response'))
+                                            <span class="help-block">
+                                                <strong>{{ $errors->first('g-recaptcha-response') }}</strong>
+                                            </span>
+                                        @endif
                                     </div>
-                                    @if ($errors->has('g-recaptcha-response'))
-                                        <span class="help-block">
-                                            <strong>{{ $errors->first('g-recaptcha-response') }}</strong>
-                                        </span>
-                                    @endif
+                                   
                             </div>
                     
                     
