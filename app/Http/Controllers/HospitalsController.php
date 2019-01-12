@@ -85,6 +85,8 @@ class HospitalsController extends Controller
     
     public function store(Request $request)
     {
+        // dd($request->all());
+
         $request->validate([
             'registration_no'=>'nullable|max:20',
             'start_date'=>'nullable|date',
@@ -156,8 +158,8 @@ class HospitalsController extends Controller
         $hosp_id = $hosp->id;
         
          //insert services
-         $services = $request->services;
-         if ($services){
+         $services[] = $request->services;
+         if (!empty($services)){
             foreach ($services as $id){
                 $hosp_services = new hs_hospital_service;
                 $hosp_services->service_id = $id;

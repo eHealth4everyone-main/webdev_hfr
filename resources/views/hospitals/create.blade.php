@@ -57,7 +57,7 @@
                                     <option value="">--Select State--</option>
                                     
                                     @foreach($lst_states as $st)
-                                        <option value="{{$st->id}}">{{$st->name}}</option>
+                                        <option value="{{ $st->id }}">{{ $st->name }}</option>
                                     @endforeach
                                     
                                 </select>
@@ -133,20 +133,20 @@
                             <div class="col-sm-10">
                                 <select class="form-control select2" name="operational_days[]" multiple="multiple" data-placeholder="Select days of operation"
                                 style="width: 100%;">
-                                <option value="Monday" >Monday</option>
-                                <option value="Tuesday" >Tuesday</option>
-                                <option value="Wednesday" >Wednesday</option>
-                                <option value="Thursday" >Thursday</option>
-                                <option value="Friday" >Friday</option>
-                                <option value="Saturday" >Saturday</option>
-                                <option value="Sunday" >Sunday</option>
+                                <option value="Monday" {{ (is_array(old('operational_days')) && in_array("Monday", old('operational_days'))) ? "selected":"" }}>Monday</option>
+                                <option value="Tuesday" {{ (is_array(old('operational_days')) && in_array("Tuesday", old('operational_days'))) ? "selected":"" }}>Tuesday</option>
+                                <option value="Wednesday" {{ (is_array(old('operational_days')) && in_array("Wednesday", old('operational_days'))) ? "selected":"" }}>Wednesday</option>
+                                <option value="Thursday" {{ (is_array(old('operational_days')) && in_array("Thursday", old('operational_days'))) ? "selected":"" }}>Thursday</option>
+                                <option value="Friday" {{ (is_array(old('operational_days')) && in_array("Friday", old('operational_days'))) ? "selected":"" }}>Friday</option>
+                                <option value="Saturday" {{ (is_array(old('operational_days')) && in_array("Saturday", old('operational_days'))) ? "selected":"" }}>Saturday</option>
+                                <option value="Sunday" {{ (is_array(old('operational_days')) && in_array("Sunday", old('operational_days'))) ? "selected":"" }}>Sunday</option>
                             </select>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-2 control-label">Hours of Operation:</label>
                         <div class="col-sm-4">
-                            <input type="text" class="form-control"  id="operational_hours" name="operational_hours" value="" placeholder="24hrs / 08:00AM-06:00PM" >
+                            <input type="text" class="form-control"  id="operational_hours" name="operational_hours" value="{{ old('operational_hours') }}" placeholder="24hrs / 08:00AM-06:00PM" >
                         </div>
                     </div>
                     <div class="form-group">
@@ -155,7 +155,7 @@
                             <select class="form-control select2" id="facility_level_id"  name="facility_level_id" style="width: 100%;" required>
                                 <option value="">--Select Level of Care--</option>
                                 @foreach($lst_level_of_care as $st)
-                                <option value="{{$st->id}}">{{$st->name}}</option>
+                                        <option value="{{ $st->id }}" {{ (old('facility_level_id') == $st->id ? "selected":"") }}>{{ $st->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -181,7 +181,8 @@
                             <select class="form-control select2" id="ownership_id"  name="ownership_id" style="width: 100%;" required>
                                 <option value="">--Select Ownership--</option>
                                 @foreach($lst_ownerships as $st)
-                                <option value="{{$st->id}}">{{$st->name}}</option>
+                                        <option value="{{ $st->id }}" {{ (old('ownership_id') == $st->id ? "selected":"") }}>{{ $st->name }}</option>
+                                        
                                 @endforeach
                                 
                             </select>
@@ -207,7 +208,7 @@
                             <select class="form-control select2" id="operational_status_id" name="operational_status_id" style="width: 100%;" required>
                                 <option value="">--Select Operation Status--</option>
                                 @foreach($lst_oparational_status as $st)
-                                <option value="{{$st->id}}">{{$st->status}}</option>
+                                        <option value="{{ $st->id }}" {{ (old('operational_status_id') == $st->id ? "selected":"") }}>{{ $st->status }}</option>
                                 @endforeach
                             </select>
                             
@@ -217,7 +218,7 @@
                             <select class="form-control select2" id="regulatory_status_id" name="regulatory_status_id" style="width: 100%;">
                                 <option value="">--Select Regulatory Status--</option>
                                 @foreach($lst_regulatory_status as $st)
-                                <option value="{{$st->id}}">{{$st->status}}</option>
+                                    <option value="{{ $st->id }}" {{ (old('regulatory_status_id') == $st->id ? "selected":"") }}>{{ $st->status }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -228,7 +229,7 @@
                             <select class="form-control select2" id="license_status_id" name="license_status_id" style="width: 100%;">
                                 <option value="">--Select License Status--</option>
                                 @foreach($lst_license_status as $st)
-                                <option value="{{$st->id}}">{{$st->status}}</option>
+                                    <option value="{{ $st->id }}" {{ (old('license_status_id') == $st->id ? "selected":"") }}>{{ $st->status }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -452,25 +453,25 @@
                                 <div class="form-group">
                                         <div class="col-sm-1">  </div>                                        
                                         <div class="col-sm-3">                               
-                                                <input type='checkbox'name='onsite_pharmarcy' value='Yes'> Onsite Pharmacy
+                                                <input type='checkbox'name='onsite_pharmarcy' value='Yes' {{ (old('onsite_pharmarcy') == 'Yes' ? "checked":"") }}> Onsite Pharmacy
                                         </div>
                                 </div>
                                 <div class="form-group">
                                         <div class="col-sm-1">  </div> 
                                         <div class="col-sm-3">                               
-                                                <input type='checkbox'name='onsite_laboratory' value='Yes'> Onsite Laboratory
+                                                <input type='checkbox'name='onsite_laboratory' value='Yes' {{ (old('onsite_laboratory') == 'Yes' ? "checked":"") }}> Onsite Laboratory
                                         </div>
                                 </div>
                                 <div class="form-group">
                                         <div class="col-sm-1">  </div> 
                                         <div class="col-sm-3">                               
-                                                <input type='checkbox'name='onsite_imaging' value='Yes'> Onsite Imaging/ Radio-Diagnostics Center
+                                                <input type='checkbox'name='onsite_imaging' value='Yes'{{ (old('onsite_imaging') == 'Yes' ? "checked":"") }}> Onsite Imaging/ Radio-Diagnostics Center
                                         </div>
                                 </div>
                                 <div class="form-group">
                                         <div class="col-sm-1">  </div> 
                                         <div class="col-sm-3">                               
-                                                <input type='checkbox'name='mortuary_services' value='Yes'> Mortuary Services
+                                                <input type='checkbox'name='mortuary_services' value='Yes'{{ (old('mortuary_services') == 'Yes' ? "checked":"") }}> Mortuary Services
                                         </div> 
                                 </div>
                         </div>
@@ -507,8 +508,28 @@
         success:function(result)
         {
             $('#lga_id').html(result);
+
+            var lga = '{{ old('lga_id') }}';
+            if(lga !== '') { //if old value is not empty
+                $('#lga_id').val(lga);
+                
+                //get wards and fill with old value
+                var _token = $('input[name="_token"]').val();
+                $.ajax({
+                    url:"{{route('getWardList')}}",
+                    method:"POST",
+                    data:{lgaId:lga,_token:_token},
+                    success:function(result)
+                    {
+                        $('#ward_id').html(result);
+                        $('#ward_id').val({{ old('ward_id')  }});
+                    }         
+                })
+            }
         }         
     })
+ 
+
     /* hospital level change */
     $("#facility_level_id").change(function(){
         if($(this).val()=="2") //if secondary
@@ -581,6 +602,26 @@
             })            
         }
     });
+
+
+      //fill ownership type after validation fails
+    var own_id = '{{ old('ownership_id') }}';
+    if(own_id != "") 
+    {    
+        var _token = $('input[name="_token"]').val();
+        $.ajax({
+            url:"{{route('getOwnershipType')}}",
+            method:"POST",
+            data:{ownership_id:own_id,_token:_token},
+            success:function(result)
+            {
+                $('#ownership_type_id').html(result);
+                $('#ownership_type_id').val({{  old('ownership_type_id') }});
+            }         
+        })            
+    }
+
+
 </script>
 
 @endpush
