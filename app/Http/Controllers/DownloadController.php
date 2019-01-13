@@ -164,7 +164,29 @@ class DownloadController extends Controller
     public function adminIndex (){
         $downloads = Download::all();
         return view('downloads.index', compact("downloads"));
-     
     }
     
+    public function exportHospitals($state_id,$format){
+         
+        $facilities = DB::table('hospital_details')
+                        ->select('unique_id','registration_no','start_date','facility_name','state','lga','ward','ownership',
+                        'facility_level','longitude','latitude','operation_status','regulatory_status','license_status')
+                        ->where('state_id','like','%'.$state_id.'%')
+                        ->orderByRaw('state','lga','facility_name')
+                        ->get();
+
+        $column_header = array("unique_id","reg_number","start_date","facility_name","state","lga","ward","ownership",
+        "facility_level","longitude","latitude","operation_status","regulatory_status","license_status");
+        
+    
+        if ($format == 'excel'){
+            $down_filename = 'hospitals_data.xlsx';
+        }
+        if ($format == 'csv'){
+            $down_filename = 'hospitals_data.csv';
+        }
+     
+        return Excel::download(new HFExport( $facilities, $column_header), $down_filename );
+
+    }
 }

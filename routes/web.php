@@ -132,6 +132,7 @@ Route::middleware(["auth"])->group(function(){
 
     //download
     Route::get('admin/download/list', 'DownloadController@adminIndex')->name('downloadList');
+    Route::get('admin/downloads/hospitals/{state}/{format}', 'DownloadController@exportHospitals')->name('export.hosptitals');
 
 });
 

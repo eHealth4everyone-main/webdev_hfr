@@ -108,7 +108,6 @@
                         <a href="{{route('export',['type'=>$facility_type_id,'state'=>$state_id,'format'=>'excel'])}}">
                             <button type="button" class="btn btn-success btn-sm">Download Excel</button>
                         </a>
-                        
                 </div>
 
             </div>
