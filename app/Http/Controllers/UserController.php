@@ -21,6 +21,7 @@ class UserController extends Controller
         {
             $users =User::get();
             $roles=Role::get();
+            
             $lst_states = Cache::remember('lst_states', 60, function () {
                 return DB::table('ou_states')
                         ->select('id','name')
@@ -51,6 +52,7 @@ class UserController extends Controller
                 'email' => $data['email'],
                 'mobile' => $data['mobile'],
                 'state_id' => $data['state_id'],
+                'lga_id' => $data['lga_id'],
                 'job_title' => $data['job'],
                 'status'=>'Active',
                 'organisation' => $data['organisation'],
@@ -86,6 +88,7 @@ class UserController extends Controller
         $user->organisation = $data['organisation1'];
         $user->mobile = $data['mobile1'];
         $user->state_id = $data['state_id1'];
+        $user->lga_id = $data['lga_id1'];
         $user->save();
 
         $user->syncRoles($data['role1']);
@@ -120,15 +123,25 @@ class UserController extends Controller
     }
 
     public function profile()
-    {
-
-       
+    {       
         $users = Auth::user();
         $roles=  $users->getRoleNames()->toArray();
        
         $role = implode(",",$roles);
-   
-        return view('users.userprofile', compact("users","role"));  
+
+        $lst_states = Cache::remember('lst_states', 60, function () {
+            return DB::table('ou_states')
+                    ->select('id','name')
+                    ->orderByRaw('name ASC')
+                    ->get();
+        });
+
+        $lst_lgas = DB::table('ou_lgas')
+                    ->select('id','name')
+                    ->where('state_id',Auth::user()->state_id)
+                    ->get();
+
+        return view('users.userprofile', compact("users","role","lst_states","lst_lgas"));  
     }
 
     

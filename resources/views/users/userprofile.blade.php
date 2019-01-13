@@ -102,6 +102,37 @@
                             </div>
                     </div>  
                     <div class="form-group row">
+                            <div class="col-md-1"></div>
+                                <label for="state" class="col-md-3 col-form-label text-md-right">{{ __('State Permission') }}</label>
+                                <div class="col-md-7">
+                                    @if (Auth::user()->state_id == 1 )
+                                        <input  type="text" class="form-control"  value="All States" disabled>
+                                    @else                            
+                                        @foreach($lst_states as $st)
+                                            @if ($st->id == Auth::user()->state_id)
+                                                <input  type="text" class="form-control"  value="{{ $st->name }}" disabled>                                                
+                                            @endif
+                                         @endforeach
+                                            
+                                    @endif
+                                </div>
+                    </div> 
+                    <div class="form-group row">
+                            <div class="col-md-1"></div>
+                                <label for="state" class="col-md-3 col-form-label text-md-right">{{ __('LGA Permission') }}</label>
+                                <div class="col-md-7">
+                                    @if (Auth::user()->lga_id == 1 )
+                                        <input  type="text" class="form-control"  value="All LGAs" disabled>
+                                    @else                            
+                                        @foreach($lst_lgas as $lga)
+                                            @if ($lga->id == Auth::user()->lga_id)
+                                                <input  type="text" class="form-control"  value="{{ $lga->name }}" disabled>                                                
+                                            @endif
+                                         @endforeach
+                                    @endif
+                                </div>
+                    </div> 
+                    <div class="form-group row">
                         <div class="col-md-3"></div>
                         <div class="col-sm-8">
                             <div class="pull-right">

@@ -46,7 +46,7 @@ Users
               <a href="#">
                 <button class="btn btn-warning btn-sm" data-fname="{{$user->firstname}}" data-lname="{{$user->lastname}}"
                     data-username="{{$user->username}}" data-email="{{$user->email}}" data-id="{{$user->id}}" data-role="{{$user->getRoleNames()}}"
-                    data-job="{{$user->job_title}}" data-org="{{$user->organisation}}" data-mobile="{{$user->mobile}}" data-state_id="{{$user->state_id}}"
+                    data-job="{{$user->job_title}}" data-org="{{$user->organisation}}" data-mobile="{{$user->mobile}}" data-state_id="{{$user->state_id}}" data-lga_id="{{$user->lga_id}}"
                     type="button" data-toggle="modal" data-target="#editUser">Edit</button>
               </a>
             @endif
@@ -85,6 +85,7 @@ Users
 
 @include('partials.notification')
 
+
 <script>
   $(document).ready(function(){
     $('#table1').DataTable( {
@@ -93,6 +94,42 @@ Users
         "info":     true
     } );
   
+      //if fill lga after state change
+      $('#state_id').change(function(){
+            if($(this).val() != '')
+            {
+                var stateID= $('#state_id').val();
+                var _token = $('input[name="_token"]').val();
+                $.ajax({
+                    url:"{{route('getLgaList')}}",
+                    method:"POST",
+                    data:{id:stateID, _token:_token},
+                    success:function(result)
+                    {
+                        $('#lga_id').html(result);
+                        $('#lga_id').prepend('<option value="1">All LGAs</option>');
+                    }         
+                })
+            }
+        });
+         //if fill lga after state change for edit modal
+        $('#state_id1').change(function(){
+              if($(this).val() != '')
+              {
+                  var stateID= $('#state_id1').val();
+                  var _token = $('input[name="_token"]').val();
+                  $.ajax({
+                      url:"{{route('getLgaList')}}",
+                      method:"POST",
+                      data:{id:stateID, _token:_token},
+                      success:function(result)
+                      {
+                          $('#lga_id1').html(result);
+                          $('#lga_id1').prepend('<option value="1">All LGAs</option>');
+                      }         
+                  })
+              }
+          });
  
       //edit user
       $('#editUser').on('show.bs.modal', function (event) {
@@ -103,12 +140,33 @@ Users
         var email=button.data('email')
         var mobile=button.data('mobile')
         var state_id=button.data('state_id')
+        var lga_id=button.data('lga_id')
         var job=button.data('job') 
         var org=button.data('org')   
         var role=button.data('role')  
         var id=button.data('id')    
         var modal = $(this)
-   
+
+        if(state_id != 1)
+        {
+            var _token = $('input[name="_token"]').val();
+            $.ajax({
+                url:"{{route('getLgaList')}}",
+                method:"POST",
+                data:{id:state_id, _token:_token},
+                success:function(result)
+                {
+                    $('#lga_id1').html(result);
+                    $('#lga_id1').prepend('<option value="1">All LGAs</option>');
+                    $('#lga_id1').val(lga_id);
+                }         
+            })
+        }
+        else{
+              $('#lga_id1').prepend('<option value="1">All LGAs</option>');
+              $('#lga_id1').val(lga_id);
+        }
+
         modal.find('.modal-body #firstname1').val(fname);
         modal.find('.modal-body #lastname1').val(lname);
         modal.find('.modal-body #username1').val(username);
@@ -149,9 +207,12 @@ Users
       var state
 
       $.each(@json($lst_states), function( index, value ){
-        if(state_id = value.id){
+        if(state_id == value.id){
           state = value.name;
           return false;
+        }
+        else{
+          state = "All States"
         }
       });
       

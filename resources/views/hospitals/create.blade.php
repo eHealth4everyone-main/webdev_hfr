@@ -61,7 +61,7 @@
                                     @endforeach
                                     
                                 </select>
-                                <input type="hidden" name="state_id" value="{{Auth::user()->state_id}}" />
+                                <input type="hidden" name="state_id" value="{{ Auth::user()->state_id }}" />
                             </div>
                             
                             <label class="col-sm-2 control-label">LGA:<font color="red">*</font> </label></label>

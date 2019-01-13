@@ -18,14 +18,23 @@ Hospitals and Clinics
         <form class="form-horizontal"  action="{{route('searchHospitalsAdmin')}}" method="post">
             @csrf
             <div class="form-group">
-                
-                <div class="col-sm-4">
-                    <select class="form-control select2" id="state_id" name ="state_id">
-                        <option value="">--Select State--</option>
-                            @foreach($lst_states as $st)
-                                <option value="{{$st->id}}">{{$st->name}}</option>
-                            @endforeach
-                        </select>
+                    <div class="col-sm-4">  
+                        @if (Auth::user()->state_id == 1 )
+                            <select class="form-control select2" id="state_id" name ="state_id">
+                                <option value="">--Select State--</option>
+                                @foreach($lst_states as $st)
+                                    <option value="{{$st->id}}">{{$st->name}}</option>
+                                @endforeach
+                            </select>
+                        @else
+                            <select class="form-control select2 dynamic" id="state_id" name ="state_id" disabled required>                                
+                                @foreach($lst_states as $st)
+                                    <option value="{{ $st->id }}">{{ $st->name }}</option>
+                                @endforeach
+                                
+                            </select>
+                            <input type="hidden" name="state_id" value="{{ Auth::user()->state_id }}" />
+                        @endif
                     </div>
                     
                     <div class="col-sm-3">
@@ -94,21 +103,22 @@ Hospitals and Clinics
                                 View
                             </button>
                         </a> 
-                        @if(auth()->user()->hasPermissionTo(3))
-                        <a href="{{route('hospitals.edit',$fac->id)}}">
-                            <button class="btn btn-warning btn-sm"  type="button" > Edit</button>
-                        </a>
+                        @if ($fac->lga_id == Auth::user()->lga_id)                        
+                            @if(auth()->user()->hasPermissionTo(3))
+                            <a href="{{route('hospitals.edit',$fac->id)}}">
+                                <button class="btn btn-warning btn-sm"  type="button" > Edit</button>
+                            </a>
+                            @endif
+                    
+                            @if(auth()->user()->hasPermissionTo(4))
+                            <a href="#">
+                                <button class="btn btn-danger btn-sm"  type="button"  data-toggle="modal" data-target="#delete"
+                                    data-id_del="{{$fac->id}}" data-unique_id_del="{{$fac->unique_id}}" data-facility_name_del="{{$fac->facility_name}}"> 
+                                    Delete
+                                </button>
+                            </a>
+                            @endif
                         @endif
-                  
-                        @if(auth()->user()->hasPermissionTo(4))
-                        <a href="#">
-                            <button class="btn btn-danger btn-sm"  type="button"  data-toggle="modal" data-target="#delete"
-                                data-id_del="{{$fac->id}}" data-unique_id_del="{{$fac->unique_id}}" data-facility_name_del="{{$fac->facility_name}}"> 
-                                Delete
-                            </button>
-                        </a>
-                        @endif
-                        
                     </td>
                 </tr>
                 @endforeach
@@ -529,6 +539,8 @@ Hospitals and Clinics
     @include('partials.notification')
     
     <script>
+        $("#state_id").val({{Auth::user()->state_id}}).change();
+
         $(document).ready( function () {
             $("#state_id").val({{Auth::user()->state_id}}).change();
             

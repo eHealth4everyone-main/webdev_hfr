@@ -42,8 +42,9 @@
                                 <div class="col-md-8" id="userrole"></div>
                         </div>
                         <div class="row">
-                                <label class="col-md-4">State:</label>
+                                <label class="col-md-4">State Permission:</label>
                                 <div class="col-md-8" id="state"></div>
+                           
                         </div>
               
                 </div>

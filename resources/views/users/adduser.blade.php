@@ -110,13 +110,22 @@
                                 <div class="col-md-8">
                                         <select class="form-control select2"  class="form-control" id="state_id" name="state_id" data-placeholder="Select State" required data-width="100%">
                                             <option value="1">All States</option>    
-                                            @foreach($lst_states as $s)
+                                                @foreach($lst_states as $s)
                                                     <option value="{{$s->id}}">{{$s->name}}</option>
                                                 @endforeach
                                         </select>
                                 <span class="text-danger">
                                     <strong id="state-id"></strong>
                                 </span>
+                                </div>
+                        </div> 
+                        <div class="form-group row">
+                                <label for="state_id" class="col-md-4 col-form-label text-md-right">{{ __('LGA Permission') }}</label>
+                                <div class="col-md-8">
+                                        <select class="form-control select2"  class="form-control" id="lga_id" name="lga_id" data-placeholder="Select LGA" required data-width="100%">   
+                                            
+                                        </select>
+                                
                                 </div>
                         </div>          
                         <div class="pull-right">

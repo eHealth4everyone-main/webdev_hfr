@@ -118,7 +118,17 @@
                                     <strong id="state-id"></strong>
                                 </span>
                                 </div>
-                        </div>           
+                        </div>    
+                        <div class="form-group row">
+                                <label for="state_id" class="col-md-4 col-form-label text-md-right">{{ __('LGA Permission') }}</label>
+                                <div class="col-md-8">
+                                        <select class="form-control select2"  class="form-control" id="lga_id1" name="lga_id1" data-placeholder="Select LGA" required data-width="100%">   
+                                            
+                                        </select>
+                                
+                                </div>
+                        </div>   
+
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                             <button type="submit" id="update" class="btn btn-primary">Update</button>
