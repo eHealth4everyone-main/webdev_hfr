@@ -13,6 +13,11 @@ use App\hs_hospital_history;
 use App\hs_hospital_service;
 use App\hs_hospital_service_history;
 use App\audit;
+use App\Notifications\FacilityApproved;
+use App\Notifications\FacilityVerifiedLevel1;
+use App\Notifications\FacilityVerifiedLevel2;
+use App\Notifications\ApprovalRejected;
+use App\User;
 
 class ApprovalController extends Controller
 {
@@ -111,6 +116,43 @@ class ApprovalController extends Controller
         $status->note = $notes;
         $status->created_at =  Carbon::now()->format('Y-m-d H:i:s');
         $status->save();
+
+        //****** send notifications *********
+        //get users with verification level 1 access
+        if($request->action == "approve"){
+            $users = DB::select("SELECT u.id FROM users u
+                    JOIN model_has_roles r on r.model_id = u.id
+                    JOIN role_has_permissions p on p.role_id = r.role_id
+                    WHERE p.permission_id = 60 and u.state_id = ". $hosp->state_id ."");
+            
+            foreach ($users as $user){
+                $user = user::find($user->id);
+                $user->notify(new ApprovalRejected($message,$request->id));
+            }  
+        }
+
+        if($request->action == "reject"){ // if rejected send notification to requester
+            if($request->requested_action == "CREATE"){
+                $userid = $hosp->created_by;
+            }
+            else{
+                $userid = $hosp->requested_by;
+            }
+
+            $user = user::find($userid);
+            $user->notify(new ApprovalRejected($message,$request->id));
+        }
+
+
+        //mark as read the notification
+        $notification_id = DB::select("select id from notifications where type like '%teRequest' and 
+        notifiable_id=". Auth::user()->id ." and data like '%" . $request->id . "%' and read_at is null");
+
+        if (!empty($notification_id)){
+            auth()->user()->unreadNotifications->where('id', $notification_id[0]->id)->markAsRead();
+        }
+ 
+        // ****** notifiction end*****
     
         session()->flash("alert-success", $message);
         return redirect()->route('view.pendingapproval');
@@ -133,24 +175,25 @@ class ApprovalController extends Controller
 
     public function storeVerification1(Request $request)
     {
+       
         if($request->action == "approve"){
             if($request->requested_action == "CREATE"){
                 $status_id = 4;
                 $notes = $request->notes;
-                $message = "Facility Creation Verified";
+                $message = "Facility Creation Verified (Level 1)";
                 $action="Create Verified (Lv1)";
             }
             elseif($request->requested_action == "UPDATE"){
                 $status_id = 11;
                 $notes = $request->notes;
-                $message = "Facility Update Verified";
+                $message = "Facility Update Verified (Level 1)";
                 $action="Update Verified (Lv1)";
             }
             else{
                 $status_id = 18;
                 $notes = $request->notes;
                 $action="Delete Verified(Lv1)";
-                $message = "Facility Deletion Verified";
+                $message = "Facility Deletion Verified (Level 1)";
             }
         }
 
@@ -158,19 +201,19 @@ class ApprovalController extends Controller
             if($request->requested_action == "CREATE"){
                 $status_id = 5;
                 $notes = $request->notes;
-                $message = "Facility Verification Rejected";
+                $message = "Facility Verification Rejected (Level 1)";
                 $action="Create Rejected (Lv1)";
             }
             elseif($request->requested_action == "UPDATE"){
                 $status_id = 12;
                 $notes = $request->notes;
-                $message = "Facility Verification Rejected";
+                $message = "Facility Verification Rejected (Level 1)";
                 $action="Update Rejected (Lv1)";
             }
             else{
                 $status_id = 19;
                 $notes = $request->notes;
-                $message = "Facility Verification Rejected";
+                $message = "Facility Verification Rejected (Level 1)";
                 $action="Delete Rejected (Lv1)";                
             }
         }
@@ -189,9 +232,31 @@ class ApprovalController extends Controller
         $status->created_at = Carbon::now()->format('Y-m-d H:i:s');
         $status->save();
     
+         //****** send notifications *********
+        //get users with verification level 2 access
+        $users = DB::select("SELECT u.id FROM users u
+        JOIN model_has_roles r on r.model_id = u.id
+        JOIN role_has_permissions p on p.role_id = r.role_id
+        WHERE p.permission_id = 61 and u.state_id = ". $hosp->state_id ."");
+        
+        foreach ($users as $user){
+            $user = user::find($user->id);
+            $user->notify(new FacilityVerifiedLevel1($message,$request->id));
+        }  
+
+        //mark as read the notification
+        $notification_id = DB::select("select id from notifications where type like '%FacilityApproved' and 
+        notifiable_id=". Auth::user()->id ." and data like '%" . $request->id . "%' and read_at is null");
+
+        if (!empty($notification_id)){
+            auth()->user()->unreadNotifications->where('id', $notification_id[0]->id)->markAsRead();
+        }
+
+        // ****** notifiction end*****
+
+
         session()->flash("alert-success", $message);
         return redirect()->route('view.pendingverification1');
-
     }
 
     public function pendingVerification2()
@@ -298,6 +363,30 @@ class ApprovalController extends Controller
                 hs_hospital::destroy($request->id);
             }
         }
+
+        //****** send notifications *********
+        //get users with verification level 2 access
+        // $users = DB::select("SELECT u.id FROM users u
+        // JOIN model_has_roles r on r.model_id = u.id
+        // JOIN role_has_permissions p on p.role_id = r.role_id
+        // WHERE p.permission_id = 61 and u.state_id = ". $hosp->state_id ."");
+        
+        // foreach ($users as $user){
+        //     $user = user::find($user->id);
+        //     $user->notify(new FacilityVerifiedLevel1($message,$request->id));
+        // }  
+
+        //mark as read the notification
+        $notification_id = DB::select("select id from notifications where type like '%FacilityVerifiedLevel1' and 
+        notifiable_id=". Auth::user()->id ." and data like '%" . $request->id . "%' and read_at is null");
+
+        if (!empty($notification_id)){
+            auth()->user()->unreadNotifications->where('id', $notification_id[0]->id)->markAsRead();
+        }
+
+        // ****** notifiction end*****
+
+
 
         session()->flash("alert-success", $message);
         return redirect()->route('view.pendingverification2');

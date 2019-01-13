@@ -122,7 +122,7 @@ Hospitals and Clinics
                             @if(auth()->user()->hasPermissionTo(4))
                             <a href="#">
                                 <button class="btn btn-danger btn-sm"  type="button"  data-toggle="modal" data-target="#delete"
-                                    data-id_del="{{$fac->id}}" data-unique_id_del="{{$fac->unique_id}}" data-facility_name_del="{{$fac->facility_name}}"> 
+                                    data-id_del="{{$fac->id}}" data-unique_id_del="{{$fac->unique_id}}" data-facility_name_del="{{$fac->facility_name}}" data-state_id_del="{{$fac->state_id}}"> 
                                     Delete
                                 </button>
                             </a>
@@ -498,6 +498,9 @@ Hospitals and Clinics
                 <form method="POST" action="{{route('hospitals.InitiateDelete')}}">
                     @csrf
                     <input type="hidden" id="facility_id" name="facility_id">
+                    <input type="hidden" id="facility_name_to_del" name="facility_name_to_del">
+                    <input type="hidden" id="state_id_del" name="state_id_del">
+
                     <div class="panel-body">
                         
                         <div class="panel-group" id="accordion_d">
@@ -654,7 +657,9 @@ Hospitals and Clinics
         
             modal.find('.modal-body #unique_id_del').text(button.data('unique_id_del'));
             modal.find('.modal-body #facility_name_del').text(button.data('facility_name_del'));
-            modal.find('.modal-body #facility_id').val(button.data('id_del'));            
+            modal.find('.modal-body #facility_id').val(button.data('id_del'));   
+            modal.find('.modal-body #facility_name_to_del').val(button.data('facility_name_del'));
+            modal.find('.modal-body #state_id_del').val(button.data('state_id_del'));
           
         });//end
         

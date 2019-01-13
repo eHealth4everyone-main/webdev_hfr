@@ -12,6 +12,10 @@ use App\hs_hospital_service_history;
 use App\hs_status_tracking;
 use Carbon\Carbon;
 use Auth;
+use App\Notifications\CreateRequest;
+use App\Notifications\UpdateRequest;
+use App\Notifications\DeleteRequest;
+use App\User;
 
 class HospitalsController extends Controller
 {
@@ -85,7 +89,6 @@ class HospitalsController extends Controller
     
     public function store(Request $request)
     {
-        // dd($request->all());
 
         $request->validate([
             'registration_no'=>'nullable|max:20',
@@ -161,13 +164,27 @@ class HospitalsController extends Controller
          $services[] = $request->services;
          if (!empty($services)){
             foreach ($services as $id){
-                $hosp_services = new hs_hospital_service;
+                $hosp_services = new hs_hospital_service_history;
                 $hosp_services->service_id = $id;
                 $hosp_services->hospital_id = $hosp_id; 
                 $hosp_services->save();
             }            
          }
         
+         //****** send notifications *********
+
+         //get users with approval access
+        $users = DB::select("SELECT u.id FROM users u
+                JOIN model_has_roles r on r.model_id = u.id
+                JOIN role_has_permissions p on p.role_id = r.role_id
+                WHERE p.permission_id = 59 and u.state_id = ". $request->state_id ."");
+        
+        foreach ($users as $user){
+            $user = user::find($user->id);
+            $user->notify(new CreateRequest($request->facility_name, $hosp_id));
+        }  
+        // ****** notifiction end*****
+     
         
         session()->flash("alert-success", "Request Sent Successfully!");
         return redirect()->back();
@@ -313,6 +330,7 @@ class HospitalsController extends Controller
             'onsite_imaging'=>'nullable',
             'mortuary_services'=>'nullable',
         ]);
+     
        
         //update records in history with new changes
         $hosp = new hs_hospital_history;
@@ -344,7 +362,12 @@ class HospitalsController extends Controller
             $services_before[] = $s->service_id;
         }
 
-        $services_update[] = $request->services;
+        if(empty($request->services)){
+            $services_update = [];
+        }
+        else{
+            $services_update = $request->services;
+        }
 
         $diff = array_diff($services_before, $services_update);
 
@@ -360,12 +383,26 @@ class HospitalsController extends Controller
             }
         }
 
+        //****** send notifications *********
+
+        //get users with approval access
+        $users = DB::select("SELECT u.id FROM users u
+                JOIN model_has_roles r on r.model_id = u.id
+                JOIN role_has_permissions p on p.role_id = r.role_id
+                WHERE p.permission_id = 59 and u.state_id = ". $request->state_id ."");
+        
+        foreach ($users as $user){
+            $user = user::find($user->id);
+            $user->notify(new UpdateRequest($request->facility_name, $id));
+        }  
+        // ****** notifiction end*****
+
         session()->flash("alert-success", "Request Sent Successfully!");
         return redirect()->route('hospitals.index');
     }
     
     public function InitiateDelete(Request $request){ 
-        // dd($request->all());
+        
         $hs_tracking = new hs_status_tracking;
         $hs_tracking->action = "Delete Request"; 
         $hs_tracking->hospital_id = $request->facility_id;
@@ -381,6 +418,23 @@ class HospitalsController extends Controller
         $hosp->requested_by = Auth::user()->id; 
         $hosp->save();
         
+        
+        //****** send notifications *********
+
+        //get users with approval access
+        $users = DB::select("SELECT u.id FROM users u
+            JOIN model_has_roles r on r.model_id = u.id
+            JOIN role_has_permissions p on p.role_id = r.role_id
+            WHERE p.permission_id = 59 and u.state_id = ". $request->state_id_del ."");
+            
+        $name = $request->facility_name_to_del;
+        foreach ($users as $user){
+            $user = user::find($user->id);
+            $user->notify(new DeleteRequest($name, $request->facility_id));
+        }  
+        // ****** notifiction end*****
+
+
         session()->flash("alert-success", "Delete request initiated successfully!");
         return redirect()->back();
     }

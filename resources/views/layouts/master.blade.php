@@ -57,19 +57,49 @@
                                     <li class="dropdown notifications-menu">
                                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                         <i class="fa fa-bell-o"></i>
-                                        <span class="label label-warning">0</span>
+                                        <span class="label label-warning">{{ auth()->user()->unreadNotifications->count() }}</span>
                                         </a>
                                         <ul class="dropdown-menu">
-                                        {{-- <li class="header">You have 10 notifications</li> --}}
+                                        <li class="header">You have {{ auth()->user()->unreadNotifications->count() }} pending request(s)</li>
                                         <li>
                                             <!-- inner menu: contains the actual data -->
                                             <ul class="menu">                                               
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="fa fa-check-square text-aqua"></i>New...
-                                                    </a>
-                                                </li>
                                                
+                                              @foreach (auth()->user()->unreadNotifications as $notification)
+                                                    <li>
+                                                        @if ($notification->type == 'App\Notifications\CreateRequest')
+                                                            <a href="{{ route('view.pendingapproval') }}">
+                                                                <i class="fa fa-exclamation-circle text-aqua"></i> {{ $notification->data['action'] }}   
+                                                            </a> 
+                                                        @endif
+                                                        @if ($notification->type == 'App\Notifications\UpdateRequest')
+                                                            <a href="{{ route('view.pendingapproval') }}">
+                                                                <i class="fa fa-exclamation-circle text-blue"></i> {{ $notification->data['action'] }}  
+                                                            </a> 
+                                                        @endif
+                                                        @if ($notification->type == 'App\Notifications\DeleteRequest')
+                                                            <a href="{{ route('view.pendingapproval') }}">
+                                                                <i class="fa fa-exclamation-circle text-red"></i> {{ $notification->data['action'] }} 
+                                                            </a>   
+                                                        @endif
+                                                        @if ($notification->type == 'App\Notifications\FacilityApproved')
+                                                            <a href="{{ route('view.pendingverification1') }}">
+                                                                <i class="fa fa-check-circle text-green"></i> {{ $notification->data['action'] }} 
+                                                            </a>   
+                                                        @endif
+                                                        @if ($notification->type == 'App\Notifications\FacilityVerifiedLevel1')
+                                                            <a href="{{ route('view.pendingverification2') }}">
+                                                                <i class="fa fa-check-circle text-green"></i> {{ $notification->data['action'] }} 
+                                                            </a>   
+                                                        @endif
+                                                        @if ($notification->type == 'App\Notifications\ApprovalRejected')
+                                                            <a href="#">
+                                                                <i class="fa fa-times-circle text-red"></i> {{ $notification->data['action'] }} 
+                                                            </a>   
+                                                        @endif
+                                                        
+                                                    </li>
+                                              @endforeach
                                             </ul>
                                         </li>
                                         

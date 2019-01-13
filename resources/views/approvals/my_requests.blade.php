@@ -7,11 +7,11 @@ My Pending Requests
 @endsection
 
 @section("content")
-{{-- @if($myrequests->isEmpty())
+@if(empty($myrequests))
     <div class="callout callout-success">
-        <p>You do not have recent requests..</p>
+        <p>You do not have pending requests</p>
   </div>
-@endif --}}
+@endif
 
 @foreach($myrequests as $r)
 
@@ -28,9 +28,10 @@ My Pending Requests
                   Request Type: <span class="label label-danger"> {{$r->action}}</span>                
               @endif
 
-              @if (($r->status_id === 1) or ($r->status_id ===8))
+              @if (($r->status_id === 1) or ($r->status_id ===8) or ($r->status_id ===15))
                 Status: <span class="label label-warning"> {{$r->status}}</span> 
-              @elseif (($r->status_id === 3) or ($r->status_id ===5) or ($r->status_id ===7) or ($r->status_id===10) or ($r->status_id ===12 or ($r->status_id ===12)))
+              @elseif (($r->status_id === 3) or ($r->status_id ===5) or ($r->status_id ===7) or ($r->status_id===10) or ($r->status_id ===12) or 
+                ($r->status_id ===14)  or ($r->status_id ===17) or ($r->status_id ===19) or ($r->status_id ===21) )
                 Status: <span class="label label-danger"> {{$r->status}}</span> 
               @else
                 Status: <span class="label label-success"> {{$r->status}}</span>                 

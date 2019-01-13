@@ -81,11 +81,11 @@
                         @endif
         
                         @if(auth()->user()->hasPermissionTo(59))
-                            <li><a href="{{route('view.pendingapproval')}}"><i class="fa fa-exclamation-circle"></i>Pending Approvals</a></li>
+                            <li><a href="{{ route('view.pendingapproval') }}"><i class="fa fa-exclamation-circle"></i>Pending Approvals</a></li>
                         @endif
 
                         @if(auth()->user()->hasPermissionTo(60))
-                            <li><a href="{{route('view.pendingverification1')}}"><i class="fa fa-exclamation-circle"></i>Pending Level I Verifications</a></li>
+                            <li><a href="{{ route('view.pendingverification1') }}"><i class="fa fa-exclamation-circle"></i>Pending Level I Verifications</a></li>
                         @endif
                         @if(auth()->user()->hasPermissionTo(61))
                             <li><a href="{{route('view.pendingverification2')}}"><i class="fa fa-exclamation-circle"></i>Pending Level II Verifications</a></li>

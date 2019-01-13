@@ -10,7 +10,7 @@ Pending Level I Verification
 @if($pending->isEmpty())
     <div class="callout callout-success">
         <h4>Congrats!</h4>
-        <p>No Pending Verifications</p>
+        <p>You do not have pending verifications</p>
   </div>
 @endif
 
@@ -29,12 +29,13 @@ Pending Level I Verification
                 Request Type: <span class="label label-danger"> {{$p->action}}</span>                
             @endif
 
-            @if (($p->status_id === 1) or ($p->status_id ===8))
-            Status: <span class="label label-warning"> {{$p->status}}</span> 
-            @elseif (($p->status_id === 3) or ($p->status_id ===5) or ($p->status_id ===7) or ($p->status_id===10) or ($p->status_id ===12 or ($p->status_id ===12)))
-            Status: <span class="label label-danger"> {{$p->status}}</span> 
+            @if (($p->status_id === 1) or ($p->status_id ===8) or ($p->status_id ===15))
+                Status: <span class="label label-warning"> {{$p->status}}</span> 
+            @elseif (($p->status_id === 3) or ($p->status_id ===5) or ($p->status_id ===7) or ($p->status_id===10) or ($p->status_id ===12) or 
+                ($p->status_id ===14)  or ($p->status_id ===17) or ($p->status_id ===19) or ($p->status_id ===21))
+                Status: <span class="label label-danger"> {{$p->status}}</span> 
             @else
-            Status: <span class="label label-success"> {{$p->status}}</span>                 
+                Status: <span class="label label-success"> {{$p->status}}</span>                 
             @endif
           </h3>
       
