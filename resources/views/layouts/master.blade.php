@@ -63,36 +63,13 @@
                                         {{-- <li class="header">You have 10 notifications</li> --}}
                                         <li>
                                             <!-- inner menu: contains the actual data -->
-                                            <ul class="menu">
-                                            @if(auth()->user()->hasPermissionTo(2) or auth()->user()->hasPermissionTo(3) or auth()->user()->hasPermissionTo(4))
+                                            <ul class="menu">                                               
                                                 <li>
-                                                    <a href="{{route('view.myrequest')}}">
-                                                    <i class="fa fa-user-secret text-orange"></i>My Pending Requests
+                                                    <a href="#">
+                                                        <i class="fa fa-check-square text-aqua"></i>New...
                                                     </a>
                                                 </li>
-                                            @endif
-
-                                            @if(auth()->user()->hasPermissionTo(59))                                          
-                                                <li>
-                                                    <a href="{{route('view.pendingapproval')}}">
-                                                    <i class="fa fa-check-square text-green"></i>Pending Approvals
-                                                    </a>
-                                                </li>
-                                            @endif
-                                            @if(auth()->user()->hasPermissionTo(60))
-                                                <li>
-                                                    <a href="{{route('view.pendingverification1')}}">
-                                                    <i class="fa fa-check-square text-aqua"></i>Pending Level I Verifications
-                                                    </a>
-                                                </li>
-                                            @endif
-                                            @if(auth()->user()->hasPermissionTo(61))
-                                                <li>
-                                                <a href="{{route('view.pendingverification2')}}">
-                                                    <i class="fa fa-check-square text-orange"></i>Pending Level II Verifications
-                                                    </a>
-                                                </li>
-                                            @endif
+                                               
                                             </ul>
                                         </li>
                                         

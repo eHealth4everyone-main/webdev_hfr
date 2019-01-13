@@ -26,7 +26,7 @@
                             <i class="fa fa-gears"></i>
                             <span>Masters</span>
                             <span class="pull-right-container">
-                                <span class="label label-success pull-right">7</span>
+                                <span class="label label-success pull-right">+</span>
                             </span>
                         </a>
                         <ul class="treeview-menu">
@@ -62,6 +62,36 @@
                         </a>
                     @endif
                    
+                </li>
+                <li  class="treeview"> 
+                    @if(auth()->user()->hasPermissionTo(21) or auth()->user()->hasPermissionTo(17))
+                        <a href="#">
+                            <i class="fa fa-check-circle"></i>
+                            <span>Facility Approvals</span>
+                            <span class="pull-right-container">
+                                    <span class="label label-success pull-right">+</span>
+                            </span>
+                        </a>
+                    @endif
+                    <ul class="treeview-menu">
+                        @if(auth()->user()->hasPermissionTo(2) or auth()->user()->hasPermissionTo(3) or auth()->user()->hasPermissionTo(4))
+                            <li>
+                                <a href="{{route('view.myrequest')}}"><i class="fa fa-exclamation-circle"></i>Pending Requests </a>    
+                            </li>
+                        @endif
+        
+                        @if(auth()->user()->hasPermissionTo(59))
+                            <li><a href="{{route('view.pendingapproval')}}"><i class="fa fa-exclamation-circle"></i>Pending Approvals</a></li>
+                        @endif
+
+                        @if(auth()->user()->hasPermissionTo(60))
+                            <li><a href="{{route('view.pendingverification1')}}"><i class="fa fa-exclamation-circle"></i>Pending Level I Verifications</a></li>
+                        @endif
+                        @if(auth()->user()->hasPermissionTo(61))
+                            <li><a href="{{route('view.pendingverification2')}}"><i class="fa fa-exclamation-circle"></i>Pending Level II Verifications</a></li>
+                        @endif
+                    
+                    </ul>
                 </li>
                 <li> 
                     @if(auth()->user()->hasPermissionTo(9))
@@ -111,7 +141,7 @@
                             <i class="fa fa-users"></i>
                             <span>User Management</span>
                             <span class="pull-right-container">
-                                    <span class="label label-success pull-right">2</span>
+                                    <span class="label label-success pull-right">+</span>
                             </span>
                         </a>
                     @endif
