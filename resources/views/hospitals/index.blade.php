@@ -56,16 +56,7 @@ Hospitals and Clinics
         </div>
         
         <div class="box-body">
-            {{-- download buttons  --}}
-            <div class="btn-group pull-right">
-                    <a href="{{route('export.hosptitals',['state'=>auth::user()->state_id,'format'=>'csv'])}}">
-                        <button type="button" class="btn btn-info btn-sm">Download CSV</button>
-                    </a>
-                    <a href="{{route('export.hosptitals',['state'=>auth::user()->state_id,'format'=>'excel'])}}">
-                        <button type="button" class="btn btn-primary btn-sm">Download Excel</button>
-                    </a>
-            </div>
-
+         
             <table id="table1" class="table table-bordered table-striped">
                 <thead>
                     <tr>
@@ -162,6 +153,17 @@ Hospitals and Clinics
                     {{$facilities->links()}}                  
                 </div>
             </div>
+            
+               {{-- download buttons  --}}
+               <div class="btn-group pull-right">
+                    <a href="{{route('export.hosptitals',['state'=>auth::user()->state_id,'format'=>'csv'])}}">
+                        <button type="button" class="btn btn-info btn-sm">Download CSV</button>
+                    </a>
+                    <a href="{{route('export.hosptitals',['state'=>auth::user()->state_id,'format'=>'excel'])}}">
+                        <button type="button" class="btn btn-primary btn-sm">Download Excel</button>
+                    </a>
+            </div>
+
             
         </div>
       
