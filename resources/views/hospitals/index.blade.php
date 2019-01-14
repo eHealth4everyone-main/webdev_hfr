@@ -112,7 +112,7 @@ Hospitals and Clinics
                                 View
                             </button>
                         </a> 
-                        @if (($fac->lga_id == Auth::user()->lga_id) OR ($fac->lga_id == 1))                    
+                        @if (($fac->lga_id == Auth::user()->lga_id) OR (Auth::user()->lga_id == 1))                    
                             @if(auth()->user()->hasPermissionTo(3))
                             <a href="{{route('hospitals.edit',$fac->id)}}">
                                 <button class="btn btn-warning btn-sm"  type="button" >Edit</button>
