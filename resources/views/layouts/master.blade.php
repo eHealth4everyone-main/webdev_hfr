@@ -60,7 +60,7 @@
                                         <span class="label label-warning">{{ auth()->user()->unreadNotifications->count() }}</span>
                                         </a>
                                         <ul class="dropdown-menu">
-                                        <li class="header">You have {{ auth()->user()->unreadNotifications->count() }} pending request(s)</li>
+                                        <li class="header">You have {{ auth()->user()->unreadNotifications->count() }} notifications</li>
                                         <li>
                                             <!-- inner menu: contains the actual data -->
                                             <ul class="menu">                                               

@@ -28,8 +28,8 @@
             <tr>  
               {{-- check if values are not empty --}}
               @if(!($audit['old']=="" and $audit['new']=="")) 
-                {{-- check if attribute is not status id --}}
-                @if($attr != 'status_id' AND $attr != 'requested_by') 
+                {{-- check if attribute is not status id, approved by, verified by and update no--}}
+                @if($attr != 'status_id' AND $attr != 'requested_by' AND $attr != 'approved_by' AND $attr != 'verified_lv1_by' AND $attr != 'verified_lv2_by'AND $attr != 'update_no') 
                   <td><label>{{array_search($attr,$lookup)}}</label></td>
                   <td>Updated from </td>
                   

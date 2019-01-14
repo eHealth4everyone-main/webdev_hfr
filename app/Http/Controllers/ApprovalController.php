@@ -106,6 +106,7 @@ class ApprovalController extends Controller
         $hosp = new hs_hospital_history;
         $hosp = hs_hospital_history::findOrFail($request->id);
         $hosp->status_id = $status_id;
+        $hosp->approved_by = Auth::user()->id;
         $hosp->save();
     
         $status = new hs_status_tracking;
@@ -115,6 +116,7 @@ class ApprovalController extends Controller
         $status->status_id = $status_id;
         $status->note = $notes;
         $status->created_at =  Carbon::now()->format('Y-m-d H:i:s');
+        $status->update_no = $hosp->update_no;
         $status->save();
 
         //****** send notifications *********
@@ -127,7 +129,7 @@ class ApprovalController extends Controller
             
             foreach ($users as $user){
                 $user = user::find($user->id);
-                $user->notify(new ApprovalRejected($message,$request->id));
+                $user->notify(new FacilityApproved($message,$request->id));
             }  
         }
 
@@ -221,6 +223,7 @@ class ApprovalController extends Controller
         $hosp = new hs_hospital_history();
         $hosp = hs_hospital_history::findOrFail($request->id);
         $hosp->status_id = $status_id;
+        $hosp->verified_lv1_by = Auth::user()->id;
         $hosp->save();
     
         $status = new hs_status_tracking;
@@ -230,19 +233,28 @@ class ApprovalController extends Controller
         $status->status_id = $status_id;
         $status->note = $notes;
         $status->created_at = Carbon::now()->format('Y-m-d H:i:s');
+        $status->update_no = $hosp->update_no;
         $status->save();
     
-         //****** send notifications *********
+        //****** send notifications *********
         //get users with verification level 2 access
-        $users = DB::select("SELECT u.id FROM users u
-        JOIN model_has_roles r on r.model_id = u.id
-        JOIN role_has_permissions p on p.role_id = r.role_id
-        WHERE p.permission_id = 61 and u.state_id = ". $hosp->state_id ."");
-        
-        foreach ($users as $user){
-            $user = user::find($user->id);
-            $user->notify(new FacilityVerifiedLevel1($message,$request->id));
-        }  
+        if($request->action == "approve"){      
+            $users = DB::select("SELECT u.id FROM users u
+            JOIN model_has_roles r on r.model_id = u.id
+            JOIN role_has_permissions p on p.role_id = r.role_id
+            WHERE p.permission_id = 61 and u.state_id = ". $hosp->state_id ."");
+            
+            foreach ($users as $user){
+                $user = user::find($user->id);
+                $user->notify(new FacilityVerifiedLevel1($message,$request->id));
+            }  
+        }
+        if($request->action == "reject"){ // if rejected send notification to approver
+            $userid = $hosp->approved_by;
+
+            $user = user::find($userid);
+            $user->notify(new VerificationRejectedLevel1($message,$request->id));
+        }
 
         //mark as read the notification
         $notification_id = DB::select("select id from notifications where type like '%FacilityApproved' and 
@@ -251,7 +263,6 @@ class ApprovalController extends Controller
         if (!empty($notification_id)){
             auth()->user()->unreadNotifications->where('id', $notification_id[0]->id)->markAsRead();
         }
-
         // ****** notifiction end*****
 
 
@@ -281,19 +292,19 @@ class ApprovalController extends Controller
             if($request->requested_action == "CREATE"){
                 $status_id = 6;
                 $notes = $request->notes;
-                $message = "Facility Creation Verified";
+                $message = "Facility Creation Verified (Level 2)";
                 $action="Create Verified (Lv2)";
             }
             elseif($request->requested_action == "UPDATE"){
                 $status_id = 13;
                 $notes = $request->notes;
-                $message = "Facility Update Verified";
+                $message = "Facility Update Verified (Level 2";
                 $action="Update Verified (Lv2)";
             }
             else{
                 $status_id = 20;
                 $notes = $request->notes;
-                $message = "Facility Deletion Verified";
+                $message = "Facility Deletion Verified (Level 2";
                 $action="Delete Verified (Lv2)";
             }
         }
@@ -302,19 +313,19 @@ class ApprovalController extends Controller
             if($request->requested_action == "CREATE"){
                 $status_id = 7;
                 $notes = $request->notes;
-                $message = "Facility Verification Rejected";
+                $message = "Facility Verification Rejected (Level 2";
                 $action="Create Rejected (Lv2)";
             }
             elseif($request->requested_action == "UPDATE"){
                 $status_id = 14;
                 $notes = $request->notes;
-                $message = "Facility Verification Rejected";
+                $message = "Facility Verification Rejected (Level 2";
                 $action="Update Rejected (Lv2)";
             }
             else{
                 $status_id = 21;
                 $notes = $request->notes;
-                $message = "Facility Verification Rejected";
+                $message = "Facility Verification Rejected (Level 2";
                 $action="Delete Rejected (Lv2)";              
             }
         }
@@ -322,6 +333,7 @@ class ApprovalController extends Controller
         $hosp = new hs_hospital_history();
         $hosp = hs_hospital_history::findOrFail($request->id);
         $hosp->status_id = $status_id;
+        $hosp->verified_lv2_by = Auth::user()->id;
         $hosp->save();
     
         $status = new hs_status_tracking;
@@ -331,6 +343,7 @@ class ApprovalController extends Controller
         $status->status_id = $status_id;
         $status->note = $notes;
         $status->created_at = Carbon::now()->format('Y-m-d H:i:s');
+        $status->update_no = $hosp->update_no;
         $status->save();
     
          //update hospital services to main table
@@ -356,25 +369,28 @@ class ApprovalController extends Controller
         //Delete facility after final verification
         if($request->requested_action == "DELETE"){
             if($status_id == 20){
-                // hs_hospital_service_history::where('hospital_id', $request->id)->delete();
-                // hs_hospital_history::destroy($request->id);
-
                 hs_hospital_service::where('hospital_id', $request->id)->delete();
                 hs_hospital::destroy($request->id);
             }
         }
 
         //****** send notifications *********
-        //get users with verification level 2 access
-        // $users = DB::select("SELECT u.id FROM users u
-        // JOIN model_has_roles r on r.model_id = u.id
-        // JOIN role_has_permissions p on p.role_id = r.role_id
-        // WHERE p.permission_id = 61 and u.state_id = ". $hosp->state_id ."");
-        
-        // foreach ($users as $user){
-        //     $user = user::find($user->id);
-        //     $user->notify(new FacilityVerifiedLevel1($message,$request->id));
-        // }  
+
+        //get users with in the state and send them notifcaion after final verifcation
+        if($request->action == "approve"){      
+            $users = DB::select("SELECT id FROM users where state_id = ". $hosp->state_id ."");
+            
+            foreach ($users as $user){
+                $user = user::find($user->id);
+                $user->notify(new FacilityVerifiedLevel2($message,$request->id));
+            }  
+        } 
+
+        if($request->action == "reject"){ // if rejected send notification to verifier 1
+            $userid = $hosp->verfied_lv1_by;
+            $user = user::find($userid);
+            $user->notify(new VerificationRejectedLevel2($message,$request->id));
+        }
 
         //mark as read the notification
         $notification_id = DB::select("select id from notifications where type like '%FacilityVerifiedLevel1' and 

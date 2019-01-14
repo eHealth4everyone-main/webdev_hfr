@@ -330,14 +330,17 @@ class HospitalsController extends Controller
             'onsite_imaging'=>'nullable',
             'mortuary_services'=>'nullable',
         ]);
-     
-       
+
         //update records in history with new changes
         $hosp = new hs_hospital_history;
+        
+        $update_no = $hosp->getUpdateNumber($id);
+    
         $hosp = hs_hospital_history::findOrFail($id);
         $hosp->fill($request->all());
         $hosp->status_id = 8;
         $hosp->requested_by = Auth::user()->id;
+        $hosp->update_no = $update_no;
         $hosp->start_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->start_date))); 
         $hosp->operational_days = $hosp->arrayValuesTostring($request->operational_days);
         $hosp->save();
@@ -349,6 +352,7 @@ class HospitalsController extends Controller
         $status->user_id = Auth::user()->id;
         $status->status_id = 8;
         $status->created_at = Carbon::now()->format('Y-m-d H:i:s');
+        $status->update_no = $update_no;
         $status->save();
 
         //get services before update

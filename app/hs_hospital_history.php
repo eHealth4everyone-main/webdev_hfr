@@ -53,4 +53,11 @@ class hs_hospital_history extends Model implements Auditable
 
         return $id;
     }
+
+    public function getUpdateNumber($state_id){
+        $update = DB::select("Select update_no+1 num from hs_hospitals_history where id = ". $state_id ."");
+
+        return $update[0]->num;
+    }
+
 }
