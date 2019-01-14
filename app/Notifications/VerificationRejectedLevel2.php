@@ -16,10 +16,12 @@ class VerificationRejectedLevel2 extends Notification
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($message,$hosp_id)
     {
-        //
+        $this->message = $message;
+        $this->facility_id = $hosp_id;
     }
+
 
     /**
      * Get the notification's delivery channels.
@@ -29,7 +31,7 @@ class VerificationRejectedLevel2 extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail'];
+        return ['database'];
     }
 
     /**
@@ -55,7 +57,8 @@ class VerificationRejectedLevel2 extends Notification
     public function toArray($notifiable)
     {
         return [
-            //
+            'action' => $this->message,
+            'facility_id' => $this->facility_id,
         ];
     }
 }

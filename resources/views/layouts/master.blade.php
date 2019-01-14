@@ -61,9 +61,18 @@
                                         </a>
                                         <ul class="dropdown-menu">
                                         <li class="header">You have {{ auth()->user()->unreadNotifications->count() }} notifications</li>
+
                                         <li>
                                             <!-- inner menu: contains the actual data -->
                                             <ul class="menu">                                               
+                                                <li class="header"> 
+                                                    @if (auth()->user()->unreadNotifications->count() != 0)
+                                                        <a href="{{ route('notification.markAsRead') }}">  
+                                                            <i class="fa fa-eye"></i> <strong>Mark all as Read</strong>
+                                                        </a>
+                                                    @endif
+                                                   
+                                                </li>
                                                
                                               @foreach (auth()->user()->unreadNotifications as $notification)
                                                     <li>
@@ -94,6 +103,16 @@
                                                         @endif
                                                         @if ($notification->type == 'App\Notifications\ApprovalRejected')
                                                             <a href="#">
+                                                                <i class="fa fa-times-circle text-red"></i> {{ $notification->data['action'] }} 
+                                                            </a>   
+                                                        @endif
+                                                        @if ($notification->type == 'App\Notifications\VerificationRejectedLevel1')
+                                                            <a href="{{ route('view.pendingapproval') }}">
+                                                                <i class="fa fa-times-circle text-red"></i> {{ $notification->data['action'] }} 
+                                                            </a>   
+                                                        @endif
+                                                        @if ($notification->type == 'App\Notifications\VerificationRejectedLevel2')
+                                                            <a href="{{ route('view.pendingverification1') }}">
                                                                 <i class="fa fa-times-circle text-red"></i> {{ $notification->data['action'] }} 
                                                             </a>   
                                                         @endif

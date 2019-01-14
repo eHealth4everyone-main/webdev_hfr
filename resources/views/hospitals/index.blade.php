@@ -154,8 +154,9 @@ Hospitals and Clinics
                 </div>
             </div>
             
-               {{-- download buttons  --}}
-               <div class="btn-group pull-right">
+        </div>
+            {{-- download buttons  --}}
+            <div class="btn-group pull-right">
                     <a href="{{route('export.hosptitals',['state'=>auth::user()->state_id,'format'=>'csv'])}}">
                         <button type="button" class="btn btn-info btn-sm">Download CSV</button>
                     </a>
@@ -164,8 +165,6 @@ Hospitals and Clinics
                     </a>
             </div>
 
-            
-        </div>
       
     </div>
     

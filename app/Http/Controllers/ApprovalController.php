@@ -17,6 +17,8 @@ use App\Notifications\FacilityApproved;
 use App\Notifications\FacilityVerifiedLevel1;
 use App\Notifications\FacilityVerifiedLevel2;
 use App\Notifications\ApprovalRejected;
+use App\Notifications\VerificationRejectedLevel1;
+use App\Notifications\VerificationRejectedLevel2;
 use App\User;
 
 class ApprovalController extends Controller
@@ -53,7 +55,7 @@ class ApprovalController extends Controller
 
         $status = DB::table('hospital_status_tracking')
             ->where('state_id', '=', Auth::user()->state_id)
-            ->whereIn('status_id',[1,5,8,12,15,17])
+            ->whereIn('status_id',[1,5,8,9,12,15,17])
             ->get();
      
         return view('approvals.pending_approval',compact('pending','status')); 
@@ -387,7 +389,7 @@ class ApprovalController extends Controller
         } 
 
         if($request->action == "reject"){ // if rejected send notification to verifier 1
-            $userid = $hosp->verfied_lv1_by;
+            $userid = $hosp->verified_lv1_by;
             $user = user::find($userid);
             $user->notify(new VerificationRejectedLevel2($message,$request->id));
         }
