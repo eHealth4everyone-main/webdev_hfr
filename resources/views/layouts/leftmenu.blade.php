@@ -63,8 +63,16 @@
                     @endif
                    
                 </li>
+                <li> 
+                    @if(auth()->user()->hasPermissionTo(2) or auth()->user()->hasPermissionTo(3) or auth()->user()->hasPermissionTo(4))
+                        <a href="{{route('view.myrequest')}}">
+                            <i class="fa  fa-exclamation-triangle"></i>
+                            <span>My Pending Requests</span>
+                        </a>
+                    @endif   
+                </li>
                 <li  class="treeview"> 
-                    @if(auth()->user()->hasPermissionTo(21) or auth()->user()->hasPermissionTo(17))
+                    @if(auth()->user()->hasPermissionTo(59) or auth()->user()->hasPermissionTo(60) or auth()->user()->hasPermissionTo(61))
                         <a href="#">
                             <i class="fa fa-check-circle"></i>
                             <span>Facility Approvals</span>
@@ -73,13 +81,7 @@
                             </span>
                         </a>
                     @endif
-                    <ul class="treeview-menu">
-                        @if(auth()->user()->hasPermissionTo(2) or auth()->user()->hasPermissionTo(3) or auth()->user()->hasPermissionTo(4))
-                            <li>
-                                <a href="{{route('view.myrequest')}}"><i class="fa fa-exclamation-circle"></i>Pending Requests </a>    
-                            </li>
-                        @endif
-        
+                    <ul class="treeview-menu">        
                         @if(auth()->user()->hasPermissionTo(59))
                             <li><a href="{{ route('view.pendingapproval') }}"><i class="fa fa-exclamation-circle"></i>Pending Approvals</a></li>
                         @endif

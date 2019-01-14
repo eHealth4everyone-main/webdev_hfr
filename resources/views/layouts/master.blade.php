@@ -53,7 +53,7 @@
                                    
                                 </li>
                                 <!-- Notifications: style can be found in dropdown.less -->
-                                @if(auth()->user()->hasPermissionTo(59) or auth()->user()->hasPermissionTo(61) or auth()->user()->hasPermissionTo(60))
+                               
                                     <li class="dropdown notifications-menu">
                                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                         <i class="fa fa-bell-o"></i>
@@ -105,7 +105,7 @@
                                         
                                         </ul>
                                     </li>
-                                @endif
+                              
                                 <!-- User Account: style can be found in dropdown.less -->
                                 <li class="dropdown user user-menu">
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
