@@ -2,7 +2,7 @@
 
 
 @section('content-title')
-Messages & Feedbacks
+Users Feedback
 @endsection
 
 @section("content")

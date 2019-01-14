@@ -124,7 +124,7 @@
                     @if(auth()->user()->hasPermissionTo(29))
                         <a href="{{route('getMessages')}}">
                             <i class="fa  fa-comments"></i>
-                            <span>Messages</span>
+                            <span>Users Feedback</span>
                         </a>
                     @endif
                 </li>
