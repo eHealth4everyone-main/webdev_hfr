@@ -49,6 +49,12 @@ Route::post('hospitals/servicesavailable','HospitalsController@getservices')->na
 Route::get('resources/download/{file}', 'ResourceController@download')->name('downloadFile');
 Route::get('resources', 'ResourceController@public_index')->name('public_resources');
 
+//to factor token
+Route::get('login/token', 'Auth\TokenController@getToken');
+Route::post('login/token', 'Auth\TokenController@postToken')->name('login.token');
+
+
+
 Auth::routes();
 
 Route::middleware(["auth"])->group(function(){

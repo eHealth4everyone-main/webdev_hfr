@@ -155,8 +155,8 @@ class ApprovalController extends Controller
         if (!empty($notification_id)){
             auth()->user()->unreadNotifications->where('id', $notification_id[0]->id)->markAsRead();
         }
- 
-        // ****** notifiction end*****
+
+        // ****** notifiction end *****
     
         session()->flash("alert-success", $message);
         return redirect()->route('view.pendingapproval');
