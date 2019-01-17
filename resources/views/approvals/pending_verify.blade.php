@@ -57,7 +57,7 @@ Pending Verifications
 
         <td>{{$p->status}}</td>
         <td>
-            @if ($p->action === "CREATE")
+            @if ($p->action === "CREATE FACILITY")
                 <a href="#">
                     <button class="btn btn-success btn-sm"  type="button" data-toggle="modal" data-target="#view_details" data-id="{{$p->id}}"
                         data-unique_id="{{$p->unique_id}}" data-registration_no="{{$p->registration_no}}" data-start_date="{{$p->start_date}}"
@@ -78,7 +78,7 @@ Pending Verifications
                         Review
                     </button>
                 </a>  
-            @elseif ($p->action === "UPDATE") 
+            @elseif ($p->action === "UPDATE FACILITY") 
                 <a href="{{route('view.updated_records',['id'=>$p->id,'stage'=>'approve'])}}">
                     <button class="btn btn-success btn-sm"  type="button" > Review</button>
                 </a>

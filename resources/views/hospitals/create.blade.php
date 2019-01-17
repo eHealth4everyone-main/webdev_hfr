@@ -484,7 +484,7 @@
     <a href="{{route('hospitals.index')}}">
         <button type="button" class="btn btn-warning">Return Back</button>
     </a>
-    <button type="submit" class="btn btn-primary pull-right">Send Create Request</button>
+    <button type="submit" class="btn btn-primary pull-right">Submit Request</button>
 </div>
 <!-- /.box-footer -->
 </form>

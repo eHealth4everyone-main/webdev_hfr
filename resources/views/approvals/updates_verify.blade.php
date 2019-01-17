@@ -16,7 +16,7 @@
     <!-- /.box-tools -->
   </div>
   <!-- /.box-header -->
-  <form method="POST" action="{{route('store.approval')}}">
+  <form method="POST" action="{{route('verify.store')}}">
     @csrf
     
     <div class="box-body">
@@ -131,7 +131,7 @@
       <div class="pull-right">
         <button type="submit" class="btn btn-danger" name="action" value="reject">Reject</button>
         <button type="submit" class="btn btn-success" name="action" value="approve">Verify</button>
-        <a href="{{ route('view.pendingapproval') }}">
+        <a href="{{ route('verify.pending') }}">
             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
         </a>
         

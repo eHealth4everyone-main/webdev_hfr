@@ -91,7 +91,7 @@ Route::middleware(["auth"])->group(function(){
     Route::get('admin/hospitals/myrequest/update/{id}','MyRequestController@editRequest')->name('myrequest.edit');
     Route::put('admin/hospitals/myrequest/updates','MyRequestController@updateRequest')->name('myrequest.update');
     Route::post('admin/hospitals/myrequest/delete','MyRequestController@deleteRequest')->name('myrequest.delete');
-
+    
 
 
     //approvals

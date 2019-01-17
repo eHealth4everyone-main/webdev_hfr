@@ -535,7 +535,7 @@ Hospitals and Clinics
                     </div>
                     
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-success">Send Delete Request</button>
+                        <button type="submit" class="btn btn-success">Submit Delete Request</button>
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     </div>
                 </form>

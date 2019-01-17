@@ -69,9 +69,13 @@ My Pending Requests
               <a href="{{ route('myrequest.edit',$r->id) }}">
                   <button class="btn btn-warning btn-sm"  type="button" >Update Request</button>
               </a>
-              <a href="{{route('myrequest.delete',$r->id)}}">
-                  <button class="btn btn-danger btn-sm"  type="button" >Delete Request</button>
+              <a href="#">
+                  <button class="btn btn-danger btn-sm"  type="button"  data-toggle="modal" data-target="#delete"
+                    data-id="{{$r->id}}" data-status="{{$r->status_id}}"> 
+                    Delete Request
+                </button>
               </a>
+             
             @endif
     
           </td>
@@ -88,6 +92,31 @@ My Pending Requests
 @endif
 
  
+<!-- Modal delete record -->
+<div class="modal fade" id="delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+      <div class="modal-content">
+       
+      <form action="{{route('myrequest.delete')}}" method="POST">
+          @csrf
+
+          <div class="modal-body">
+              <p class="text-center">
+                Are you sure you want to delete this request?
+              </p>
+                <input type="hidden" id="hosp_id" name="hosp_id" >  
+                <input type="hidden" id="status_id" name="status_id" >   
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">No</button>
+            <button type="submit" class="btn btn-warning btn-sm">Yes</button>
+          </div>
+        </form>
+        
+      </div>
+    </div>
+</div> 
   
 
 @endsection 
@@ -104,11 +133,17 @@ My Pending Requests
         "ordering": true,
         "info":     true
     } );
-  
-     
-
 
   });
+   //delete modal
+   $('#delete').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) 
+       
+        var modal = $(this)
+        modal.find('.modal-body #hosp_id').val(button.data('id'));
+        modal.find('.modal-body #status_id').val(button.data('status'));
+    })//end
+      
 </script>
 
 @endpush

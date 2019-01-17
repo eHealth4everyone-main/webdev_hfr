@@ -66,6 +66,7 @@
                                     
                                 </select>
                                 <input type="hidden" name="state_id" value="{{$hosp->state_id}}">
+                                <input type="hidden" name="status_id" value="{{$hosp->status_id}}">
                                 <input type="hidden" name="id" value="{{$hosp->id}}">
                                 <input type="hidden" name="update_no" value="{{$hosp->update_no}}">
 
