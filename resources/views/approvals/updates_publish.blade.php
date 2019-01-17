@@ -16,7 +16,7 @@
     <!-- /.box-tools -->
   </div>
   <!-- /.box-header -->
-  <form method="POST" action="{{route('store.verify1')}}">
+  <form method="POST" action="{{route('store.verify2')}}">
     @csrf
     
     <div class="box-body">
@@ -29,7 +29,7 @@
                 {{-- check if values are not empty --}}
                 @if(!($audit['old']=="" and $audit['new']=="")) 
                   {{-- check if attribute is not status id --}}
-                  @if($attr != 'status_id'  AND $attr != 'requested_by' AND $attr != 'approved_by' AND $attr != 'verified_lv1_by' AND $attr != 'verified_lv2_by' AND $attr != 'update_no') 
+                  @if($attr != 'status_id'  AND $attr != 'requested_by' AND $attr != 'approved_by' AND $attr != 'verified_lv1_by' AND $attr != 'verified_lv2_by'AND $attr != 'update_no') 
                     <td><label>{{array_search($attr,$lookup)}}</label></td>
                     <td>Updated from </td>
                     
@@ -127,7 +127,10 @@
     <div class="box-footer">
       <div class="pull-right">
         <button type="submit" class="btn btn-danger" name="action" value="reject">Reject</button>
-        <button type="submit" class="btn btn-success" name="action" value="approve">Verify</button>
+        <button type="submit" class="btn btn-success" name="action" value="approve">Publish</button>
+        <a href="{{ route('view.pendingverification2') }}">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        </a>
       </div>
     </div>
   </form>
@@ -137,6 +140,7 @@
 
 
 @endsection 
+
 
 @push('bk_script')
   @include('partials.notification')

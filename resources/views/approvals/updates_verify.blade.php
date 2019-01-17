@@ -119,7 +119,7 @@
       <input type="hidden" name="requested_action" value="UPDATE">
       
       <div class="row">
-        <label class="col-md-2">Approval Note <font color="red">*</font></label>
+        <label class="col-md-2">Verification/ Rejection Note <font color="red">*</font></label>
         <div class="col-md-10">
           <textarea class="form-control" rows="3" name="notes" placeholder="Please enter note ..." required></textarea>
         </div>
@@ -130,7 +130,11 @@
     <div class="box-footer">
       <div class="pull-right">
         <button type="submit" class="btn btn-danger" name="action" value="reject">Reject</button>
-        <button type="submit" class="btn btn-success" name="action" value="approve">Approve</button>
+        <button type="submit" class="btn btn-success" name="action" value="approve">Verify</button>
+        <a href="{{ route('view.pendingapproval') }}">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        </a>
+        
       </div>
     </div>
   </form>

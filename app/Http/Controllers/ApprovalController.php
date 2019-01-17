@@ -24,83 +24,64 @@ use App\User;
 class ApprovalController extends Controller
 {
         
-    public function myRequest()
-    {
-        // $myrequests = DB::table('hospital_details_history')
-        //     ->where('created_by',Auth::user()->id)
-        //     ->orWhere('requested_by',Auth::user()->id)
-        //     ->whereNotIn('status_id', [6, 13, 20])
-        //     ->orderby('updated_at','desc')
-        //     ->paginate(20);
-
-        $user = Auth::user()->id;
-        $myrequests = DB::select("SELECT * FROM hospital_details_history WHERE 
-        (created_by = ". $user ." OR requested_by = ". $user .") AND status_id NOT IN (6,13,20)");
-
-    
-        $status = DB::table('hospital_status_tracking')
-            ->whereNotIn('status_id', [6, 13, 20])
-            ->where('state_id', Auth::user()->state_id)
-            ->get();
-
-        return view('approvals.my_requests',compact('myrequests','status')); 
-    }
-    public function pendingApproval()
+ 
+    public function pendingVerify()
     {
         $pending = DB::table('hospital_details_history')
             ->where('state_id', '=',Auth::user()->state_id)
-            ->whereIn('status_id',[1,5,8,12,15,17])
+            ->whereIn('status_id',[1,5,8,12,15,19])
             ->orderby('updated_at','desc')
             ->get();
 
         $status = DB::table('hospital_status_tracking')
             ->where('state_id', '=', Auth::user()->state_id)
-            ->whereIn('status_id',[1,5,8,9,12,15,17])
+            ->whereIn('status_id',[1,5,8,9,12,15,19])
+            ->orderBy('created_at', 'desc')
             ->get();
      
-        return view('approvals.pending_approval',compact('pending','status')); 
+        return view('approvals.pending_verify',compact('pending','status')); 
     }
 
-    public function storeApproval(Request $request)
+    public function storeVerification(Request $request)
     {
           if($request->action == "approve"){
-            if($request->requested_action == "CREATE"){
+            if($request->requested_action == "CREATE FACILITY"){
                 $status_id = 2;
                 $notes = $request->notes;
-                $action="Create Approved";
-                $message = "Facility Creation Approved";
+                $action="Create Verified";
+                $message = "Facility Creation Verified";
             }
-            elseif($request->requested_action == "UPDATE"){
+            elseif($request->requested_action == "UPDATE FACILITY"){
                 $status_id = 9;
                 $notes = $request->notes;
-                $action="Update Approved";
-                $message = "Facility Update Approved";
+                $action="Update Verified";
+                $message = "Facility Update Verified";
             }
             else{
                 $status_id = 16;
                 $notes = $request->notes;
-                $action="Delete Approved";
-                $message = "Facility Deletion Approved";
+                $action="Delete Verified";
+                $message = "Facility Deletion Verified";
             }
         }
 
         if($request->action == "reject"){
-            if($request->requested_action == "CREATE"){
+            if($request->requested_action == "CREATE FACILITY"){
                 $status_id = 3;
                 $notes = $request->notes;
-                $action="Create Rejected";
+                $action="Create Verification Rejected";
                 $message = "Facility Creation Rejected";
             }
-            elseif($request->requested_action == "UPDATE"){
+            elseif($request->requested_action == "UPDATE FACILITY"){
                 $status_id = 10;
                 $notes = $request->notes;
-                $action="Update Rejected";
+                $action="Update Verification Rejected";
                 $message = "Facility Update Rejected";
             }
             else{
                 $status_id = 17;
                 $notes = $request->notes;
-                $action="Delete Rejected";
+                $action="Delete Verification Rejected";
                 $message = "Facility Deletion Rejected";
             }
         }
@@ -136,7 +117,7 @@ class ApprovalController extends Controller
         }
 
         if($request->action == "reject"){ // if rejected send notification to requester
-            if($request->requested_action == "CREATE"){
+            if($request->requested_action == "CREATE FACILITY"){
                 $userid = $hosp->created_by;
             }
             else{
@@ -159,10 +140,10 @@ class ApprovalController extends Controller
         // ****** notifiction end *****
     
         session()->flash("alert-success", $message);
-        return redirect()->route('view.pendingapproval');
+        return redirect()->route('verify.pending');
     }
 
-    public function pendingVerification1()
+    public function pendingValidation()
     {
         $pending  = DB::table('hospital_details_history')
             ->where('state_id', '=',Auth::user()->state_id)
@@ -171,54 +152,55 @@ class ApprovalController extends Controller
 
         $status = DB::table('hospital_status_tracking')
             ->where('state_id', '=', Auth::user()->state_id)
-            // ->whereIn('status_id',[2,7,9,14,16,21])
+            ->whereIn('status_id',[1,8,15,2,7,9,14,16,21])
+            ->orderBy('created_at', 'desc')
             ->get();
             
-        return view('approvals.pending_verification1',compact('pending','status'));
+        return view('approvals.pending_validation',compact('pending','status'));
     }
 
-    public function storeVerification1(Request $request)
+    public function storeValidation(Request $request)
     {
        
         if($request->action == "approve"){
-            if($request->requested_action == "CREATE"){
+            if($request->requested_action == "CREATE FACILITY"){
                 $status_id = 4;
                 $notes = $request->notes;
-                $message = "Facility Creation Verified (Level 1)";
-                $action="Create Verified (Lv1)";
+                $message = "Facility Creation Validated";
+                $action="Create Validated";
             }
-            elseif($request->requested_action == "UPDATE"){
+            elseif($request->requested_action == "UPDATE FACILITY"){
                 $status_id = 11;
                 $notes = $request->notes;
-                $message = "Facility Update Verified (Level 1)";
-                $action="Update Verified (Lv1)";
+                $message = "Facility Update Validated";
+                $action="Update Validated";
             }
             else{
                 $status_id = 18;
                 $notes = $request->notes;
-                $action="Delete Verified(Lv1)";
-                $message = "Facility Deletion Verified (Level 1)";
+                $action="Delete Validated";
+                $message = "Facility Deletion Validated";
             }
         }
 
         if($request->action == "reject"){
-            if($request->requested_action == "CREATE"){
+            if($request->requested_action == "CREATE FACILITY"){
                 $status_id = 5;
                 $notes = $request->notes;
-                $message = "Facility Verification Rejected (Level 1)";
-                $action="Create Rejected (Lv1)";
+                $message = "Facility Validation Rejected";
+                $action="Create Validation Rejected";
             }
-            elseif($request->requested_action == "UPDATE"){
+            elseif($request->requested_action == "UPDATE FACILITY"){
                 $status_id = 12;
                 $notes = $request->notes;
-                $message = "Facility Verification Rejected (Level 1)";
-                $action="Update Rejected (Lv1)";
+                $message = "Facility Validation Rejected";
+                $action="Update Validation Rejected";
             }
             else{
                 $status_id = 19;
                 $notes = $request->notes;
-                $message = "Facility Verification Rejected (Level 1)";
-                $action="Delete Rejected (Lv1)";                
+                $message = "Facility Validation Rejected";
+                $action="Delete Validation Rejected";                
             }
         }
             
@@ -258,77 +240,67 @@ class ApprovalController extends Controller
             $user->notify(new VerificationRejectedLevel1($message,$request->id));
         }
 
-        //mark as read the notification
-        $notification_id = DB::select("select id from notifications where type like '%FacilityApproved' and 
-        notifiable_id=". Auth::user()->id ." and data like '%" . $request->id . "%' and read_at is null");
-
-        if (!empty($notification_id)){
-            auth()->user()->unreadNotifications->where('id', $notification_id[0]->id)->markAsRead();
-        }
-        // ****** notifiction end*****
-
-
         session()->flash("alert-success", $message);
-        return redirect()->route('view.pendingverification1');
+        return redirect()->route('validate.pending');
     }
 
-    public function pendingVerification2()
+    public function pendingPublish()
     {
-        $pending  = DB::table('hospital_details_history')
+        $pending = DB::table('hospital_details_history')
             ->where('state_id', '=',Auth::user()->state_id)
             ->whereIn('status_id',[4,11,18])
             ->get();
 
         $status = DB::table('hospital_status_tracking')
             ->where('state_id', '=', Auth::user()->state_id)
-            // ->whereIn('status_id',[4,11,18])
+            ->whereIn('status_id',[2,9,16,4,11,18])
+            ->orderBy('created_at', 'desc')
             ->get();
-            
         
-        return view('approvals.pending_verification2',compact('pending','status'));
+        return view('approvals.pending_publish',compact('pending','status'));
     }
     
-    public function storeVerification2(Request $request)
+    public function storePublish(Request $request)
     {                 
         if($request->action == "approve"){
-            if($request->requested_action == "CREATE"){
+            if($request->requested_action == "CREATE FACILITY"){
                 $status_id = 6;
                 $notes = $request->notes;
-                $message = "Facility Creation Verified (Level 2)";
-                $action="Create Verified (Lv2)";
+                $message = "Facility Published";
+                $action="Create Published";
             }
-            elseif($request->requested_action == "UPDATE"){
+            elseif($request->requested_action == "UPDATE FACILITY"){
                 $status_id = 13;
                 $notes = $request->notes;
-                $message = "Facility Update Verified (Level 2";
-                $action="Update Verified (Lv2)";
+                $message = "Facility Update Published";
+                $action="Update Published";
             }
             else{
                 $status_id = 20;
                 $notes = $request->notes;
-                $message = "Facility Deletion Verified (Level 2";
-                $action="Delete Verified (Lv2)";
+                $message = "Facility Deleted";
+                $action="Delete Published";
             }
         }
 
         if($request->action == "reject"){
-            if($request->requested_action == "CREATE"){
+            if($request->requested_action == "CREATE FACILITY"){
                 $status_id = 7;
                 $notes = $request->notes;
-                $message = "Facility Verification Rejected (Level 2";
-                $action="Create Rejected (Lv2)";
+                $message = "Facility Publish Rejected";
+                $action="Create Publish Rejected";
             }
-            elseif($request->requested_action == "UPDATE"){
+            elseif($request->requested_action == "UPDATE FACILITY"){
                 $status_id = 14;
                 $notes = $request->notes;
-                $message = "Facility Verification Rejected (Level 2";
-                $action="Update Rejected (Lv2)";
+                $message = "Facility Publish Rejected";
+                $action="Update Publish Rejected";
             }
             else{
                 $status_id = 21;
                 $notes = $request->notes;
-                $message = "Facility Verification Rejected (Level 2";
-                $action="Delete Rejected (Lv2)";              
+                $message = "Facility Publish Rejected";
+                $action="Delete Publish Rejected";              
             }
         }
       
@@ -349,7 +321,7 @@ class ApprovalController extends Controller
         $status->save();
     
          //update hospital services to main table
-        if($request->requested_action == "UPDATE"){
+        if($request->requested_action == "UPDATE FACILITY"){
             if($status_id == 13){
                 //get new hospital services
                 $services = DB::select("SELECT service_id FROM hs_hospital_services_history WHERE hospital_id = ". $request->id . ""); 
@@ -394,20 +366,8 @@ class ApprovalController extends Controller
             $user->notify(new VerificationRejectedLevel2($message,$request->id));
         }
 
-        //mark as read the notification
-        $notification_id = DB::select("select id from notifications where type like '%FacilityVerifiedLevel1' and 
-        notifiable_id=". Auth::user()->id ." and data like '%" . $request->id . "%' and read_at is null");
-
-        if (!empty($notification_id)){
-            auth()->user()->unreadNotifications->where('id', $notification_id[0]->id)->markAsRead();
-        }
-
-        // ****** notifiction end*****
-
-
-
         session()->flash("alert-success", $message);
-        return redirect()->route('view.pendingverification2');
+        return redirect()->route('publish.pending');
     }
     
     public function getUpdatedRecords($id,$stage)
@@ -467,15 +427,14 @@ class ApprovalController extends Controller
         $name=($hosp->facility_name);
 
         if ($stage=='approve'){
-            return view('approvals.updates_approve',compact('audits','lookup','old_values','new_values','hosp_id','name','old_services','new_services')); 
+            return view('approvals.updates_verify',compact('audits','lookup','old_values','new_values','hosp_id','name','old_services','new_services')); 
         }
         if ($stage=='verify1'){
-            return view('approvals.updates_verify1',compact('audits','lookup','old_values','new_values','hosp_id','name','old_services','new_services')); 
+            return view('approvals.updates_validate',compact('audits','lookup','old_values','new_values','hosp_id','name','old_services','new_services')); 
         }
         if ($stage=='verify2'){
-            return view('approvals.updates_verify2',compact('audits','lookup','old_values','new_values','hosp_id','name','old_services','new_services')); 
+            return view('approvals.updates_publish',compact('audits','lookup','old_values','new_values','hosp_id','name','old_services','new_services')); 
         }
     }
-    
-  
+      
 }

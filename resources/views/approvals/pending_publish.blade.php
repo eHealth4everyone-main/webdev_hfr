@@ -2,80 +2,74 @@
 
 
 @section('content-title')
-Pending Level II Verification
+Pending Publish
 
 @endsection
 
 @section("content")
 @if($pending->isEmpty())
 <div class="callout callout-success">
-    <h4>Congrats!</h4>
-    <p>You do not have pending verifications</p>
+    <p>You do not have pending requests</p>
 </div>
 @endif
 
-@foreach($pending as $p)
+@if(!$pending->isEmpty())
 
-<div class="box box-primary">
-    <div class="box-header with-border">
-        <h3 class="box-title">
-            Facility Name: <span class="label label-default"> {{$p->facility_name}}</span> 
-            
-            @if ($p->action === "CREATE")
-            Request Type: <span class="label label-info"> {{$p->action}}</span>
-            @elseif ($p->action === "UPDATE")
-            Request Type: <span class="label label-primary"> {{$p->action}}</span>
-            @else
-            Request Type: <span class="label label-danger"> {{$p->action}}</span>                
-            @endif
-            
-            @if (($p->status_id === 1) or ($p->status_id ===8) or ($p->status_id ===15))
-                Status: <span class="label label-warning"> {{$p->status}}</span> 
-            @elseif (($p->status_id === 3) or ($p->status_id ===5) or ($p->status_id ===7) or ($p->status_id===10) or ($p->status_id ===12) or 
-                ($p->status_id ===14)  or ($p->status_id ===17) or ($p->status_id ===19) or ($p->status_id ===21))
-                Status: <span class="label label-danger"> {{$p->status}}</span> 
-            @else
-                Status: <span class="label label-success"> {{$p->status}}</span>                 
-            @endif
-        </h3>
-        
-        <div class="box-tools pull-right">
-            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-            </button>
-        </div>
-        <!-- /.box-tools -->
-    </div>
-    <!-- /.box-header -->
-    <div class="box-body">
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>Action</th>
-                    <th>Date</th>
-                    <th>Done By</th>
-                    <th>Remarks</th>
-                </tr>
-            </thead>
-            <tbody>
-                
+<div class="box">
+  {{-- <div class="box-header">
+    <h3 class="box-title">Users</h3>
+  </div> --}}
+  <!-- /.box-header -->
+<div class="box-body">
+  <table id="table1" class="table table-bordered table-striped" style="width:100%">
+    <thead>
+      <tr>
+            <th>Facility Name</th>
+            <th>Request Type</th>
+            <th>Verified By</th>
+            <th>Validated By</th>
+            <th>Status</th>        
+            <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      @foreach($pending as $p)
+      <tr>
+            <td>{{$p->facility_name}}</td>
+            <td>{{$p->action}}</td>
+        <td>
                 @foreach($status as $s)
-                <tr>
-                    @if(($p->id == $s->hospital_id) and ($p->action == $s->action_type))
-                    <td>{{$s->action}}</td>
-                    <td>{{$s->created_at}}</td>
-                    <td>
-                        <Strong>Name: </Strong>{{$s->user}} <br>
-                        <Strong>Position: </Strong>{{$s->position}} <br>
-                        <Strong>E-mail: </Strong>{{$s->email}} <br>
-                        <Strong>Mobile: </Strong>{{$s->mobile}}
-                    </td>
-                    <td>{{$s->note}}</td>
+                    @if(($p->id == $s->hospital_id) and ($p->action == $s->action_type) )
+                        @if (in_array($s->status_id,[2,9,16]))
+                            <Strong>Name: </Strong>{{$s->user}} <br>
+                            <Strong>E-mail: </Strong>{{$s->email}} <br>
+                            <Strong>Mobile: </Strong>{{ $s->mobile }}<br>
+                            <Strong>Remarks: </Strong>{{ $s->note }} <br>
+                            <Strong>Date: </Strong>{{ $s->created_at }} <br>
+                            @break
+                        @endif
                     @endif
-                </tr>
+        
                 @endforeach
-            </tbody>
-        </table>
-        @if ($p->action === "CREATE")
+        </td>
+        <td>
+                @foreach($status as $s)
+                    @if(($p->id == $s->hospital_id) and ($p->action == $s->action_type) )
+                        @if (in_array($s->status_id,[4,11,18]))
+                            <Strong>Name: </Strong>{{$s->user}} <br>
+                            <Strong>E-mail: </Strong>{{$s->email}} <br>
+                            <Strong>Mobile: </Strong>{{ $s->mobile }}<br>
+                            <Strong>Remarks: </Strong>{{ $s->note }} <br>
+                            <Strong>Date: </Strong>{{ $s->created_at }} <br>
+                            @break
+                        @endif
+                    @endif
+                @endforeach
+        </td>
+
+        <td>{{$p->status}}</td>
+        <td>
+            @if ($p->action === "CREATE")
             <a href="#">
                 <button class="btn btn-success btn-sm"  type="button" data-toggle="modal" data-target="#view_details" data-id="{{$p->id}}"
                     data-unique_id="{{$p->unique_id}}" data-registration_no="{{$p->registration_no}}" data-start_date="{{$p->start_date}}"
@@ -93,12 +87,12 @@ Pending Level II Verification
                     data-dental_technicians="{{$p->dental_technicians}}" data-env_health_officers="{{$p->env_health_officers}}" data-beds_accidents_emerg="{{$p->beds_accidents_emerg}}"
                     data-beds_adminission="{{$p->beds_adminission}}" data-beds_icu="{{$p->beds_icu}}" data-onsite_laboratory="{{$p->onsite_laboratory}}"
                     data-onsite_imaging="{{$p->onsite_imaging}}" data-onsite_pharmarcy="{{$p->onsite_pharmarcy}}" data-mortuary_services="{{$p->mortuary_services}}" data-action="{{$p->action}}">
-                    Verify
+                    Review
                 </button>
             </a>  
         @elseif ($p->action === "UPDATE") 
             <a href="{{route('view.updated_records',['id'=>$p->id,'stage'=>'verify2'])}}">
-                <button class="btn btn-success btn-sm"  type="button" >Verify</button>
+                <button class="btn btn-success btn-sm"  type="button" > Review</button>
             </a>
         @else
         <a href="#">
@@ -118,14 +112,26 @@ Pending Level II Verification
                     data-dental_technicians="{{$p->dental_technicians}}" data-env_health_officers="{{$p->env_health_officers}}" data-beds_accidents_emerg="{{$p->beds_accidents_emerg}}"
                     data-beds_adminission="{{$p->beds_adminission}}" data-beds_icu="{{$p->beds_icu}}" data-onsite_laboratory="{{$p->onsite_laboratory}}"
                     data-onsite_imaging="{{$p->onsite_imaging}}" data-onsite_pharmarcy="{{$p->onsite_pharmarcy}}" data-mortuary_services="{{$p->mortuary_services}}" data-action="{{$p->action}}">
-                    Approve
+                    Review
                 </button>
-            </a>
+            </a>  
         @endif
-    </div>
+    
+          </td>
+        </tr>
+        @endforeach
+        
+      </tbody>
+    </table>
+    
+  </div>
+  <!-- /.box-body -->
 </div>
+<!-- /.box -->
+@endif
 
-@endforeach
+
+
 
 {{-- modal facility details --}}
 <div class="modal fade" id="view_details" tabindex="-1" role="dialog">
@@ -133,11 +139,11 @@ Pending Level II Verification
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">Facility Details</h4>
+                <h4 class="modal-title">Review facility</h4>
                 <div class='notifications top-right'></div>
             </div>
             <div class="modal-body">
-                <form method="POST" action="{{route('store.verify2')}}">
+                <form method="POST" action="{{route('publish.store')}}">
                     @csrf
                     <input type="hidden" id="id" name="id">
                     <input type="hidden" id="requested_action" name="requested_action">
@@ -419,8 +425,8 @@ Pending Level II Verification
                                 <div id="collapse7" class="panel-collapse">
                                     <div class="panel-body">
                                         <div class="row">
-                                            <label class="col-md-2">Note:<font color="red">*</font></label>
-                                            <div class="col-md-10">
+                                            <label class="col-md-4">Publish/ Reject Note:<font color="red">*</font></label>
+                                            <div class="col-md-8">
                                                 <textarea class="form-control" rows="3" name="notes" placeholder="Please enter notes ..." required></textarea>
                                             </div>
                                         </div>
@@ -435,7 +441,7 @@ Pending Level II Verification
                     
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-danger" name="action" value="reject">Reject</button>
-                        <button type="submit" class="btn btn-success" name="action" value="approve">Verify</button>
+                        <button type="submit" class="btn btn-success" name="action" value="approve">Publish</button>
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     </div>
                 </form>
@@ -453,7 +459,11 @@ Pending Level II Verification
     
     <script>
         $(document).ready( function () {
-            
+            $('#table1').DataTable( {
+                "paging":   false,
+                "ordering": true,
+                "info":     true
+            } );
         });
         
         

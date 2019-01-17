@@ -84,14 +84,23 @@ Route::middleware(["auth"])->group(function(){
     Route::get('admin/hospitals/service/master','HospitalServiceController@Index')->name('hospServices.index');
     Route::post('admin/hospitals/delete','HospitalsController@InitiateDelete')->name('hospitals.InitiateDelete');
 
+    //my requests
+    Route::get('admin/hospitals/myrequest/pending','MyRequestController@myPendingRequest')->name('myrequest.pending');
+    Route::get('admin/hospitals/myrequest/approved','MyRequestController@myApprovedRequest')->name('myrequest.approved');
+    Route::get('admin/hospitals/myrequest/rejected','MyRequestController@myRejectedRequest')->name('myrequest.rejected');
+    Route::get('admin/hospitals/myrequest/update/{id}','MyRequestController@editRequest')->name('myrequest.edit');
+    Route::put('admin/hospitals/myrequest/updates','MyRequestController@updateRequest')->name('myrequest.update');
+    Route::post('admin/hospitals/myrequest/delete','MyRequestController@deleteRequest')->name('myrequest.delete');
+
+
+
     //approvals
-    Route::get('admin/hospitals/approvals/myrequest','ApprovalController@myRequest')->name('view.myrequest');
-    Route::get('admin/hospitals/approvals/pendingapproval','ApprovalController@pendingApproval')->name('view.pendingapproval');
-    Route::post('admin/hospitals/approvals/','ApprovalController@storeApproval')->name('store.approval');
-    Route::get('admin/hospitals/approvals/verification','ApprovalController@pendingVerification1')->name('view.pendingverification1');
-    Route::post('admin/hospitals/approvals/verification','ApprovalController@storeVerification1')->name('store.verify1');
-    Route::get('admin/hospitals/approvals/verification2','ApprovalController@pendingVerification2')->name('view.pendingverification2');
-    Route::post('admin/hospitals/approvals/verification2','ApprovalController@storeVerification2')->name('store.verify2');
+    Route::get('admin/hospitals/approvals/verify','ApprovalController@pendingVerify')->name('verify.pending');
+    Route::post('admin/hospitals/approvals/verify','ApprovalController@storeVerification')->name('verify.store');
+    Route::get('admin/hospitals/approvals/validation','ApprovalController@pendingValidation')->name('validate.pending');
+    Route::post('admin/hospitals/approvals/validation','ApprovalController@storeValidation')->name('validate.store');
+    Route::get('admin/hospitals/approvals/publish','ApprovalController@pendingPublish')->name('publish.pending');
+    Route::post('admin/hospitals/approvals/publish','ApprovalController@storePublish')->name('publish.store');
     Route::get('admin/hospitals/approvals/update/{id}/{stage}','ApprovalController@getUpdatedRecords')->name('view.updated_records');
 
     Route::get('admin/notifications','NotificationController@markAllAsRead')->name('notification.markAsRead');

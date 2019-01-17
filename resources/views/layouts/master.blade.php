@@ -77,27 +77,27 @@
                                               @foreach (auth()->user()->unreadNotifications as $notification)
                                                     <li>
                                                         @if ($notification->type == 'App\Notifications\CreateRequest')
-                                                            <a href="{{ route('view.pendingapproval') }}">
+                                                            <a href="">
                                                                 <i class="fa fa-exclamation-circle text-aqua"></i> {{ $notification->data['action'] }}   
                                                             </a> 
                                                         @endif
                                                         @if ($notification->type == 'App\Notifications\UpdateRequest')
-                                                            <a href="{{ route('view.pendingapproval') }}">
+                                                            <a href="">
                                                                 <i class="fa fa-exclamation-circle text-blue"></i> {{ $notification->data['action'] }}  
                                                             </a> 
                                                         @endif
                                                         @if ($notification->type == 'App\Notifications\DeleteRequest')
-                                                            <a href="{{ route('view.pendingapproval') }}">
+                                                            <a href="">
                                                                 <i class="fa fa-exclamation-circle text-red"></i> {{ $notification->data['action'] }} 
                                                             </a>   
                                                         @endif
                                                         @if ($notification->type == 'App\Notifications\FacilityApproved')
-                                                            <a href="{{ route('view.pendingverification1') }}">
+                                                            <a href="}">
                                                                 <i class="fa fa-check-circle text-green"></i> {{ $notification->data['action'] }} 
                                                             </a>   
                                                         @endif
                                                         @if ($notification->type == 'App\Notifications\FacilityVerifiedLevel1')
-                                                            <a href="{{ route('view.pendingverification2') }}">
+                                                            <a href="}">
                                                                 <i class="fa fa-check-circle text-green"></i> {{ $notification->data['action'] }} 
                                                             </a>   
                                                         @endif
@@ -107,12 +107,12 @@
                                                             </a>   
                                                         @endif
                                                         @if ($notification->type == 'App\Notifications\VerificationRejectedLevel1')
-                                                            <a href="{{ route('view.pendingapproval') }}">
+                                                            <a href="">
                                                                 <i class="fa fa-times-circle text-red"></i> {{ $notification->data['action'] }} 
                                                             </a>   
                                                         @endif
                                                         @if ($notification->type == 'App\Notifications\VerificationRejectedLevel2')
-                                                            <a href="{{ route('view.pendingverification1') }}">
+                                                            <a href="">
                                                                 <i class="fa fa-times-circle text-red"></i> {{ $notification->data['action'] }} 
                                                             </a>   
                                                         @endif
