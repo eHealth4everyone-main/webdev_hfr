@@ -14,10 +14,8 @@ class ViewComposerServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        View::composer('*', 'App\Http\Composers\MyRequestsCountComposer');
-        View::composer('*', 'App\Http\Composers\MyApprovalsCountComposer');
-
-        
+        View::composer('layouts.leftmenu', 'App\Http\Composers\MyRequestsCountComposer');
+        View::composer('layouts.leftmenu', 'App\Http\Composers\MyApprovalsCountComposer');
     }
 
     /**

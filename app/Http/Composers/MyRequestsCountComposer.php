@@ -5,13 +5,12 @@ namespace App\Http\Composers;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
 use Auth;
+use App\User;
 
 
 class MyRequestsCountComposer
 {
 
-   
- 
     public function __construct()
     {
        
@@ -20,6 +19,7 @@ class MyRequestsCountComposer
 
     public function compose(View $view)
     {
+     
         $user = Auth::user()->id;
 
         $pending = DB::select("SELECT * FROM hospital_details_history WHERE 
@@ -38,7 +38,7 @@ class MyRequestsCountComposer
         $request_count[1] = count($rejected);
         $request_count[2] = count($approved);
         $request_count[3] = count($approved)+count($rejected)+count($pending);
-
+      
         $view->with('request_count',$request_count);
     }
 }

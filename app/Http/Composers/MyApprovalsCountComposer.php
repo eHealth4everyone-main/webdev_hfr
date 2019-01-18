@@ -45,8 +45,9 @@ class MyApprovalsCountComposer
                 $approval_count[2] = $publish;
                 $approval_count[3] = $count;
 
-               
-                $view->with('approval_count',$approval_count);
+        
+                $view->with('approval_count',$approval_count);                        
+                
         }
 
 }
