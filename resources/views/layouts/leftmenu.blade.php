@@ -76,8 +76,8 @@
                     @endif
                     <ul class="treeview-menu">        
                         <li><a href="{{ route('myrequest.pending') }}"><i class="fa fa-pencil-square"></i>My Pending Requests</a></li>
+                        <li><a href="{{ route('myrequest.rejected') }}"><i class="fa fa-pencil-square"></i>My Rejected Requests</a></li>  
                         <li><a href="{{ route('myrequest.approved') }}"><i class="fa fa-pencil-square"></i>My Approved Requests</a></li>
-                        <li><a href="{{ route('myrequest.rejected') }}"><i class="fa fa-pencil-square"></i>My Rejected Requests</a></li>                  
                     </ul>
                 </li>
                 <li  class="treeview"> 
