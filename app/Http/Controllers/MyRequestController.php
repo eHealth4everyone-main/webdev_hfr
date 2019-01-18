@@ -308,15 +308,17 @@ class MyRequestController extends Controller
     
     public function deleteRequest(Request $request){
         
-        if($request->status_id == 3){  // verification rejected for new facility
+        // Delete my pending verification or rejected verification for new facility
+        if($request->status_id == 1 OR $request->status_id == 3){  
 
             //delete hosp and services in history
             hs_hospital_history::destroy($request->hosp_id);
             hs_hospital_service_history::where('hospital_id', $request->hosp_id)->delete();
 
         }
-
-        if($request->status_id == 10){  // verification rejected for updating existing facility
+    
+        // Delete pending verification or rejected verification for update requests
+        if($request->status_id == 8 OR $request->status_id == 10){ 
             
             //restore main table data before being udpated. Delete data in history and copy data from main to history
             hs_hospital_history::disableAuditing();
@@ -328,7 +330,7 @@ class MyRequestController extends Controller
             $hosp_main = new hs_hospital;
             $hosp_main = hs_hospital::find($request->hosp_id);
 
-            //restore data from main table to history
+            //restore data from main tables to history
             $hosp_history = new hs_hospital_history;
             $hosp_history -> fill($hosp_main->toArray());
             $hosp_history -> unique_id = $hosp_main->unique_id;
@@ -337,7 +339,10 @@ class MyRequestController extends Controller
             $hosp_history -> created_by = $hosp_main->created_by;
             $hosp_history -> operational_days =  $hosp_main->operational_days;        
             $hosp_history -> save();
-            //copy ends
+
+            //copy services data
+
+           
 
             hs_hospital_history::enableAuditing();
 

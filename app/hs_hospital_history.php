@@ -13,6 +13,7 @@ class hs_hospital_history extends Model implements Auditable
     
     protected $table = 'hs_hospitals_history';
     protected $guarded = ["unique_id","start_date","operational_days","status_id","created_by","services"];
+    protected $auditExclude = ['status_id', 'created_by','requested_by', 'verified_by', 'validated_by', 'published_by','update_no'];
 
     public function arrayValuesTostring($val)
     {

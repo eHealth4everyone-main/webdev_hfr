@@ -32,7 +32,7 @@ My Pending Requests
         <th>Status</th>
        
         @foreach ($myrequests as $r)
-            @if (in_array($r->status_id,[3,10]))
+            @if (in_array($r->status_id,[1,3,8,10]))
               <th>Actions</th>
             @endif
             @break
@@ -65,7 +65,7 @@ My Pending Requests
         <td>{{$r->status}}</td>
 
           <td>
-            @if (in_array($r->status_id,[3,10]))
+            @if (in_array($r->status_id,[1,3,8,10]))
               <a href="{{ route('myrequest.edit',$r->id) }}">
                   <button class="btn btn-warning btn-sm"  type="button" >Update Request</button>
               </a>

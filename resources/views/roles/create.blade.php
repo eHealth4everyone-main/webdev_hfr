@@ -289,24 +289,24 @@
                                                 <input type='checkbox'name='permissions[]' value='62'> View Masters                                            
                                     </div>
                                     <div class="col-sm-2">                               
-                                                <input type='checkbox'name='permissions[]' value='59'> Approve Facility
+                                                <input type='checkbox'name='permissions[]' value='59'> Verify Facility
                                     </div>
                                     <div class="col-sm-2"></div>
                             </div>
                             <div class="form-group row">
                                         <label class="col-sm-2"></label>
                                         <div class="col-sm-2">                               
-                                            <input type='checkbox'name='permissions[]' value='60'> Verify Facility (Level I)                                                   
+                                            <input type='checkbox'name='permissions[]' value='60'> Validate Facility                                                   
                                         </div>
                                         <div class="col-sm-2">                               
-                                            <input type='checkbox'name='permissions[]' value='61'> Verify Facility (Level II)                                               
+                                            <input type='checkbox'name='permissions[]' value='61'> Publish Facility                                               
                                         </div>
                                         <div class="col-sm-2">                               
                                                                                                    
                                         </div>
                                         <div class="col-sm-2"></div>                              
                                </div>
-                        {{-- <input type="hidden"  name="hospital_id" value="{{$hosp[0]->id}}"> --}}
+                      
                 
                 
                             
