@@ -11,7 +11,7 @@
                 <li>
                     <a target="_blank" rel="noopener noreferrer" href="{{route('home')}}">
                         <i class="fa fa-home"></i> 
-                        <span>Public Home</span>
+                        <span>Public Portal</span>
                     </a>
                 </li>
                 <li>
@@ -70,14 +70,14 @@
                             <i class="fa fa-pencil"></i>
                             <span>My Requests</span>
                             <span class="pull-right-container">
-                                    <span class="label label-success pull-right">+</span>
+                                    <span class="label label-success pull-right">{{ $request_count[3] }}</span>
                             </span>
                         </a>
                     @endif
                     <ul class="treeview-menu">        
-                        <li><a href="{{ route('myrequest.pending') }}"><i class="fa fa-pencil-square"></i>My Pending Requests</a></li>
-                        <li><a href="{{ route('myrequest.rejected') }}"><i class="fa fa-pencil-square"></i>My Rejected Requests</a></li>  
-                        <li><a href="{{ route('myrequest.approved') }}"><i class="fa fa-pencil-square"></i>My Approved Requests</a></li>
+                        <li><a href="{{ route('myrequest.pending') }}"><i class="fa fa-pencil-square"></i>My Pending Requests <font color="orange">[{{ $request_count[0] }}]</font> </a></li>
+                        <li><a href="{{ route('myrequest.rejected') }}"><i class="fa fa-pencil-square"></i>My Rejected Requests <font color="orange">[{{ $request_count[1] }}]</font></a></li>  
+                        <li><a href="{{ route('myrequest.approved') }}"><i class="fa fa-pencil-square"></i>My Approved Requests <font color="orange">[{{ $request_count[2] }}]</font></a></li>
                     </ul>
                 </li>
                 <li  class="treeview"> 
@@ -86,19 +86,19 @@
                             <i class="fa fa-check-circle"></i>
                             <span>My Approvals</span>
                             <span class="pull-right-container">
-                                    <span class="label label-success pull-right">+</span>
+                                    <span class="label label-success pull-right">{{ $approval_count[3] }}</span>
                             </span>
                         </a>
                     @endif
                     <ul class="treeview-menu">        
                         @if(auth()->user()->hasPermissionTo(59))
-                            <li><a href="{{ route('verify.pending') }}"><i class="fa  fa-check"></i>Pending Verification</a></li>
+                            <li><a href="{{ route('verify.pending') }}"><i class="fa  fa-check"></i>Pending Verification <font color="orange">[{{ $approval_count[0] }}]</font></a></li>
                         @endif
                         @if(auth()->user()->hasPermissionTo(60))
-                            <li><a href="{{ route('validate.pending') }}"><i class="fa  fa-check"></i>Pending Validation</a></li>
+                            <li><a href="{{ route('validate.pending') }}"><i class="fa  fa-check"></i>Pending Validation  <font color="orange">[{{ $approval_count[1] }}]</font></a></li>
                         @endif
                         @if(auth()->user()->hasPermissionTo(61))
-                            <li><a href="{{route('publish.pending')}}"><i class="fa  fa-check"></i>Pending Publish</a></li>
+                            <li><a href="{{route('publish.pending')}}"><i class="fa  fa-check"></i>Pending Publish  <font color="orange">[{{ $approval_count[2] }}]</font></a></li>
                         @endif
                     
                     </ul>

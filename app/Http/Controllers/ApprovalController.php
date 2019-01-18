@@ -85,12 +85,13 @@ class ApprovalController extends Controller
                 $message = "Facility Deletion Rejected";
             }
         }
-       
+        hs_hospital_history::disableAuditing();       
         $hosp = new hs_hospital_history;
         $hosp = hs_hospital_history::findOrFail($request->id);
         $hosp->status_id = $status_id;
         $hosp->verified_by = Auth::user()->id;
         $hosp->save();
+        hs_hospital_history::enableAuditing();
     
         $status = new hs_status_tracking;
         $status->hospital_id = $request->id;
@@ -203,12 +204,14 @@ class ApprovalController extends Controller
                 $action="Delete Validation Rejected";                
             }
         }
-            
+        hs_hospital_history::disableAuditing();        
         $hosp = new hs_hospital_history();
         $hosp = hs_hospital_history::findOrFail($request->id);
         $hosp->status_id = $status_id;
         $hosp->validated_by = Auth::user()->id;
         $hosp->save();
+        hs_hospital_history::enableAuditing();
+
     
         $status = new hs_status_tracking;
         $status->hospital_id = $request->id;
@@ -303,12 +306,13 @@ class ApprovalController extends Controller
                 $action="Delete Publish Rejected";              
             }
         }
-      
+        hs_hospital_history::disableAuditing();      
         $hosp = new hs_hospital_history();
         $hosp = hs_hospital_history::findOrFail($request->id);
         $hosp->status_id = $status_id;
         $hosp->published_by = Auth::user()->id;
         $hosp->save();
+        hs_hospital_history::enableAuditing();
     
         $status = new hs_status_tracking;
         $status->hospital_id = $request->id;

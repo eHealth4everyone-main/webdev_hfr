@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\View;
 
 class ViewComposerServiceProvider extends ServiceProvider
 {
@@ -13,9 +14,10 @@ class ViewComposerServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // View::composer('*', function ($view) {
-        //     // $view->with('myrequest',$my_num_of_requests);
-        // });
+        View::composer('*', 'App\Http\Composers\MyRequestsCountComposer');
+        View::composer('*', 'App\Http\Composers\MyApprovalsCountComposer');
+
+        
     }
 
     /**
