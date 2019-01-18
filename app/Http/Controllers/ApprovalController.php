@@ -89,7 +89,7 @@ class ApprovalController extends Controller
         $hosp = new hs_hospital_history;
         $hosp = hs_hospital_history::findOrFail($request->id);
         $hosp->status_id = $status_id;
-        $hosp->approved_by = Auth::user()->id;
+        $hosp->verified_by = Auth::user()->id;
         $hosp->save();
     
         $status = new hs_status_tracking;
@@ -207,7 +207,7 @@ class ApprovalController extends Controller
         $hosp = new hs_hospital_history();
         $hosp = hs_hospital_history::findOrFail($request->id);
         $hosp->status_id = $status_id;
-        $hosp->verified_lv1_by = Auth::user()->id;
+        $hosp->validated_by = Auth::user()->id;
         $hosp->save();
     
         $status = new hs_status_tracking;
@@ -307,7 +307,7 @@ class ApprovalController extends Controller
         $hosp = new hs_hospital_history();
         $hosp = hs_hospital_history::findOrFail($request->id);
         $hosp->status_id = $status_id;
-        $hosp->verified_lv2_by = Auth::user()->id;
+        $hosp->published_by = Auth::user()->id;
         $hosp->save();
     
         $status = new hs_status_tracking;
