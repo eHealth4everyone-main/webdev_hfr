@@ -114,7 +114,7 @@
     @endif
 
       <input type="hidden" id="id" name="id" value="{{ $hosp_id }}">
-      <input type="hidden" name="requested_action" value="UPDATE">
+      <input type="hidden" name="requested_action" value="UPDATE FACILITY">
       
       <div class="row">
         <label class="col-md-2">Verification Note <font color="red">*</font></label>

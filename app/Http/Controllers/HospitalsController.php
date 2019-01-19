@@ -152,8 +152,10 @@ class HospitalsController extends Controller
         $hosp->fill($request->all());
         $hosp->unique_id = $hosp->generateUniqueID($request->lga_id,'1',$request->facility_level_id,$request->ownership_id);
         $hosp->start_date = $start_date;
+        $hosp->requested_at = Carbon::now()->format('Y-m-d H:i:s');
         $hosp->status_id = 1;
         $hosp->created_by = Auth::user()->id;
+        $hosp->requested_by = Auth::user()->id;
         $hosp->operational_days = $hosp->arrayValuesTostring($request->operational_days);
         $hosp->save();
         
@@ -174,15 +176,15 @@ class HospitalsController extends Controller
          //****** send notifications *********
 
          //get users with approval access
-        $users = DB::select("SELECT u.id FROM users u
-                JOIN model_has_roles r on r.model_id = u.id
-                JOIN role_has_permissions p on p.role_id = r.role_id
-                WHERE p.permission_id = 59 and u.state_id = ". $request->state_id ."");
+        // $users = DB::select("SELECT u.id FROM users u
+        //         JOIN model_has_roles r on r.model_id = u.id
+        //         JOIN role_has_permissions p on p.role_id = r.role_id
+        //         WHERE p.permission_id = 59 and u.state_id = ". $request->state_id ."");
         
-        foreach ($users as $user){
-            $user = user::find($user->id);
-            $user->notify(new CreateRequest($request->facility_name, $hosp_id));
-        }  
+        // foreach ($users as $user){
+        //     $user = user::find($user->id);
+        //     $user->notify(new CreateRequest($request->facility_name, $hosp_id));
+        // }  
         // ****** notifiction end*****
      
         
@@ -249,27 +251,9 @@ class HospitalsController extends Controller
              //get hospital services
             $lst_services = DB::table('lst_hosp_services')->get();
 
-            //get status to check if the facility is being updated
-            $update_status = DB::table('hospital_status_tracking')
-                ->select('status_id')
-                ->where('hospital_id',$id)   
-                ->where('action_type','UPDATE')     
-                ->orderBy('created_at', 'DESC')
-                ->first();
-
-            if(is_null($update_status)){
-                $updating=FALSE;
-            }
-            else{
-                if($update_status->status_id == 13){
-                    $updating=FALSE;
-                }else{
-                    $updating=TRUE;
-                }
-            }
            
             return view('hospitals.edit',compact('hosp','current_services','lst_level_of_care','lst_states','lst_ownerships','lst_oparational_status',
-            'lst_regulatory_status','lst_license_status','lst_services','updating')); 
+            'lst_regulatory_status','lst_license_status','lst_services')); 
     }
     
   
@@ -329,18 +313,26 @@ class HospitalsController extends Controller
             'onsite_laboratory'=>'nullable',
             'onsite_imaging'=>'nullable',
             'mortuary_services'=>'nullable',
+            'verified_by'=>'nullable',
+            'verified_at'=>'nullable',
+            'validated_by'=>'nullable',
+            'validated_at'=>'nullable',
+            'published_by' => 'nullable',
+            'published_at' => 'nullable',
         ]);
 
         //update records in history with new changes
         $hosp = new hs_hospital_history;
-        
-        $update_no = $hosp->getUpdateNumber($id);
     
         $hosp = hs_hospital_history::findOrFail($id);
         $hosp->fill($request->all());
         $hosp->status_id = 8;
         $hosp->requested_by = Auth::user()->id;
-        $hosp->update_no = $update_no;
+        $hosp->requested_at = Carbon::now()->format('Y-m-d H:i:s');  
+        $hosp->request_note = '';
+        $hosp->verify_note = '';
+        $hosp->validate_note = '';
+        $hosp->publish_note = '';  
         $hosp->start_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->start_date))); 
         $hosp->operational_days = $hosp->arrayValuesTostring($request->operational_days);
         $hosp->save();
@@ -348,11 +340,9 @@ class HospitalsController extends Controller
         //insert in status tracking
         $status = new hs_status_tracking;
         $status->hospital_id = $id;
-        $status->action = 'Update Request';
         $status->user_id = Auth::user()->id;
         $status->status_id = 8;
         $status->created_at = Carbon::now()->format('Y-m-d H:i:s');
-        $status->update_no = $update_no;
         $status->save();
 
         //get services before update
@@ -390,15 +380,15 @@ class HospitalsController extends Controller
         //****** send notifications *********
 
         //get users with approval access
-        $users = DB::select("SELECT u.id FROM users u
-                JOIN model_has_roles r on r.model_id = u.id
-                JOIN role_has_permissions p on p.role_id = r.role_id
-                WHERE p.permission_id = 59 and u.state_id = ". $request->state_id ."");
+        // $users = DB::select("SELECT u.id FROM users u
+        //         JOIN model_has_roles r on r.model_id = u.id
+        //         JOIN role_has_permissions p on p.role_id = r.role_id
+        //         WHERE p.permission_id = 59 and u.state_id = ". $request->state_id ."");
         
-        foreach ($users as $user){
-            $user = user::find($user->id);
-            $user->notify(new UpdateRequest($request->facility_name, $id));
-        }  
+        // foreach ($users as $user){
+        //     $user = user::find($user->id);
+        //     $user->notify(new UpdateRequest($request->facility_name, $id));
+        // }  
         // ****** notifiction end*****
 
         session()->flash("alert-success", "Request Sent Successfully!");
@@ -407,7 +397,6 @@ class HospitalsController extends Controller
     
     public function InitiateDelete(Request $request){ 
         $hs_tracking = new hs_status_tracking;
-        $hs_tracking->action = "Delete Request"; 
         $hs_tracking->hospital_id = $request->facility_id;
         $hs_tracking->user_id = Auth::user()->id;
         $hs_tracking->status_id = '15';
@@ -415,13 +404,15 @@ class HospitalsController extends Controller
         $hs_tracking->created_at = Carbon::now()->format('Y-m-d H:i:s');
         $hs_tracking->save();
 
+        hs_hospital_history::disableAuditing();      
         $hosp = new hs_hospital_history;
         $hosp = hs_hospital_history::findOrFail($request->facility_id); 
         $hosp->status_id = '15';
-        $hosp->created_at = Carbon::now()->format('Y-m-d H:i:s');
+        $hosp->requested_at = Carbon::now()->format('Y-m-d H:i:s');
         $hosp->requested_by = Auth::user()->id; 
+        $hosp->request_note = $request->reason;
         $hosp->save();
-        
+        hs_hospital_history::enableAuditing();        
         
         //****** send notifications *********
 

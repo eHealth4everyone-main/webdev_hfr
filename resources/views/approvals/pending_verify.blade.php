@@ -28,7 +28,7 @@ Pending Verifications
         <th>Facility Name</th>
         <th>Request Type</th>
         <th>Submitted By</th>
-        <th>Remarks</th>
+        <th>Validated By</th>        
         <th>Status</th>        
         <th>Actions</th>
       </tr>
@@ -39,22 +39,20 @@ Pending Verifications
     
         <td>{{$p->facility_name}}</td>
         <td>{{$p->action}}</td>
-
-        @foreach($status as $s)
-        
-            @if(($p->id == $s->hospital_id) and ($p->action == $s->action_type))
-                <td>
-                    <Strong>Name: </Strong>{{$s->user}} <br>
-                    <Strong>E-mail: </Strong>{{$s->email}} <br>
-                    <Strong>Mobile: </Strong>{{ $s->mobile }}<br>
-                    <Strong>Date: </Strong>{{ $s->created_at }}
-                </td>
-                <td>{{ $s->note }}</td>
-                @break
-            @endif
-        
-        @endforeach
-
+        <td>
+            <Strong>Name: </Strong>{{$p->requested_by}} <br>
+            <Strong>E-mail: </Strong>{{$p->requested_email}} <br>
+            <Strong>Mobile: </Strong>{{ $p->requested_mobile }} <br>
+            <Strong>Remarks: </Strong>{{ $p->request_note }} <br>
+            <Strong>Date: </Strong>{{ ($p->requested_at? date('d M Y', strtotime($p->requested_at)) : '') }} <br>                
+        </td>
+        <td>
+            <Strong>Name: </Strong>{{$p->validated_by}} <br>
+            <Strong>E-mail: </Strong>{{$p->validated_email}} <br>
+            <Strong>Mobile: </Strong>{{ $p->validated_mobile }} <br>
+            <Strong>Remarks: </Strong>{{ $p->validate_note }} <br>
+            <Strong>Date: </Strong>{{ ($p->validated_at? date('d M Y', strtotime($p->validated_at)) : '') }}
+        </td>
         <td>{{$p->status}}</td>
         <td>
             @if ($p->action === "CREATE FACILITY")

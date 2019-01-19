@@ -27,10 +27,10 @@ My Rejected Requests
       <tr>
           <th>Facility Name</th>
           <th>Request Type</th>
-          <th>Request Date</th>
+          <th>Verified By</th>
+          <th>Validated By</th>
+          <th>Published By</th>
           <th>Status</th>
-          <th>Rejected By</th>
-          <th>Rejected Date</th>
       </tr>
     </thead>
     <tbody>
@@ -38,22 +38,29 @@ My Rejected Requests
         <tr>
           <td>{{$r->facility_name}}</td>
           <td>{{$r->action}}</td>
-          <td>{{$r->created_at}}</td>
-          <td>{{$r->status}}</td>
-  
-          @foreach($status as $s)
-            @if(($r->id == $s->hospital_id) and ($r->status_id == $s->status_id))
-                
-                  <td>
-                      <Strong>Name: </Strong>{{$s->user}} <br>
-                      <Strong>E-mail: </Strong>{{$s->email}} <br>
-                      <Strong>Mobile: </Strong>{{ $s->mobile }} <br>
-                      <Strong>Remarks: </Strong>{{ $s->note }} <br>
-                  </td>
-                  <td>{{$s->created_at}}</td>
-              
-            @endif
-          @endforeach
+          <td>
+              <Strong>Name: </Strong>{{$r->verified_by}} <br>
+              <Strong>E-mail: </Strong>{{$r->verified_email}} <br>
+              <Strong>Mobile: </Strong>{{ $r->verified_mobile }} <br>
+              <Strong>Remarks: </Strong>{{ $r->verify_note }} <br>
+              <Strong>Date: </Strong>{{ ($r->verified_at ? date('d M Y', strtotime($r->verified_at )) : '')}} <br>                
+         </td>
+         <td>
+              <Strong>Name: </Strong>{{$r->validated_by}} <br>
+              <Strong>E-mail: </Strong>{{$r->validated_email}} <br>
+              <Strong>Mobile: </Strong>{{ $r->validated_mobile }} <br>
+              <Strong>Remarks: </Strong>{{ $r->validate_note }} <br>
+              <Strong>Date: </Strong>{{ ($r->validated_at ? date('d M Y', strtotime($r->validated_at )) : '')}} <br>                
+        </td>
+        <td>
+              <Strong>Name: </Strong>{{$r->published_by}} <br>
+              <Strong>E-mail: </Strong>{{$r->published_email}} <br>
+              <Strong>Mobile: </Strong>{{ $r->published_mobile }} <br>
+              <Strong>Remarks: </Strong>{{ $r->publish_note }} <br>
+              <Strong>Date: </Strong>{{ ($r->published_at ? date('d M Y', strtotime($r->published_at )) : '') }} <br>               
+        </td>
+         <td>{{$r->status}}</td>
+
     
           </tr>
           @endforeach

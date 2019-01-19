@@ -47,35 +47,8 @@
 
             <div class="row" >
                     <div class="col-sm-12">
-                            <div class="single-latest-item">      
-                                  
+                            <div class="single-latest-item">       
                                     <div id="container3" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
-
-                                    <table  id="table3">
-                                            <thead>
-                                            <tr>
-                                                <th></th>
-                                                <th>Primary</th>
-                                                <th>Secondary</th>
-                                                <th>Tertiary</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach($levels_by_state as $lev)
-                                                    <tr>
-                                                        @if($state_id==0)
-                                                            <td>{{$lev->state}}</td>
-                                                        @else
-                                                            <td>{{$lev->lga}}</td>
-                                                        @endif
-                                                        
-                                                        <td>{{$lev->Primary}}</td>
-                                                        <td>{{$lev->Secondary}}</td>
-                                                        <td>{{$lev->Tertiary}}</td>
-                                                    </tr>
-                                                @endforeach
-                                            <tbody>
-                                    </table>
                             </div>
                  
                     </div>
@@ -102,6 +75,33 @@
             </div>
     
     </div>
+</div>
+<div>
+        <table  id="table3">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>Primary</th>
+                    <th>Secondary</th>
+                    <th>Tertiary</th>
+                </tr>
+                </thead>
+                <tbody>
+                    @foreach($levels_by_state as $lev)
+                        <tr>
+                            @if($state_id==0)
+                                <td>{{$lev->state}}</td>
+                            @else
+                                <td>{{$lev->lga}}</td>
+                            @endif
+                            
+                            <td>{{$lev->Primary}}</td>
+                            <td>{{$lev->Secondary}}</td>
+                            <td>{{$lev->Tertiary}}</td>
+                        </tr>
+                    @endforeach
+                <tbody>
+        </table>
 </div>
 @endsection 
 

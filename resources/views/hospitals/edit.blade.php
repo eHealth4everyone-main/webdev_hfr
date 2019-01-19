@@ -24,10 +24,10 @@
             <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
                 <div class="panel-body">
                     <div class="box-body">
-                            @if($updating)
+                            @if(!in_array($hosp->status_id,[6,13]))
                                 <div class="callout callout-warning">
                                     <h4>Alert</h4>
-                                    <p>This facility has pending updates waiting for approval. Wait for changes to be approved to proceed!</p>
+                                    <p>This facility updates are pending. Wait for changes to be published to proceed!</p>
                                 </div>
                             @endif
 
@@ -72,6 +72,13 @@
                                     
                                 </select>
                                 <input type="hidden" name="state_id" value="{{$hosp->state_id}}">
+                                <input type="hidden" name="verified_by" value="">
+                                <input type="hidden" name="verified_at" value="">
+                                <input type="hidden" name="validated_at" value="">
+                                <input type="hidden" name="validated_by" value="">
+                                <input type="hidden" name="published_by" value="">
+                                <input type="hidden" name="published_at" value="">
+
                             </div>
                             
                             <label class="col-sm-2 control-label">LGA:<font color="red">*</font> </label></label>
@@ -521,7 +528,7 @@
     <a href="{{route('hospitals.index')}}">
         <button type="button" class="btn btn-warning">Return Back</button>
     </a>
-    @if(!$updating)
+    @if(in_array($hosp->status_id,[6,13]))
         <button type="submit" class="btn btn-primary pull-right">Submit Update Request</button>
     @endif
     

@@ -26,8 +26,9 @@ Pending Publish
       <tr>
             <th>Facility Name</th>
             <th>Request Type</th>
+            <th>Requested By</th>
             <th>Verified By</th>
-            <th>Validated By</th>
+            <th>validated By</th>
             <th>Status</th>        
             <th>Actions</th>
       </tr>
@@ -37,35 +38,27 @@ Pending Publish
       <tr>
             <td>{{$p->facility_name}}</td>
             <td>{{$p->action}}</td>
-        <td>
-                @foreach($status as $s)
-                    @if(($p->id == $s->hospital_id) and ($p->action == $s->action_type) )
-                        @if (in_array($s->status_id,[2,9,16]))
-                            <Strong>Name: </Strong>{{$s->user}} <br>
-                            <Strong>E-mail: </Strong>{{$s->email}} <br>
-                            <Strong>Mobile: </Strong>{{ $s->mobile }}<br>
-                            <Strong>Remarks: </Strong>{{ $s->note }} <br>
-                            <Strong>Date: </Strong>{{ $s->created_at }} <br>
-                            @break
-                        @endif
-                    @endif
-        
-                @endforeach
-        </td>
-        <td>
-                @foreach($status as $s)
-                    @if(($p->id == $s->hospital_id) and ($p->action == $s->action_type) )
-                        @if (in_array($s->status_id,[4,11,18]))
-                            <Strong>Name: </Strong>{{$s->user}} <br>
-                            <Strong>E-mail: </Strong>{{$s->email}} <br>
-                            <Strong>Mobile: </Strong>{{ $s->mobile }}<br>
-                            <Strong>Remarks: </Strong>{{ $s->note }} <br>
-                            <Strong>Date: </Strong>{{ $s->created_at }} <br>
-                            @break
-                        @endif
-                    @endif
-                @endforeach
-        </td>
+            <td>
+                <Strong>Name: </Strong>{{$p->requested_by}} <br>
+                <Strong>E-mail: </Strong>{{$p->requested_email}} <br>
+                <Strong>Mobile: </Strong>{{ $p->requested_mobile }} <br>
+                <Strong>Remarks: </Strong>{{ $p->request_note }} <br>
+                <Strong>Date: </Strong>{{ ($p->requested_at? date('d M Y', strtotime($p->requested_at)) : '') }} <br>                
+            </td>
+            <td>
+                <Strong>Name: </Strong>{{$p->verified_by}} <br>
+                <Strong>E-mail: </Strong>{{$p->verified_email}} <br>
+                <Strong>Mobile: </Strong>{{ $p->verified_mobile }} <br>
+                <Strong>Remarks: </Strong>{{ $p->verify_note }} <br>
+                <Strong>Date: </Strong>{{ ($p->verified_at? date('d M Y', strtotime($p->verified_at)) : '') }} <br>                
+            </td>
+            <td>
+                <Strong>Name: </Strong>{{$p->validated_by}} <br>
+                <Strong>E-mail: </Strong>{{$p->validated_email}} <br>
+                <Strong>Mobile: </Strong>{{ $p->validated_mobile }} <br>
+                <Strong>Remarks: </Strong>{{ $p->validate_note }} <br>
+                <Strong>Date: </Strong>{{ ($p->validated_at? date('d M Y', strtotime($p->validated_at)) : '') }}
+            </td>
 
         <td>{{$p->status}}</td>
         <td>

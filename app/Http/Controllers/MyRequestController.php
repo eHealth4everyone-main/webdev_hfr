@@ -19,46 +19,27 @@ class MyRequestController extends Controller
     public function myPendingRequest()
     {
         $myrequests = DB::select("SELECT * FROM hospital_details_history WHERE 
-        (created_by = ". Auth::user()->id ." OR requested_by = ". Auth::user()->id .") 
+        (created_by = ". Auth::user()->id ." OR requested_id = ". Auth::user()->id .") 
         AND status_id NOT IN (6,13,17,20,5,7,12,14,19,21)");
 
-    
-        $status = DB::table('hospital_status_tracking')
-            ->whereNotIn('status_id', [6,13,17,20,5,7,12,14,19,21])
-            ->where('state_id', Auth::user()->state_id)
-            ->orderBy('created_at','desc')
-            ->get();
-
-        return view('approvals.my_pending_requests',compact('myrequests','status')); 
+        return view('approvals.my_pending_requests',compact('myrequests')); 
     }
     
     public function myApprovedRequest()
     {
         $myrequests = DB::select("SELECT * FROM hospital_details_history WHERE 
-        (created_by = ". Auth::user()->id ." OR requested_by = ". Auth::user()->id .") 
+        (created_by = ". Auth::user()->id ." OR requested_id = ". Auth::user()->id .") 
         AND status_id IN (6,13,20)");
 
-    
-        $status = DB::table('hospital_status_tracking')
-            ->whereIn('status_id', [6, 13, 20])
-            ->where('state_id', Auth::user()->state_id)
-            ->get();
-
-        return view('approvals.my_approved_requests',compact('myrequests','status')); 
+        return view('approvals.my_approved_requests',compact('myrequests')); 
     }
     public function myRejectedRequest()
     {
         $myrequests = DB::select("SELECT * FROM hospital_details_history WHERE 
-        (created_by = ". Auth::user()->id ." OR requested_by = ". Auth::user()->id .") 
+        (created_by = ". Auth::user()->id ." OR requested_id = ". Auth::user()->id .") 
         AND status_id IN (3,5,7,10,12,14,17,19,21)");
 
-    
-        $status = DB::table('hospital_status_tracking')
-            ->whereIn('status_id', [3,5,7,10,12,14,17,19,21])
-            ->where('state_id', Auth::user()->state_id)
-            ->get();
-
-        return view('approvals.my_rejected_requests',compact('myrequests','status')); 
+        return view('approvals.my_rejected_requests',compact('myrequests')); 
     }
 
     public function editRequest($id)
@@ -180,6 +161,12 @@ class MyRequestController extends Controller
             'onsite_laboratory'=>'nullable',
             'onsite_imaging'=>'nullable',
             'mortuary_services'=>'nullable',
+            'verified_by'=>'nullable',
+            'verified_at'=>'nullable',
+            'validated_by'=>'nullable',
+            'validated_at'=>'nullable',
+            'published_by' => 'nullable',
+            'published_at' => 'nullable',
         ]);
         
         if($request->status_id == 3){  // verification rejected for new facility
@@ -192,6 +179,11 @@ class MyRequestController extends Controller
             $hosp->fill($request->all());
             $hosp->status_id = 1;
             $hosp->requested_by = Auth::user()->id;
+            $hosp->requested_at = Carbon::now()->format('Y-m-d H:i:s');
+            $hosp->request_note = "";
+            $hosp->verify_note = "";
+            $hosp->validate_note = "";
+            $hosp->publish_note = "";
             $hosp->start_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->start_date))); 
             $hosp->operational_days = $hosp->arrayValuesTostring($request->operational_days);
             $hosp->save();
@@ -201,7 +193,6 @@ class MyRequestController extends Controller
             //insert in status tracking
             $status = new hs_status_tracking;
             $status->hospital_id = $request->id;
-            $status->action = 'Create Request Updated';
             $status->user_id = Auth::user()->id;
             $status->status_id = 1;
             $status->created_at = Carbon::now()->format('Y-m-d H:i:s');
@@ -253,7 +244,13 @@ class MyRequestController extends Controller
             $hosp = hs_hospital_history::find($request->id);
             $hosp->fill($request->all());
             $hosp->status_id = 8;
+            $hosp->request_note = "";
+            $hosp->requested_at = Carbon::now()->format('Y-m-d H:i:s');  
             $hosp->requested_by = Auth::user()->id;
+            $hosp->request_note = "";
+            $hosp->verify_note = "";
+            $hosp->validate_note = "";
+            $hosp->publish_note = "";
             $hosp->start_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->start_date))); 
             $hosp->operational_days = $hosp->arrayValuesTostring($request->operational_days);
             $hosp->save();
@@ -261,11 +258,9 @@ class MyRequestController extends Controller
             //insert in status tracking
             $status = new hs_status_tracking;
             $status->hospital_id = $request->id;
-            $status->action = 'Update Request Updated';
             $status->user_id = Auth::user()->id;
             $status->status_id = 8;
             $status->created_at = Carbon::now()->format('Y-m-d H:i:s');
-            $status->update_no = $request->update_no;
             $status->save();
 
             //get services before update
