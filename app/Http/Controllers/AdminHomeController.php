@@ -30,10 +30,59 @@ class AdminHomeController extends Controller
         $num_downloads = DB::select("SELECT date_format(created_at,'%b %y') as name,month(created_at) mon,COUNT(id) y 
         FROM downloads group by name,mon order by mon limit 12");
 
-        $num_feedbacks = DB::select("SELECT date_format(created_at,'%b %y') name, month(created_at) mon, COUNT(id) as y 
-        FROM contact_us group by name,mon order by mon limit 12");
+        $status = DB::select("select state,status,count(id) count from hospital_details_history group by state,status");
 
-        return view("admin_dashboard",compact('num_downloads','num_feedbacks','dates','visitors'));
+        $columns = array();
+        $facility_status = array();
+        $statecheck = 0;
+        foreach($status as $s){
+            if(!in_array($s->state,$columns)){
+                foreach($status as $s2){
+                    if($s->state == $s2->state){
+                        $columns[0] = $s2->state;
+                        $statecheck = 1;
+                        if ($s2->status == "Facility Newly Created"){
+                            $columns[1] = $s2->count;
+                        }
+                        if ($s2->status == "Facility Creation Rejected"){
+                            $columns[2] = $s2->count;
+                        }
+                        if ($s2->status == "Facility Update Requested"){
+                            $columns[3] = $s2->count;                       
+                        }
+                        if ($s2->status =="Facility Update Rejected"){
+                            $columns[4] = $s2->count;                       
+                        }
+                        if ($s2->status == "Facility Deletion Requested"){
+                            $columns[5] = $s2->count;                       
+                        }
+                        if ($s2->status == "Facility Deletion Rejected"){
+                            $columns[6] = $s2->count;                       
+                        }
+                        if ($s2->status == "Facility Verified"){
+                            $columns[7] = $s2->count;                       
+                        }
+                        if ($s2->status == "Facility Validated"){
+                            $columns[8] = $s2->count;                      
+                        }
+                        if ($s2->status == "Facility Published"){
+                            $columns[9] = $s2->count;                       
+                        }
+            
+                    }else{
+                        $statecheck = 0;
+                    }
+                         
+                }
+               
+                    $facility_status[] = $columns; 
+                
+            }
+          
+        }
+       
+
+        return view("admin_dashboard",compact('num_downloads','facility_status','dates','visitors'));
     }
 
 
