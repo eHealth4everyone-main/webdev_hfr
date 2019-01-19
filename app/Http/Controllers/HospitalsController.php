@@ -331,7 +331,6 @@ class HospitalsController extends Controller
 
         //update records in history with new changes
         $hosp = new hs_hospital_history;
-    
         $hosp = hs_hospital_history::findOrFail($id);
         $hosp->fill($request->all());
         $hosp->status_id = 8;
@@ -343,7 +342,6 @@ class HospitalsController extends Controller
         $hosp->publish_note = '';  
         $hosp->start_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->start_date))); 
         $hosp->operational_days = $hosp->arrayValuesTostring($request->operational_days);
-        $hosp->save();
         
         //insert in status tracking
         $status = new hs_status_tracking;
@@ -351,7 +349,7 @@ class HospitalsController extends Controller
         $status->user_id = Auth::user()->id;
         $status->status_id = 8;
         $status->created_at = Carbon::now()->format('Y-m-d H:i:s');
-        $status->save();
+       
 
         //get services before update
         $services = DB::table('hs_hospital_services')
@@ -373,17 +371,30 @@ class HospitalsController extends Controller
 
         $diff = array_diff($services_before, $services_update);
 
-        //update hospital services
-        $deleted = DB::delete("delete from hs_hospital_services_history where hospital_id ='".$id."' and id > 0");
-                
-        if(!empty($services_update) and count($diff) > 0){ //if diff > 0 services are updated 
-            foreach ($services_update as $service_id){
-                $hosp_services = new hs_hospital_service_history;
-                $hosp_services->service_id = $service_id;
-                $hosp_services->hospital_id = $id; 
-                $hosp_services->save();
+        DB::beginTransaction();
+        try {
+            $hosp->save();
+            $status->save();
+
+             //update hospital services
+            $deleted = DB::delete("delete from hs_hospital_services_history where hospital_id ='".$id."' and id > 0");
+                    
+            if(!empty($services_update) and count($diff) > 0){ //if diff > 0 services are updated 
+                foreach ($services_update as $service_id){
+                    $hosp_services = new hs_hospital_service_history;
+                    $hosp_services->service_id = $service_id;
+                    $hosp_services->hospital_id = $id; 
+                    $hosp_services->save();
+                }
             }
+
+            DB::commit();
+        } catch (\Exception $ex) {
+            DB::rollback();
+            return response()->json(['error' => $ex->getMessage()], 500);
         }
+       
+        
 
         //****** send notifications *********
 
@@ -410,31 +421,41 @@ class HospitalsController extends Controller
         $hs_tracking->status_id = '15';
         $hs_tracking->note = $request->reason;
         $hs_tracking->created_at = Carbon::now()->format('Y-m-d H:i:s');
-        $hs_tracking->save();
-
-        hs_hospital_history::disableAuditing();      
+       
         $hosp = new hs_hospital_history;
         $hosp = hs_hospital_history::findOrFail($request->facility_id); 
         $hosp->status_id = '15';
         $hosp->requested_at = Carbon::now()->format('Y-m-d H:i:s');
         $hosp->requested_by = Auth::user()->id; 
         $hosp->request_note = $request->reason;
-        $hosp->save();
-        hs_hospital_history::enableAuditing();        
+       
+        DB::beginTransaction();
+        try {
+            hs_hospital_history::disableAuditing();  
+            $hs_tracking->save();
+            $hosp->save();
+            hs_hospital_history::enableAuditing();        
+            
+                DB::commit();
+        } catch (\Exception $ex) {
+            DB::rollback();
+            return response()->json(['error' => $ex->getMessage()], 500);
+        }
+       
         
         //****** send notifications *********
 
         //get users with approval access
-        $users = DB::select("SELECT u.id FROM users u
-            JOIN model_has_roles r on r.model_id = u.id
-            JOIN role_has_permissions p on p.role_id = r.role_id
-            WHERE p.permission_id = 59 and u.state_id = ". $request->state_id_del ."");
+        // $users = DB::select("SELECT u.id FROM users u
+        //     JOIN model_has_roles r on r.model_id = u.id
+        //     JOIN role_has_permissions p on p.role_id = r.role_id
+        //     WHERE p.permission_id = 59 and u.state_id = ". $request->state_id_del ."");
             
-        $name = $request->facility_name_to_del;
-        foreach ($users as $user){
-            $user = user::find($user->id);
-            $user->notify(new DeleteRequest($name, $request->facility_id));
-        }  
+        // $name = $request->facility_name_to_del;
+        // foreach ($users as $user){
+        //     $user = user::find($user->id);
+        //     $user->notify(new DeleteRequest($name, $request->facility_id));
+        // }  
         // ****** notifiction end*****
 
 

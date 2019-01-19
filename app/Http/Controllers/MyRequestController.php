@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Auth;
 use App\hs_hospital;
 use App\hs_hospital_history;
+use App\hs_hospital_service;
 use App\hs_hospital_service_history;
 use App\hs_status_tracking;
 use Carbon\Carbon;
@@ -169,47 +170,53 @@ class MyRequestController extends Controller
             'published_at' => 'nullable',
         ]);
         
-        if($request->status_id == 3){  // verification rejected for new facility
+        if(in_array($request->status_id,[3,1])){  // verification rejected for new facility or edit user reqeust that have not been verified yet
+            DB::beginTransaction();
+            try {
+                hs_hospital_history::disableAuditing();
 
-            hs_hospital_history::disableAuditing();
+                //update records in history with new changes
+                $hosp = new hs_hospital_history;
+                $hosp = hs_hospital_history::find($request->id);
+                $hosp->fill($request->all());
+                $hosp->status_id = 1;
+                $hosp->requested_by = Auth::user()->id;
+                $hosp->requested_at = Carbon::now()->format('Y-m-d H:i:s');
+                $hosp->request_note = "";
+                $hosp->verify_note = "";
+                $hosp->validate_note = "";
+                $hosp->publish_note = "";
+                $hosp->start_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->start_date))); 
+                $hosp->operational_days = $hosp->arrayValuesTostring($request->operational_days);
+                $hosp->save();
 
-            //update records in history with new changes
-            $hosp = new hs_hospital_history;
-            $hosp = hs_hospital_history::find($request->id);
-            $hosp->fill($request->all());
-            $hosp->status_id = 1;
-            $hosp->requested_by = Auth::user()->id;
-            $hosp->requested_at = Carbon::now()->format('Y-m-d H:i:s');
-            $hosp->request_note = "";
-            $hosp->verify_note = "";
-            $hosp->validate_note = "";
-            $hosp->publish_note = "";
-            $hosp->start_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->start_date))); 
-            $hosp->operational_days = $hosp->arrayValuesTostring($request->operational_days);
-            $hosp->save();
+                hs_hospital_history::enableAuditing();
+                
+                //insert in status tracking
+                $status = new hs_status_tracking;
+                $status->hospital_id = $request->id;
+                $status->user_id = Auth::user()->id;
+                $status->status_id = 1;
+                $status->created_at = Carbon::now()->format('Y-m-d H:i:s');
+                $status->save();
 
-            hs_hospital_history::enableAuditing();
-            
-            //insert in status tracking
-            $status = new hs_status_tracking;
-            $status->hospital_id = $request->id;
-            $status->user_id = Auth::user()->id;
-            $status->status_id = 1;
-            $status->created_at = Carbon::now()->format('Y-m-d H:i:s');
-            $status->save();
-
-            //update hospital services
-            hs_hospital_service_history::where('hospital_id', $request->id)->delete();
-                    
-            //insert services
-            $services[] = $request->services;
-            if (!empty($services)){
-                foreach ($services as $id){
-                    $hosp_services = new hs_hospital_service_history;
-                    $hosp_services->service_id = $id;
-                    $hosp_services->hospital_id = $request->id; 
-                    $hosp_services->save();
-                }            
+                //update hospital services
+                hs_hospital_service_history::where('hospital_id', $request->id)->delete();
+                        
+                //insert services
+                $services = $request->services;
+                if (!empty($services)){
+                    foreach ($services as $id){
+                        $hosp_services = new hs_hospital_service_history;
+                        $hosp_services->service_id = $id;
+                        $hosp_services->hospital_id = $request->id; 
+                        $hosp_services->save();
+                    }            
+                }
+            DB::commit();
+            } catch (\Exception $ex) {
+                DB::rollback();
+                return response()->json(['error' => $ex->getMessage()], 500);
             }
         }
 
@@ -217,83 +224,90 @@ class MyRequestController extends Controller
             
             //restore main table data before being udpated. Delete data in history and copy data from main
             //to history
-            hs_hospital_history::disableAuditing();
+            DB::beginTransaction();
+            try {
+                hs_hospital_history::disableAuditing();
 
-            //delete hosp and services in history
-            hs_hospital_history::destroy($request->id);
-            hs_hospital_service_history::where('hospital_id', $request->id)->delete();
+                //delete hosp and services in history
+                hs_hospital_history::destroy($request->id);
+                hs_hospital_service_history::where('hospital_id', $request->id)->delete();
 
-            $hosp_main = new hs_hospital;
-            $hosp_main = hs_hospital::find($request->id);
+                $hosp_main = new hs_hospital;
+                $hosp_main = hs_hospital::find($request->id);
 
-            //copy data from main to history
-            $hosp_history = new hs_hospital_history;
-            $hosp_history -> fill($hosp_main->toArray());
-            $hosp_history -> unique_id = $hosp_main->unique_id;
-            $hosp_history -> start_date = $hosp_main->start_date;
-            $hosp_history -> status_id = $hosp_main->status_id;
-            $hosp_history -> created_by = $hosp_main->created_by;
-            $hosp_history -> operational_days =  $hosp_main->operational_days;        
-            $hosp_history -> save();
-            //copy ends
+                //copy data from main to history
+                $hosp_history = new hs_hospital_history;
+                $hosp_history -> fill($hosp_main->toArray());
+                $hosp_history -> unique_id = $hosp_main->unique_id;
+                $hosp_history -> start_date = $hosp_main->start_date;
+                $hosp_history -> status_id = $hosp_main->status_id;
+                $hosp_history -> created_by = $hosp_main->created_by;
+                $hosp_history -> operational_days =  $hosp_main->operational_days;        
+                $hosp_history -> save();
+                //copy ends
 
-            hs_hospital_history::enableAuditing();
+                hs_hospital_history::enableAuditing();
 
-            //update records in history with new changes
-            $hosp = new hs_hospital_history;
-            $hosp = hs_hospital_history::find($request->id);
-            $hosp->fill($request->all());
-            $hosp->status_id = 8;
-            $hosp->request_note = "";
-            $hosp->requested_at = Carbon::now()->format('Y-m-d H:i:s');  
-            $hosp->requested_by = Auth::user()->id;
-            $hosp->request_note = "";
-            $hosp->verify_note = "";
-            $hosp->validate_note = "";
-            $hosp->publish_note = "";
-            $hosp->start_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->start_date))); 
-            $hosp->operational_days = $hosp->arrayValuesTostring($request->operational_days);
-            $hosp->save();
-            
-            //insert in status tracking
-            $status = new hs_status_tracking;
-            $status->hospital_id = $request->id;
-            $status->user_id = Auth::user()->id;
-            $status->status_id = 8;
-            $status->created_at = Carbon::now()->format('Y-m-d H:i:s');
-            $status->save();
+                //update records in history with new changes
+                $hosp = new hs_hospital_history;
+                $hosp = hs_hospital_history::find($request->id);
+                $hosp->fill($request->all());
+                $hosp->status_id = 8;
+                $hosp->request_note = "";
+                $hosp->requested_at = Carbon::now()->format('Y-m-d H:i:s');  
+                $hosp->requested_by = Auth::user()->id;
+                $hosp->request_note = "";
+                $hosp->verify_note = "";
+                $hosp->validate_note = "";
+                $hosp->publish_note = "";
+                $hosp->start_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->start_date))); 
+                $hosp->operational_days = $hosp->arrayValuesTostring($request->operational_days);
+                $hosp->save();
+                
+                //insert in status tracking
+                $status = new hs_status_tracking;
+                $status->hospital_id = $request->id;
+                $status->user_id = Auth::user()->id;
+                $status->status_id = 8;
+                $status->created_at = Carbon::now()->format('Y-m-d H:i:s');
+                $status->save();
 
-            //get services before update
-            $services = DB::table('hs_hospital_services')
-                    ->select('service_id')
-                    ->where('hospital_id','=',$id)
-                    ->get();
+                //get services before update
+                $services = DB::table('hs_hospital_services')
+                        ->select('service_id')
+                        ->where('hospital_id','=',$id)
+                        ->get();
 
-            $services_before = [];
-            foreach ($services as $s) {
-                $services_before[] = $s->service_id;
-            }
-
-            if(empty($request->services)){
-                $services_update = [];
-            }
-            else{
-                $services_update = $request->services;
-            }
-
-            $diff = array_diff($services_before, $services_update);
-
-            //update hospital services
-            // $deleted = DB::delete("delete from hs_hospital_services_history where hospital_id ='".$request->hosp_id."' and id > 0");
-            hs_hospital_service_history::where('hospital_id', $request->id)->delete();
-                    
-            if(!empty($services_update) and count($diff) > 0){ //if diff > 0 services are updated 
-                foreach ($services_update as $service_id){
-                    $hosp_services = new hs_hospital_service_history;
-                    $hosp_services->service_id = $service_id;
-                    $hosp_services->hospital_id = $id; 
-                    $hosp_services->save();
+                $services_before = [];
+                foreach ($services as $s) {
+                    $services_before[] = $s->service_id;
                 }
+
+                if(empty($request->services)){
+                    $services_update = [];
+                }
+                else{
+                    $services_update = $request->services;
+                }
+
+                $diff = array_diff($services_before, $services_update);
+
+                //update hospital services
+                // $deleted = DB::delete("delete from hs_hospital_services_history where hospital_id ='".$request->hosp_id."' and id > 0");
+                hs_hospital_service_history::where('hospital_id', $request->id)->delete();
+                        
+                if(!empty($services_update) and count($diff) > 0){ //if diff > 0 services are updated 
+                    foreach ($services_update as $service_id){
+                        $hosp_services = new hs_hospital_service_history;
+                        $hosp_services->service_id = $service_id;
+                        $hosp_services->hospital_id = $id; 
+                        $hosp_services->save();
+                    }
+                }
+            DB::commit();
+            } catch (\Exception $ex) {
+                DB::rollback();
+                return response()->json(['error' => $ex->getMessage()], 500);
             }
         }
         
@@ -304,7 +318,7 @@ class MyRequestController extends Controller
     public function deleteRequest(Request $request){
         
         // Delete my pending verification or rejected verification for new facility
-        if($request->status_id == 1 OR $request->status_id == 3){  
+        if(in_array($request->status_id,[1,3])){  
 
             //delete hosp and services in history
             hs_hospital_history::destroy($request->hosp_id);
@@ -313,33 +327,37 @@ class MyRequestController extends Controller
         }
     
         // Delete pending verification or rejected verification for update requests
-        if($request->status_id == 8 OR $request->status_id == 10){ 
-            
-            //restore main table data before being udpated. Delete data in history and copy data from main to history
-            hs_hospital_history::disableAuditing();
+        if(in_array($request->status_id, [8,1])){ 
+            DB::beginTransaction();
+            try {
+                //restore main table data before being udpated. Delete data in history and copy data from main to history
+                hs_hospital_history::disableAuditing();
 
-            //delete hosp and services in history
-            hs_hospital_history::destroy($request->hosp_id);
-            hs_hospital_service_history::where('hospital_id', $request->hosp_id)->delete();
+                //delete hosp and services in history
+                hs_hospital_history::destroy($request->hosp_id);
+                hs_hospital_service_history::where('hospital_id', $request->hosp_id)->delete();
 
-            $hosp_main = new hs_hospital;
-            $hosp_main = hs_hospital::find($request->hosp_id);
+                $hosp_main = new hs_hospital;
+                $hosp_main = hs_hospital::find($request->hosp_id);
 
-            //restore data from main tables to history
-            $hosp_history = new hs_hospital_history;
-            $hosp_history -> fill($hosp_main->toArray());
-            $hosp_history -> unique_id = $hosp_main->unique_id;
-            $hosp_history -> start_date = $hosp_main->start_date;
-            $hosp_history -> status_id = $hosp_main->status_id;
-            $hosp_history -> created_by = $hosp_main->created_by;
-            $hosp_history -> operational_days =  $hosp_main->operational_days;        
-            $hosp_history -> save();
+                //restore data from main tables to history
+                $hosp_history = new hs_hospital_history;
+                $hosp_history ->fill($hosp_main->toArray());
+                $hosp_history ->unique_id = $hosp_main->unique_id;
+                $hosp_history ->start_date = $hosp_main->start_date;
+                $hosp_history ->status_id = $hosp_main->status_id;
+                $hosp_history ->created_by = $hosp_main->created_by;
+                $hosp_history ->operational_days =  $hosp_main->operational_days;        
+                $hosp_history ->save();
 
-            //copy services data
+                //copy services data
 
-           
-
-            hs_hospital_history::enableAuditing();
+                hs_hospital_history::enableAuditing();
+                DB::commit();
+            } catch (\Exception $ex) {
+                DB::rollback();
+                return response()->json(['error' => $ex->getMessage()], 500);
+            }
 
         }
         session()->flash("alert-success", "Request Deleted Successfully!");

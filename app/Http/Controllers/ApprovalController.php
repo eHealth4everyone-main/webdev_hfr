@@ -183,6 +183,7 @@ class ApprovalController extends Controller
                 $action="Delete Validation Rejected";                
             }
         }
+
         $date = Carbon::now()->format('Y-m-d H:i:s');
 
         hs_hospital_history::disableAuditing();        
@@ -275,51 +276,58 @@ class ApprovalController extends Controller
                 $action="Delete Publish Rejected";              
             }
         }
-        $date = Carbon::now()->format('Y-m-d H:i:s');
-        hs_hospital_history::disableAuditing();      
-        $hosp = new hs_hospital_history();
-        $hosp = hs_hospital_history::findOrFail($request->id);
-        $hosp->status_id = $status_id;
-        $hosp->published_by = Auth::user()->id;
-        $hosp->published_at = $date;
-        $hosp->publish_note = $request->notes;
-        $hosp->save();
-        hs_hospital_history::enableAuditing();
-    
-        $status = new hs_status_tracking;
-        $status->hospital_id = $request->id;
-        $status->user_id = Auth::user()->id;
-        $status->status_id = $status_id;
-        $status->note = $request->notes;
-        $status->created_at = $date;
-        $status->save();
-    
-         //update hospital services to main table
-        if($request->requested_action == "UPDATE FACILITY"){
-            if($status_id == 13){
-                //get new hospital services
-                $services = DB::select("SELECT service_id FROM hs_hospital_services_history WHERE hospital_id = ". $request->id . ""); 
-    
-                if(!empty($services)){
-                    // remove current services in main table
-                    $deleted = DB::delete("delete from hs_hospital_services where hospital_id ='". $request->id ."' and id > 0");
-    
-                    foreach ($services as $service){
-                        $hosp_services = new hs_hospital_service;
-                        $hosp_services->service_id = $service->service_id;
-                        $hosp_services->hospital_id = $request->id; 
-                        $hosp_services->save();
+        DB::beginTransaction();
+        try {
+            $date = Carbon::now()->format('Y-m-d H:i:s');
+            hs_hospital_history::disableAuditing();      
+            $hosp = new hs_hospital_history();
+            $hosp = hs_hospital_history::findOrFail($request->id);
+            $hosp->status_id = $status_id;
+            $hosp->published_by = Auth::user()->id;
+            $hosp->published_at = $date;
+            $hosp->publish_note = $request->notes;
+            $hosp->save();
+            hs_hospital_history::enableAuditing();
+        
+            $status = new hs_status_tracking;
+            $status->hospital_id = $request->id;
+            $status->user_id = Auth::user()->id;
+            $status->status_id = $status_id;
+            $status->note = $request->notes;
+            $status->created_at = $date;
+            $status->save();
+        
+            //update hospital services to main table
+            if($request->requested_action == "UPDATE FACILITY"){
+                if($status_id == 13){
+                    //get new hospital services
+                    $services = DB::select("SELECT service_id FROM hs_hospital_services_history WHERE hospital_id = ". $request->id . ""); 
+        
+                    if(!empty($services)){
+                        // remove current services in main table
+                        $deleted = DB::delete("delete from hs_hospital_services where hospital_id ='". $request->id ."' and id > 0");
+        
+                        foreach ($services as $service){
+                            $hosp_services = new hs_hospital_service;
+                            $hosp_services->service_id = $service->service_id;
+                            $hosp_services->hospital_id = $request->id; 
+                            $hosp_services->save();
+                        }
                     }
                 }
             }
-        }
 
-        //Delete facility after final verification
-        if($request->requested_action == "DELETE FACILITY"){
-            if($status_id == 20){
-                hs_hospital_service::where('hospital_id', $request->id)->delete();
-                hs_hospital::destroy($request->id);
+            //Delete facility after final verification
+            if($request->requested_action == "DELETE FACILITY"){
+                if($status_id == 20){
+                    hs_hospital_service::where('hospital_id', $request->id)->delete();
+                    hs_hospital::destroy($request->id);
+                }
             }
+            DB::commit();
+        } catch (\Exception $ex) {
+            DB::rollback();
+            return response()->json(['error' => $ex->getMessage()], 500);
         }
 
         //****** send notifications *********
