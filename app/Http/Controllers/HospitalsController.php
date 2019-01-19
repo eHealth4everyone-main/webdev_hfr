@@ -157,22 +157,30 @@ class HospitalsController extends Controller
         $hosp->created_by = Auth::user()->id;
         $hosp->requested_by = Auth::user()->id;
         $hosp->operational_days = $hosp->arrayValuesTostring($request->operational_days);
-        $hosp->save();
+       
+        $services = $request->services;
         
-        //get id of inserted record
-        $hosp_id = $hosp->id;
-        
-         //insert services
-         $services[] = $request->services;
-         if (!empty($services)){
-            foreach ($services as $id){
-                $hosp_services = new hs_hospital_service_history;
-                $hosp_services->service_id = $id;
-                $hosp_services->hospital_id = $hosp_id; 
-                $hosp_services->save();
-            }            
-         }
-        
+        DB::beginTransaction();
+        try {
+            $hosp->save();
+            //get id of inserted record
+           $hosp_id = $hosp->id;
+           
+           //insert services
+           if (!empty($services)){
+                foreach ($services as $id){
+                    $hosp_services = new hs_hospital_service_history;
+                    $hosp_services->service_id = $id;
+                    $hosp_services->hospital_id = $hosp_id; 
+                    $hosp_services->save();
+                }            
+           }
+            DB::commit();
+        } catch (\Exception $ex) {
+            DB::rollback();
+            return response()->json(['error' => $ex->getMessage()], 500);
+        }
+
          //****** send notifications *********
 
          //get users with approval access
@@ -478,6 +486,17 @@ class HospitalsController extends Controller
 
       return $services;
     }
+
+    public function getServicesHistory(Request $request)
+    {
+        $services = DB::select("select s.service_category_id category_id,s.name from hs_hospital_services_history hs
+            join lst_hosp_services s on hs.service_id=s.id
+            where hospital_id='".$request->hosp_id."'");
+
+      return $services;
+    }
+
+
 
 
 }

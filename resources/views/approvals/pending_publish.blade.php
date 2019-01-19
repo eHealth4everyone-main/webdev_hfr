@@ -377,34 +377,58 @@ Pending Publish
                                 </div>
                                 <div id="collapse6" class="panel-collapse collapse">
                                     <div class="panel-body">
-                                        <div class="row">
-                                            <label class="col-md-6">Onsite Laboratory:</label>
-                                            <div class="col-md-6" id="onsite_laboratory"></div>
-                                        </div>
-                                        <div class="row">
-                                            <label class="col-md-6">Onsite Imaging:</label>
-                                            <div class="col-md-6" id="onsite_imaging"></div>
-                                        </div>
-                                        <div class="row">
-                                            <label class="col-md-6">Onsite Pharmacy:</label>
-                                            <div class="col-md-6" id="onsite_pharmarcy"></div>
-                                        </div>
-                                        <div class="row">
-                                            <label class="col-md-6">Mortuary Services:</label>
-                                            <div class="col-md-6" id="mortuary_services"></div>
-                                        </div>
-                                        <div class="row">
-                                            <label class="col-md-6">Beds Accidents and Emergency:</label>
-                                            <div class="col-md-6" id="beds_accidents_emerg"></div>
-                                        </div>
-                                        <div class="row">
-                                            <label class="col-md-6">Beds Admission Facilities:</label>
-                                            <div class="col-md-6" id="beds_adminission"></div>
-                                        </div>
-                                        <div class="row">
-                                            <label class="col-md-6">Beds ICU:</label>
-                                            <div class="col-md-6" id="beds_icu"></div>
-                                        </div>
+                                            <div class="row">
+                                                    <label class="col-md-6">Medical:</label>
+                                                    <div class="col-md-6" id="medical"></div>
+                                                </div>
+                                                <div class="row">
+                                                    <label class="col-md-6">Surgical:</label>
+                                                    <div class="col-md-6" id="surgical"></div>
+                                                </div>
+                                                <div class="row">
+                                                    <label class="col-md-6">Obsterics and Gynecology:</label>
+                                                    <div class="col-md-6" id="gyn"></div>
+                                                </div>
+                                                <div class="row">
+                                                    <label class="col-md-6">Pediatrics:</label>
+                                                    <div class="col-md-6" id="pediatrics"></div>   
+                                                </div>
+                                                <div class="row">
+                                                    <label class="col-md-6">Dental:</label>
+                                                    <div class="col-md-6" id="dental"></div>
+                                                </div>
+                                                <div class="row">
+                                                    <label class="col-md-6">Specific Clinical Service:</label>
+                                                    <div class="col-md-6" id="specialservice"></div>
+                                                </div>
+                                                <div class="row">
+                                                    <label class="col-md-6">Beds Accidents and Emergency:</label>
+                                                    <div class="col-md-6" id="beds_accidents_emerg"></div>
+                                                </div>
+                                                <div class="row">
+                                                    <label class="col-md-6">Beds Admission Facilities:</label>
+                                                    <div class="col-md-6" id="beds_adminission"></div>
+                                                </div>
+                                                <div class="row">
+                                                    <label class="col-md-6">Beds ICU:</label>
+                                                    <div class="col-md-6" id="beds_icu"></div>
+                                                </div>
+                                                <div class="row">
+                                                    <label class="col-md-6">Onsite Laboratory:</label>
+                                                    <div class="col-md-6" id="onsite_laboratory"></div>
+                                                </div>
+                                                <div class="row">
+                                                    <label class="col-md-6">Onsite Imaging:</label>
+                                                    <div class="col-md-6" id="onsite_imaging"></div>
+                                                </div>
+                                                <div class="row">
+                                                    <label class="col-md-6">Onsite Pharmacy:</label>
+                                                    <div class="col-md-6" id="onsite_pharmarcy"></div>
+                                                </div>
+                                                <div class="row">
+                                                    <label class="col-md-6">Mortuary Services:</label>
+                                                    <div class="col-md-6" id="mortuary_services"></div>
+                                                </div>
                                     </div>
                                 </div>
                             </div>
@@ -463,7 +487,13 @@ Pending Publish
         $('#view_details').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget)
             var modal = $(this)
-            
+            $("#specialservice").empty();
+            $("#medical").empty();
+            $("#surgical").empty();
+            $("#gyn").empty();
+            $("#pediatrics").empty();
+            $("#dental").empty();
+
             modal.find('.modal-body #id').val(button.data('id'));
             modal.find('.modal-body #unique_id').text(button.data('unique_id'));
             modal.find('.modal-body #registration_no').text(button.data('registration_no'));
@@ -514,6 +544,38 @@ Pending Publish
             modal.find('.modal-body #onsite_pharmarcy').text(button.data('onsite_pharmarcy'));
             modal.find('.modal-body #mortuary_services').text(button.data('mortuary_services'));
             modal.find('.modal-body #requested_action').val(button.data('action')); 
+
+            var hosp_id = button.data('id');
+                var _token = $('input[name="_token"]').val();
+                $.ajax({
+                    url:"{{route('hospitals.getServicesHistory')}}",
+                    method:"POST",
+                    data:{hosp_id:hosp_id,_token:_token},
+                    success:function(result)
+                    {
+                        $.each(result, function(i, item) {   
+                            if (item.category_id=="1"){
+                                $("#medical").append("<span class='label label-default'>" + item.name + "</span> ");
+                            }
+                            if (item.category_id=="2"){
+                                $("#surgical").append("<span class='label label-default'>" + item.name + "</span> ");
+                            }
+                            if (item.category_id=="3"){
+                                $("#gyn").append("<span class='label label-default'>" + item.name + "</span> ");
+                            }
+                            if (item.category_id=="4"){
+                                $("#pediatrics").append("<span class='label label-default'>" + item.name + "</span> ");
+                            }
+                            if (item.category_id=="5"){
+                                $("#dental").append("<span class='label label-default'>" + item.name + "</span> ");
+                            }
+                            if (item.category_id=="6"){
+                                $("#specialservice").append("<span class='label label-default'>" + item.name + "</span> ");
+                            }
+                        });     
+                    
+                    }         
+                })
 
             
         });//end

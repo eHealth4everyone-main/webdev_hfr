@@ -73,6 +73,7 @@ class ApprovalController extends Controller
                 $message = "Facility Deletion Rejected";
             }
         }
+    
         $date = Carbon::now()->format('Y-m-d H:i:s');
 
         hs_hospital_history::disableAuditing();       

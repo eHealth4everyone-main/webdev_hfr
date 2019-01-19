@@ -44,6 +44,8 @@ Route::post('hosp/fetchLga', 'GeneralController@getLgaList')->name('getLgaList')
 Route::post('hosp/fetctWards', 'GeneralController@getWardList')->name('getWardList');
 
 Route::post('hospitals/servicesavailable','HospitalsController@getservices')->name('hospitals.getServices');
+Route::post('hospitals/servicesavailable/history','HospitalsController@getservicesHistory')->name('hospitals.getServicesHistory');
+
 
 //resources
 Route::get('resources/download/{file}', 'ResourceController@download')->name('downloadFile');
