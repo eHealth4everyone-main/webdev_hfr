@@ -34,49 +34,66 @@ class AdminHomeController extends Controller
 
         $columns = array();
         $facility_status = array();
-        $statecheck = 0;
+        $looped_states = array();
+    
         foreach($status as $s){
-            if(!in_array($s->state,$columns)){
+            if(!in_array($s->state,$looped_states)){
                 foreach($status as $s2){
                     if($s->state == $s2->state){
                         $columns[0] = $s2->state;
-                        $statecheck = 1;
+                        $looped_states[] = $s2->state;
+                        
                         if ($s2->status == "Facility Newly Created"){
                             $columns[1] = $s2->count;
+                        }else{
+                            $columns[1] = 0;
                         }
                         if ($s2->status == "Facility Creation Rejected"){
                             $columns[2] = $s2->count;
+                        }else{
+                            $columns[2] = 0;
                         }
                         if ($s2->status == "Facility Update Requested"){
                             $columns[3] = $s2->count;                       
+                        }else{
+                            $columns[3] = 0;
                         }
                         if ($s2->status =="Facility Update Rejected"){
                             $columns[4] = $s2->count;                       
+                        }else{
+                            $columns[4] = 0;
                         }
                         if ($s2->status == "Facility Deletion Requested"){
                             $columns[5] = $s2->count;                       
+                        }else{
+                            $columns[5] = 0;
                         }
                         if ($s2->status == "Facility Deletion Rejected"){
                             $columns[6] = $s2->count;                       
+                        }else{
+                            $columns[6] = 0;
                         }
                         if ($s2->status == "Facility Verified"){
                             $columns[7] = $s2->count;                       
+                        }else{
+                            $columns[7] = 0;
                         }
                         if ($s2->status == "Facility Validated"){
                             $columns[8] = $s2->count;                      
+                        }else{
+                            $columns[8] = 0;
                         }
                         if ($s2->status == "Facility Published"){
                             $columns[9] = $s2->count;                       
+                        }else{
+                            $columns[9] = 0;
                         }
             
-                    }else{
-                        $statecheck = 0;
                     }
                          
                 }
                
-                    $facility_status[] = $columns; 
-                
+                $facility_status[] = $columns; 
             }
           
         }
