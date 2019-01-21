@@ -154,7 +154,7 @@ Route::middleware(["auth"])->group(function(){
     Route::get('admin/messages', 'ContactController@index')->name('getMessages');
 
     //download
-    Route::get('admin/download/list', 'DownloadController@adminIndex')->name('downloadList');
+    Route::get('admin/download/list', 'DownloadController@guestDownloadRequests')->name('downloadList');
     Route::get('admin/downloads/hospitals/{state}/{format}', 'DownloadController@exportHospitals')->name('export.hosptitals');
 
 });

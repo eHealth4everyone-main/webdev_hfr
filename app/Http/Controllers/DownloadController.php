@@ -123,10 +123,10 @@ class DownloadController extends Controller
                 'country' => 'required',
                 'purpose' => 'required|max:200',
                 'email' => 'required|string|email|max:100',
-                // 'g-recaptcha-response' => 'required|captcha',
+                'g-recaptcha-response' => 'required|captcha',
             ]);
 
-            //Download::create($request->all());
+            Download::create($request->all());
             
             $code = $this->generateToken();
        
@@ -188,7 +188,7 @@ class DownloadController extends Controller
         }
 
         if (($token_expire == 0) AND ($token_match == 1)){
-            return $this-> downloadFacilities();
+            return redirect()->route('downloadFacilitiesList');
         }
         else{
             return back()->withErrors([
@@ -198,10 +198,10 @@ class DownloadController extends Controller
 
     }
 
-    public function downloadFacilities (){
-        // if (!$request->session()->has('download_verify')){
-        //     return redirect()->route('openRegistrationForm');
-        // }
+    public function downloadFacilities (Request $request){
+        if (!$request->session()->has('download_verify')){
+            return redirect()->route('openRegistrationForm');
+        }
 
         //get state list
         $lst_states = Cache::remember('lst_states', 60, function () {
@@ -231,7 +231,8 @@ class DownloadController extends Controller
     }
 
 
-    public function adminIndex (){
+    //for admin module
+    public function guestDownloadRequests (){
         $downloads = Download::all();
         return view('downloads.index', compact("downloads"));
     }
