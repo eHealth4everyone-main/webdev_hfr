@@ -321,9 +321,15 @@ class MyRequestController extends Controller
         if(in_array($request->status_id,[1,3])){  
 
             //delete hosp and services in history
-            hs_hospital_history::destroy($request->hosp_id);
-            hs_hospital_service_history::where('hospital_id', $request->hosp_id)->delete();
-
+            DB::beginTransaction();
+            try {
+                hs_hospital_history::destroy($request->hosp_id);
+                hs_hospital_service_history::where('hospital_id', $request->hosp_id)->delete();
+                DB::commit();
+            } catch (\Exception $ex) {
+                DB::rollback();
+                return response()->json(['error' => $ex->getMessage()], 500);
+            }
         }
     
         // Delete pending verification or rejected verification for update requests

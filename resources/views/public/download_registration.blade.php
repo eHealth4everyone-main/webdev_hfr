@@ -109,7 +109,7 @@
                                         <label for="purpose" class="col-md-3 control-label">Purpose<font color="red">*</font> </label>
             
                                         <div class="col-md-6">
-                                            <textarea  id="purpose" name="purpose" class="form-control" rows="5" placeholder="Inteded usage of the data.." required></textarea>
+                                            <textarea  id="purpose" name="purpose" class="form-control" rows="5" placeholder="Intended usage of the data.." required></textarea>
                                             @if ($errors->has('purpose'))
                                                 <span class="invalid-feedback" role="alert">
                                                     <strong>{{ $errors->first('purpose') }}</strong>

@@ -18,10 +18,7 @@ class TokenController extends Controller
     }
 
     public function postToken(Request $request){
-        $this->validate($request, [
-            'token' => 'required'
-        ]);
-
+    
         if ($request->session()->get('token.expire_at') < Carbon::now() ){
             return redirect()->back()->withErrors([
                 'token' => 'Token has expired',

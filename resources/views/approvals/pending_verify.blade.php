@@ -576,8 +576,6 @@ Pending Verifications
                 
             });//end
             
-            
-            
         </script>
         
         @endpush

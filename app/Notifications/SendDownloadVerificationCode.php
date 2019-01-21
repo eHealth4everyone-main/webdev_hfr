@@ -7,7 +7,7 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class Send2faCode extends Notification implements ShouldQueue
+class SendDownloadVerificationCode extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -16,13 +16,12 @@ class Send2faCode extends Notification implements ShouldQueue
      *
      * @return void
      */
-    private $name;
+ 
     private $code;
     
-    public function __construct($code,$name)
+    public function __construct($code)
     {
         $this->code = $code;
-        $this->name = $name;
     }
     /**
      * Get the notification's delivery channels.
@@ -45,7 +44,7 @@ class Send2faCode extends Notification implements ShouldQueue
     {
         return (new MailMessage)
                 ->subject('Verification Code')
-                ->greeting('Dear '. $this->name)
+                ->greeting('Hello')
                 ->line('Your verification code is: '. $this->code);
      
     }

@@ -32,12 +32,15 @@ Route::get('statistics/charts', 'SummaryChartsController@index')->name('statisti
 Route::get('statistics/charts/filter', 'SummaryChartsController@filter')->name('filterStatisticsCharts');
 Route::get('statistics/populationindex', 'SummaryChartsController@population_index')->name('population_index');
 
-
+//download facilies
 Route::get('download/facilities', 'DownloadController@openRegistrationForm')->name('openRegistrationForm');
 Route::post('download/facilities', 'DownloadController@store')->name('saveDownloadUserRecords');
-Route::get('download/facilitylist', 'DownloadController@index')->name('downloadFacilitiesList');
+Route::get('download/facilitylist', 'DownloadController@downloadFacilities')->name('downloadFacilitiesList');
 Route::get('download/filter', 'DownloadController@filter')->name('downloadFacilityFilter');
 Route::get('downloads/excel/{type}/{state}/{format}', 'DownloadController@export')->name('export');
+Route::get('download/validate', 'DownloadController@getValidationForm')->name('getValidateForm');
+Route::post('download/validate', 'DownloadController@validateToken')->name('validateToken');
+
 
 //routes to populate lgas and wards
 Route::post('hosp/fetchLga', 'GeneralController@getLgaList')->name('getLgaList');
