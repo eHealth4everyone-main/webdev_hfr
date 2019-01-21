@@ -106,7 +106,7 @@ class DownloadController extends Controller
     public function openRegistrationForm(Request $request)
     {
         if ($request->session()->has('download_verify')){
-            return $this-> downloadFacilities();
+            return redirect()->route('downloadFacilitiesList');
         }
 
         return view('public.download_registration');
