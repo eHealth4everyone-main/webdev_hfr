@@ -10,8 +10,9 @@ use Spatie\Permission\Traits\HasRoles;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-
 use Auth;
+use Notification;
+use App\Notifications\SendEmailNewUser;
 
 class UserController extends Controller
     {
@@ -39,33 +40,44 @@ class UserController extends Controller
                 'lastname' => 'required|string|max:50',
                 'job' => 'nullable|string|max:50',
                 'organisation' => 'nullable|string|max:50',
-                'username' => 'required|string|max:50|unique:users',
                 'mobile' => 'string|max:40',
                 'role' => 'required',
                 'email' => 'required|string|email|max:255|unique:users',
             ]);
         
+            $password = str_random(15);
+
             $user=User::create([
                 'firstname' => $data['firstname'],
                 'lastname' => $data['lastname'],
-                'username' => $data['username'],
                 'email' => $data['email'],
                 'mobile' => $data['mobile'],
                 'state_id' => $data['state_id'],
                 'lga_id' => $data['lga_id'],
                 'job_title' => $data['job'],
-                'status'=>'Active',
+                'status'=>'-1',
                 'organisation' => $data['organisation'],
-                'password' => Hash::make('password'),
+                'password' => Hash::make($password),
             ]);
             
             $user->assignRole($data['role']);
 
-            session()->flash("alert-success", "User added successfully!");
+            $this->sendEmailtoUser($data['firstname'],$password, $data['email']);
+
+            session()->flash("alert-success", "User registered successfully!");
             return back();
     }
 
-
+    public function sendEmailtoUser($name,$password,$email)
+    {
+        try {
+            Notification::route('mail', $email)
+                        ->notify(new SendEmailNewUser($name,$password,$email));
+        } catch (\Exception $ex) {
+            return false; //un able send code
+        }
+        return true;
+    }
 
     public function update(Request $request)
     {
@@ -101,19 +113,19 @@ class UserController extends Controller
     public function deactivate(Request $request)
     {
        
-        if($request->status =='Active'){
+        if($request->status ==1){
             $user = new User;
             $user = User::findOrFail($request->userid);
-            $user->status = 'De-Activated';
+            $user->status = 0;
             $user->save();
     
-            session()->flash("alert-success", "User de-activated successfully!");
+            session()->flash("alert-success", "User blocked successfully!");
             return redirect()->back();
         }
-        if($request->status =='De-Activated'){
+        if($request->status ==0){
             $user = new User;
             $user = User::findOrFail($request->userid);
-            $user->status = 'Active';
+            $user->status = 1;
             $user->save();
     
             session()->flash("alert-success", "User activated successfully!");
@@ -185,7 +197,7 @@ class UserController extends Controller
  
         $request->validate([
             'current_password' => 'required',
-            'new_password' => 'required|string|min:6|confirmed',
+            'new_password' => 'required|string|min:8|confirmed',
         ]);
  
         //Change Password
@@ -197,4 +209,24 @@ class UserController extends Controller
         return redirect()->back();
     }
 
+    public function newUserChangePasswordForm(){
+        return view('auth.change_password');
+    }
+
+    public function newUserChangePassword(Request $request){
+ 
+        $request->validate([
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+ 
+        //Change Password
+        $user = Auth::user();
+        $user->password = Hash::make($request->password);
+        $user->status = 1;
+        $user->save();
+        
+        session()->flash("alert-success","Password changed successfully !");
+        return redirect()->route('admin_home');
+        
+    }
 }

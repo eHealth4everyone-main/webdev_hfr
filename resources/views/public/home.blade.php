@@ -54,11 +54,9 @@
 @push('custom_scripts')
     <script src="{{ asset("hcharts/chart/highcharts.js")}}"></script>
     <script src="{{ asset("hcharts/map/exporting.js")}}"></script>
-    {{-- <script src="{{ asset("hcharts/map/data.js")}}"></script> --}}
-    <script src="{{ asset("hcharts/map/map.js")}}"></script>
-    {{-- <script src="{{ asset("hcharts/map/drilldown.js")}}"></script>
-    --}}
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC5oMDI7RfiReQVCk3brQPcWrJJR7UYgjw" async defer></script>
+    <script src="{{ asset("hcharts/map/offline-exporting.js")}}"></script>
+
+    <script src="{{ asset("hcharts/map/map.js")}}"></script>    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC5oMDI7RfiReQVCk3brQPcWrJJR7UYgjw" async defer></script>
 
 <script>
   
@@ -451,7 +449,7 @@
             type: 'column'
         },
         title: {
-            text: 'Percent of Hospitals and Clinics with Geo Goordinates'
+            text: 'Percentage of Hospitals and Clinics with Geo Goordinates'
         },
         subtitle: {
             text: statename.concat(" State")
@@ -582,7 +580,7 @@ function facilitywithGeoCodes(){
             type: 'column'
         },
         title: {
-            text: 'Percent of Hospitals and Clinics with Geo Goordinates'
+            text: 'Percentage of Hospitals and Clinics with Geo Goordinates'
         },
         subtitle: {
             text: ''

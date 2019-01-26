@@ -8,8 +8,8 @@
               @method("PUT")
 
               <div class="modal-body">
-                  <p class="text-center">
-                    Are you sure you want to De-Activate user?
+                  <p class="text-center" id = "message">
+                    
                   </p>
                     <input type="hidden" id="userid" name="userid" value="">  
                     <input type="hidden" id="status" name="status" value="">  

@@ -71,6 +71,7 @@
     <script src="{{ asset("hcharts/chart/highcharts.js")}}"></script>
     <script src="{{ asset("hcharts/chart/exporting.js")}}"></script>
     <script src="{{ asset("hcharts/chart/data.js")}}"></script>
+    <script src="{{ asset("hcharts/chart/offline-exporting.js")}}"></script>
 
 @include('partials.dynamic_lgas_only')
 

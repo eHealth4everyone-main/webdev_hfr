@@ -37,7 +37,7 @@ class MyRequestsCountComposer
         $request_count[0] = count($pending);   
         $request_count[1] = count($rejected);
         $request_count[2] = count($approved);
-        $request_count[3] = count($approved)+count($rejected)+count($pending);
+        $request_count[3] = count($rejected)+count($pending);
       
         $view->with('request_count',$request_count);
     }

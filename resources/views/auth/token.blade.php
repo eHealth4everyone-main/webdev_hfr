@@ -36,7 +36,7 @@
                 @csrf
 
                 <div>
-                    <p class="login-box-msg"><strong>Two Factor Authentication</strong></p>
+                    <p class="login-box-msg"><strong>Token Verification</strong></p>
                 </div>
                 <div class="form-group {{ $errors->has('token') ? 'has-error' : '' }}">
                     <div class="input-group">
@@ -55,7 +55,7 @@
                  
                   <!-- /.col -->
                   <div class="col-xs-8 pull-right">
-                    <button type="submit" class="btn btn-success btn-block">Validate Token</button>
+                    <button type="submit" class="btn btn-success btn-block">Verify Token</button>
                   </div>
                   <!-- /.col -->
                 </div>

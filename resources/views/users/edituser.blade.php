@@ -35,17 +35,6 @@
                                 </div>
                             </div>
     
-                            <div class="form-group row">
-                                    <label for="username1" class="col-md-4 col-form-label text-md-right">{{ __('User Name') }}</label>
-        
-                                    <div class="col-md-8">
-                                        <input id="username1" type="text" class="form-control" name="username1 value="{{ old('username1') }}" disabled>
-        
-                                        <span class="text-danger">
-                                            <strong id="username-error1"></strong>
-                                        </span>
-                                    </div>
-                            </div>
     
                         <div class="form-group row">
                             <label for="email1" class="col-md-4 col-form-label text-md-right">{{ __('E-Mail Address') }}</label>

@@ -319,7 +319,7 @@
                 <a href="{{route('roles.index')}}">
                         <button type="button" class="btn btn-warning">Return Back</button>
                 </a>
-                <button type="submit" class="btn btn-primary pull-right">Save Record</button>
+                <button type="submit" class="btn btn-primary pull-right">Update</button>
         </div>
         <!-- /.box-footer -->
 </form>

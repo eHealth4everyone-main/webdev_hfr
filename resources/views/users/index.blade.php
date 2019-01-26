@@ -20,7 +20,6 @@ Users
       <thead>
         <tr>
           <th>Firstname</th>
-          <th>Lastname</th>
           <th>Username</th>
           <th>E-mail</th>
           <th>Status</th>
@@ -32,9 +31,16 @@ Users
         <tr>
           <td>{{$user->firstname}}</td>
           <td>{{$user->lastname}}</td>
-          <td>{{$user->username}}</td>
           <td>{{$user->email}}</td>
-          <td>{{$user->status}}</td>
+          @if ($user->status == 1)
+            <td>Active</td>              
+          @endif
+          @if ($user->status == 0)
+            <td>Blocked</td>              
+          @endif
+          @if ($user->status == -1)
+            <td>Inactive</td>              
+          @endif
           <td>
             <a href="#">
               <button class="btn btn-success btn-sm" data-fname="{{$user->firstname}}" data-lname="{{$user->lastname}}"
@@ -51,12 +57,12 @@ Users
               </a>
             @endif
             @if(auth()->user()->hasPermissionTo(20))
-                @if ($user->status === "Active")
+                @if ($user->status == 1)
                   <a href="#">
-                    <button class="btn btn-danger btn-sm"  type="button" data-toggle="modal" data-target="#disableUser" data-id="{{$user->id}}" data-status="{{$user->status}}">Deactive</button>
+                    <button class="btn btn-danger btn-sm"  type="button" data-toggle="modal" data-target="#disableUser" data-id="{{$user->id}}" data-status="{{$user->status}}">Block</button>
                   </a>
                 @endif
-                @if ($user->status === "De-Activated")
+                @if ($user->status == 0)
                 <a href="#">
                   <button class="btn btn-primary btn-sm"  type="button" data-toggle="modal" data-target="#disableUser" data-id="{{$user->id}}" data-status="{{$user->status}}">Activate</button>
                 </a>
@@ -189,6 +195,13 @@ Users
       var modal = $(this)
       modal.find('.modal-body #userid').val(id)
       modal.find('.modal-body #status').val(status)
+      if(status == 1){
+        modal.find('.modal-body #message').text('Are you sure you want to block user?')
+      }
+      if(status == 0){
+        modal.find('.modal-body #message').text('Are you sure you want to activate user?')
+      }
+
       })//end
 
       //view user
