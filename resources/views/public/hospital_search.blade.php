@@ -24,6 +24,7 @@
                         <th>Facility Name</th>
                         <th>Facility Level</th>
                         <th>Ownership</th>
+                        <th>Details</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -33,11 +34,9 @@
                         <tr>
                             <td>{{$fac->state}}</td>
                             <td>{{$fac->lga}}</td>
-                            <td>{{$fac->ward}}</td>
                             <td>{{$fac->unique_id}}</td>
                             <td>{{$fac->facility_name}}</td>
                             <td>{{$fac->facility_level}}</td>
-                           
                             <td>{{$fac->ownership}}</td>
                             <td>
                               
