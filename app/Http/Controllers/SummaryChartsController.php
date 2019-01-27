@@ -189,12 +189,20 @@ class SummaryChartsController extends Controller
 
 
     public function population_index(){
+        //get state list
+        $lst_states = Cache::remember('lst_states', 60, function () {
+            return DB::table('ou_states')
+                    ->select('id','name')
+                    ->orderByRaw('name ASC')
+                    ->get();
+        });
+        $state_id=0;
 
-        $population_index = Cache::remember('population_index', 30, function () {
-           return DB::select("SELECT state, ROUND(p.population/count(id)) AS ppf FROM hospital_details h
-                                JOIN population p ON p.state_id=h.state_id
-                                group by state,p.population
-                                order by state");
+        $population_index = Cache::remember('population_index', 60, function () {
+           return DB::select("SELECT state, ROUND(p.population/COUNT(h.id)) AS ppf FROM hospital_details h
+                    JOIN population_by_state p ON p.state_id=h.state_id
+                    GROUP BY state,p.population
+                    ORDER BY state");
         });
         
         $pop_index_states=array();
@@ -206,7 +214,46 @@ class SummaryChartsController extends Controller
         };
         // dd($pop_index_ppf);
 
-        return view('public.statistic_population_index', compact('pop_index_states','pop_index_ppf'));
+        return view('public.statistic_population_index', compact('pop_index_states','pop_index_ppf','lst_states','state_id'));
+    }
+
+    public function population_index_filter(Request $request){
+        $state_id = $request->state_id;
+
+        //get state list
+        $lst_states = Cache::remember('lst_states', 60, function () {
+            return DB::table('ou_states')
+                    ->select('id','name')
+                    ->orderByRaw('name ASC')
+                    ->get();
+        });
+
+        if($state_id == 0){
+            $population_index =  DB::select("SELECT state AS name, ROUND(p.population/COUNT(h.id)) AS ppf FROM hospital_details h
+                         JOIN population_by_state p ON p.state_id=h.state_id
+                         GROUP BY state,p.population
+                         ORDER BY state");
+            
+        }
+        else{
+            $population_index =  DB::select("SELECT lga AS name, ROUND(p.population/COUNT(h.id)) AS ppf FROM hospital_details h
+                        JOIN population p ON p.lga_id=h.lga_id
+                        WHERE h.state_id = ". $state_id ."
+                        GROUP BY lga,population
+                        ORDER BY lga");
+        }
+       
+        
+        $pop_index_states=array();
+        $pop_index_ppf=array();
+
+        foreach ($population_index as $indx){
+            $pop_index_states[]=$indx->name;
+            $pop_index_ppf[]=(int)$indx->ppf;
+        };
+        // dd($pop_index_ppf);
+
+        return view('public.statistic_population_index', compact('pop_index_states','pop_index_ppf','lst_states','state_id'));
     }
 
 }

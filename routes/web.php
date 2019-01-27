@@ -25,12 +25,16 @@ Route::get('facilities/searchlist', 'FacilityListingController@searchFacilities'
 Route::get('facilities/hospitalssearch', 'FacilityListingController@searchHospitals')->name('searchHospitals');
 Route::post('facilities/details','FacilityListingController@showDetails')->name('facilitydetails');
 
+//summary tables
 Route::get('statistics/tables', 'SummaryTablesController@index')->name('statistics');
 Route::get('statistics/tables/filter', 'SummaryTablesController@filter')->name('filterStatistics');
 
+//summary charts
 Route::get('statistics/charts', 'SummaryChartsController@index')->name('statistics_charts');
-Route::get('statistics/charts/filter', 'SummaryChartsController@filter')->name('filterStatisticsCharts');
+Route::post('statistics/charts/filter', 'SummaryChartsController@filter')->name('filterStatisticsCharts');
 Route::get('statistics/populationindex', 'SummaryChartsController@population_index')->name('population_index');
+Route::post('statistics/populationindex/filter', 'SummaryChartsController@population_index_filter')->name('population_filter');
+
 
 //download facilies
 Route::get('download/facilities', 'DownloadController@openRegistrationForm')->name('openRegistrationForm');

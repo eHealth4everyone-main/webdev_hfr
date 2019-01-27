@@ -9,7 +9,7 @@
 <div class="latest-area section-padding bg-white">
     <div class="container">
             <div class="box-header">
-            <form class="form-horizontal"  action="{{route('filterStatisticsCharts')}}" method="GET">
+            <form class="form-horizontal"  action="{{route('filterStatisticsCharts')}}" method="POST">
                         @csrf
                         <div class="form-group">
                 
