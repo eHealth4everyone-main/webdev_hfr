@@ -47,9 +47,10 @@
 @endsection 
 
 @push('custom_scripts')
-<script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/modules/exporting.js"></script>
-<script src="https://code.highcharts.com/modules/data.js"></script>
+<script src="{{ asset("hcharts/chart/highcharts.js")}}"></script>
+<script src="{{ asset("hcharts/chart/exporting.js")}}"></script>
+<script src="{{ asset("hcharts/chart/data.js")}}"></script>
+<script src="{{ asset("hcharts/chart/offline-exporting.js")}}"></script>   
 
 
 <script> 
