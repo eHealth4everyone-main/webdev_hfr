@@ -163,6 +163,7 @@ class UserController extends Controller
         $request->validate([
             'firstname' => 'required|string|max:255',
             'lastname' => 'required|string|max:255',
+            'mobile' => 'string|max:40',
             'job' => 'nullable|string|max:50',
             'organisation' => 'nullable|string|max:50',
         ]);
@@ -172,6 +173,7 @@ class UserController extends Controller
         $user = Auth::user();
         $user->firstname = $data['firstname'];
         $user->lastname = $data['lastname'];
+        $user->mobile = $data['mobile'];
         $user->job_title = $data['job'];
         $user->organisation = $data['organisation'];
         $user->save();
