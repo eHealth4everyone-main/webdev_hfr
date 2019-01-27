@@ -27,7 +27,7 @@
                             <input id="firstname" type="text" class="form-control" name="firstname" value="{{$users->firstname }}" required autofocus>
 
                             <span class="text-danger">
-                                <strong id="firstname-error1"></strong>
+                                <strong id="firstname-error"></strong>
                             </span>
                         </div>
                     </div>
@@ -39,7 +39,7 @@
                                 <input id="lastname1" type="text" class="form-control" name="lastname" value="{{ $users->lastname}}" required>
 
                                 <span class="text-danger">
-                                    <strong id="lastname-error1"></strong>
+                                    <strong id="lastname-error"></strong>
                                 </span>
                             </div>
                         </div>
@@ -53,9 +53,21 @@
                             <input id="email" type="email" class="form-control" name="email" value="{{ $users->email }}" disabled>
 
                             <span class="text-danger">
-                                 <strong id="email-error1"></strong>
+                                 <strong id="email-error"></strong>
                             </span>
                         </div>
+                    </div>
+                    <div class="form-group row">
+                            <div class="col-md-1"></div>
+                            <label for="mobile1" class="col-md-3 col-form-label text-md-right">{{ __('Mobile Number') }}</label>
+    
+                            <div class="col-md-7">
+                                <input id="mobile" type="text" class="form-control{{ $errors->has('mobile') ? ' is-invalid' : '' }}" name="mobile" value="{{ $users->mobile }}" required>
+    
+                                <span class="text-danger">
+                                     <strong id="mobile-error"></strong>
+                                </span>
+                            </div>
                     </div>
                     <div class="form-group row">
                         <div class="col-md-1"></div>
@@ -65,7 +77,7 @@
                                 <input id="job" type="text" class="form-control" name="job" value="{{ $users->job_title }}">
     
                                 <span class="text-danger">
-                                     <strong id="job-error1"></strong>
+                                     <strong id="job-error"></strong>
                                 </span>
                             </div>
                     </div>
@@ -77,7 +89,7 @@
                                 <input id="organisation" type="text" class="form-control" name="organisation" value="{{$users->organisation }}">
     
                                 <span class="text-danger">
-                                     <strong id="org-error1"></strong>
+                                     <strong id="org-error"></strong>
                                 </span>
                             </div>
                     </div>
