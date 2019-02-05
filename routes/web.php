@@ -154,8 +154,8 @@ Route::middleware(["auth"])->group(function(){
             Route::get('admin/resources', 'ResourceController@index')->name('resources');
             Route::get('admin/resources/upload', 'ResourceController@upload')->name('upload');
             Route::post('admin/resources/uploads', 'ResourceController@store')->name('savefile');
-            Route::post('admin/resources/delete/{file}', 'ResourceController@destroy')->name('deleteFile');
-            
+            Route::post('admin/resources/delete', 'ResourceController@destroy')->name('deleteFile');
+            Route::post('admin/resources/edit','ResourceController@update')->name('updateResource');
 
             //messages
             Route::get('admin/messages', 'ContactController@index')->name('getMessages');

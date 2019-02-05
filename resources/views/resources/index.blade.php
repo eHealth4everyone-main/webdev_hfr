@@ -21,7 +21,7 @@ Resources
             <thead>
               <tr>
                 <th>Type</th>
-                <th>Filename</th>
+                <th>Document Name</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -46,21 +46,21 @@ Resources
                       <button class="btn btn-success btn-sm" type="button">Download</button>
                     </a>
                     @if(auth()->user()->hasPermissionTo(27))
-                        <a href="">
-                          <button class="btn btn-danger btn-sm" type="button"> Edit</button>
-                        </a>
+                      <a href="#">
+                        <button class="btn btn-warning btn-sm" data-id="{{$res->id}}" data-desc="{{$res->description}}"
+                            type="button" data-toggle="modal" data-target="#edit">Edit</button>
+                      </a>
                     @endif
                     @if(auth()->user()->hasPermissionTo(28))
-                        <a href="{{route('deleteFile',$res->filename)}}">
-                          <button class="btn btn-danger btn-sm" type="button"> Delete</button>
+                        <a href="#">
+                          <button class="btn btn-danger btn-sm" data-id="{{$res->id}}" data-filename="{{$res->filename}}" 
+                          type="button" data-toggle="modal" data-target="#delete"> Delete</button>
                         </a>
                     @endif
                   </td>
               </tr>
               @endforeach
-              <form method="POST" action="{{route('updateuser') }}" >
-
-              </form>
+             
             </tbody>
           
           </table>
@@ -73,7 +73,79 @@ Resources
 @endsection 
 
 
+{{--  edit resource  --}}
+<div class="modal fade" id="edit" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">Update Resource</h4>
+          <div class='notifications top-right'></div>
+        </div>
+        <div class="modal-body">
+          
+            <div class="panel-body">
+                <form method="POST" action="{{route('updateResource') }}" >
+                    @csrf
+                    <input id="id" name="id" type="hidden">
+                
+                    <div class="form-group row">
+                        <label class="col-md-4 col-form-label text-md-right">{{ __('Document Name') }}</label>
+
+                        <div class="col-md-12">
+                            <input id="filename1" type="text" class="form-control" name="filename1"  required autofocus>
+
+                            <span class="text-danger">
+                                <strong id="filename-error1"></strong>
+                            </span>
+                        </div>
+                    </div>
+            
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" id="update" class="btn btn-primary">Update</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+           
+      
+      </div>
+</div>
+</div><!--/.modal -->
+
+<!-- Modal delete record -->
+<div class="modal fade" id="delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+      <div class="modal-content">
+       
+      <form action="{{route('deleteFile')}}" method="POST">
+          @csrf
+
+          <div class="modal-body">
+              <p class="text-center">
+                Are you sure you want to delete this document?
+              </p>
+                <input type="hidden" id="doc_id" name="doc_id"> 
+                <input type="hidden" id="filename" name="filename" >  
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">No</button>
+            <button type="submit" class="btn btn-warning btn-sm">Yes</button>
+          </div>
+        </form>
+        
+      </div>
+    </div>
+</div> 
+  
+
 @push("bk_script")
+@include('partials.notification')
+
 <script>
   $(document).ready( function () {
     $('#table1').DataTable( {
@@ -84,6 +156,29 @@ Resources
       "autoWidth"   : false,
   } );
 
+
+//edit modal form
+  $('#edit').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget)
+        var desc = button.data('desc') 
+        var id=button.data('id')    
+        var modal = $(this)
+
+        modal.find('.modal-body #filename1').val(desc);
+        modal.find('.modal-body #id').val(id);
+  });//end edit
+
+  //delete resource modal
+  $('#delete').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget)
+        var id=button.data('id')    
+        var filename=button.data('filename')    
+        var modal = $(this)
+
+        modal.find('.modal-body #doc_id').val(id);
+        modal.find('.modal-body #filename').val(filename);
+
+  });//end
 
 
 } );

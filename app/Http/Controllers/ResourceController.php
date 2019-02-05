@@ -35,35 +35,66 @@ class ResourceController extends Controller
         ]);
 
         if ($request->hasFile('resourcefile')){
-            $filenamewithExt=$request->file('resourcefile')->getClientOriginalName();
-            $filename = pathInfo($filenamewithExt,PATHINFO_FILENAME);
+         
             $extension = $request->file('resourcefile')->getClientOriginalExtension();
-            $filenametoStore = $filename.'_'.time().'.'.$extension;
+            $filenametoStore = $request->filename.'.'. $extension;
 
             $path = $request->file('resourcefile')->storeAs('public/resources',$filenametoStore);
+
+            $resource = new Resource;
+            $resource->filename = $filenametoStore;
+            $resource->description = $request->filename;
+            $resource->format = $extension;
+            $resource->save();
         }
      
-        $resource = new Resource;
-        $resource->filename = $filenametoStore;
-        $resource->description = $request->filename;
-        $resource->format = $extension;
-        $resource->save();
-
         session()->flash("alert-success", "File uploaded successfully!");
         return redirect()->route('resources');
 
         }
 
+
+    public function update(Request $request)
+    {
+        $request->validate([
+            'filename1' => 'required|string|max:90',  
+        ]);
+        
+        $resource = Resource::find($request->id);
+        $resource->description = $request->filename1;
+        $resource->save();
+        
+        session()->flash("alert-success", "Document updated successfully!");
+        return redirect()->route('resources');
+    }
+    
     public function download($filename)
     {
-        $file= public_path(). "/storage/resources/".$filename;   
-        return response()->download($file);
-        
-        //return Storage::download($file);
+        // $file= public_path(). "/storage/resources/".$filename;  
+        // // dd($file);
+        // return response()->download($file);
+        $file_path = storage_path('app/public/resources/'.$filename);
+        return response()->download($file_path);
     }
 
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        $file_path = storage_path('app/public/resources/'.$request->filename);
+
+        if(!is_file($file_path))
+        {
+            session()->flash("alert-danger", "Document does not exist!");
+            return redirect()->route('resources');
+        }
+        else
+        {
+            Storage::delete('/public/resources/'.$request->filename);
+            Resource::destroy($request->doc_id);
+    
+            session()->flash("alert-success", "Document deleted successfully!");
+            return redirect()->route('resources');
+        }
+
     }
+
 }
