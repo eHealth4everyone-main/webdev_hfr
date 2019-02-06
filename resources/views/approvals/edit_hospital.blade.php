@@ -9,10 +9,14 @@
 @section("content")
 
 
-<form class="form-horizontal" action="{{route('hospitals.update',$hosp->id)}}" method="POST">
+<form class="form-horizontal" action="{{route('myrequest.update')}}" method="POST">
     @csrf
     @method("PUT")   
-    
+
+    <input type="hidden" name="state_id" value="{{$hosp->state_id}}">
+    <input type="hidden" name="status_id" value="{{$hosp->status_id}}">
+    <input type="hidden" name="id" value="{{$hosp->id}}">
+
     <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
         {{-- Tab One   --}}
         <div class="panel panel-default">
@@ -26,13 +30,7 @@
             <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
                 <div class="panel-body">
                     <div class="box-body">
-                            @if(!in_array($hosp->status_id,[6,13]))
-                                <div class="callout callout-warning">
-                                    <h4>Alert</h4>
-                                    <p>This facility updates are pending. Wait for changes to be published to proceed!</p>
-                                </div>
-                            @endif
-
+                     
 
                         <div class="form-group">
                             <label for="cac_reg" class="col-sm-2 control-label">State Unique ID:</label>
@@ -76,13 +74,7 @@
                                     @endforeach
                                     
                                 </select>
-                                <input type="hidden" name="state_id" value="{{$hosp->state_id}}">
-                                <input type="hidden" name="verified_by" value="">
-                                <input type="hidden" name="verified_at" value="">
-                                <input type="hidden" name="validated_at" value="">
-                                <input type="hidden" name="validated_by" value="">
-                                <input type="hidden" name="published_by" value="">
-                                <input type="hidden" name="published_at" value="">
+                             
 
                             </div>
                         </div>
@@ -531,12 +523,11 @@
 
 <!-- /.box-body -->
 <div class="box-footer">
-    <a href="{{route('hospitals.index')}}">
+    <a href="{{route('myrequest.pending')}}">
         <button type="button" class="btn btn-warning">Return Back</button>
     </a>
-    @if(in_array($hosp->status_id,[6,13]))
-        <button type="submit" class="btn btn-primary pull-right">Submit Update Request</button>
-    @endif
+
+    <button type="submit" class="btn btn-primary pull-right">Update</button>
     
 </div>
 <!-- /.box-footer -->

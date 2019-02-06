@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Approval;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Auth;
 use App\hs_hospital;
 use App\hs_hospital_history;
-use App\hs_hospital_service;
 use App\hs_hospital_service_history;
 use App\hs_status_tracking;
 use Carbon\Carbon;
@@ -34,6 +34,7 @@ class MyRequestController extends Controller
 
         return view('approvals.my_approved_requests',compact('myrequests')); 
     }
+
     public function myRejectedRequest()
     {
         $myrequests = DB::select("SELECT * FROM hospital_details_history WHERE 
@@ -45,9 +46,9 @@ class MyRequestController extends Controller
 
     public function editRequest($id)
     {
-            $hosp =hs_hospital_history::findorfail($id);
+            $hosp =hs_hospital_history::find($id);
 
-            $services = DB::table('hs_hospital_services')
+            $services = DB::table('hs_hospital_services_history')
                     ->select('service_id')
                     ->where('hospital_id','=',$id)
                     ->get();
@@ -85,8 +86,8 @@ class MyRequestController extends Controller
                         ->get();
             });
             //get regulatory statuss
-            $lst_regulatory_status= Cache::remember('lst_regulatory_status', 60, function () {
-                return DB::table('lst_regulatory_status')
+            $lst_registration_status= Cache::remember('lst_registration_status', 60, function () {
+                return DB::table('lst_registration_status')
                         ->select('id','status')
                         ->get();
             });
@@ -101,41 +102,41 @@ class MyRequestController extends Controller
             $lst_services = DB::table('lst_hosp_services')->get();
 
          
-            return view('approvals.my_request_update',compact('hosp','current_services','lst_level_of_care','lst_states','lst_ownerships','lst_oparational_status',
-            'lst_regulatory_status','lst_license_status','lst_services')); 
+            return view('approvals.edit_hospital',compact('hosp','current_services','lst_level_of_care','lst_states','lst_ownerships','lst_oparational_status',
+            'lst_registration_status','lst_license_status','lst_services')); 
     }
     
     public function updateRequest(Request $request)
     {
       
         $request->validate([
-            'registration_no'=>'nullable',
+            'registration_no'=>'nullable|max:20',
             'start_date'=>'nullable|date',
             'facility_name'=>'required|max:200',
             'alt_facility_name'=>'nullable|max:200',
             'state_id'=>'required',
             'lga_id'=>'required',
             'ward_id'=>'required',
+            'state_unique_id' => 'nullable|max:50',
             'ownership_id'=>'required',
             'ownership_type_id'=>'required',
-            'ownership_details'=>'nullable',
             'facility_level_id'=>'required',
             'facility_level_option_id'=>'nullable',
-            'house_no'=>'nullable',
-            'street_name'=>'nullable',
             'longitude'=>'nullable',
             'latitude'=>'nullable',
-            'postal_address'=>'nullable',
-            'phone_number'=>'nullable',
+            'physical_location'=>'nullable|max:100',
+            'postal_address'=>'nullable|max:100',
+            'phone_number'=>'nullable|max:50',
+            'alternate_number'=>'nullable|max:50',
             'email_address'=>'nullable|email',
             'website'=>'nullable',
             'operational_days'=>'nullable',
             'operational_hours'=>'nullable',
             'operational_status_id'=>'required',
-            'regulatory_status_id'=>'nullable',
+            'registration_status_id'=>'nullable',
             'license_status_id'=>'nullable',
             'doctors'=>'nullable|numeric',
-            'pharmacists'=>'nullable',
+            'pharmacists'=>'nullable|numeric',
             'pharmacy_technicians'=>'nullable|numeric',
             'nurses'=>'nullable|numeric',
             'lab_scientists'=>'nullable|numeric',
@@ -146,22 +147,17 @@ class MyRequestController extends Controller
             'community_health_officer'=>'nullable|numeric',
             'community_extension_workers'=>'nullable|numeric',
             'jun_community_extension_worker'=>'nullable|numeric',
+            'attendants'=>'nullable|numeric',
             'dental_technicians'=>'nullable|numeric',
             'env_health_officers'=>'nullable|numeric',
-            'beds_accidents_emerg'=>'nullable|numeric',
-            'beds_adminission'=>'nullable|numeric',
-            'beds_icu'=>'nullable|numeric',
             'onsite_laboratory'=>'nullable',
             'onsite_imaging'=>'nullable',
             'onsite_pharmarcy'=>'nullable',
             'mortuary_services'=>'nullable',
-            'beds_accidents_emerg'=>'nullable|numeric',
-            'beds_adminission'=>'nullable|numeric',
-            'beds_icu'=>'nullable|numeric',
-            'onsite_pharmarcy'=>'nullable',
-            'onsite_laboratory'=>'nullable',
-            'onsite_imaging'=>'nullable',
-            'mortuary_services'=>'nullable',
+            'ambulance'=>'nullable',
+            'beds'=>'nullable|numeric',
+            'outpatient'=>'nullable',
+            'inpatient'=>'nullable',
             'verified_by'=>'nullable',
             'verified_at'=>'nullable',
             'validated_by'=>'nullable',
@@ -170,7 +166,8 @@ class MyRequestController extends Controller
             'published_at' => 'nullable',
         ]);
         
-        if(in_array($request->status_id,[3,1])){  // verification rejected for new facility or edit user reqeust that have not been verified yet
+        // Update rejected update request, or update create request for reqeust that have not been verified yet
+        if(in_array($request->status_id,[3,1])){  
             DB::beginTransaction();
             try {
                 hs_hospital_history::disableAuditing();
@@ -220,9 +217,10 @@ class MyRequestController extends Controller
             }
         }
 
-        if($request->status_id == 10){  // verification rejected for updating existing facility
+        // MOdify request that have been rejected, this is the request for updating existing facility
+        if($request->status_id == 10){  
             
-            //restore main table data before being udpated. Delete data in history and copy data from main
+            //restore main table data before being updated. Delete data in history and copy data from main
             //to history
             DB::beginTransaction();
             try {
@@ -315,6 +313,7 @@ class MyRequestController extends Controller
         return redirect()->route('myrequest.pending');
     }
     
+    
     public function deleteRequest(Request $request){
         
         // Delete my pending verification or rejected verification for new facility
@@ -333,10 +332,10 @@ class MyRequestController extends Controller
         }
     
         // Delete pending verification or rejected verification for update requests
-        if(in_array($request->status_id, [8,1])){ 
+        //restore main table data before being udpated. Delete data in history and copy data from main to history
+        if(in_array($request->status_id, [8,10])){ 
             DB::beginTransaction();
             try {
-                //restore main table data before being udpated. Delete data in history and copy data from main to history
                 hs_hospital_history::disableAuditing();
 
                 //delete hosp and services in history
@@ -356,7 +355,19 @@ class MyRequestController extends Controller
                 $hosp_history ->operational_days =  $hosp_main->operational_days;        
                 $hosp_history ->save();
 
-                //copy services data
+                //copy services data from main to services history table
+                $services = DB::select("SELECT service_id FROM hs_hospital_services WHERE hospital_id = ". $request->hosp_id . ""); 
+    
+                if(!empty($services)){
+                    //add new services 
+                    foreach ($services as $service){
+                        $hosp_services = new hs_hospital_service_history;
+                        $hosp_services->service_id = $service->service_id;
+                        $hosp_services->hospital_id = $request->hosp_id; 
+                        $hosp_services->save();
+                    }
+                }
+
 
                 hs_hospital_history::enableAuditing();
                 DB::commit();

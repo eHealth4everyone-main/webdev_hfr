@@ -97,23 +97,21 @@ Route::middleware(["auth"])->group(function(){
             Route::post('admin/hospitals/delete','HospitalsController@InitiateDelete')->name('hospitals.InitiateDelete');
 
             //my requests
-            Route::get('admin/hospitals/myrequest/pending','MyRequestController@myPendingRequest')->name('myrequest.pending');
-            Route::get('admin/hospitals/myrequest/approved','MyRequestController@myApprovedRequest')->name('myrequest.approved');
-            Route::get('admin/hospitals/myrequest/rejected','MyRequestController@myRejectedRequest')->name('myrequest.rejected');
-            Route::get('admin/hospitals/myrequest/update/{id}','MyRequestController@editRequest')->name('myrequest.edit');
-            Route::put('admin/hospitals/myrequest/updates','MyRequestController@updateRequest')->name('myrequest.update');
-            Route::post('admin/hospitals/myrequest/delete','MyRequestController@deleteRequest')->name('myrequest.delete');
-            
-
+            Route::get('admin/hospitals/myrequest/pending','Approval\MyRequestController@myPendingRequest')->name('myrequest.pending');
+            Route::get('admin/hospitals/myrequest/approved','Approval\MyRequestController@myApprovedRequest')->name('myrequest.approved');
+            Route::get('admin/hospitals/myrequest/rejected','Approval\MyRequestController@myRejectedRequest')->name('myrequest.rejected');
+            Route::get('admin/hospitals/myrequest/update/{id}','Approval\MyRequestController@editRequest')->name('myrequest.edit');
+            Route::put('admin/hospitals/myrequest/updates','Approval\MyRequestController@updateRequest')->name('myrequest.update');
+            Route::post('admin/hospitals/myrequest/delete','Approval\MyRequestController@deleteRequest')->name('myrequest.delete');
 
             //approvals
-            Route::get('admin/hospitals/approvals/verify','ApprovalController@pendingVerify')->name('verify.pending');
-            Route::post('admin/hospitals/approvals/verify','ApprovalController@storeVerification')->name('verify.store');
-            Route::get('admin/hospitals/approvals/validation','ApprovalController@pendingValidation')->name('validate.pending');
-            Route::post('admin/hospitals/approvals/validation','ApprovalController@storeValidation')->name('validate.store');
-            Route::get('admin/hospitals/approvals/publish','ApprovalController@pendingPublish')->name('publish.pending');
-            Route::post('admin/hospitals/approvals/publish','ApprovalController@storePublish')->name('publish.store');
-            Route::get('admin/hospitals/approvals/update/{id}/{stage}','ApprovalController@getUpdatedRecords')->name('view.updated_records');
+            Route::get('admin/hospitals/approvals/verify','Approval\VerifyController@index')->name('verify.pending');
+            Route::post('admin/hospitals/approvals/verify','Approval\VerifyController@store')->name('verify.store');
+            Route::get('admin/hospitals/approvals/validation','Approval\ValidateController@index')->name('validate.pending');
+            Route::post('admin/hospitals/approvals/validation','Approval\ValidateController@store')->name('validate.store');
+            Route::get('admin/hospitals/approvals/publish','Approval\PublishController@index')->name('publish.pending');
+            Route::post('admin/hospitals/approvals/publish','Approval\PublishController@store')->name('publish.store');
+            Route::get('admin/hospitals/approvals/updated/{id}/{stage}','Approval\UpdatedRecordsController@updatedRecords')->name('view.updated_records');
 
             Route::get('admin/notifications','NotificationController@markAllAsRead')->name('notification.markAsRead');
 
@@ -127,7 +125,8 @@ Route::middleware(["auth"])->group(function(){
             Route::resource('admin/laboratory','LabController');
             Route::post('lab/equips', 'LabController@fetchEquips')->name('lab.fetchEquips');
             Route::post('lab/cert', 'LabController@fetchCert')->name('lab.fetchCert');
-        //equipments
+            
+            //equipments
             Route::get('admin/equipments','EquipmentController@index')->name('equip.index');
 
             //lab certification
@@ -139,7 +138,6 @@ Route::middleware(["auth"])->group(function(){
 
             //wards
             Route::get('admin/wards','WardController@index')->name('wards.index');
-
 
             //Pharmacy
             Route::resource('admin/pharmacies','PharmacyController');

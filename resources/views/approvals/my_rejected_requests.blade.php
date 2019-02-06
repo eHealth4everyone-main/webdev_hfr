@@ -87,7 +87,7 @@ My Rejected Requests
 <script>
   $(document).ready(function(){
     $('#table1').DataTable( {
-        "paging":   false,
+        "paging":   true,
         "ordering": true,
         "info":     true
     } );

@@ -205,7 +205,11 @@
                                             <tbody>
                                                     @foreach($levels_ownership_by_lga as $lev)
                                                     <tr>
-                                                        <td>{{$lev->lga}}</td>
+                                                        @if($state_id==0)
+                                                            <td>{{$lev->state}}</td>
+                                                        @else
+                                                            <td>{{$lev->lga}}</td>
+                                                        @endif
                                                         <td>{{$lev->Pub_Primary}}</td>
                                                         <td>{{$lev->Pub_Secondary}}</td>
                                                         <td>{{$lev->Pub_Tertiary}}</td>

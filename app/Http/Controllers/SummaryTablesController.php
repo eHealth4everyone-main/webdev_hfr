@@ -100,16 +100,13 @@ class SummaryTablesController extends Controller
         // if hospitals
         if ($facility_type_id==1){
             if($state_id==0){
-                $levels_by_lga = DB::table('hospitals_count_by_level_lga_column')
-                ->orderByRaw('lga')
-                ->get();
+                $levels_by_lga = DB::table('hospitals_count_by_level_state_column')
+                            ->get();
                             
-                $ownerships_by_lga= DB::table('hospitals_count_by_ownership_lga_column')
-                            ->orderByRaw('lga')
+                $ownerships_by_lga= DB::table('hospitals_count_by_ownership_state_column')
                             ->get();
 
-                $levels_ownership_by_lga = DB::table('hospitals_count_by_ownership_level_lga_column')
-                            ->orderByRaw('lga')
+                $levels_ownership_by_lga = DB::table('hospitals_count_by_ownership_level_state_column')
                             ->get();
             }
             else{

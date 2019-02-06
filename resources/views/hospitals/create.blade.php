@@ -1,6 +1,10 @@
 @extends("layouts.master")
 
 
+@section("bk_css")
+    <link rel="stylesheet" href="{{asset("dist/iCheck/minimal/green.css")}}"/>
+@endsection 
+
 @section("content")
 
 
@@ -22,21 +26,17 @@
                     <div class="box-body">
                         
                         <div class="form-group">
+                            <label for="cac_reg" class="col-sm-2 control-label">State Unique ID:</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control"  id="state_unique_id" name="state_unique_id" value="{{old('state_unique_id')}}" placeholder="State Unique Identifier">
+                            </div>
                             <label for="cac_reg" class="col-sm-2 control-label">Registration No:</label>
                             <div class="col-sm-4">
                                 <input type="text" class="form-control"  id="registration_no" name="registration_no" value="{{old('registration_no')}}" placeholder="Corporate Affairs Registration Number">
                             </div>
-                            
-                            <label class="col-sm-2 control-label">Commencement Date:</label>
-                            <div class="col-sm-4">
-                                <div class="input-group date" >
-                                    <div class="input-group-addon">
-                                        <i class="fa fa-calendar"></i>
-                                    </div>
-                                    <input type="text" class="form-control pull-right" id="datepicker" name="start_date" value="{{old('start_date')}}">
-                                </div>
-                            </div>
+                        
                         </div>
+                 
                         
                         <div class="form-group">
                             <label for="reg_fac_name" class="col-sm-2 control-label">Registered Name: <font color="red">*</font> </label>
@@ -49,8 +49,16 @@
                                 <input type="text" class="form-control"  id="alt_facility_name" name="alt_facility_name" value="{{old('alt_facility_name')}}" placeholder="Alternate Facility Name">
                             </div>
                         </div>
-                        
                         <div class="form-group">
+                            <label class="col-sm-2 control-label">Commencement Date:</label>
+                            <div class="col-sm-4">
+                                <div class="input-group date" >
+                                    <div class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                    </div>
+                                    <input type="text" class="form-control pull-right" id="datepicker" name="start_date" value="{{old('start_date')}}">
+                                </div>
+                            </div>
                             <label class="col-sm-2 control-label">State:<font color="red">*</font> </label></label>
                             <div class="col-sm-4">
                                 <select class="form-control select2 dynamic" id="state_id" name ="state_id" data-dependent="lga_id" disabled required>
@@ -63,57 +71,102 @@
                                 </select>
                                 <input type="hidden" name="state_id" value="{{ Auth::user()->state_id }}" />
                             </div>
-                            
+                        </div>
+                        <div class="form-group">                            
                             <label class="col-sm-2 control-label">LGA:<font color="red">*</font> </label></label>
                             <div class="col-sm-4">
                                 <select class="form-control select2 dynamic" id="lga_id" name="lga_id" data-dependent="ward_id" required>
                                     
                                 </select>
                             </div>
-                            
-                        </div>
-                        <div class="form-group">
                             <label class="col-sm-2 control-label">Ward:<font color="red">*</font> </label>
-                            <div class="col-sm-10">
+                            <div class="col-sm-4">
                                 <select class="form-control select2" id="ward_id" name="ward_id" style="width: 100%;" required>
                                     
                                 </select>
                             </div>
+                            
                         </div>
-                        
                         <div class="form-group">
-                            <label for="house_no" class="col-sm-2 control-label">House Number:</label>
-                            <div class="col-sm-4">
-                                <input type="text" class="form-control"  id="house_no" name="house_no" value="{{old('house_no')}}">
+                                <label class="col-sm-2 control-label">Hospital/ Clinic Level:<font color="red">*</font> </label></label>
+                                <div class="col-sm-4">
+                                    <select class="form-control select2" id="facility_level_id"  name="facility_level_id" style="width: 100%;" required>
+                                        <option value="">--Select Level of Care--</option>
+                                        @foreach($lst_level_of_care as $st)
+                                                <option value="{{ $st->id }}" {{ (old('facility_level_id') == $st->id ? "selected":"") }}>{{ $st->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <label id="level_option_label" class="col-sm-2 control-label" style="display:none">Facility Level Options:</label>
+                                <div id="level_option_div" class="col-sm-4" style="display:none">
+                                    <select class="form-control select2" id="facility_level_option_id" name="facility_level_option_id" style="width: 100%;">
+                                        
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group" id="specialized_div" style="display:none">
+                                <label class="col-sm-2 control-label">Specialized Options:</label>
+                                <div class="col-sm-10">
+                                    <select class="form-control select2" id="facility_level_options_category_id" name="facility_level_options_category_id" style="width: 100%;">
+                                        
+                                    </select>
+                                </div>
                             </div>
                             
-                            <label for="street_name" class="col-sm-2 control-label">Street Name:</label>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Ownership:<font color="red">*</font> </label></label>
+                                <div class="col-sm-4">
+                                    <select class="form-control select2" id="ownership_id"  name="ownership_id" style="width: 100%;" required>
+                                        <option value="">--Select Ownership--</option>
+                                        @foreach($lst_ownerships as $st)
+                                                <option value="{{ $st->id }}" {{ (old('ownership_id') == $st->id ? "selected":"") }}>{{ $st->name }}</option>
+                                                
+                                        @endforeach
+                                        
+                                    </select>
+                                </div>
+                                <label class="col-sm-2 control-label">Ownership Type:<font color="red">*</font></label>
+                                <div class="col-sm-4">
+                                    <select class="form-control select2" id="ownership_type_id" name="ownership_type_id" style="width: 100%;" required>
+                                        
+                                    </select>
+                                </div>
+                            </div>
+                            
+                        
+                        <div class="form-group">
+                            <label for="house_no" class="col-sm-2 control-label"> Physical Location:</label>
                             <div class="col-sm-4">
-                                <input type="text" class="form-control"  id="street_name"  name="street_name" value="{{old('street_name')}}">
+                                <input type="text" class="form-control"  id="physical_location" name="physical_location" value="{{old('physical_location')}}" placeholder="Not P.O. Box or PMB">
+                            </div>
+                            
+                            <label for="street_name" class="col-sm-2 control-label"> Postal Address:</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control"  id="postal_address"  name="postal_address" value="{{old('postal_address')}}">
                             </div>
                         </div>
                         
                         <div class="form-group">
                             <label for="latitude" class="col-sm-2 control-label">Latitude:</label>
                             <div class="col-sm-4">
-                                <input type="text" class="form-control"  id="latitude" name="latitude"  value="{{old('latitude')}}">
+                                <input type="text" class="form-control"  id="latitude" name="latitude"  value="{{old('latitude')}}" placeholder="N 003.12345">
                             </div>
                             
                             <label for="longitude" class="col-sm-2 control-label">Longitude:</label>
                             <div class="col-sm-4">
-                                <input type="text" class="form-control"  id="longitude" name="longitude" value="{{old('longitude')}}">
+                                <input type="text" class="form-control"  id="longitude" name="longitude" value="{{old('longitude')}}" placeholder="E 007.12345">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="postal_address" class="col-sm-2 control-label">Postal Address:</label>
-                            <div class="col-sm-4">
-                                <input type="text" class="form-control"  id="postal_address"  name="postal_address" value="{{old('postal_address')}}">
-                            </div>
-                            
                             <label for="phone_number" class="col-sm-2 control-label">Phone Number:</label>
                             <div class="col-sm-4">
-                                <input type="text" class="form-control"  id="phone_number" name="phone_number"  value="{{old('phone_number')}}">
+                                <input type="text" class="form-control"  id="phone_number" name="phone_number"  value="{{old('phone_number')}}" placeholder="Official number">
                             </div>
+                            <label for="postal_address" class="col-sm-2 control-label">Alternate Number:</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control"  id="alternate_number"  name="alternate_number" value="{{old('alternate_number')}}">
+                            </div>
+                            
                         </div>
                         <div class="form-group">
                             <label for="email_address" class="col-sm-2 control-label">Email Address:</label>
@@ -126,83 +179,45 @@
                                 <input type="text" class="form-control"  id="website" name="website" value="{{old('website')}}">
                             </div>
                         </div>
-                        
-                        
+    
                     <div class="form-group">
                             <label class="col-sm-2 control-label">Days of Operation:</label>
-                            <div class="col-sm-10">
-                                <select class="form-control select2" name="operational_days[]" multiple="multiple" data-placeholder="Select days of operation"
-                                style="width: 100%;">
-                                <option value="Monday" {{ (is_array(old('operational_days')) && in_array("Monday", old('operational_days'))) ? "selected":"" }}>Monday</option>
-                                <option value="Tuesday" {{ (is_array(old('operational_days')) && in_array("Tuesday", old('operational_days'))) ? "selected":"" }}>Tuesday</option>
-                                <option value="Wednesday" {{ (is_array(old('operational_days')) && in_array("Wednesday", old('operational_days'))) ? "selected":"" }}>Wednesday</option>
-                                <option value="Thursday" {{ (is_array(old('operational_days')) && in_array("Thursday", old('operational_days'))) ? "selected":"" }}>Thursday</option>
-                                <option value="Friday" {{ (is_array(old('operational_days')) && in_array("Friday", old('operational_days'))) ? "selected":"" }}>Friday</option>
-                                <option value="Saturday" {{ (is_array(old('operational_days')) && in_array("Saturday", old('operational_days'))) ? "selected":"" }}>Saturday</option>
-                                <option value="Sunday" {{ (is_array(old('operational_days')) && in_array("Sunday", old('operational_days'))) ? "selected":"" }}>Sunday</option>
-                            </select>
-                        </div>
+                            <div class="col-sm-2">                               
+                                    <input type='checkbox' id='all_days' value='' >Select all
+                            </div>
+                            <div class="col-sm-2">                               
+                                    <input type='checkbox' id='d1' name='operational_days[]' value='Monday' {{ (is_array(old('operational_days')) && in_array("Monday", old('operational_days'))) ? "checked":"" }}> Monday
+                            </div>
+                            <div class="col-sm-2">                               
+                                    <input type='checkbox' id='d2' name='operational_days[]' value='Tuesday' {{ (is_array(old('operational_days')) && in_array("Tuesday", old('operational_days'))) ? "checked":"" }}> Tuesday
+                            </div>
+                            <div class="col-sm-2">                               
+                                    <input type='checkbox' id='d3' name='operational_days[]' value='Wednesday'{{ (is_array(old('operational_days')) && in_array("Wednesday", old('operational_days'))) ? "checked":"" }}> Wednesday
+                            </div> 
                     </div>
+
+                    <div class="form-group">
+                            <label class="col-sm-2 control-label"></label>
+                            <div class="col-sm-2">                               
+                                    <input type='checkbox' id='d4'  name='operational_days[]' value='Thursday'{{ (is_array(old('operational_days')) && in_array("Thursday", old('operational_days'))) ? "checked":"" }}>Thursday
+                            </div> 
+                            <div class="col-sm-2">                               
+                                    <input type='checkbox' id='d5' name='operational_days[]' value='Friday' {{ (is_array(old('operational_days')) && in_array("Friday", old('operational_days'))) ? "checked":"" }}> Friday
+                            </div> 
+                            <div class="col-sm-2">                               
+                                    <input type='checkbox'id='d6'  name='operational_days[]' value='Saturday'{{ (is_array(old('operational_days')) && in_array("Saturday", old('operational_days'))) ? "checked":"" }} > Saturday
+                            </div> 
+                            <div class="col-sm-2">                               
+                                    <input type='checkbox' id='d7' name='operational_days[]' value='Sunday'{{ (is_array(old('operational_days')) && in_array("Sunday", old('operational_days'))) ? "checked":"" }}> Sunday
+                            </div> 
+                    </div>
+
+
                     <div class="form-group">
                         <label class="col-sm-2 control-label">Hours of Operation:</label>
                         <div class="col-sm-4">
                             <input type="text" class="form-control"  id="operational_hours" name="operational_hours" value="{{ old('operational_hours') }}" placeholder="24hrs / 08:00AM-06:00PM" >
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label">Hospital/ Clinic Level:<font color="red">*</font> </label></label>
-                        <div class="col-sm-4">
-                            <select class="form-control select2" id="facility_level_id"  name="facility_level_id" style="width: 100%;" required>
-                                <option value="">--Select Level of Care--</option>
-                                @foreach($lst_level_of_care as $st)
-                                        <option value="{{ $st->id }}" {{ (old('facility_level_id') == $st->id ? "selected":"") }}>{{ $st->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <label id="level_option_label" class="col-sm-2 control-label" style="display:none">Facility Level Options:</label>
-                        <div id="level_option_div" class="col-sm-4" style="display:none">
-                            <select class="form-control select2" id="facility_level_option_id" name="facility_level_option_id" style="width: 100%;">
-                                
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group" id="specialized_div" style="display:none">
-                        <label class="col-sm-2 control-label">Specialized Options:</label>
-                        <div class="col-sm-4">
-                            <select class="form-control select2" id="facility_level_options_category_id" name="facility_level_options_category_id" style="width: 100%;">
-                                
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label">Ownership:<font color="red">*</font> </label></label>
-                        <div class="col-sm-4">
-                            <select class="form-control select2" id="ownership_id"  name="ownership_id" style="width: 100%;" required>
-                                <option value="">--Select Ownership--</option>
-                                @foreach($lst_ownerships as $st)
-                                        <option value="{{ $st->id }}" {{ (old('ownership_id') == $st->id ? "selected":"") }}>{{ $st->name }}</option>
-                                        
-                                @endforeach
-                                
-                            </select>
-                        </div>
-                        <label class="col-sm-2 control-label">Ownership Type:<font color="red">*</font></label>
-                        <div class="col-sm-4">
-                            <select class="form-control select2" id="ownership_type_id" name="ownership_type_id" style="width: 100%;" required>
-                                
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="hs_ownership_details" class="col-sm-2 control-label">Ownership Details:</label>
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control"  id="ownership_details" name="ownership_details" value="{{old('ownership_details')}}">
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
                         <label class="col-sm-2 control-label">Operation Status:<font color="red">*</font> </label></label>
                         <div class="col-sm-4">
                             <select class="form-control select2" id="operational_status_id" name="operational_status_id" style="width: 100%;" required>
@@ -213,27 +228,31 @@
                             </select>
                             
                         </div>
-                        <label class="col-sm-2 control-label">Regulatory Status:</label>
+                    </div>
+                 
+                
+                    
+                    <div class="form-group" id ='reg_license_status'>
+                        <label class="col-sm-2 control-label">Registration Status:</label>
                         <div class="col-sm-4">
-                            <select class="form-control select2" id="regulatory_status_id" name="regulatory_status_id" style="width: 100%;">
-                                <option value="">--Select Regulatory Status--</option>
-                                @foreach($lst_regulatory_status as $st)
-                                    <option value="{{ $st->id }}" {{ (old('regulatory_status_id') == $st->id ? "selected":"") }}>{{ $st->status }}</option>
+                            <select class="form-control select2" id="registration_status_id" name="registration_status_id" style="width: 100%;">
+                                <option value="0">--Select Registration Status--</option>
+                                @foreach($lst_registration_status as $st)
+                                    <option value="{{ $st->id }}" {{ (old('registration_status_id') == $st->id ? "selected":"") }}>{{ $st->status }}</option>
                                 @endforeach
                             </select>
                         </div>
-                    </div>
-                    <div class="form-group">
                         <label class="col-sm-2 control-label">License Status:</label>
                         <div class="col-sm-4">
                             <select class="form-control select2" id="license_status_id" name="license_status_id" style="width: 100%;">
-                                <option value="">--Select License Status--</option>
+                                <option value="0">--Select License Status--</option>
                                 @foreach($lst_license_status as $st)
                                     <option value="{{ $st->id }}" {{ (old('license_status_id') == $st->id ? "selected":"") }}>{{ $st->status }}</option>
                                 @endforeach
                             </select>
                         </div>
                     </div>
+                   
                     
                 </div>
             </div>
@@ -246,100 +265,156 @@
             <div class="panel-heading" role="tab" id="heading2">
                 <h4 class="panel-title">
                     <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse2" aria-expanded="false" aria-controls="collapse2">
-                        Services
+                        Service Elements
                     </a>
                 </h4>
             </div>
             <div id="collapse2" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading2">
                 <div class="panel-body">
                         <div class="form-group">
-                                <label class="col-sm-3 control-label">Medical:</label>
+                                <label class="col-sm-3 control-label"> Service Type:</label>                                      
+                               
                                 <div class="col-sm-9">
-                                    <select class="form-control select2" name="services[]" multiple="multiple" data-placeholder="Select Service" style="width: 100%;">
-                                            @foreach($lst_services as $s)      
-                                                @if($s->service_category_id == 1)
-                                                        <option value="{{$s->id}}">{{$s->name}}</option>
-                                                @endif                                       
-                                            @endforeach
-                                    </select>
+                                        <div class="col-sm-12">                               
+                                                <input type='checkbox'name='outpatient' value='Yes' {{ (old('outpatient') == 'Yes' ? "checked":"") }}> Out Patient
+                                        </div>
+                                        <div class="col-sm-12">                               
+                                                <input type='checkbox'name='inpatient' value='Yes' {{ (old('inpatient') == 'Yes' ? "checked":"") }}> In Patient
+                                        </div>
+                                </div>
+                                
+                        </div>
+                      
+                        <hr size="30">
+                        <div class="form-group">
+                                <label class="col-sm-3 control-label">Medical Services:</label>
+                                <div class="col-sm-9">
+                                    {{--  <div class="col-sm-4">
+                                        <input type='checkbox' id='check_all_medical' > <strong>Check all</strong> 
+                                    </div>  --}}
+                                    @foreach($lst_services as $s)      
+                                        @if($s->service_category_id == 1)
+                                            <div class="col-sm-4">
+                                                <input type='checkbox' name='services[]' value={{ $s->id }} > {{$s->name}}
+                                            </div>
+                                        @endif                                       
+                                    @endforeach
                                 </div>
                         </div>
+                        <hr size="30">
                         <div class="form-group">
-                                <label class="col-sm-3 control-label">Surgical:</label>
+                                <label class="col-sm-3 control-label">Surgical Services:</label>
                                 <div class="col-sm-9">
-                                        <select class="form-control select2" name="services[]" multiple="multiple" data-placeholder="Select Service" style="width: 100%;">
-                                                @foreach($lst_services as $s)      
-                                                    @if($s->service_category_id == 2)
-                                                            <option value="{{$s->id}}">{{$s->name}}</option>
-                                                    @endif                                       
-                                                @endforeach
-                                        </select>
+                                        {{--  <div class="col-sm-4">
+                                            <input type='checkbox' id='check_all_surgical' > <strong>Check all</strong> 
+                                        </div>  --}}
+                                        @foreach($lst_services as $s)      
+                                            @if($s->service_category_id == 2)
+                                                <div class="col-sm-4">
+                                                    <input type='checkbox' name='services[]' value={{ $s->id }} > {{$s->name}}
+                                                </div>
+                                            @endif                                       
+                                        @endforeach
                                     
-                            </div>
-                        </div>
-                        <div class="form-group">
-                                <label class="col-sm-3 control-label">Obstetrics and Gynecology:</label>
-                                <div class="col-sm-9">
-                                        <select class="form-control select2" name="services[]" multiple="multiple" data-placeholder="Select Service" style="width: 100%;">
-                                                @foreach($lst_services as $s)      
-                                                    @if($s->service_category_id == 3)
-                                                            <option value="{{$s->id}}">{{$s->name}}</option>
-                                                    @endif                                       
-                                                @endforeach
-                                        </select>    
-                            </div>
-                        </div>
-                        <div class="form-group">
-                                <label class="col-sm-3 control-label">Pediatrics:</label>
-                                <div class="col-sm-9">
-                                        <select class="form-control select2" name="services[]" multiple="multiple" data-placeholder="Select Service" style="width: 100%;">
-                                                @foreach($lst_services as $s)      
-                                                    @if($s->service_category_id == 4)
-                                                            <option value="{{$s->id}}">{{$s->name}}</option>
-                                                    @endif                                       
-                                                @endforeach
-                                        </select>
-                                    
-                            </div>
-                        </div>
-                        <div class="form-group">
-                                <label class="col-sm-3 control-label">Dental:</label>
-                                <div class="col-sm-9">
-                                        <select class="form-control select2" name="services[]" multiple="multiple" data-placeholder="Select Service" style="width: 100%;">
-                                                @foreach($lst_services as $s)      
-                                                    @if($s->service_category_id == 5)
-                                                            <option value="{{$s->id}}">{{$s->name}}</option>
-                                                    @endif                                       
-                                                @endforeach
-                                        </select>   
-                            </div>
-                        </div>
-                        <div class="form-group">
-                                <label class="col-sm-3 control-label">Specific Clinical Service:</label>
-                                <div class="col-sm-9">
-                                        <select class="form-control select2" name="services[]" multiple="multiple" data-placeholder="Select Service" style="width: 100%;">
-                                                @foreach($lst_services as $s)      
-                                                    @if($s->service_category_id == 6)
-                                                            <option value="{{$s->id}}">{{$s->name}}</option>
-                                                    @endif                                       
-                                                @endforeach
-                                        </select>   
-                            </div>
-                        </div>
-                        <div class="form-group">
-                                <label for="hs_no_doctors" class="col-sm-3 control-label">Accidents and Emergency (Number of Beds):</label>
-                                <div class="col-sm-3">
-                                    <input type="text" class="form-control input-sm"  id="beds_accidents_emerg" name="beds_accidents_emerg"  value="{{old('beds_accidents_emerg')}}">
-                                </div>
-                                <label for="hs_no_pharm" class="col-sm-3 control-label">Admission Facilities (Number of Beds) :</label>
-                                <div class="col-sm-3">
-                                    <input type="text" class="form-control input-sm"  id="beds_adminission" name="beds_adminission" value="{{old('beds_adminission')}}">
                                 </div>
                         </div>
+                        <hr size="30">
                         <div class="form-group">
-                                <label for="hs_no_doctors" class="col-sm-3 control-label">Intensive Care Unit (Number of Beds):</label>
-                                <div class="col-sm-3">
-                                    <input type="text" class="form-control input-sm"  id="beds_icu" name="beds_icu"  value="{{old('beds_icu')}}">
+                                <label class="col-sm-3 control-label">Obstetrics and Gynecology Services:</label>
+                                <div class="col-sm-9">
+                                        {{--  <div class="col-sm-4">
+                                                <input type='checkbox' id='check_all_gyn' > <strong>Check all</strong> 
+                                        </div>  --}}
+                                        @foreach($lst_services as $s)      
+                                            @if($s->service_category_id == 3)
+                                                <div class="col-sm-4">
+                                                    <input type='checkbox' name='services[]' value={{ $s->id }} > {{$s->name}}
+                                                </div>
+                                            @endif                                       
+                                        @endforeach
+                                </div>
+                        </div>
+                        <hr size="30">
+                        <div class="form-group">
+                                <label class="col-sm-3 control-label">Pediatrics Services:</label>
+                                <div class="col-sm-9">
+                                        {{--  <div class="col-sm-4">
+                                                <input type='checkbox' id='check_all_pediatrics' > <strong>Check all</strong> 
+                                        </div>  --}}
+                                    @foreach($lst_services as $s)      
+                                        @if($s->service_category_id == 4)
+                                        <div class="col-sm-4">
+                                                <input type='checkbox' name='services[]' value={{ $s->id }} > {{$s->name}}
+                                            </div>
+                                        @endif                                       
+                                    @endforeach                                    
+                            </div>
+                        </div>
+                        <hr size="30">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Dental Services:</label>
+                            <div class="col-sm-9">
+                                    {{--  <div class="col-sm-4">
+                                            <input type='checkbox' id='check_all_dental' > <strong>Check all</strong> 
+                                    </div>  --}}
+                                        @foreach($lst_services as $s)      
+                                            @if($s->service_category_id == 5)
+                                            <div class="col-sm-4">
+                                                    <input type='checkbox' name='services[]' value={{ $s->id }} > {{$s->name}}
+                                                </div>
+                                            @endif                                       
+                                        @endforeach
+                            </div>
+                        </div>
+                        <hr size="30">
+                        <div class="form-group">
+                                <label class="col-sm-3 control-label">Specific Clinical Services:</label>
+                                <div class="col-sm-9">
+                                        {{--  <div class="col-sm-4">
+                                                <input type='checkbox' id='check_all_specific' > <strong>Check all</strong> 
+                                        </div>  --}}
+                                        @foreach($lst_services as $s)      
+                                            @if($s->service_category_id == 6)
+                                            <div class="col-sm-4">
+                                                    <input type='checkbox' name='services[]' value={{ $s->id }} > {{$s->name}}
+                                                </div>
+                                            @endif                                       
+                                        @endforeach
+                                </div>
+                        </div>
+                        <hr size="30">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Other Services:</label>
+                            <div class="col-sm-9">
+                                    <div class="col-sm-4">                               
+                                            <input type='checkbox'name='onsite_pharmarcy' value='Yes' {{ (old('onsite_pharmarcy') == 'Yes' ? "checked":"") }}> Onsite Pharmacy
+                                    </div>
+                                    <div class="col-sm-4">                               
+                                            <input type='checkbox'name='onsite_laboratory' value='Yes' {{ (old('onsite_laboratory') == 'Yes' ? "checked":"") }}> Onsite Laboratory
+                                    </div>
+                                    <div class="col-sm-4">                               
+                                            <input type='checkbox'name='mortuary_services' value='Yes'{{ (old('mortuary_services') == 'Yes' ? "checked":"") }}> Mortuary Services
+                                    </div> 
+                                
+                                    <div class="col-sm-4">                               
+                                            <input type='checkbox'name='onsite_imaging' value='Yes'{{ (old('onsite_imaging') == 'Yes' ? "checked":"") }}> Onsite Imaging/ Radio-Diagnostics Center
+                                    </div>
+                                    <div class="col-sm-4">                               
+                                            <input type='checkbox'name='ambulance_services' value='Yes'{{ (old('ambulance_services') == 'Yes' ? "checked":"") }}> Ambulance Services
+                                    </div> 
+                            </div>
+                         
+                          
+                        </div>
+                        <hr size="30">
+ 
+                        <div class="form-group">
+                                <label for="hs_no_doctors" class="col-sm-3 control-label">Total number of beds:</label>
+                          
+                                <div class="col-sm-9">
+                                        <div class="col-sm-12">                               
+                                             <input type="text" class="form-control input-sm"  id="beds" name="beds"  value="{{old('beds')}}">
+                                        </div> 
                                 </div>
                         </div>
                 </div>
@@ -359,124 +434,99 @@
                 <div class="panel-body">
                     
                     <div class="form-group">
-                        <label for="hs_no_doctors" class="col-sm-3 control-label">Medical Doctors:</label>
-                        <div class="col-sm-3">
+                        <label for="hs_no_doctors" class="col-sm-4 control-label">Number of Medical Doctors:</label>
+                        <div class="col-sm-2">
                             <input type="text" class="form-control input-sm"  id="doctors" name="doctors"  value="{{old('doctors')}}">
                         </div>
-                        <label for="hs_no_pharm" class="col-sm-3 control-label">Pharmacists:</label>
-                        <div class="col-sm-3">
-                            <input type="text" class="form-control input-sm"  id="pharmacists" name="pharmacists" value="{{old('pharmacists')}}">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="hs_no_dentist" class="col-sm-3 control-label">Dentists:</label>
-                        <div class="col-sm-3">
+                        <label for="hs_no_dentist" class="col-sm-4 control-label">Number of Dentists:</label>
+                        <div class="col-sm-2">
                             <input type="text" class="form-control input-sm"  id="dentist" name="dentist"  value="{{old('dentist')}}">
                         </div>
-                        <label for="hs_no_pharm_tech" class="col-sm-3 control-label">Pharmacy Technicians:</label>
-                        <div class="col-sm-3">
+                    </div>
+                   
+                    <div class="form-group">
+                            <label for="hs_no_dental_tech" class="col-sm-4 control-label">Number of Dental Technicians:</label>
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control input-sm"  id="dental_technicians" name="dental_technicians" value="{{old('dental_technicians')}}">
+                            </div>
+                            <label for="hs_no_pharm" class="col-sm-4 control-label">Number of Pharmacists:</label>
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control input-sm"  id="pharmacists" name="pharmacists" value="{{old('pharmacists')}}">
+                            </div>
+                    </div>
+                   
+                    <div class="form-group">
+                        <label for="hs_no_pharm_tech" class="col-sm-4 control-label">Number of Pharmacy Technicians:</label>
+                        <div class="col-sm-2">
                             <input type="text" class="form-control input-sm"  id="pharmacy_technicians" name="pharmacy_technicians" value="{{old('pharmacy_technicians')}}">
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="hs_no_single_qualified_nurses" class="col-sm-3 control-label">Nurses (Single):</label>
-                        <div class="col-sm-3">
-                            <input type="text" class="form-control input-sm"  id="nurses" name="nurses"  value="{{old('nurses')}}">
-                        </div>
-                        <label for="hs_no_lab_sc" class="col-sm-3 control-label">Laboratory Scientists:</label>
-                        <div class="col-sm-3">
+                        <label for="hs_no_lab_sc" class="col-sm-4 control-label">Number of Laboratory Scientists:</label>
+                        <div class="col-sm-2">
                             <input type="text" class="form-control input-sm"  id="lab_scientists" name="lab_scientists" value="{{old('lab_scientists')}}">
                         </div>
                     </div>
+                   
                     <div class="form-group">
-                        <label for="hs_no_single_qualified_midwives" class="col-sm-3 control-label">Midwifes (Single):</label>
-                        <div class="col-sm-3">
-                            <input type="text" class="form-control input-sm"  id="midwifes" name="midwifes"  value="{{old('midwifes')}}">
-                        </div>
-                        <label for="hs_no_lab_tech" class="col-sm-3 control-label">Laboratory Technicians:</label>
-                        <div class="col-sm-3">
+                        <label for="hs_no_lab_tech" class="col-sm-4 control-label">Number of Laboratory Technicians:</label>
+                        <div class="col-sm-2">
                             <input type="text" class="form-control input-sm"  id="lab_technicians" name="lab_technicians" value="{{old('lab_technicians')}}">
                         </div>
+                        <label for="hs_no_single_qualified_nurses" class="col-sm-4 control-label">Number of Nurses (Single Qualified):</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control input-sm"  id="nurses" name="nurses"  value="{{old('nurses')}}">
+                        </div>
                     </div> 
-                    
+                  
                     <div class="form-group">
-                        <label for="hs_nurses_midwives" class="col-sm-3 control-label">Nurse/ Midwife (Double):</label>
-                        <div class="col-sm-3">
+                        <label for="hs_no_single_qualified_midwives" class="col-sm-4 control-label">Number of Midwifes (Single Qualified):</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control input-sm"  id="midwifes" name="midwifes"  value="{{old('midwifes')}}">
+                        </div><label for="hs_nurses_midwives" class="col-sm-4 control-label">Number of Nurse and Midwife (Double Qualified):</label>
+                        <div class="col-sm-2">
                             <input type="text" class="form-control input-sm"  id="nurse_midwife" name="nurse_midwife"  value="{{old('nurse_midwife')}}">
                         </div>
-                        <label for="hs_no_health_rec" class="col-sm-3 control-label">Health Records/HIM Officers:</label>
-                        <div class="col-sm-3">
-                            <input type="text" class="form-control input-sm"  id="him_officers" name="him_officers" value="{{old('him_officers')}}">
-                        </div>
-                    </div>
+
+                    </div> 
+                  
                     <div class="form-group">
-                        <label for="hs_no_comm_health_officer" class="col-sm-3 control-label">Community Health Officer:</label>
-                        <div class="col-sm-3">
+                        <label for="hs_no_comm_health_officer" class="col-sm-4 control-label">Number of Community Health Officer:</label>
+                        <div class="col-sm-2">
                             <input type="text" class="form-control input-sm"  id="community_health_officer" name="community_health_officer"  value="{{old('community_health_officer')}}">
                         </div>
-                        <label for="hs_no_comm_health_ext_officer" class="col-sm-3 control-label">Community Health Extension Worker:</label>
-                        <div class="col-sm-3">
-                            <input type="text" class="form-control input-sm"  id="community_extension_workers" name="community_extension_workers" value="{{old('community_extension_workers')}}">
+                        <label for="hs_no_comm_health_officer" class="col-sm-4 control-label">Number of Community Health Extension Workers:</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control input-sm"  id="community_extension_workers" name="community_extension_workers"  value="{{ old('community_extension_workers')}}">
                         </div>
-                    </div>
+                    </div> 
+                
                     <div class="form-group">
-                        <label for="hs_no_jun_comm_health_ext_off" class="col-sm-3 control-label">Junior Com Health Extension Worker:</label>
-                        <div class="col-sm-3">
+                        <label for="hs_no_jun_comm_health_ext_off" class="col-sm-4 control-label">Number of Junior Com Health Extension Worker:</label>
+                        <div class="col-sm-2">
                             <input type="text" class="form-control input-sm"  id="jun_community_extension_worker" name="jun_community_extension_worker"  value="{{old('jun_community_extension_worker')}}">
                         </div>
-                        <label for="hs_no_dental_tech" class="col-sm-3 control-label">Dental Technicians:</label>
-                        <div class="col-sm-3">
-                            <input type="text" class="form-control input-sm"  id="dental_technicians" name="dental_technicians" value="{{old('dental_technicians')}}">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="hs_no_env_health_officer" class="col-sm-3 control-label">Environmental Health Officers:</label>
-                        <div class="col-sm-3">
+                        <label for="hs_no_env_health_officer" class="col-sm-4 control-label">Number of Environmental Health Officers:</label>
+                        <div class="col-sm-2">
                             <input type="text" class="form-control input-sm"  id="env_health_officers" name="env_health_officers" value="{{old('env_health_officers')}}">
+                        </div>
+                        
+                    </div>
+               
+                    <div class="form-group">
+                        <label for="hs_no_health_rec" class="col-sm-4 control-label">Number of Health Records / HIM Officers:</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control input-sm"  id="him_officers" name="him_officers" value="{{old('him_officers')}}">
+                        </div>
+                        <label for="hs_no_env_health_officer" class="col-sm-4 control-label">Number of Health Attendant/Assistant:</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control input-sm"  id="attendants" name="attendants" value="{{old('attendants')}}">
                         </div>
                     </div>
                 </div>
             </div>
-        </div><!-- end here-->
+        </div>
+        <!-- end here-->
 
-              {{-- Tab four- Other Services --}}
-              <div class="panel panel-default">
-                    <div class="panel-heading" role="tab" id="heading4">
-                        <h4 class="panel-title">
-                            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse4" aria-expanded="false" aria-controls="collapse4">
-                                Other Services
-                            </a>
-                        </h4>
-                    </div>
-                    <div id="collapse4" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading4">
-                        <div class="panel-body">
-                                <div class="form-group">
-                                        <div class="col-sm-1">  </div>                                        
-                                        <div class="col-sm-3">                               
-                                                <input type='checkbox'name='onsite_pharmarcy' value='Yes' {{ (old('onsite_pharmarcy') == 'Yes' ? "checked":"") }}> Onsite Pharmacy
-                                        </div>
-                                </div>
-                                <div class="form-group">
-                                        <div class="col-sm-1">  </div> 
-                                        <div class="col-sm-3">                               
-                                                <input type='checkbox'name='onsite_laboratory' value='Yes' {{ (old('onsite_laboratory') == 'Yes' ? "checked":"") }}> Onsite Laboratory
-                                        </div>
-                                </div>
-                                <div class="form-group">
-                                        <div class="col-sm-1">  </div> 
-                                        <div class="col-sm-3">                               
-                                                <input type='checkbox'name='onsite_imaging' value='Yes'{{ (old('onsite_imaging') == 'Yes' ? "checked":"") }}> Onsite Imaging/ Radio-Diagnostics Center
-                                        </div>
-                                </div>
-                                <div class="form-group">
-                                        <div class="col-sm-1">  </div> 
-                                        <div class="col-sm-3">                               
-                                                <input type='checkbox'name='mortuary_services' value='Yes'{{ (old('mortuary_services') == 'Yes' ? "checked":"") }}> Mortuary Services
-                                        </div> 
-                                </div>
-                        </div>
-                    </div>
-                </div><!-- end here-->
+           
 </div>
 
 <!-- /.box-body -->
@@ -495,6 +545,24 @@
 @include('partials.dynamic_state_script')
 @include('partials.notification')
 
+<script src="{{asset("dist/iCheck/icheck.min.js")}}"></script>
+
+<script>
+    $(document).ready(function(){
+        $('input').iCheck({
+            checkboxClass: 'icheckbox_minimal-green',
+            increaseArea: '20%' // optional
+        });
+
+        $('#all_days').on('ifChecked', function(event){
+            $('#d1, #d2, #d3, #d4, #d5,#d6, #d7').iCheck('check');
+        });
+        $('#all_days').on('ifUnchecked', function(event){
+            $('#d1, #d2, #d3, #d4, #d5,#d6, #d7').iCheck('uncheck');
+        });
+
+    });
+</script>
 <script>
     $("#state_id").val({{Auth::user()->state_id}}).change();
 
@@ -587,7 +655,7 @@
     
     //get ownership  type ownership_type_id
     $("#ownership_id").change(function(){
-        if($(this).val() != "") //if specialized 
+        if($(this).val() != "") 
         {    
             var id= $('#ownership_id').val();
             var _token = $('input[name="_token"]').val();
@@ -600,6 +668,18 @@
                     $('#ownership_type_id').html(result);
                 }         
             })            
+        }
+
+        //check if public is selected and hide registration and license status
+        if($(this).val() == 1){
+            $('#registration_status_id').val(6).change();
+            $('#license_status_id').val(4).change();     
+            $('#reg_license_status').hide();
+        }
+        else{
+            $('#registration_status_id').val(0).change();
+            $('#license_status_id').val(0).change(); 
+            $('#reg_license_status').show();
         }
     });
 

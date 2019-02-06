@@ -38,7 +38,7 @@ class SendEmailNewUser extends Notification
                 ->line('Your HFR account registration is complete')
                 ->line('Please login using your email: '. $this->email .'  and temporary password: '. $this->password)
                 ->action('Login', $url)
-                ->line('You will required to change your password before you proceed!');
+                ->line('You will be required to change your password before you proceed!');
 
     }
 

@@ -17,10 +17,7 @@ My Pending Requests
 @if(!empty($myrequests))
 
 <div class="box">
-  {{-- <div class="box-header">
-    <h3 class="box-title">Users</h3>
-  </div> --}}
-  <!-- /.box-header -->
+
 <div class="box-body">
   <table id="table1" class="table table-bordered table-striped" style="width:100%">
     <thead>
@@ -28,8 +25,8 @@ My Pending Requests
         <th>Facility Name</th>
         <th>Request Type</th>
         <th>Verified By</th>
-          <th>Validated By</th>
-          <th>Published By</th>
+        <th>Validated By</th>
+        <th>Published By</th>
         <th>Status</th>
        
         @foreach ($myrequests as $r)
@@ -80,7 +77,6 @@ My Pending Requests
                     Delete Request
                 </button>
               </a>
-             
             @endif
     
           </td>
@@ -130,16 +126,18 @@ My Pending Requests
 
 @include('partials.notification')
 
-
 <script>
   $(document).ready(function(){
     $('#table1').DataTable( {
-        "paging":   false,
+        "paging":   true,
         "ordering": true,
         "info":     true
     } );
 
   });
+</script>
+
+<script>
    //delete modal
    $('#delete').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget) 

@@ -24,7 +24,9 @@ class HospitalsController extends Controller
     {
         $facilities = DB::table('hospital_details')
             ->Where('state_id', 'like', '%' .  Auth::user()->state_id . '%')
-            ->orderByRaw('state','lga','facility_name')
+            ->orderBy('state')
+            ->orderBy('lga')
+            ->orderBy('facility_name')
             ->paginate(20);
             
         //get state list
@@ -67,11 +69,12 @@ class HospitalsController extends Controller
                     ->where('category','1')
                     ->get();
         });
-            //get regulatory statuss
-            $lst_regulatory_status= Cache::remember('lst_regulatory_status', 60, function () {
-            return DB::table('lst_regulatory_status')
-                    ->select('id','status')
-                    ->get();
+        
+        //get registratoin statuss
+        $lst_registration_status= Cache::remember('lst_registration_status', 60, function () {
+        return DB::table('lst_registration_status')
+                ->select('id','status')
+                ->get();
         });
         //get license statuss
         $lst_license_status= Cache::remember('lst_license_status', 60, function () {
@@ -84,12 +87,12 @@ class HospitalsController extends Controller
                     ->get();
         
         return view('hospitals.create',compact('lst_level_of_care','lst_states','lst_ownerships','lst_oparational_status',
-        'lst_regulatory_status','lst_license_status','lst_services')); 
+        'lst_registration_status','lst_license_status','lst_services')); 
     }
     
     public function store(Request $request)
     {
-
+       
         $request->validate([
             'registration_no'=>'nullable|max:20',
             'start_date'=>'nullable|date',
@@ -98,23 +101,23 @@ class HospitalsController extends Controller
             'state_id'=>'required',
             'lga_id'=>'required',
             'ward_id'=>'required',
+            'state_unique_id' => 'nullable|max:50',
             'ownership_id'=>'required',
             'ownership_type_id'=>'required',
-            'ownership_details'=>'nullable',
             'facility_level_id'=>'required',
             'facility_level_option_id'=>'nullable',
-            'house_no'=>'nullable',
-            'street_name'=>'nullable',
             'longitude'=>'nullable',
             'latitude'=>'nullable',
-            'postal_address'=>'nullable',
-            'phone_number'=>'nullable',
+            'physical_location'=>'nullable|max:100',
+            'postal_address'=>'nullable|max:100',
+            'phone_number'=>'nullable|max:50',
+            'alternate_number'=>'nullable|max:50',
             'email_address'=>'nullable|email',
             'website'=>'nullable',
             'operational_days'=>'nullable',
             'operational_hours'=>'nullable',
             'operational_status_id'=>'required',
-            'regulatory_status_id'=>'nullable',
+            'registration_status_id'=>'nullable',
             'license_status_id'=>'nullable',
             'doctors'=>'nullable|numeric',
             'pharmacists'=>'nullable|numeric',
@@ -128,22 +131,17 @@ class HospitalsController extends Controller
             'community_health_officer'=>'nullable|numeric',
             'community_extension_workers'=>'nullable|numeric',
             'jun_community_extension_worker'=>'nullable|numeric',
+            'attendants'=>'nullable|numeric',
             'dental_technicians'=>'nullable|numeric',
             'env_health_officers'=>'nullable|numeric',
-            'beds_accidents_emerg'=>'nullable|numeric',
-            'beds_adminission'=>'nullable|numeric',
-            'beds_icu'=>'nullable|numeric',
             'onsite_laboratory'=>'nullable',
             'onsite_imaging'=>'nullable',
             'onsite_pharmarcy'=>'nullable',
             'mortuary_services'=>'nullable',
-            'beds_accidents_emerg'=>'nullable|numeric',
-            'beds_adminission'=>'nullable|numeric',
-            'beds_icu'=>'nullable|numeric',
-            'onsite_pharmarcy'=>'nullable',
-            'onsite_laboratory'=>'nullable',
-            'onsite_imaging'=>'nullable',
-            'mortuary_services'=>'nullable',
+            'ambulance'=>'nullable',
+            'beds'=>'nullable|numeric',
+            'outpatient'=>'nullable',
+            'inpatient'=>'nullable',
         ]);
         
         $start_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->start_date)));
@@ -243,12 +241,12 @@ class HospitalsController extends Controller
                         ->where('category','1')
                         ->get();
             });
-            //get regulatory statuss
-            $lst_regulatory_status= Cache::remember('lst_regulatory_status', 60, function () {
-                return DB::table('lst_regulatory_status')
+            //get registration status
+            $lst_registration_status= Cache::remember('lst_registration_status', 60, function () {
+                return DB::table('lst_registration_status')
                         ->select('id','status')
                         ->get();
-            });
+                });
             //get license statuss
             $lst_license_status= Cache::remember('lst_license_status', 60, function () {
                 return DB::table('lst_license_status')
@@ -261,40 +259,40 @@ class HospitalsController extends Controller
 
            
             return view('hospitals.edit',compact('hosp','current_services','lst_level_of_care','lst_states','lst_ownerships','lst_oparational_status',
-            'lst_regulatory_status','lst_license_status','lst_services')); 
+            'lst_registration_status','lst_license_status','lst_services')); 
     }
     
   
     public function update(Request $request, $id)
     {
         $request->validate([
-            'registration_no'=>'nullable',
+            'registration_no'=>'nullable|max:20',
             'start_date'=>'nullable|date',
             'facility_name'=>'required|max:200',
             'alt_facility_name'=>'nullable|max:200',
             'state_id'=>'required',
             'lga_id'=>'required',
             'ward_id'=>'required',
+            'state_unique_id' => 'nullable|max:50',
             'ownership_id'=>'required',
             'ownership_type_id'=>'required',
-            'ownership_details'=>'nullable',
             'facility_level_id'=>'required',
             'facility_level_option_id'=>'nullable',
-            'house_no'=>'nullable',
-            'street_name'=>'nullable',
             'longitude'=>'nullable',
             'latitude'=>'nullable',
-            'postal_address'=>'nullable',
-            'phone_number'=>'nullable',
+            'physical_location'=>'nullable|max:100',
+            'postal_address'=>'nullable|max:100',
+            'phone_number'=>'nullable|max:50',
+            'alternate_number'=>'nullable|max:50',
             'email_address'=>'nullable|email',
             'website'=>'nullable',
             'operational_days'=>'nullable',
             'operational_hours'=>'nullable',
             'operational_status_id'=>'required',
-            'regulatory_status_id'=>'nullable',
+            'registration_status_id'=>'nullable',
             'license_status_id'=>'nullable',
             'doctors'=>'nullable|numeric',
-            'pharmacists'=>'nullable',
+            'pharmacists'=>'nullable|numeric',
             'pharmacy_technicians'=>'nullable|numeric',
             'nurses'=>'nullable|numeric',
             'lab_scientists'=>'nullable|numeric',
@@ -305,30 +303,19 @@ class HospitalsController extends Controller
             'community_health_officer'=>'nullable|numeric',
             'community_extension_workers'=>'nullable|numeric',
             'jun_community_extension_worker'=>'nullable|numeric',
+            'attendants'=>'nullable|numeric',
             'dental_technicians'=>'nullable|numeric',
             'env_health_officers'=>'nullable|numeric',
-            'beds_accidents_emerg'=>'nullable|numeric',
-            'beds_adminission'=>'nullable|numeric',
-            'beds_icu'=>'nullable|numeric',
             'onsite_laboratory'=>'nullable',
             'onsite_imaging'=>'nullable',
             'onsite_pharmarcy'=>'nullable',
             'mortuary_services'=>'nullable',
-            'beds_accidents_emerg'=>'nullable|numeric',
-            'beds_adminission'=>'nullable|numeric',
-            'beds_icu'=>'nullable|numeric',
-            'onsite_pharmarcy'=>'nullable',
-            'onsite_laboratory'=>'nullable',
-            'onsite_imaging'=>'nullable',
-            'mortuary_services'=>'nullable',
-            'verified_by'=>'nullable',
-            'verified_at'=>'nullable',
-            'validated_by'=>'nullable',
-            'validated_at'=>'nullable',
-            'published_by' => 'nullable',
-            'published_at' => 'nullable',
+            'ambulance'=>'nullable',
+            'beds'=>'nullable|numeric',
+            'outpatient'=>'nullable',
+            'inpatient'=>'nullable',
         ]);
-
+        
         //update records in history with new changes
         $hosp = new hs_hospital_history;
         $hosp = hs_hospital_history::findOrFail($id);
@@ -376,7 +363,7 @@ class HospitalsController extends Controller
             $hosp->save();
             $status->save();
 
-             //update hospital services
+             //update hospital services history
             $deleted = DB::delete("delete from hs_hospital_services_history where hospital_id ='".$id."' and id > 0");
                     
             if(!empty($services_update) and count($diff) > 0){ //if diff > 0 services are updated 
@@ -460,7 +447,7 @@ class HospitalsController extends Controller
 
 
         session()->flash("alert-success", "Delete request initiated successfully!");
-        return redirect()->back();
+        return redirect()->route('hospitals.index');
     }
 
     public function destroy($id)
