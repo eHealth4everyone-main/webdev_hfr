@@ -168,16 +168,37 @@
                             </div>
                             
                         </div>
-                        <div class="form-group">
-                            <label for="email_address" class="col-sm-2 control-label">Email Address:</label>
-                            <div class="col-sm-4">
-                                <input type="text" class="form-control"  id="email_address" name="email_address" value="{{old('email_address')}}">
+                        <div class="form-group" >
+                            <div class="col-sm-6">
+                                <div class="form-group {{ $errors->has('email_address') ? 'has-error' : '' }}" >
+                                    <label for="email_address" class="col-sm-4 control-label">Email Address:</label>
+                                <div class="col-sm-8">
+                                        <input type="text" class="form-control"  id="email_address" name="email_address" value="{{old('email_address')}}">
+                                        @if ($errors->has('email_address'))
+                                            <span class="help-block">
+                                                {{ $errors->first('email_address') }}
+                                            </span>                                 
+                                        @endif
+                                </div>
+                                 
+                                </div>
                             </div>
-                            
-                            <label for="website" class="col-sm-2 control-label">Website:</label>
-                            <div class="col-sm-4">
-                                <input type="text" class="form-control"  id="website" name="website" value="{{old('website')}}">
-                            </div>
+                           
+                            <div class="col-sm-6">
+                                    <div class="form-group {{ $errors->has('website') ? 'has-error' : '' }}" >
+                                        <label for="website" class="col-sm-4 control-label">Website:</label>
+                                        <div class="col-sm-8">
+                                                <input type="text" class="form-control"  id="website" name="website" value="{{old('website')}}">
+                                                @if ($errors->has('website'))
+                                                    <span class="help-block">
+                                                        {{ $errors->first('website') }}
+                                                    </span>                                 
+                                                @endif
+                                        </div>
+                                     
+                                    </div>
+                            </div>      
+                           
                         </div>
     
                     <div class="form-group">

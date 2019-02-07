@@ -113,7 +113,7 @@ class HospitalsController extends Controller
             'phone_number'=>'nullable|max:50',
             'alternate_number'=>'nullable|max:50',
             'email_address'=>'nullable|email',
-            'website'=>'nullable',
+            'website'=>'nullable|max:100|url',
             'operational_days'=>'nullable',
             'operational_hours'=>'nullable',
             'operational_status_id'=>'required',
