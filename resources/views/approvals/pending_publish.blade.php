@@ -2,7 +2,7 @@
 
 
 @section('content-title')
-Pending Publish
+Facility Publishing
 
 @endsection
 

@@ -336,7 +336,7 @@
                     
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-danger" name="action" value="reject">Reject</button>
-                        <button type="submit" class="btn btn-success" name="action" value="approve">Verify</button>
+                        <button type="submit" class="btn btn-success" name="action" value="approve">Accept</button>
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     </div>
                

@@ -107,8 +107,10 @@ Route::middleware(["auth"])->group(function(){
             //approvals
             Route::get('admin/hospitals/approvals/verify','Approval\VerifyController@index')->name('verify.pending');
             Route::post('admin/hospitals/approvals/verify','Approval\VerifyController@store')->name('verify.store');
+            Route::post('admin/hospitals/approvals/verify-recall','Approval\VerifyController@recall')->name('verify.recall');
             Route::get('admin/hospitals/approvals/validation','Approval\ValidateController@index')->name('validate.pending');
             Route::post('admin/hospitals/approvals/validation','Approval\ValidateController@store')->name('validate.store');
+            Route::post('admin/hospitals/approvals/validation-recall','Approval\ValidateController@recall')->name('validate.recall');
             Route::get('admin/hospitals/approvals/publish','Approval\PublishController@index')->name('publish.pending');
             Route::post('admin/hospitals/approvals/publish','Approval\PublishController@store')->name('publish.store');
             Route::get('admin/hospitals/approvals/updated/{id}/{stage}','Approval\UpdatedRecordsController@updatedRecords')->name('view.updated_records');

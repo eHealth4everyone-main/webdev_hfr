@@ -2,7 +2,7 @@
 
 
 @section('content-title')
-Pending Validation
+Facility Validation
 
 @endsection
 
@@ -54,67 +54,84 @@ Pending Validation
                 <Strong>Remarks: </Strong>{{ $p->verify_note }} <br>
             </td>
             <td>
-                <Strong>Name: </Strong>{{$p->published_by}} <br>
-                <Strong>E-mail: </Strong>{{$p->published_email}} <br>
-                <Strong>Mobile: </Strong>{{ $p->published_mobile }} <br>
-                <Strong>Date: </Strong>{{ ($p->published_at? date('d M Y', strtotime($p->validated_at)) : '') }} <br>
-                <Strong>Remarks: </Strong>{{ $p->publish_note }} <br>
+                @if ($p->published_by !="")
+                    <Strong>Name: </Strong>{{ $p->published_by }} <br>
+                    <Strong>E-mail: </Strong>{{ $p->published_email }} <br>
+                    <Strong>Mobile: </Strong>{{ $p->published_mobile }} <br>
+                    <Strong>Date: </Strong>{{ ($p->published_at? date('d M Y', strtotime($p->validated_at)) : '') }} <br>
+                    <Strong>Remarks: </Strong>{{ $p->publish_note }} <br>
+                @else
+                    Pending
+                @endif
+          
             </td>
 
         <td>{{$p->status}}</td>
         <td>
-            @if ($p->action === "CREATE FACILITY")
-            <a href="#">
-                <button class="btn btn-success btn-sm"  type="button" data-toggle="modal" data-target="#view_details"
-                        data-id="{{$p->id}}" data-unique_id="{{$p->unique_id}}" data-registration_no="{{$p->registration_no}}" data-start_date="{{$p->start_date}}"
-                        data-facility_name="{{$p->facility_name}}" data-alt_facility_name="{{$p->alt_facility_name}}" data-state="{{$p->state}}"
-                        data-lga="{{$p->lga}}" data-ward="{{$p->ward}}" data-ownership="{{$p->ownership}}" data-ownership_type="{{$p->ownership_type}}"
-                        data-facility_level="{{$p->facility_level}}" data-facility_level_option="{{$p->facility_level_option}}"
-                        data-physical_location="{{$p->physical_location}}" data-alternate_number="{{$p->alternate_number}}" data-longitude="{{$p->longitude}}" data-latitude="{{$p->latitude}}"
-                        data-postal_address="{{$p->postal_address}}" data-phone_number="{{$p->phone_number}}" data-email_address="{{$p->email_address}}"
-                        data-website="{{$p->website}}" data-operational_days="{{$p->operational_days}}" data-operational_hours="{{$p->operational_hours}}"
-                        data-operation_status="{{$p->operation_status}}" data-registration_status="{{$p->registration_status}}" data-license_status="{{$p->license_status}}"
-                        data-doctors="{{$p->doctors}}" data-pharmacists="{{$p->pharmacists}}" data-dentist="{{$p->dentist}}" data-pharmacy_technicians="{{$p->pharmacy_technicians}}"
-                        data-nurses="{{$p->nurses}}" data-lab_scientists="{{$p->lab_scientists}}" data-midwifes="{{$p->midwifes}}" data-lab_technicians="{{$p->lab_technicians}}"
-                        data-nurse_midwife="{{$p->nurse_midwife}}" data-him_officers="{{$p->him_officers}}" data-community_health_officer="{{$p->community_health_officer}}"
-                        data-community_extension_workers="{{$p->community_extension_workers}}" data-jun_community_extension_worker="{{$p->jun_community_extension_worker}}"
-                        data-dental_technicians="{{$p->dental_technicians}}" data-env_health_officers="{{$p->env_health_officers}}" data-inpatient="{{$p->inpatient}}"
-                        data-outpatient="{{$p->outpatient}}" data-beds="{{$p->beds}}" data-onsite_laboratory="{{$p->onsite_laboratory}}"
-                        data-onsite_imaging="{{$p->onsite_imaging}}" data-onsite_pharmarcy="{{$p->onsite_pharmarcy}}" data-mortuary_services="{{$p->mortuary_services}}"
-                        data-attendants = "{{ $p->attendants }}" data-ambulance_services="{{ $p->ambulance_services }}" data-state_unique_id="{{ $p->state_unique_id }}" 
-                        data-outpatient = "{{ $p->outpatient }}" data-inpatient="{{ $p->inpatient }}" data-action="{{$p->action}}">
-                        Review
-                </button>
-            </a>  
-        @elseif ($p->action === "UPDATE FACILITY") 
-            <a href="{{route('view.updated_records',['id'=>$p->id,'stage'=>'verify1'])}}">
-                <button class="btn btn-success btn-sm"  type="button" > Review</button>
-            </a>
-        @else
-        <a href="#">
-            <button class="btn btn-success btn-sm"  type="button" data-toggle="modal" data-target="#view_details"
-            data-id="{{$p->id}}" data-unique_id="{{$p->unique_id}}" data-registration_no="{{$p->registration_no}}" data-start_date="{{$p->start_date}}"
-            data-facility_name="{{$p->facility_name}}" data-alt_facility_name="{{$p->alt_facility_name}}" data-state="{{$p->state}}"
-            data-lga="{{$p->lga}}" data-ward="{{$p->ward}}" data-ownership="{{$p->ownership}}" data-ownership_type="{{$p->ownership_type}}"
-            data-facility_level="{{$p->facility_level}}" data-facility_level_option="{{$p->facility_level_option}}"
-            data-physical_location="{{$p->physical_location}}" data-alternate_number="{{$p->alternate_number}}" data-longitude="{{$p->longitude}}" data-latitude="{{$p->latitude}}"
-            data-postal_address="{{$p->postal_address}}" data-phone_number="{{$p->phone_number}}" data-email_address="{{$p->email_address}}"
-            data-website="{{$p->website}}" data-operational_days="{{$p->operational_days}}" data-operational_hours="{{$p->operational_hours}}"
-            data-operation_status="{{$p->operation_status}}" data-registration_status="{{$p->registration_status}}" data-license_status="{{$p->license_status}}"
-            data-doctors="{{$p->doctors}}" data-pharmacists="{{$p->pharmacists}}" data-dentist="{{$p->dentist}}" data-pharmacy_technicians="{{$p->pharmacy_technicians}}"
-            data-nurses="{{$p->nurses}}" data-lab_scientists="{{$p->lab_scientists}}" data-midwifes="{{$p->midwifes}}" data-lab_technicians="{{$p->lab_technicians}}"
-            data-nurse_midwife="{{$p->nurse_midwife}}" data-him_officers="{{$p->him_officers}}" data-community_health_officer="{{$p->community_health_officer}}"
-            data-community_extension_workers="{{$p->community_extension_workers}}" data-jun_community_extension_worker="{{$p->jun_community_extension_worker}}"
-            data-dental_technicians="{{$p->dental_technicians}}" data-env_health_officers="{{$p->env_health_officers}}" data-inpatient="{{$p->inpatient}}"
-            data-outpatient="{{$p->outpatient}}" data-beds="{{$p->beds}}" data-onsite_laboratory="{{$p->onsite_laboratory}}"
-            data-onsite_imaging="{{$p->onsite_imaging}}" data-onsite_pharmarcy="{{$p->onsite_pharmarcy}}" data-mortuary_services="{{$p->mortuary_services}}"
-            data-attendants = "{{ $p->attendants }}" data-ambulance_services="{{ $p->ambulance_services }}" data-state_unique_id="{{ $p->state_unique_id }}" 
-            data-outpatient = "{{ $p->outpatient }}" data-inpatient="{{ $p->inpatient }}" data-action="{{$p->action}}">
-            Review
-            </button>
-            </a>  
-        @endif
-    
+            @if (in_array($p->status_id,[2,7,9,14,16,21]))
+                @if ($p->action === "CREATE FACILITY")
+                <a href="#">
+                    <button class="btn btn-success btn-sm"  type="button" data-toggle="modal" data-target="#view_details"
+                            data-id="{{$p->id}}" data-unique_id="{{$p->unique_id}}" data-registration_no="{{$p->registration_no}}" data-start_date="{{$p->start_date}}"
+                            data-facility_name="{{$p->facility_name}}" data-alt_facility_name="{{$p->alt_facility_name}}" data-state="{{$p->state}}"
+                            data-lga="{{$p->lga}}" data-ward="{{$p->ward}}" data-ownership="{{$p->ownership}}" data-ownership_type="{{$p->ownership_type}}"
+                            data-facility_level="{{$p->facility_level}}" data-facility_level_option="{{$p->facility_level_option}}"
+                            data-physical_location="{{$p->physical_location}}" data-alternate_number="{{$p->alternate_number}}" data-longitude="{{$p->longitude}}" data-latitude="{{$p->latitude}}"
+                            data-postal_address="{{$p->postal_address}}" data-phone_number="{{$p->phone_number}}" data-email_address="{{$p->email_address}}"
+                            data-website="{{$p->website}}" data-operational_days="{{$p->operational_days}}" data-operational_hours="{{$p->operational_hours}}"
+                            data-operation_status="{{$p->operation_status}}" data-registration_status="{{$p->registration_status}}" data-license_status="{{$p->license_status}}"
+                            data-doctors="{{$p->doctors}}" data-pharmacists="{{$p->pharmacists}}" data-dentist="{{$p->dentist}}" data-pharmacy_technicians="{{$p->pharmacy_technicians}}"
+                            data-nurses="{{$p->nurses}}" data-lab_scientists="{{$p->lab_scientists}}" data-midwifes="{{$p->midwifes}}" data-lab_technicians="{{$p->lab_technicians}}"
+                            data-nurse_midwife="{{$p->nurse_midwife}}" data-him_officers="{{$p->him_officers}}" data-community_health_officer="{{$p->community_health_officer}}"
+                            data-community_extension_workers="{{$p->community_extension_workers}}" data-jun_community_extension_worker="{{$p->jun_community_extension_worker}}"
+                            data-dental_technicians="{{$p->dental_technicians}}" data-env_health_officers="{{$p->env_health_officers}}" data-inpatient="{{$p->inpatient}}"
+                            data-outpatient="{{$p->outpatient}}" data-beds="{{$p->beds}}" data-onsite_laboratory="{{$p->onsite_laboratory}}"
+                            data-onsite_imaging="{{$p->onsite_imaging}}" data-onsite_pharmarcy="{{$p->onsite_pharmarcy}}" data-mortuary_services="{{$p->mortuary_services}}"
+                            data-attendants = "{{ $p->attendants }}" data-ambulance_services="{{ $p->ambulance_services }}" data-state_unique_id="{{ $p->state_unique_id }}" 
+                            data-outpatient = "{{ $p->outpatient }}" data-inpatient="{{ $p->inpatient }}" data-action="{{$p->action}}">
+                            Review
+                    </button>
+                </a>  
+                @elseif ($p->action === "UPDATE FACILITY") 
+                    <a href="{{route('view.updated_records',['id'=>$p->id,'stage'=>'verify1'])}}">
+                        <button class="btn btn-success btn-sm"  type="button" > Review</button>
+                    </a>
+                @else
+                <a href="#">
+                    <button class="btn btn-success btn-sm"  type="button" data-toggle="modal" data-target="#view_details"
+                    data-id="{{$p->id}}" data-unique_id="{{$p->unique_id}}" data-registration_no="{{$p->registration_no}}" data-start_date="{{$p->start_date}}"
+                    data-facility_name="{{$p->facility_name}}" data-alt_facility_name="{{$p->alt_facility_name}}" data-state="{{$p->state}}"
+                    data-lga="{{$p->lga}}" data-ward="{{$p->ward}}" data-ownership="{{$p->ownership}}" data-ownership_type="{{$p->ownership_type}}"
+                    data-facility_level="{{$p->facility_level}}" data-facility_level_option="{{$p->facility_level_option}}"
+                    data-physical_location="{{$p->physical_location}}" data-alternate_number="{{$p->alternate_number}}" data-longitude="{{$p->longitude}}" data-latitude="{{$p->latitude}}"
+                    data-postal_address="{{$p->postal_address}}" data-phone_number="{{$p->phone_number}}" data-email_address="{{$p->email_address}}"
+                    data-website="{{$p->website}}" data-operational_days="{{$p->operational_days}}" data-operational_hours="{{$p->operational_hours}}"
+                    data-operation_status="{{$p->operation_status}}" data-registration_status="{{$p->registration_status}}" data-license_status="{{$p->license_status}}"
+                    data-doctors="{{$p->doctors}}" data-pharmacists="{{$p->pharmacists}}" data-dentist="{{$p->dentist}}" data-pharmacy_technicians="{{$p->pharmacy_technicians}}"
+                    data-nurses="{{$p->nurses}}" data-lab_scientists="{{$p->lab_scientists}}" data-midwifes="{{$p->midwifes}}" data-lab_technicians="{{$p->lab_technicians}}"
+                    data-nurse_midwife="{{$p->nurse_midwife}}" data-him_officers="{{$p->him_officers}}" data-community_health_officer="{{$p->community_health_officer}}"
+                    data-community_extension_workers="{{$p->community_extension_workers}}" data-jun_community_extension_worker="{{$p->jun_community_extension_worker}}"
+                    data-dental_technicians="{{$p->dental_technicians}}" data-env_health_officers="{{$p->env_health_officers}}" data-inpatient="{{$p->inpatient}}"
+                    data-outpatient="{{$p->outpatient}}" data-beds="{{$p->beds}}" data-onsite_laboratory="{{$p->onsite_laboratory}}"
+                    data-onsite_imaging="{{$p->onsite_imaging}}" data-onsite_pharmarcy="{{$p->onsite_pharmarcy}}" data-mortuary_services="{{$p->mortuary_services}}"
+                    data-attendants = "{{ $p->attendants }}" data-ambulance_services="{{ $p->ambulance_services }}" data-state_unique_id="{{ $p->state_unique_id }}" 
+                    data-outpatient = "{{ $p->outpatient }}" data-inpatient="{{ $p->inpatient }}" data-action="{{$p->action}}">
+                    Review
+                    </button>
+                </a>  
+                @endif
+            @endif
+           
+
+            @if (in_array($p->status_id,[4,11,18]))
+                <a href="#">
+                    <button class="btn btn-primary btn-sm"  type="button"  data-toggle="modal" data-target="#recall"
+                        data-id="{{$p->id}}" data-action="{{$p->action}}"> 
+                        Recall
+                    </button>
+                </a>
+            @endif
+
           </td>
         </tr>
         @endforeach
@@ -153,6 +170,36 @@ Pending Validation
 </div><!--/.modal -->
 @endsection 
 
+ 
+<!-- Modal Recall Validation -->
+<div class="modal fade" id="recall" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog modal-sm" role="document">
+          <div class="modal-content">
+           
+          <form action="{{route('validate.recall')}}" method="POST">
+              @csrf
+    
+              <div class="modal-body">
+                  <p class="text-center">
+                    Are you sure you want to recall validation for this facility?
+                  </p>
+                    <input type="hidden" id="hosp_id" name="hosp_id" >  
+                    <input type="hidden" id="action" name="action" >
+                    <input type="hidden" id="validated_by" name="validated_by" >   
+                    <input type="hidden" id="validated_at" name="validated_at">   
+                    <input type="hidden" id="validate_note" name="validate_note" >   
+
+    
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">No</button>
+                <button type="submit" class="btn btn-warning btn-sm">Yes</button>
+              </div>
+            </form>
+            
+          </div>
+        </div>
+    </div> 
 
 @push('bk_script')
 @include('partials.notification')
@@ -267,5 +314,18 @@ Pending Validation
 
       });//end
   </script>
+
+<script>
+        //recall modal
+        $('#recall').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget) 
+        
+            var modal = $(this)
+            modal.find('.modal-body #hosp_id').val(button.data('id'));
+            modal.find('.modal-body #action').val(button.data('action'));
+        })//end
+        
+    </script>
+
 
 @endpush

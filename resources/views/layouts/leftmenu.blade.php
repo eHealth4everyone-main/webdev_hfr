@@ -92,13 +92,13 @@
                     @endif
                     <ul class="treeview-menu">        
                         @if(auth()->user()->hasPermissionTo(59))
-                            <li><a href="{{ route('verify.pending') }}"><i class="fa  fa-check"></i>Pending Verification <font color="orange">[{{ $approval_count[0] }}]</font></a></li>
+                            <li><a href="{{ route('verify.pending') }}"><i class="fa  fa-check"></i>Verification <font color="orange">[{{ $approval_count[0] }}]</font></a></li>
                         @endif
                         @if(auth()->user()->hasPermissionTo(60))
-                            <li><a href="{{ route('validate.pending') }}"><i class="fa  fa-check"></i>Pending Validation  <font color="orange">[{{ $approval_count[1] }}]</font></a></li>
+                            <li><a href="{{ route('validate.pending') }}"><i class="fa  fa-check"></i>Validation  <font color="orange">[{{ $approval_count[1] }}]</font></a></li>
                         @endif
                         @if(auth()->user()->hasPermissionTo(61))
-                            <li><a href="{{route('publish.pending')}}"><i class="fa  fa-check"></i>Pending Publish  <font color="orange">[{{ $approval_count[2] }}]</font></a></li>
+                            <li><a href="{{route('publish.pending')}}"><i class="fa  fa-check"></i>Publish  <font color="orange">[{{ $approval_count[2] }}]</font></a></li>
                         @endif
                     
                     </ul>

@@ -20,7 +20,7 @@ class VerifyController extends Controller
     {
         $pending = DB::table('hospital_details_history')
             ->where('state_id', '=',Auth::user()->state_id)
-            ->whereIn('status_id',[1,5,8,12,15,19])
+            ->whereIn('status_id',[1,2,5,8,9,12,15,16,19])
             ->orderby('updated_at','desc')
             ->get();
      
@@ -135,6 +135,59 @@ class VerifyController extends Controller
 
         // ****** notifiction end *****
         session()->flash("alert-success", $message);
+        return redirect()->route('verify.pending');
+    }
+
+    public function recall(Request $request)
+    {
+
+
+        if($request->action == "CREATE FACILITY"){
+            $status_id = 1;
+            $action="Recall Create Verification";
+        }
+        elseif($request->action == "UPDATE FACILITY"){
+            $status_id = 8;
+            $action="Recall Update Verification";
+        }
+        else{
+            $status_id = 15;
+            $action="Recall Delete Verification";
+        }
+
+    
+        $date = Carbon::now()->format('Y-m-d H:i:s');
+
+        hs_hospital_history::disableAuditing();       
+        $hosp = new hs_hospital_history;
+        $hosp = hs_hospital_history::findOrFail($request->hosp_id);
+        $hosp->status_id = $status_id;
+        $hosp->verified_by = $request->verified_by;
+        $hosp->verified_at = $request->verified_at;
+        $hosp->verify_note = $request->verified_note;
+    
+        $status = new hs_status_tracking;
+        $status->hospital_id = $request->hosp_id;
+        $status->user_id = Auth::user()->id;
+        $status->status_id = $status_id;
+        $status->created_at =  $date;
+        $status->note = $action;
+
+        DB::beginTransaction();
+        try {
+            $hosp->save();
+            $status->save();
+     
+            DB::commit();
+        } catch (\Exception $ex) {
+            DB::rollback();
+            return response()->json(['error' => $ex->getMessage()], 500);
+        }
+
+        hs_hospital_history::enableAuditing();
+
+
+        session()->flash("alert-success", "Verification recalled successfully!");
         return redirect()->route('verify.pending');
     }
 

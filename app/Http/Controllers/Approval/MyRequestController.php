@@ -315,7 +315,7 @@ class MyRequestController extends Controller
     
     
     public function deleteRequest(Request $request){
-        
+     
         // Delete my pending verification or rejected verification for new facility
         if(in_array($request->status_id,[1,3])){  
 
@@ -331,6 +331,7 @@ class MyRequestController extends Controller
             }
         }
     
+
         // Delete pending verification or rejected verification for update requests
         //restore main table data before being udpated. Delete data in history and copy data from main to history
         if(in_array($request->status_id, [8,10])){ 
@@ -377,6 +378,33 @@ class MyRequestController extends Controller
             }
 
         }
+        
+        // Delete request for facility delition
+        if(in_array($request->status_id, [15,17])){ 
+
+            DB::beginTransaction();
+            try {
+                hs_hospital_history::disableAuditing();
+
+                $hosp = new hs_hospital_history;
+                $hosp = hs_hospital_history::find($request->hosp_id);
+                $hosp->status_id = '6';
+                $hosp->verified_by = $request->null;
+                $hosp->verified_at = $request->null;
+                $hosp->verify_note = $request->null;
+                $hosp->save();      
+
+                hs_hospital_history::enableAuditing();
+
+                DB::commit();
+            } catch (\Exception $ex) {
+                DB::rollback();
+                return response()->json(['error' => $ex->getMessage()], 500);
+            }
+
+        }
+
+
         session()->flash("alert-success", "Request Deleted Successfully!");
         return redirect()->back();
     }

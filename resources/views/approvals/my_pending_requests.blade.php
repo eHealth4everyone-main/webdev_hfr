@@ -26,7 +26,6 @@ My Pending Requests
         <th>Request Type</th>
         <th>Verified By</th>
         <th>Validated By</th>
-        <th>Published By</th>
         <th>Status</th>
        
         @foreach ($myrequests as $r)
@@ -44,39 +43,51 @@ My Pending Requests
         <td>{{$r->facility_name}}</td>
         <td>{{$r->action}}</td>
         <td>
-            <Strong>Name: </Strong>{{$r->verified_by}} <br>
-            <Strong>E-mail: </Strong>{{$r->verified_email}} <br>
-            <Strong>Mobile: </Strong>{{ $r->verified_mobile }} <br>
-            <Strong>Remarks: </Strong>{{ $r->verify_note }} <br>
-            <Strong>Date: </Strong>{{ ($r->verified_at? date('d M Y', strtotime($r->verified_at)) : '') }} <br>                
+            @if ($r->verified_email != "" )
+              <Strong>Name: </Strong>{{$r->verified_by}} <br>
+              <Strong>E-mail: </Strong>{{$r->verified_email}} <br>
+              <Strong>Mobile: </Strong>{{ $r->verified_mobile }} <br>
+              <Strong>Remarks: </Strong>{{ $r->verify_note }} <br>
+              <Strong>Date: </Strong>{{ ($r->verified_at? date('d M Y', strtotime($r->verified_at)) : '') }} <br>   
+            @else
+                Pending
+            @endif
+                       
         </td>
         <td>
-            <Strong>Name: </Strong>{{$r->validated_by}} <br>
-            <Strong>E-mail: </Strong>{{$r->validated_email}} <br>
-            <Strong>Mobile: </Strong>{{ $r->validated_mobile }} <br>
-            <Strong>Remarks: </Strong>{{ $r->validate_note }} <br>
-            <Strong>Date: </Strong>{{ ($r->validated_at? date('d M Y', strtotime($r->validated_at)) : '')}} <br>                
+            @if ($r->validated_email != "" )
+                <Strong>Name: </Strong>{{$r->validated_by}} <br>
+                <Strong>E-mail: </Strong>{{ $r->validated_email }} <br>
+                <Strong>Mobile: </Strong>{{ $r->validated_mobile }} <br>
+                <Strong>Date: </Strong>{{ ($r->validated_at? date('d M Y', strtotime($r->validated_at)) : '') }} <br>
+                <Strong>Remarks: </Strong>{{ $r->validate_note }} <br>
+            @else
+                Pending
+            @endif              
       </td>
-      <td>
-            <Strong>Name: </Strong>{{$r->published_by}} <br>
-            <Strong>E-mail: </Strong>{{$r->published_email}} <br>
-            <Strong>Mobile: </Strong>{{ $r->published_mobile }} <br>
-            <Strong>Remarks: </Strong>{{ $r->publish_note }} <br>
-            <Strong>Date: </Strong>{{  ($r->published_at? date('d M Y', strtotime($r->published_at)) : '')}} <br>               
-      </td>
+    
         <td>{{$r->status}}</td>
 
           <td>
             @if (in_array($r->status_id,[1,3,8,10]))
-              <a href="{{ route('myrequest.edit',$r->id) }}">
-                  <button class="btn btn-warning btn-sm"  type="button" >Update Request</button>
-              </a>
-              <a href="#">
-                  <button class="btn btn-danger btn-sm"  type="button"  data-toggle="modal" data-target="#delete"
-                    data-id="{{$r->id}}" data-status="{{$r->status_id}}"> 
-                    Delete Request
-                </button>
-              </a>
+                <a href="{{ route('myrequest.edit',$r->id) }}">
+                    <button class="btn btn-warning btn-sm"  type="button" >Update Request</button>
+                </a>
+                <a href="#">
+                    <button class="btn btn-danger btn-sm"  type="button"  data-toggle="modal" data-target="#delete"
+                      data-id="{{$r->id}}" data-status="{{$r->status_id}}"> 
+                      Delete Request
+                  </button>
+                </a>
+            @endif
+
+            @if (in_array($r->status_id,[15,17]))
+                <a href="#">
+                    <button class="btn btn-danger btn-sm"  type="button"  data-toggle="modal" data-target="#delete"
+                      data-id="{{$r->id}}" data-status="{{$r->status_id}}"> 
+                      Delete Request
+                  </button>
+                </a>
             @endif
     
           </td>
@@ -106,7 +117,8 @@ My Pending Requests
                 Are you sure you want to delete this request?
               </p>
                 <input type="hidden" id="hosp_id" name="hosp_id" >  
-                <input type="hidden" id="status_id" name="status_id" >   
+                <input type="hidden" id="status_id" name="status_id" >  
+                <input type="hidden" id="null" name="null" >   
 
           </div>
           <div class="modal-footer">

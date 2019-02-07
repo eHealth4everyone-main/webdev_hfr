@@ -21,7 +21,7 @@ class ValidateController extends Controller
     {
         $pending  = DB::table('hospital_details_history')
             ->where('state_id', '=',Auth::user()->state_id)
-            ->whereIn('status_id',[2,7,9,14,16,21])
+            ->whereIn('status_id',[2,7,9,14,16,21,4,11,18])
             ->get();
 
         return view('approvals.pending_validation',compact('pending'));
@@ -34,16 +34,13 @@ class ValidateController extends Controller
             if($request->requested_action == "CREATE FACILITY"){
                 $status_id = 4;
                 $message = "Facility Creation Validated";
-                $action="Create Validated";
             }
             elseif($request->requested_action == "UPDATE FACILITY"){
                 $status_id = 11;
                 $message = "Facility Update Validated";
-                $action="Update Validated";
             }
             else{
                 $status_id = 18;
-                $action="Delete Validated";
                 $message = "Facility Deletion Validated";
             }
         }
@@ -52,17 +49,14 @@ class ValidateController extends Controller
             if($request->requested_action == "CREATE FACILITY"){
                 $status_id = 5;
                 $message = "Facility Validation Rejected";
-                $action="Create Validation Rejected";
             }
             elseif($request->requested_action == "UPDATE FACILITY"){
                 $status_id = 12;
                 $message = "Facility Validation Rejected";
-                $action="Update Validation Rejected";
             }
             else{
                 $status_id = 19;
                 $message = "Facility Validation Rejected";
-                $action="Delete Validation Rejected";                
             }
         }
 
@@ -117,6 +111,57 @@ class ValidateController extends Controller
         // }
 
         session()->flash("alert-success", $message);
+        return redirect()->route('validate.pending');
+    }
+
+     
+    public function recall(Request $request)
+    {
+   
+        if($request->action == "CREATE FACILITY"){
+            $status_id = 2;
+            $action="Recall Create Validation";
+        }
+        elseif($request->action == "UPDATE FACILITY"){
+            $status_id = 9;
+            $action="Recall Update Validation";
+        }
+        else{
+            $status_id = 16;
+            $action="Recall Delete Validation";
+        }
+  
+        hs_hospital_history::disableAuditing();       
+        $hosp = new hs_hospital_history;
+        $hosp = hs_hospital_history::findOrFail($request->hosp_id);
+        $hosp->status_id = $status_id;
+        $hosp->validated_by = $request->validated_by;
+        $hosp->validated_at = $request->validated_at;
+        $hosp->validate_note = $request->validate_note;
+   
+        $status = new hs_status_tracking;
+        $status->hospital_id = $request->hosp_id;
+        $status->user_id = Auth::user()->id;
+        $status->status_id = $status_id;
+        $status->created_at =  Carbon::now()->format('Y-m-d H:i:s');
+        $status->note = $action;
+
+
+        DB::beginTransaction();
+        try {
+            $hosp->save();
+            $status->save();
+     
+            DB::commit();
+        } catch (\Exception $ex) {
+            DB::rollback();
+            return response()->json(['error' => $ex->getMessage()], 500);
+        }
+
+        hs_hospital_history::enableAuditing();
+
+
+        session()->flash("alert-success", "Validation recalled successfully!");
         return redirect()->route('validate.pending');
     }
 
