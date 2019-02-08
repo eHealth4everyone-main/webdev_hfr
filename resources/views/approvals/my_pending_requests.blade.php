@@ -26,6 +26,7 @@ My Pending Requests
         <th>Request Type</th>
         <th>Verified By</th>
         <th>Validated By</th>
+        <th>Published By</th>
         <th>Status</th>
        
         @foreach ($myrequests as $r)
@@ -64,6 +65,17 @@ My Pending Requests
             @else
                 Pending
             @endif              
+      </td>
+      <td>
+          @if ($r->published_by !="")
+            <Strong>Name: </Strong>{{ $r->published_by }} <br>
+            <Strong>E-mail: </Strong>{{ $r->published_email }} <br>
+            <Strong>Mobile: </Strong>{{ $r->published_mobile }} <br>
+            <Strong>Date: </Strong>{{ ($r->published_at? date('d M Y', strtotime($r->validated_at)) : '') }} <br>
+            <Strong>Remarks: </Strong>{{ $r->publish_note }} <br>
+        @else
+            Pending
+        @endif
       </td>
     
         <td>{{$r->status}}</td>

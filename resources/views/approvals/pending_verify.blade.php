@@ -28,6 +28,7 @@ Facility Verification
         <th>Facility Name</th>
         <th>Request Type</th>
         <th>Submitted By</th>
+        <th>Verified By</th>
         <th>Validated By</th> 
         <th>Published By</th>        
         <th>Status</th>        
@@ -47,6 +48,18 @@ Facility Verification
             <Strong>Date: </Strong>{{ ($p->requested_at? date('d M Y', strtotime($p->requested_at)) : '') }} <br>   
             <Strong>Remarks: </Strong>{{ $p->request_note }} <br>
         </td>
+        <td>
+           
+        
+                @if ($p->verified_email != "" )
+                    <Strong>Name: </Strong>{{$p->verified_by}} <br>
+                    <Strong>E-mail: </Strong>{{$p->verified_email}} <br>
+                    <Strong>Mobile: </Strong>{{ $p->verified_mobile }} <br>
+                    <Strong>Date: </Strong>{{ ($p->verified_at? date('d M Y', strtotime($p->verified_at)) : '') }} <br>     
+                    <Strong>Remarks: </Strong>{{ $p->verify_note }} <br>
+                @else
+                    Pending
+                @endif    </td>
         <td>
             @if ($p->validated_email != "" )
                 <Strong>Name: </Strong>{{$p->validated_by}} <br>
