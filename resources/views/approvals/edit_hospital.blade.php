@@ -12,7 +12,12 @@
 <form class="form-horizontal" action="{{route('myrequest.update')}}" method="POST">
     @csrf
     @method("PUT")   
-
+    <input type="hidden" name="verified_by" value="">
+    <input type="hidden" name="verified_at" value="">
+    <input type="hidden" name="validated_at" value="">
+    <input type="hidden" name="validated_by" value="">
+    <input type="hidden" name="published_by" value="">
+    <input type="hidden" name="published_at" value="">
     <input type="hidden" name="state_id" value="{{$hosp->state_id}}">
     <input type="hidden" name="status_id" value="{{$hosp->status_id}}">
     <input type="hidden" name="id" value="{{$hosp->id}}">
@@ -30,7 +35,7 @@
             <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
                 <div class="panel-body">
                     <div class="box-body">
-                     
+                        
 
                         <div class="form-group">
                             <label for="cac_reg" class="col-sm-2 control-label">State Unique ID:</label>
@@ -42,17 +47,39 @@
                                 <input type="text" class="form-control"  id="registration_no" name="registration_no" value="{{$hosp->registration_no}}" placeholder="Corporate Affairs Registration Number">
                             </div>
                         </div> 
-                            <div class="form-group">
-                                <label for="reg_fac_name" class="col-sm-2 control-label">Registered Name: <font color="red">*</font> </label>
-                                <div class="col-sm-4">
-                                    <input type="text" class="form-control"  id="facility_name"  name="facility_name" value="{{$hosp->facility_name}}" placeholder="Registered Facility Name" required>
+
+                        <div class="form-group" >
+                            <div class="col-sm-6">
+                                <div class="form-group {{ $errors->has('facility_name') ? 'has-error' : '' }}" >
+                                <label for="reg_fac_name" class="col-sm-4 control-label">Registered Name: <font color="red">*</font> </label>
+                                <div class="col-sm-8">
+                                <input type="text" class="form-control"  id="facility_name"  name="facility_name" value="{{$hosp->facility_name}}" placeholder="Registered Facility Name">
+                                        @if ($errors->has('facility_name'))
+                                            <span class="help-block">
+                                                {{ $errors->first('facility_name') }}
+                                            </span>                                 
+                                        @endif
                                 </div>
-                                
-                                <label for="alt_facility_name" class="col-sm-2 control-label">Alternate Name:</label> 
-                                <div class="col-sm-4">
-                                    <input type="text" class="form-control"  id="alt_facility_name" name="alt_facility_name" value="{{$hosp->alt_facility_name}}" placeholder="Alternate Facility Name">
+                                 
                                 </div>
                             </div>
+                           
+                            <div class="col-sm-6">
+                                    <div class="form-group {{ $errors->has('alt_facility_name') ? 'has-error' : '' }}" >
+                                    <label for="alt_facility_name" class="col-sm-4 control-label">Alternate Name:</label> 
+                                        <div class="col-sm-8">
+                                        <input type="text" class="form-control"  id="alt_facility_name" name="alt_facility_name" value="{{$hosp->alt_facility_name}}" placeholder="Alternate Facility Name">
+                                                @if ($errors->has('alt_facility_name'))
+                                                    <span class="help-block">
+                                                        {{ $errors->first('alt_facility_name') }}
+                                                    </span>                                 
+                                                @endif
+                                        </div>
+                                     
+                                    </div>
+                            </div>      
+                           
+                        </div>
 
                         <div class="form-group">
                             <label class="col-sm-2 control-label">Commencement Date:</label>
@@ -74,44 +101,80 @@
                                     @endforeach
                                     
                                 </select>
-                             
+                           
 
                             </div>
                         </div>
-                        
 
-                        <div class="form-group">
 
-                            <label class="col-sm-2 control-label">LGA:<font color="red">*</font> </label></label>
-                            <div class="col-sm-4">
-                                <select class="form-control select2 dynamic" id="lga_id" name="lga_id" data-dependent="ward_id" required>
+                        <div class="form-group" >
+                            <div class="col-sm-6">
+                                <div class="form-group {{ $errors->has('lga_id') ? 'has-error' : '' }}" >
+                                <label class="col-sm-4 control-label">LGA:<font color="red">*</font> </label></label>
+                                <div class="col-sm-8">
+                                <select class="form-control select2 dynamic" id="lga_id" name="lga_id" data-dependent="ward_id">
                                     
                                 </select>
+                                        @if ($errors->has('lga_id'))
+                                            <span class="help-block">
+                                                {{ $errors->first('lga_id') }}
+                                            </span>                                 
+                                        @endif
+                                </div>
+                                 
+                                </div>
                             </div>
-                            <label class="col-sm-2 control-label">Ward:<font color="red">*</font> </label>
-                            <div class="col-sm-4">
-                                <select class="form-control select2" id="ward_id" name="ward_id" style="width: 100%;" required>
+                           
+                            <div class="col-sm-6">
+                                    <div class="form-group {{ $errors->has('ward_id') ? 'has-error' : '' }}" >
+                                    <label class="col-sm-4 control-label">Ward:<font color="red">*</font> </label>
+                                        <div class="col-sm-8">
+                                        <select class="form-control select2" id="ward_id" name="ward_id" style="width: 100%;">
                                     
-                                </select>
-                            </div>
+                                    </select>
+                                                @if ($errors->has('ward_id'))
+                                                    <span class="help-block">
+                                                        {{ $errors->first('ward_id') }}
+                                                    </span>                                 
+                                                @endif
+                                        </div>
+                                     
+                                    </div>
+                            </div>      
+                           
                         </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">Hospital/ Clinic Level:<font color="red">*</font> </label></label>
-                            <div class="col-sm-4">
-                                <select class="form-control select2" id="facility_level_id"  name="facility_level_id" style="width: 100%;" required>
+
+                        <div class="form-group" >
+                            <div class="col-sm-6">
+                                <div class="form-group {{ $errors->has('facility_level_id') ? 'has-error' : '' }}" >
+                                <label class="col-sm-4 control-label">Hospital/ Clinic Level:<font color="red">*</font> </label></label>
+                                <div class="col-sm-8">
+                                <select class="form-control select2" id="facility_level_id"  name="facility_level_id" style="width: 100%;">
                                     <option value="">--Select Level of Care--</option>
                                     @foreach($lst_level_of_care as $st)
                                     <option value="{{$st->id}}">{{$st->name}}</option>
                                     @endforeach
                                 </select>
+                                        @if ($errors->has('facility_level_id'))
+                                            <span class="help-block">
+                                                {{ $errors->first('facility_level_id') }}
+                                            </span>                                 
+                                        @endif
+                                </div>
+                                 
+                                </div>
                             </div>
+                           
                             <label id="level_option_label" class="col-sm-2 control-label" style="display:none">Facility Level Options:</label>
-                            <div id="level_option_div" class="col-sm-4" style="display:none">
-                                <select class="form-control select2" id="facility_level_option_id" name="facility_level_option_id" style="width: 100%;">
-                                    
-                                </select>
-                            </div>
+                                <div id="level_option_div" class="col-sm-4" style="display:none">
+                                    <select class="form-control select2" id="facility_level_option_id" name="facility_level_option_id" style="width: 100%;">
+                                        
+                                    </select>
+                                </div> 
+                           
                         </div>
+                        
+
                         <div class="form-group" id="specialized_div" style="display:none">
                             <label class="col-sm-2 control-label">Specialized Options:</label>
                             <div class="col-sm-4">
@@ -120,25 +183,48 @@
                                 </select>
                             </div>
                         </div>
-                        
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">Ownership:<font color="red">*</font> </label></label>
-                            <div class="col-sm-4">
-                                <select class="form-control select2" id="ownership_id"  name="ownership_id" style="width: 100%;" required>
+
+
+                        <div class="form-group" >
+                                <div class="col-sm-6">
+                                <div class="form-group {{ $errors->has('ownership_id') ? 'has-error' : '' }}" >
+                                <label class="col-sm-4 control-label">Ownership:<font color="red">*</font> </label></label>
+                                <div class="col-sm-8">
+                                <select class="form-control select2" id="ownership_id"  name="ownership_id" style="width: 100%;">
                                     <option value="">--Select Ownership--</option>
                                     @foreach($lst_ownerships as $st)
                                     <option value="{{$st->id}}">{{$st->name}}</option>
                                     @endforeach
                                     
                                 </select>
-                            </div>
-                            <label class="col-sm-2 control-label">Ownership Type:<font color="red">*</font></label>
-                            <div class="col-sm-4">
-                                <select class="form-control select2" id="ownership_type_id" name="ownership_type_id" style="width: 100%;" required>
+                                        @if ($errors->has('ownership_id'))
+                                            <span class="help-block">
+                                                {{ $errors->first('ownership_id') }}
+                                            </span>                                 
+                                        @endif
+                                </div>
+                                 
+                                </div>
+                                </div>
+                           
+                                    <div class="col-sm-6">
+                                <div class="form-group {{ $errors->has('ownership_type_id') ? 'has-error' : '' }}" >
+                                <label class="col-sm-4 control-label">Ownership Type:<font color="red">*</font></label>
+                                <div class="col-sm-8">
+                                <select class="form-control select2" id="ownership_type_id" name="ownership_type_id" style="width: 100%;">
                                     
                                 </select>
-                            </div>
-                        </div>
+                                        @if ($errors->has('ownership_type_id'))
+                                            <span class="help-block">
+                                                {{ $errors->first('ownership_type_id') }}
+                                            </span>                                 
+                                        @endif
+                                </div>
+                                 
+                                </div>
+                            </div> 
+                        
+                       
                         <div class="form-group">
                             <label for="house_no" class="col-sm-2 control-label"> Physical Location:</label>
                             <div class="col-sm-4">
@@ -151,40 +237,105 @@
                             </div>
                         </div>
 
-                 
-                        <div class="form-group">
-                            <label for="latitude" class="col-sm-2 control-label">Latitude:</label>
-                            <div class="col-sm-4">
+                        <div class="form-group" >
+                            <div class="col-sm-6">
+                                <div class="form-group {{ $errors->has('latitude') ? 'has-error' : '' }}" >
+                                <label for="latitude" class="col-sm-4 control-label">Latitude:</label>
+                                <div class="col-sm-8">
                                 <input type="text" class="form-control"  id="latitude" name="latitude"  value="{{$hosp->latitude}}">
+                                        @if ($errors->has('latitude'))
+                                            <span class="help-block">
+                                                {{ $errors->first('latitude') }}
+                                            </span>                                 
+                                        @endif
+                                </div>
+                                 
+                                </div>
                             </div>
-                            
-                            <label for="longitude" class="col-sm-2 control-label">Longitude:</label>
-                            <div class="col-sm-4">
+                           
+                            <div class="col-sm-6">
+                                <div class="form-group {{ $errors->has('longitude') ? 'has-error' : '' }}" >
+                                <label for="longitude" class="col-sm-4 control-label">Longitude:</label>
+                                <div class="col-sm-8">
                                 <input type="text" class="form-control"  id="longitude" name="longitude" value="{{$hosp->longitude}}">
-                            </div>
+                                        @if ($errors->has('longitude'))
+                                            <span class="help-block">
+                                                {{ $errors->first('longitude') }}
+                                            </span>                                 
+                                        @endif
+                                </div>
+                                 
+                                </div>
+                            </div> 
+                           
                         </div>
 
-                        <div class="form-group">
-                            
-                            <label for="phone_number" class="col-sm-2 control-label">Phone Number:</label>
-                            <div class="col-sm-4">
+
+                        <div class="form-group" >
+                            <div class="col-sm-6">
+                                <div class="form-group {{ $errors->has('phone_number') ? 'has-error' : '' }}" >
+                                <label for="phone_number" class="col-sm-4 control-label">Phone Number:</label>
+                                <div class="col-sm-8">
                                 <input type="text" class="form-control"  id="phone_number" name="phone_number"  value="{{$hosp->phone_number}}">
+                                        @if ($errors->has('phone_number'))
+                                            <span class="help-block">
+                                                {{ $errors->first('phone_number') }}
+                                            </span>                                 
+                                        @endif
+                                </div>
+                                 
+                                </div>
                             </div>
-                            <label for="postal_address" class="col-sm-2 control-label">Alternate Number:</label>
-                            <div class="col-sm-4">
+                           
+                            <div class="col-sm-6">
+                                <div class="form-group {{ $errors->has('alternate_number') ? 'has-error' : '' }}" >
+                                <label for="postal_address" class="col-sm-4 control-label">Alternate Number:</label>
+                                <div class="col-sm-8">
                                 <input type="text" class="form-control"  id="alternate_number"  name="alternate_number" value="{{ $hosp->alternate_number}}">
-                            </div>
+                                        @if ($errors->has('alternate_number'))
+                                            <span class="help-block">
+                                                {{ $errors->first('alternate_number') }}
+                                            </span>                                 
+                                        @endif
+                                </div>
+                                 
+                                </div>
+                            </div> 
+                           
                         </div>
-                        <div class="form-group">
-                            <label for="email_address" class="col-sm-2 control-label">Email Address:</label>
-                            <div class="col-sm-4">
+
+
+                        <div class="form-group" >
+                            <div class="col-sm-6">
+                                <div class="form-group {{ $errors->has('email_address') ? 'has-error' : '' }}" >
+                                    <label for="email_address" class="col-sm-4 control-label">Email Address:</label>
+                                <div class="col-sm-8">
                                 <input type="text" class="form-control"  id="email_address" name="email_address" value="{{$hosp->email_address}}">
+                                        @if ($errors->has('email_address'))
+                                            <span class="help-block">
+                                                {{ $errors->first('email_address') }}
+                                            </span>                                 
+                                        @endif
+                                </div>
+                                 
+                                </div>
                             </div>
-                            
-                            <label for="website" class="col-sm-2 control-label">Website:</label>
-                            <div class="col-sm-4">
-                                <input type="text" class="form-control"  id="website" name="website" value="{{$hosp->website}}">
-                            </div>
+                           
+                            <div class="col-sm-6">
+                                    <div class="form-group {{ $errors->has('website') ? 'has-error' : '' }}" >
+                                        <label for="website" class="col-sm-4 control-label">Website:</label>
+                                        <div class="col-sm-8">
+                                        <input type="text" class="form-control"  id="website" name="website" value="{{$hosp->website}}">
+                                                @if ($errors->has('website'))
+                                                    <span class="help-block">
+                                                        {{ $errors->first('website') }}
+                                                    </span>                                 
+                                                @endif
+                                        </div>
+                                     
+                                    </div>
+                            </div>      
+                           
                         </div>
                      
                     <div class="form-group">
@@ -218,27 +369,45 @@
                                     <input type='checkbox' id='d7' name='operational_days[]' value='Sunday'{{ strpos($hosp->operational_days, "Sunday") !== false ? "checked":"" }}> Sunday
                             </div> 
                     </div>
-   
-                        
-               
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label">Hours of Operation:</label>
-                        <div class="col-sm-4">
-                            <input type="text" class="form-control"  name="operational_hours" value="{{$hosp->operational_hours}}" placeholder="24hrs / 08:00AM-06:00PM" >
-                        </div>
-                        <label class="col-sm-2 control-label">Operation Status:<font color="red">*</font> </label></label>
-                        <div class="col-sm-4">
-                            <select class="form-control select2" id="operational_status_id" name="operational_status_id" style="width: 100%;" required>
+
+
+                    <div class="form-group" >
+                            <div class="col-sm-6">
+                                <div class="form-group {{ $errors->has('operational_hours') ? 'has-error' : '' }}" >
+                                <label class="col-sm-4 control-label">Hours of Operation:</label>
+                                <div class="col-sm-8">
+                                <input type="text" class="form-control"  name="operational_hours" value="{{$hosp->operational_hours}}" placeholder="24hrs / 08:00AM-06:00PM" >
+                                        @if ($errors->has('operational_hours'))
+                                            <span class="help-block">
+                                                {{ $errors->first('operational_hours') }}
+                                            </span>                                 
+                                        @endif
+                                </div>
+                                 
+                                </div>
+                            </div>
+                           
+                            <div class="col-sm-6">
+                                <div class="form-group {{ $errors->has('operational_status_id') ? 'has-error' : '' }}" >
+                                <label class="col-sm-4 control-label">Operation Status:<font color="red">*</font> </label></label>
+                                <div class="col-sm-8">
+                                <select class="form-control select2" id="operational_status_id" name="operational_status_id" style="width: 100%;">
                                 <option value="">--Select Operation Status--</option>
                                 @foreach($lst_oparational_status as $st)
                                 <option value="{{$st->id}}">{{$st->status}}</option>
                                 @endforeach
                             </select>
-                            
-                        </div>
-                    </div>
-               
-                    
+                                        @if ($errors->has('operational_status_id'))
+                                            <span class="help-block">
+                                                {{ $errors->first('operational_status_id') }}
+                                            </span>                                 
+                                        @endif
+                                </div>
+                                 
+                                </div>
+                            </div> 
+                           
+                        </div>               
                 
                     <div class="form-group" id='reg_license_status'>
                  
@@ -399,12 +568,18 @@
                             </div> 
                         </div>
                         <hr size="30">
-    
-                        <div class="form-group">
-                                <label for="beds" class="col-sm-3 control-label">Total number of beds:</label>
+
+                        <div class="form-group {{ $errors->has('beds') ? 'has-error' : '' }}" >
+                                <label for="hs_no_doctors" class="col-sm-3 control-label">Total number of beds:</label>
+                          
                                 <div class="col-sm-9">
                                         <div class="col-sm-12">                               
-                                                <input type="text" class="form-control input-sm"  id="beds" name="beds"  value="{{ $hosp->beds}}">
+                                        <input type="text" class="form-control input-sm"  id="beds" name="beds"  value="{{ $hosp->beds}}">
+                                             @if ($errors->has('beds'))
+                                            <span class="help-block">
+                                                {{ $errors->first('beds') }}
+                                            </span>                                 
+                                        @endif
                                         </div> 
                                 </div>
                         </div>
@@ -421,113 +596,287 @@
                 </a>
             </h4>
         </div>
-        <div id="collapse3" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading3">
+
+
+         <div id="collapse3" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading3">
             <div class="panel-body">
-                       
-                    <div class="form-group">
-                            <label for="hs_no_doctors" class="col-sm-4 control-label">Number of Medical Doctors:</label>
-                            <div class="col-sm-2">
+
+                        <div class="form-group" >
+                            <div class="col-sm-6">
+                                <div class="form-group {{ $errors->has('doctors') ? 'has-error' : '' }}" >
+                                <label for="hs_no_doctors" class="col-sm-8 control-label">Number of Medical Doctors:</label>
+                                <div class="col-sm-4">
                                 <input type="text" class="form-control input-sm"  id="doctors" name="doctors"  value="{{$hosp->doctors}}">
+                                        @if ($errors->has('doctors'))
+                                            <span class="help-block">
+                                                {{ $errors->first('doctors') }}
+                                            </span>                                 
+                                        @endif
+                                </div>
+                                 
+                                </div>
                             </div>
-                            <label for="hs_no_dentist" class="col-sm-4 control-label">Number of Dentists:</label>
-                            <div class="col-sm-2">
-                                <input type="text" class="form-control input-sm"  id="dentist" name="dentist"  value="{{$hosp->dentist}}">
-                            </div>
+                           
+                            <div class="col-sm-6">
+                                <div class="form-group {{ $errors->has('dentist') ? 'has-error' : '' }}" >
+                                <label for="hs_no_dentist" class="col-sm-8 control-label">Number of Dentists:</label>
+                                <div class="col-sm-4">
+                                <input type="text" class="form-control input-sm"  id="dentist" name="dentist"  value="{{$hosp->doctors}}">
+                                        @if ($errors->has('dentist'))
+                                            <span class="help-block">
+                                                {{ $errors->first('dentist') }}
+                                            </span>                                 
+                                        @endif
+                                </div>
+                                 
+                                </div>
+                            </div> 
+                           
                         </div>
                        
-                        <div class="form-group">
-                                <label for="hs_no_dental_tech" class="col-sm-4 control-label">Number of Dental Technicians:</label>
-                                <div class="col-sm-2">
-                                    <input type="text" class="form-control input-sm"  id="dental_technicians" name="dental_technicians" value="{{$hosp->dental_technicians}}">
+                        <div class="form-group" >
+                            <div class="col-sm-6">
+                                <div class="form-group {{ $errors->has('dental_technicians') ? 'has-error' : '' }}" >
+                                <label for="hs_no_dental_tech" class="col-sm-8 control-label">Number of Dental Technicians:</label>
+                                <div class="col-sm-4">
+                                <input type="text" class="form-control input-sm"  id="dental_technicians" name="dental_technicians" value="{{$hosp->dental_technicians}}">
+                                        @if ($errors->has('dental_technicians'))
+                                            <span class="help-block">
+                                                {{ $errors->first('dental_technicians') }}
+                                            </span>                                 
+                                        @endif
                                 </div>
-                                <label for="hs_no_pharm" class="col-sm-4 control-label">Number of Pharmacists:</label>
-                                <div class="col-sm-2">
-                                    <input type="text" class="form-control input-sm"  id="pharmacists" name="pharmacists" value="{{$hosp->pharmacists}}">
+                                 
                                 </div>
+                            </div>
+                           
+                            <div class="col-sm-6">
+                                <div class="form-group {{ $errors->has('pharmacists') ? 'has-error' : '' }}" >
+                                <label for="hs_no_pharm" class="col-sm-8 control-label">Number of Pharmacists:</label>
+                                <div class="col-sm-4">
+                                <input type="text" class="form-control input-sm"  id="pharmacists" name="pharmacists" value="{{$hosp->pharmacists}}">
+                                        @if ($errors->has('pharmacists'))
+                                            <span class="help-block">
+                                                {{ $errors->first('pharmacists') }}
+                                            </span>                                 
+                                        @endif
+                                </div>
+                                 
+                                </div>
+                            </div> 
+                           
                         </div>
-                       
-                        <div class="form-group">
-                            <label for="hs_no_pharm_tech" class="col-sm-4 control-label">Number of Pharmacy Technicians:</label>
-                            <div class="col-sm-2">
+
+                        <div class="form-group" >
+                            <div class="col-sm-6">
+                                <div class="form-group {{ $errors->has('pharmacy_technicians') ? 'has-error' : '' }}" >
+                                <label for="hs_no_pharm_tech" class="col-sm-8 control-label">Number of Pharmacy Technicians:</label>
+                                <div class="col-sm-4">
                                 <input type="text" class="form-control input-sm"  id="pharmacy_technicians" name="pharmacy_technicians" value="{{$hosp->pharmacy_technicians}}">
+                                        @if ($errors->has('pharmacy_technicians'))
+                                            <span class="help-block">
+                                                {{ $errors->first('pharmacy_technicians') }}
+                                            </span>                                 
+                                        @endif
+                                </div>
+                                 
+                                </div>
                             </div>
-                            <label for="hs_no_lab_sc" class="col-sm-4 control-label">Number of Laboratory Scientists:</label>
-                            <div class="col-sm-2">
+                           
+                            <div class="col-sm-6">
+                                <div class="form-group {{ $errors->has('lab_scientists') ? 'has-error' : '' }}" >
+                                <label for="hs_no_lab_sc" class="col-sm-8 control-label">Number of Laboratory Scientists:</label>
+                                <div class="col-sm-4">
                                 <input type="text" class="form-control input-sm"  id="lab_scientists" name="lab_scientists" value="{{$hosp->lab_scientists}}">
-                            </div>
+                                        @if ($errors->has('lab_scientists'))
+                                            <span class="help-block">
+                                                {{ $errors->first('lab_scientists') }}
+                                            </span>                                 
+                                        @endif
+                                </div>
+                                 
+                                </div>
+                            </div> 
+                           
                         </div>
-                       
-                        <div class="form-group">
-                            <label for="hs_no_lab_tech" class="col-sm-4 control-label">Number of Laboratory Technicians:</label>
-                            <div class="col-sm-2">
+
+                        <div class="form-group" >
+                            <div class="col-sm-6">
+                                <div class="form-group {{ $errors->has('lab_technicians') ? 'has-error' : '' }}" >
+                                <label for="hs_no_lab_tech" class="col-sm-8 control-label">Number of Laboratory Technicians:</label>
+                                <div class="col-sm-4">
                                 <input type="text" class="form-control input-sm"  id="lab_technicians" name="lab_technicians" value="{{$hosp->lab_technicians}}">
+                                        @if ($errors->has('lab_technicians'))
+                                            <span class="help-block">
+                                                {{ $errors->first('lab_technicians') }}
+                                            </span>                                 
+                                        @endif
+                                </div>
+                                 
+                                </div>
                             </div>
-                            <label for="hs_no_single_qualified_nurses" class="col-sm-4 control-label">Number of Nurses (Single Qualified):</label>
-                            <div class="col-sm-2">
+                           
+                            <div class="col-sm-6">
+                                <div class="form-group {{ $errors->has('nurses') ? 'has-error' : '' }}" >
+                                <label for="hs_no_single_qualified_nurses" class="col-sm-8 control-label">Number of Nurses (Single Qualified):</label>
+                                <div class="col-sm-4">
                                 <input type="text" class="form-control input-sm"  id="nurses" name="nurses"  value="{{$hosp->nurses}}">
-                            </div>
-                        </div> 
-                      
-                        <div class="form-group">
-                            <label for="hs_no_single_qualified_midwives" class="col-sm-4 control-label">Number of Midwifes (Single Qualified):</label>
-                            <div class="col-sm-2">
-                                <input type="text" class="form-control input-sm"  id="midwifes" name="midwifes"  value="{{$hosp->midwifes}}">
-                            </div><label for="hs_nurses_midwives" class="col-sm-4 control-label">Number of Nurse and Midwife (Double Qualified):</label>
-                            <div class="col-sm-2">
-                                <input type="text" class="form-control input-sm"  id="nurse_midwife" name="nurse_midwife"  value="{{$hosp->nurse_midwife}}">
-                            </div>
-    
-                        </div> 
-                      
-                        <div class="form-group">
-                            <label for="hs_no_comm_health_officer" class="col-sm-4 control-label">Number of Community Health Officer:</label>
-                            <div class="col-sm-2">
-                                <input type="text" class="form-control input-sm"  id="community_health_officer" name="community_health_officer"  value="{{$hosp->community_health_officer}}">
-                            </div>
-                            <label for="hs_no_comm_health_officer" class="col-sm-4 control-label">Number of Community Health Extension Workers:</label>
-                            <div class="col-sm-2">
-                                <input type="text" class="form-control input-sm"  id="community_extension_workers" name="community_extension_workers"  value="{{ $hosp->community_extension_workers}}">
-                            </div>
-                        </div> 
-                    
-                        <div class="form-group">
-                            <label for="hs_no_jun_comm_health_ext_off" class="col-sm-4 control-label">Number of Junior Com Health Extension Worker:</label>
-                            <div class="col-sm-2">
-                                <input type="text" class="form-control input-sm"  id="jun_community_extension_worker" name="jun_community_extension_worker"  value="{{$hosp->jun_community_extension_worker}}">
-                            </div>
-                            <label for="hs_no_env_health_officer" class="col-sm-4 control-label">Number of Environmental Health Officers:</label>
-                            <div class="col-sm-2">
-                                <input type="text" class="form-control input-sm"  id="env_health_officers" name="env_health_officers" value="{{$hosp->env_health_officers}}">
-                            </div>
-                            
+                                        @if ($errors->has('nurses'))
+                                            <span class="help-block">
+                                                {{ $errors->first('nurses') }}
+                                            </span>                                 
+                                        @endif
+                                </div>
+                                 
+                                </div>
+                            </div> 
+                           
                         </div>
-                   
-                        <div class="form-group">
-                            <label for="hs_no_health_rec" class="col-sm-4 control-label">Number of Health Records / HIM Officers:</label>
-                            <div class="col-sm-2">
+
+                        <div class="form-group" >
+                            <div class="col-sm-6">
+                                <div class="form-group {{ $errors->has('midwifes') ? 'has-error' : '' }}" >
+                                <label for="hs_no_single_qualified_midwives" class="col-sm-8 control-label">Number of Midwifes (Single Qualified):</label>
+                                <div class="col-sm-4">
+                                <input type="text" class="form-control input-sm"  id="midwifes" name="midwifes"  value="{{$hosp->midwifes}}">
+                                        @if ($errors->has('midwifes'))
+                                            <span class="help-block">
+                                                {{ $errors->first('midwifes') }}
+                                            </span>                                 
+                                        @endif
+                                </div>
+                                 
+                                </div>
+                            </div>
+                           
+                            <div class="col-sm-6">
+                                <div class="form-group {{ $errors->has('nurse_midwife') ? 'has-error' : '' }}" >
+                                <label for="hs_nurses_midwives" class="col-sm-8 control-label">Number of Nurse and Midwife (Double Qualified):</label>
+                                <div class="col-sm-4">
+                                <input type="text" class="form-control input-sm"  id="nurse_midwife" name="nurse_midwife"  value="{{$hosp->nurse_midwife}}">
+                                        @if ($errors->has('nurse_midwife'))
+                                            <span class="help-block">
+                                                {{ $errors->first('nurse_midwife') }}
+                                            </span>                                 
+                                        @endif
+                                </div>
+                                 
+                                </div>
+                            </div> 
+                           
+                        </div>
+
+                        <div class="form-group" >
+                            <div class="col-sm-6">
+                                <div class="form-group {{ $errors->has('community_health_officer') ? 'has-error' : '' }}" >
+                                <label for="hs_no_comm_health_officer" class="col-sm-8 control-label">Number of Community Health Officer:</label>
+                                <div class="col-sm-4">
+                                <input type="text" class="form-control input-sm"  id="community_health_officer" name="community_health_officer"  value="{{$hosp->community_health_officer}}">
+                                        @if ($errors->has('community_health_officer'))
+                                            <span class="help-block">
+                                                {{ $errors->first('community_health_officer') }}
+                                            </span>                                 
+                                        @endif
+                                </div>
+                                 
+                                </div>
+                            </div>
+                           
+                            <div class="col-sm-6">
+                                <div class="form-group {{ $errors->has('community_extension_workers') ? 'has-error' : '' }}" >
+                                <label for="hs_no_comm_health_officer" class="col-sm-8 control-label">Number of Community Health Extension Workers:</label>
+                                <div class="col-sm-4">
+                                <input type="text" class="form-control input-sm"  id="community_extension_workers" name="community_extension_workers" value="{{ $hosp->community_extension_workers}}">
+                                        @if ($errors->has('community_extension_workers'))
+                                            <span class="help-block">
+                                                {{ $errors->first('community_extension_workers') }}
+                                            </span>                                 
+                                        @endif
+                                </div>
+                                 
+                                </div>
+                            </div> 
+                           
+                        </div>
+
+                        <div class="form-group" >
+                            <div class="col-sm-6">
+                                <div class="form-group {{ $errors->has('jun_community_extension_worker') ? 'has-error' : '' }}" >
+                                <label for="hs_no_jun_comm_health_ext_off" class="col-sm-8 control-label">Number of Junior Com Health Extension Worker:</label>
+                                <div class="col-sm-4">
+                                <input type="text" class="form-control input-sm"  id="jun_community_extension_worker" name="jun_community_extension_worker"  value="{{$hosp->jun_community_extension_worker}}">
+                                        @if ($errors->has('jun_community_extension_worker'))
+                                            <span class="help-block">
+                                                {{ $errors->first('jun_community_extension_worker') }}
+                                            </span>                                 
+                                        @endif
+                                </div>
+                                 
+                                </div>
+                            </div>
+                           
+                            <div class="col-sm-6">
+                                <div class="form-group {{ $errors->has('env_health_officers') ? 'has-error' : '' }}" >
+                                <label for="hs_no_env_health_officer" class="col-sm-8 control-label">Number of Environmental Health Officers:</label>
+                                <div class="col-sm-4">
+                                <input type="text" class="form-control input-sm"  id="env_health_officers" name="env_health_officers" value="{{$hosp->env_health_officers}}">
+                                        @if ($errors->has('env_health_officers'))
+                                            <span class="help-block">
+                                                {{ $errors->first('env_health_officers') }}
+                                            </span>                                 
+                                        @endif
+                                </div>
+                                 
+                                </div>
+                            </div> 
+                           
+                        </div>
+
+                        <div class="form-group" >
+                            <div class="col-sm-6">
+                                <div class="form-group {{ $errors->has('him_officers') ? 'has-error' : '' }}" >
+                                <label for="hs_no_health_rec" class="col-sm-8 control-label">Number of Health Records / HIM Officers:</label>
+                                <div class="col-sm-4">
                                 <input type="text" class="form-control input-sm"  id="him_officers" name="him_officers" value="{{$hosp->him_officers}}">
+                                        @if ($errors->has('him_officers'))
+                                            <span class="help-block">
+                                                {{ $errors->first('him_officers') }}
+                                            </span>                                 
+                                        @endif
+                                </div>
+                                 
+                                </div>
                             </div>
-                            <label for="hs_no_env_health_officer" class="col-sm-4 control-label">Number of Health Attendant/Assistant:</label>
-                            <div class="col-sm-2">
+                           
+                            <div class="col-sm-6">
+                                <div class="form-group {{ $errors->has('attendants') ? 'has-error' : '' }}" >
+                                <label for="hs_no_env_health_officer" class="col-sm-8 control-label">Number of Health Attendant/Assistant:</label>
+                                <div class="col-sm-4">
                                 <input type="text" class="form-control input-sm"  id="attendants" name="attendants" value="{{$hosp->attendants}}">
-                            </div>
+                                        @if ($errors->has('attendants'))
+                                            <span class="help-block">
+                                                {{ $errors->first('attendants') }}
+                                            </span>                                 
+                                        @endif
+                                </div>
+                                 
+                                </div>
+                            </div> 
+                           
                         </div>
                
             </div>
         </div>
     </div><!-- end here-->
-    
-     
-
     </div>
 
 <!-- /.box-body -->
 <div class="box-footer">
-    <a href="{{route('myrequest.pending')}}">
-        <button type="button" class="btn btn-warning">Return Back</button>
-    </a>
+        <a href="{{route('myrequest.pending')}}">
+            <button type="button" class="btn btn-warning">Return Back</button>
+        </a>
 
-    <button type="submit" class="btn btn-primary pull-right">Update</button>
+    <button type="submit" class="btn btn-primary pull-right">Update Request</button>
     
 </div>
 <!-- /.box-footer -->

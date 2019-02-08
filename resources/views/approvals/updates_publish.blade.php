@@ -127,7 +127,7 @@
     <div class="box-footer">
       <div class="pull-right">
         <button type="submit" class="btn btn-danger" name="action" value="reject">Reject</button>
-        <button type="submit" class="btn btn-success" name="action" value="approve">Publish</button>
+        <button type="submit" class="btn btn-success" name="action" value="approve">Accept</button>
         <a href="{{ route('publish.pending') }}">
             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
         </a>

@@ -17,6 +17,7 @@ use App\Notifications\UpdateRequest;
 use App\Notifications\DeleteRequest;
 use App\User;
 
+
 class HospitalsController extends Controller
 {
     
@@ -110,8 +111,8 @@ class HospitalsController extends Controller
             'latitude'=>'nullable',
             'physical_location'=>'nullable|max:100',
             'postal_address'=>'nullable|max:100',
-            'phone_number'=>'nullable|max:20|numeric',
-            'alternate_number'=>'nullable|max:50|numeric',
+            'phone_number'=>'nullable|max:20',
+            'alternate_number'=>'nullable|max:20',
             'email_address'=>'nullable|email',
             'website'=>'nullable|max:100|url',
             'operational_days'=>'nullable',
@@ -159,21 +160,31 @@ class HospitalsController extends Controller
        
         $services = $request->services;
         
+       
+
         DB::beginTransaction();
         try {
             $hosp->save();
             //get id of inserted record
-           $hosp_id = $hosp->id;
-           
-           //insert services
-           if (!empty($services)){
-                foreach ($services as $id){
-                    $hosp_services = new hs_hospital_service_history;
-                    $hosp_services->service_id = $id;
-                    $hosp_services->hospital_id = $hosp_id; 
-                    $hosp_services->save();
-                }            
-           }
+            $hosp_id = $hosp->id;
+            
+            //insert in status tracking table
+            $status = new hs_status_tracking;
+            $status->hospital_id = $hosp_id;
+            $status->user_id = Auth::user()->id;
+            $status->status_id = 1;
+            $status->created_at = Carbon::now()->format('Y-m-d H:i:s');
+            $status->save();
+
+            //insert services
+            if (!empty($services)){
+                    foreach ($services as $id){
+                        $hosp_services = new hs_hospital_service_history;
+                        $hosp_services->service_id = $id;
+                        $hosp_services->hospital_id = $hosp_id; 
+                        $hosp_services->save();
+                    }            
+            }
             DB::commit();
         } catch (\Exception $ex) {
             DB::rollback();
@@ -283,8 +294,8 @@ class HospitalsController extends Controller
             'latitude'=>'nullable',
             'physical_location'=>'nullable|max:100',
             'postal_address'=>'nullable|max:100',
-            'phone_number'=>'nullable|max:50',
-            'alternate_number'=>'nullable|max:50',
+            'phone_number'=>'nullable|max:20',
+            'alternate_number'=>'nullable|max:20',
             'email_address'=>'nullable|email',
             'website'=>'nullable',
             'operational_days'=>'nullable',
@@ -337,7 +348,6 @@ class HospitalsController extends Controller
         $status->user_id = Auth::user()->id;
         $status->status_id = 8;
         $status->created_at = Carbon::now()->format('Y-m-d H:i:s');
-       
 
         //get services before update
         $services = DB::table('hs_hospital_services')
@@ -357,22 +367,26 @@ class HospitalsController extends Controller
             $services_update = $request->services;
         }
 
-        $diff = array_diff($services_before, $services_update);
+        
 
         DB::beginTransaction();
         try {
             $hosp->save();
             $status->save();
 
-             //update hospital services history
-            $deleted = DB::delete("delete from hs_hospital_services_history where hospital_id ='".$id."' and id > 0");
-                    
-            if(!empty($services_update) and count($diff) > 0){ //if diff > 0 services are updated 
-                foreach ($services_update as $service_id){
-                    $hosp_services = new hs_hospital_service_history;
-                    $hosp_services->service_id = $service_id;
-                    $hosp_services->hospital_id = $id; 
-                    $hosp_services->save();
+             //update hospital services history if services are updated
+            $services_equal = $hosp->array_equal($services_before, $services_update);
+
+            if(!$services_equal){ 
+                hs_hospital_service_history::where('hospital_id', $id)->delete();
+
+                if (!empty($services_update)){
+                    foreach ($services_update as $service_id){
+                        $hosp_services = new hs_hospital_service_history;
+                        $hosp_services->service_id = $service_id;
+                        $hosp_services->hospital_id = $id; 
+                        $hosp_services->save();
+                    }         
                 }
             }
 

@@ -63,5 +63,10 @@ class hs_hospital_history extends Model implements Auditable
 
         return $update[0]->num;
     }
+    
+    function array_equal($a, $b) {
+        return (is_array($a) && is_array($b) && array_diff($a, $b) === array_diff($b, $a));
+    }
+
 
 }

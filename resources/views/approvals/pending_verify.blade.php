@@ -28,7 +28,8 @@ Facility Verification
         <th>Facility Name</th>
         <th>Request Type</th>
         <th>Submitted By</th>
-        <th>Validated By</th>        
+        <th>Validated By</th> 
+        <th>Published By</th>        
         <th>Status</th>        
         <th>Actions</th>
       </tr>
@@ -57,6 +58,18 @@ Facility Verification
                 Pending
             @endif
    
+        </td>
+        <td>
+            @if ($p->published_by != "" )
+                <Strong>Name: </Strong>{{$p->published_by}} <br>
+                <Strong>E-mail: </Strong>{{$p->published_email}} <br>
+                <Strong>Mobile: </Strong>{{ $p->published_mobile }} <br>
+                <Strong>Date: </Strong>{{  ($p->published_at? date('d M Y', strtotime($p->published_at)) : '')}} <br>  
+                <Strong>Remarks: </Strong>{{ $p->publish_note }} <br>
+            @else
+                Pending
+            @endif
+    
         </td>
         <td>{{$p->status}}</td>
         <td>

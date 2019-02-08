@@ -21,7 +21,7 @@ class MyRequestController extends Controller
     {
         $myrequests = DB::select("SELECT * FROM hospital_details_history WHERE 
         (created_by = ". Auth::user()->id ." OR requested_id = ". Auth::user()->id .") 
-        AND status_id NOT IN (6,13,17,20,5,7,12,14,19,21)");
+        AND status_id NOT IN (6,13,20,5,7,12,14,19,21)");
 
         return view('approvals.my_pending_requests',compact('myrequests')); 
     }
@@ -126,16 +126,17 @@ class MyRequestController extends Controller
             'latitude'=>'nullable',
             'physical_location'=>'nullable|max:100',
             'postal_address'=>'nullable|max:100',
-            'phone_number'=>'nullable|max:50',
-            'alternate_number'=>'nullable|max:50',
+            'phone_number'=>'nullable|max:20',
+            'alternate_number'=>'nullable|max:20',
             'email_address'=>'nullable|email',
-            'website'=>'nullable',
+            'website'=>'nullable|max:100|url',
             'operational_days'=>'nullable',
             'operational_hours'=>'nullable',
             'operational_status_id'=>'required',
             'registration_status_id'=>'nullable',
             'license_status_id'=>'nullable',
             'doctors'=>'nullable|numeric',
+            'dentist'=>'nullable|numeric',
             'pharmacists'=>'nullable|numeric',
             'pharmacy_technicians'=>'nullable|numeric',
             'nurses'=>'nullable|numeric',
@@ -158,15 +159,9 @@ class MyRequestController extends Controller
             'beds'=>'nullable|numeric',
             'outpatient'=>'nullable',
             'inpatient'=>'nullable',
-            'verified_by'=>'nullable',
-            'verified_at'=>'nullable',
-            'validated_by'=>'nullable',
-            'validated_at'=>'nullable',
-            'published_by' => 'nullable',
-            'published_at' => 'nullable',
         ]);
-        
-        // Update rejected update request, or update create request for reqeust that have not been verified yet
+       
+        // Update rejected create request, or update create request for reqeust that have not been verified yet
         if(in_array($request->status_id,[3,1])){  
             DB::beginTransaction();
             try {
@@ -218,7 +213,7 @@ class MyRequestController extends Controller
         }
 
         // MOdify request that have been rejected, this is the request for updating existing facility
-        if($request->status_id == 10){  
+        if(in_array($request->status_id,[8,10])){ 
             
             //restore main table data before being updated. Delete data in history and copy data from main
             //to history
@@ -273,7 +268,7 @@ class MyRequestController extends Controller
                 //get services before update
                 $services = DB::table('hs_hospital_services')
                         ->select('service_id')
-                        ->where('hospital_id','=',$id)
+                        ->where('hospital_id','=',$request->id)
                         ->get();
 
                 $services_before = [];
@@ -288,20 +283,24 @@ class MyRequestController extends Controller
                     $services_update = $request->services;
                 }
 
-                $diff = array_diff($services_before, $services_update);
+    
+                //update hospital services history if services are updated
+                $services_equal = $hosp->array_equal($services_before, $services_update);
 
-                //update hospital services
-                // $deleted = DB::delete("delete from hs_hospital_services_history where hospital_id ='".$request->hosp_id."' and id > 0");
-                hs_hospital_service_history::where('hospital_id', $request->id)->delete();
-                        
-                if(!empty($services_update) and count($diff) > 0){ //if diff > 0 services are updated 
-                    foreach ($services_update as $service_id){
-                        $hosp_services = new hs_hospital_service_history;
-                        $hosp_services->service_id = $service_id;
-                        $hosp_services->hospital_id = $id; 
-                        $hosp_services->save();
+                if(!$services_equal){ 
+                    hs_hospital_service_history::where('hospital_id', $request->id)->delete();
+
+                    if (!empty($services_update)){
+                        foreach ($services_update as $service_id){
+                            $hosp_services = new hs_hospital_service_history;
+                            $hosp_services->service_id = $service_id;
+                            $hosp_services->hospital_id = $request->id; 
+                            $hosp_services->save();
+                        }         
                     }
                 }
+
+
             DB::commit();
             } catch (\Exception $ex) {
                 DB::rollback();
@@ -385,13 +384,21 @@ class MyRequestController extends Controller
             DB::beginTransaction();
             try {
                 hs_hospital_history::disableAuditing();
+                $hosp_main = new hs_hospital;
+                $hosp_main = hs_hospital::find($request->hosp_id);
 
                 $hosp = new hs_hospital_history;
                 $hosp = hs_hospital_history::find($request->hosp_id);
-                $hosp->status_id = '6';
-                $hosp->verified_by = $request->null;
-                $hosp->verified_at = $request->null;
-                $hosp->verify_note = $request->null;
+                $hosp->status_id = $hosp_main->status_id;
+                $hosp->verified_by =  $hosp_main->verified_by;
+                $hosp->verified_at = $hosp_main->verified_at;
+                $hosp->verify_note = $hosp_main->verified_note;
+                $hosp->validated_by = $hosp_main->validate_by;
+                $hosp->validated_at = $hosp_main->validate_at;
+                $hosp->validate_note = $hosp_main->validate_note;
+                $hosp->published_by = $hosp_main->published_by;
+                $hosp->published_at = $hosp_main->published_at;
+                $hosp->publish_note = $hosp_main->published_note;
                 $hosp->save();      
 
                 hs_hospital_history::enableAuditing();
