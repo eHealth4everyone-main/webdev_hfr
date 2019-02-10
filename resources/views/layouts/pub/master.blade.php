@@ -4,7 +4,7 @@
 <head>
         <!-- Global site tag (gtag.js) - Google Analytics -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=UA-130161904-1"></script>
-       
+        <script src='https://www.google.com/recaptcha/api.js'></script>
         <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
@@ -26,7 +26,6 @@
 		<!-- Google Fonts
 		============================================ -->		
         <link href='https://fonts.googleapis.com/css?family=Raleway:400,300,500,600,700,800' rel='stylesheet' type='text/css'>
-	   
         <link rel="stylesheet" href="{{asset("design/css/bootstrap.min.css")}}">
 
         <link rel="stylesheet" href="{{asset("design/css/font-awesome.min.css")}}">
@@ -207,228 +206,14 @@
         </div>    
         <!--End of Main Wrapper Area--> 
         
-      <!-- Goolge Map Modal -->
-        <div class="modal fade" id="googleMapModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"  >
-                <div class="modal-dialog modal-lg" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title" id="myModalLabel">Facilities in LGA</h4>
-                        </div>
-                        <div class="modal-body">
-                            <div id="googleMap" style="height: 500px; min-width: 500px; max-width: 800px; margin: 0 auto"></div>
-                            
-                        </div>
-                        <div class="modal-footer">
-                          
-                            <div class="row">
-                                <div class="col-md-2">
-                                    <img src="http://maps.google.com/mapfiles/ms/micons/green.png" alt="Public">Public
-                                </div>
-                                <div class="col-md-2">
-                                        <img src="http://maps.google.com/mapfiles/ms/micons/blue.png" alt="Private">Private
-                                </div>
-                                <label class="col-md-2">P: Primary</label>
-                                <label class="col-md-2">S: Secondary</label>
-                                <label class="col-md-2">T: Tertiary</label>
 
-                            </div>
-                           
-                            
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        </div>
-                    </div>
-                </div>
-        </div>
-
-<!-- Modal Facility Details on google map-->
-<div class="modal fade" id="details_onGmap" tabindex="-1" role="dialog" aria-labelledby="details_Title">
-        <div class="modal-dialog " role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-              <h4 class="modal-title" id="details_Title"></h4>
-              <div class='notifications top-right'></div>
-            </div>
-            <div class="modal-body">
-              
-                <div class="panel-body">
-                   
-                        <div class="panel-group" id="accordion1">
-                             {{-- panel one --}}
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                  <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion1" href="#collapse1">Status</a>
-                                  </h4>
-                                </div>
-                                <div id="collapse1" class="panel-collapse collapse in">
-                                  <div class="panel-body">
-                                      <div class="row">
-                                          <label class="col-md-4">Operational Status:</label>
-                                          <div class="col-md-8" id="operation_status1"></div>
-                                      </div>
-                                      <div class="row">
-                                          <label class="col-md-4">Regulatory Status:</label>
-                                          <div class="col-md-8" id="regulatory_status1"></div>
-                                      </div>
-                                      <div class="row">
-                                          <label class="col-md-4">License Status:</label>
-                                          <div class="col-md-8" id="license_status1"></div>
-                                      </div>
-                                  </div>
-                                </div>
-                            </div>
-                                  {{-- pane two --}}
-                                  <div class="panel panel-default">
-                                        <div class="panel-heading">
-                                          <h4 class="panel-title">
-                                            <a data-toggle="collapse" data-parent="#accordion1" href="#collapse2">Services</a>
-                                          </h4>
-                                        </div>
-                                        <div id="collapse2" class="panel-collapse collapse">
-                                          <div class="panel-body">
-                                                <div class="row">
-                                                        <label class="col-md-6">Medical Services:</label>
-                                                        <div class="col-md-6" id="medical"></div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <label class="col-md-6">Surgical Services:</label>
-                                                        <div class="col-md-6" id="surgical"></div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <label class="col-md-6">Obsterics Services:</label>
-                                                        <div class="col-md-6" id="gyn"></div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <label class="col-md-6">Pediatrics Services:</label>
-                                                        <div class="col-md-6" id="pediatrics"></div>   
-                                                    </div>
-                                                    <div class="row">
-                                                        <label class="col-md-6">Dental Services:</label>
-                                                        <div class="col-md-6" id="dental"></div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <label class="col-md-6">Specific Clinical Services:</label>
-                                                        <div class="col-md-6" id="specialservice"></div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <label class="col-md-6">Capacity for Accidents and Emergency Services (Beds):</label>
-                                                        <div class="col-md-6" id="beds_accidents_emerg"></div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <label class="col-md-6">Capacity for Admission Services (Beds):</label>
-                                                        <div class="col-md-6" id="beds_adminission"></div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <label class="col-md-6">Capacity for ICU Services (Beds):</label>
-                                                        <div class="col-md-6" id="beds_icu"></div>
-                                                    </div>
-                                           
-                                          </div>
-                                        </div>
-                                  </div>
-
-                          {{-- panel three --}}
-                          <div class="panel panel-default">
-                            <div class="panel-heading">
-                              <h4 class="panel-title">
-                                <a data-toggle="collapse" data-parent="#accordion1" href="#collapse3">Days of Operation</a>
-                              </h4>
-                            </div>
-                            <div id="collapse3" class="panel-collapse collapse">
-                              <div class="panel-body">
-                                  <div class="row">
-                                      <label class="col-md-4 text-md-right">Days of Operation:</label>
-                                      <div class="col-md-8" id="operational_days1">   </div>
-                                  </div>
-                                  <div class="row">
-                                      <label class="col-md-4 text-md-right">Hours of Operation:</label>
-                                      <div class="col-md-8" id="operational_hours1">   </div>
-                                  </div>
-                            </div>
-                            </div>
-                          </div>
-                        
-                          {{-- panel four --}}
-                          <div class="panel panel-default">
-                            <div class="panel-heading">
-                              <h4 class="panel-title">
-                                <a data-toggle="collapse" data-parent="#accordion1" href="#collapse4">Contacts</a>
-                              </h4>
-                            </div>
-                            <div id="collapse4" class="panel-collapse collapse">
-                              <div class="panel-body">
-                                  <div class="row">
-                                      <label class="col-md-4">Phone Number:</label>
-                                      <div class="col-md-8" id="phone_number1"></div>
-                                  </div>
-                                  <div class="row">
-                                      <label class="col-md-4">Email Address:</label>
-                                      <div class="col-md-8" id="email_address1"></div>
-                                  </div>
-                                  <div class="row">
-                                      <label class="col-md-4">Website:</label>
-                                      <div class="col-md-8" id="website1"></div>
-                                  </div>
-                              </div>
-                            </div>
-                          </div>
-                         
-                            {{-- panel five --}}
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                  <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion1" href="#collapse5">Personnel</a>
-                                  </h4>
-                                </div>
-                                <div id="collapse5" class="panel-collapse collapse">
-                                  <div class="panel-body">
-                                      <div class="row">
-                                          <label class="col-md-6">Number of Doctors:</label>
-                                          <div class="col-md-6" id="doctors1"></div>
-                                      </div>
-                                    
-                                      <div class="row">
-                                          <label class="col-md-6">Number of Dentists:</label>
-                                          <div class="col-md-6" id="dentist1"></div>
-                                      </div>
-                                    
-                                      <div class="row">
-                                          <label class="col-md-6">Number of Nurses:</label>
-                                          <div class="col-md-6" id="nurses1"></div>
-                                      </div>
-                                      <div class="row">
-                                          <label class="col-md-6">Number of Midwifes:</label>
-                                          <div class="col-md-6" id="midwifes1"></div>
-                                      </div>
-                                      <div class="row">
-                                          <label class="col-md-6">Number of Nurses/Midwifes:</label>
-                                          <div class="col-md-6" id="nurse_midwife1"></div>
-                                      </div>
-                                    
-                                  </div>
-                                </div>
-                              </div>
-                        
-                        </div> 
-                     
-
-                </div>
-               
-            <div class="modal-footer">
-              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-           </div>
-          </div><!-- /.modal-content -->
-    </div><!--/.modal-dialog -->
-</div><!-- end modal -->
+<!-- Show facility details on click view in public facility list -->
+@include('hospitals.details_modal')
 
 
 
 
 
-
-        
 <script src="{{asset("design/js/vendor/jquery-1.12.4.min.js")}}"></script>
         	
 <script src="{{asset("design/js/bootstrap.min.js")}}"></script>
@@ -438,13 +223,13 @@
 <script src="{{asset("design/js/main.js")}}"></script>
 <script src="{{asset("dist/js/select2.full.min.js")}}"></script>
 
-<script>
+        <script>
+    
+            $('.select2').select2() 
 
-    $('.select2').select2() 
+        </script>
 
-</script>
-
-@stack("custom_scripts")
+        @stack("custom_scripts")
 </body>
 
 </html>
