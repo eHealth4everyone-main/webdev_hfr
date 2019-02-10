@@ -29,7 +29,7 @@ class GeneralController extends Controller
         ->orderByRaw('name')
         ->get();
     
-        $output = '<option value="">--Select Ward--</option>';
+        $output = '<option value="0">--Select Ward--</option>';
         foreach($data as $row)
         {
             $output .= '<option value="'.$row->id.'">'.$row->name.'</option>';
@@ -74,6 +74,21 @@ class GeneralController extends Controller
                 ->get();
     
         $output = '<option value="0">--Select Option--</option>';
+        foreach($data as $row)
+        {
+            $output .= '<option value="'.$row->id.'">'.$row->name.'</option>';
+        }
+        return $output;
+    }
+
+    public function getServices(Request $request){
+        $data = DB::table('lst_hosp_services')
+        ->select('id','name')
+        ->where('service_category_id', $request->id)
+        ->orderByRaw('id')
+        ->get();
+    
+        $output = '<option value="0">--Select Services--</option>';
         foreach($data as $row)
         {
             $output .= '<option value="'.$row->id.'">'.$row->name.'</option>';

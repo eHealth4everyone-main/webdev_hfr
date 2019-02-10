@@ -6,93 +6,169 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 
+
 class FacilityListingController extends Controller
 {
    
     public function index()
     {
-      
+       
         $facilities = DB::table('hospital_details')
-            ->orderByRaw('state','lga','facility_name')
+            ->orderBy('state')
+            ->orderBy('lga')
+            ->orderBy('facility_name')
             ->paginate(20);
 
-        //get state list
-        $lst_states = Cache::remember('lst_states', 60, function () {
-            return DB::table('ou_states')
-                    ->select('id','name')
-                    ->orderByRaw('name ASC')
-                    ->get();
-        });
-        //get facility types
-        $lst_facility_types = Cache::remember('lst_facility_types', 60, function () {
-            return DB::table('lst_facility_types')
-                    ->select('id','name')
-                    ->get();
-        });
-
         //set values facility list when no filter
-        $state_id = 0;
-        $lga_id = "";
-        $facility_type_id = 1;
-        $facility_name = "";
-        $geo_codes = 0;
 
-        return view('public.hospitalList',compact("facilities",'lst_states','lst_facility_types',
-        'state_id','lga_id','facility_type_id','facility_name','geo_codes')); 
+        list($state_id, $lga_id, $facility_type_id,$facility_name, $geo_codes, $ward_id, 
+            $facility_level_id , $ownership_id,$operational_status_id,$registration_status_id,
+            $license_status_id,$service_type) = [1,1,1,"",0,0,0,0,0,0,0,0];
+
+      
+        
+        return view('public.facilities_list',compact('facilities',
+        'state_id', 'lga_id', 'facility_type_id','facility_name', 'geo_codes', 'ward_id','facility_level_id', 
+        'ownership_id','operational_status_id','registration_status_id', 'license_status_id','service_type'));    
     }
 
   
 
-    public function searchFacilities(Request $request)
+  
+    public function getHospitals(Request $request)
     {
-        // dd($request->all());
         $state_id = $request->state_id;
         $lga_id = $request->lga_id;
+        $ward_id = $request->ward_id;
+        $facility_name =$request->facility_name;
         $facility_type_id = $request->facility_type_id;
-        $facility_name = $request->facility_name;
-        $geo_codes = $request->geo_codes;
+        $facility_level_id = $request->facility_level_id;
+        $ownership_id = $request->ownership_id;
+        $operational_status_id = $request->operational_status_id;
+        $registration_status_id = $request->registration_status_id;
+        $license_status_id = $request->license_status_id;
     
-        if ($state_id == 0){
-            $state_id2 = "";
-        }
-        else{
-            $state_id2 = $state_id;
-        }
-
-        if ($geo_codes == 0){
+        if ( $request->geo_codes == 0){
             $cond = "<>";
             $value = 'XXX';
         }
-        if ($geo_codes == 1){
+        if ( $request->geo_codes == 1){
             $cond = "<>";
             $value = '';
         }
-        if ($geo_codes == 2){
+        if ( $request->geo_codes == 2){
             $cond = "=";
             $value = '';
         }
-      
 
-        if ($facility_type_id==1){
-
-            $facilities = DB::table('hospital_details')
-            ->where('state_id','like','%'.$state_id2.'%')
-            ->where('lga_id','like','%'.$lga_id.'%')
-            ->Where('facility_name', 'like', '%' .  $facility_name . '%')
-            ->where('latitude',$cond,$value)
-            ->orderByRaw('state','lga','facility_name')
-            ->paginate(20);
-
-            $facilities->appends([
-                'state_id'=>$request->state_id,
-                'lga_id'=>$request->lga_id,
-                'facility_name'=>$request->facility_name,
-                'facility_type_id' => $request->facility_type_id,
-                'geo_codes' => $geo_codes,
-            ]);
-
+        if ($request->service_type == 1){
+            $outpatient = 'Yes';
+            $inpatient = '';
+        }elseif($request->service_type == 2){
+            $outpatient = '';
+            $inpatient = 'Yes';
+        } else{
+            $outpatient = '';
+            $inpatient = '';
         }
 
+        if ($ward_id == 0){
+            $ward_id ='';
+        }
+        if($facility_level_id == 0){
+            $facility_level_id = '';
+        }
+        if($ownership_id==0 ){
+            $ownership_id=''; 
+        }
+        if($operational_status_id==0){
+            $operational_status_id='';
+        }
+        if($registration_status_id==0){
+            $registration_status_id='';
+        }
+        if($license_status_id==0){
+            $license_status_id='';
+        }
+
+        if(!empty($request->services)){
+            $hospital = DB::select("SELECT DISTINCT hospital_id FROM hs_hospital_services 
+            WHERE service_id IN (". implode (",", $request->services) . ")");
+
+            $hospital_with_services=[];
+            foreach ($hospital as $h){
+                $hospital_with_services[]= $h->hospital_id;
+            }
+            
+        }else{
+            $hospital = DB::select("SELECT id FROM hospital_details");
+
+            $hospital_with_services=[];
+            foreach ($hospital as $h){
+                $hospital_with_services[]= $h->id;
+            }
+        }
+
+        $facilities = DB::table('hospital_details')
+            ->where('state_id','like','%'.$state_id.'%')
+            ->where('lga_id','like','%'.$lga_id.'%')
+            ->where('ward_id','like','%'.$ward_id.'%')
+            ->where('facility_level_id','like','%'.$facility_level_id.'%')
+            ->where('ownership_id','like','%'.$ownership_id.'%')
+            ->where('operational_status_id','like','%'.$operational_status_id.'%')
+            ->where('registration_status_id','like','%'.$registration_status_id.'%')
+            ->where('license_status_id','like','%'.$license_status_id.'%')
+            ->where(DB::Raw("IFNULL(outpatient, '')"),'like','%'.$outpatient.'%')
+            ->where(DB::Raw("IFNULL(inpatient, '')"),'like','%'.$inpatient.'%')
+            ->Where('facility_name', 'like', '%' .  $facility_name . '%')
+            ->where('latitude',$cond,$value)
+            ->wherein('id',$hospital_with_services)
+            ->orderBy('state')
+            ->orderBy('lga')
+            ->orderBy('facility_name')
+            ->paginate(20);
+
+        //  dd($facilities);
+
+        $facilities->appends([
+            'state_id' => $request->state_id,
+            'lga_id' => $request->lga_id,
+            'ward_id' => $request->ward_id,
+            'facility_name' =>$request->facility_name,
+            'geo_codes' => $request->geo_codes,
+            'facility_type_id' => $request->facility_type_id,
+            'facility_level_id' => $request->facility_level_id,
+            'ownership_id' => $request->ownership_id,
+            'operational_status_id' => $request->operational_status_id,
+            'registration_status_id' => $request->registration_status_id,
+            'license_status_id' => $request->license_status_id,
+            'service_type' => $request->service_type,
+            'outpatient' => $outpatient,
+            'inpatient' => $inpatient,
+        ]);
+        
+        //return original values from request
+        $state_id = $request->state_id;
+        $lga_id = $request->lga_id;
+        $ward_id = $request->ward_id;
+        $facility_name =$request->facility_name;
+        $geo_codes = $request->geo_codes;
+        $facility_type_id = $request->facility_type_id;
+        $facility_level_id = $request->facility_level_id;
+        $ownership_id = $request->ownership_id;
+        $operational_status_id = $request->operational_status_id;
+        $registration_status_id = $request->registration_status_id;
+        $license_status_id = $request->license_status_id;
+        $service_type = $request->service_type;
+
+        
+        return view('public.facilities_list',compact('facilities',
+        'state_id', 'lga_id', 'facility_type_id','facility_name', 'geo_codes', 'ward_id','facility_level_id', 
+        'ownership_id','operational_status_id','registration_status_id', 'license_status_id','service_type'));     
+    }
+
+    private function getLabs(Request $request)
+    {
         if ($facility_type_id==2){
             $facilities = DB::table('pharmacy_details')
             ->where('state_id','like','%'.$state_id2.'%')
@@ -147,36 +223,21 @@ class FacilityListingController extends Controller
             ]);
         }
 
-
-        //get state list
-          $lst_states = Cache::remember('lst_states', 30, function () {
-            return DB::table('ou_states')
-                    ->select('id','name')
-                    ->orderByRaw('name ASC')
-                    ->get();
-        });
-        //get facility types
-        $lst_facility_types = Cache::remember('lst_facility_types', 30, function () {
-            return DB::table('lst_facility_types')
-                    ->select('id','name')
-                    ->get();
-        });
-       
-      
-        return view('public.hospitalList',compact("facilities",'lst_states','lst_facility_types',
-        'state_id','lga_id','facility_type_id','facility_name','geo_codes'));       
     }
 
-
-    public function searchHospitals(Request $request)
+    //search hospital from top banner search option
+    public function searchHospital(Request $request)
     {
       
         $facility_name = $request->facility_name;
 
         $facilities = DB::table('hospital_details')
             ->Where('facility_name', 'like', '%' .  $facility_name . '%')
-            ->orderByRaw('state','lga','facility_name')
+            ->orderBy('state')
+            ->orderBy('lga')
+            ->orderBy('facility_name')
             ->paginate(20);
+
 
         $facilities->appends([
             'facility_name'=>$request->facility_name,
@@ -186,30 +247,6 @@ class FacilityListingController extends Controller
     }
 
  
-    public function showDetails(Request $request)
-    {
-        if($request->facility_type_id==1){
-            $details = DB::table('hospital_details')
-            ->where('id',$request->id)
-            ->get();
-    
-            $serv = DB::select("SELECT s.name FROM lst_hosp_services s JOIN hs_hospital_services h on h.service_id = s.id
-                    where h. hospital_id='".$request->id."'");
-           
-            $services = array();
-            
-            foreach ($serv as $s){
-                $services[] = $s->name;
-            };
-
-            $result  = array();
-            $result['details'] = $details;
-            $result['services'] =  $services;
-
-            return  $result;
-           
-        }
-            
-    }
+  
 
 }

@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
-
+use App\Exports\HFExport;
+use Maatwebsite\Excel\Facades\Excel;
 use App\hs_hospital;
 use App\hs_hospital_history;
 use App\hs_hospital_service_history;
@@ -20,7 +21,7 @@ use App\User;
 
 class HospitalsController extends Controller
 {
-    
+  
     public function index()
     {
         $facilities = DB::table('hospital_details')
@@ -30,65 +31,23 @@ class HospitalsController extends Controller
             ->orderBy('facility_name')
             ->paginate(20);
             
-        //get state list
-        $lst_states = Cache::remember('lst_states', 60, function () {
-        return DB::table('ou_states')
-                ->select('id','name')
-                ->orderByRaw('name ASC')
-                ->get();
-        });
-        return view('hospitals.index',compact('facilities','lst_states')); 
+            list($state_id, $lga_id,$facility_name, $geo_codes, $ward_id, 
+            $facility_level_id , $ownership_id,$operational_status_id,$registration_status_id,
+            $license_status_id) = [1,1,"",0,0,0,0,0,0,0,0];
+            
+            return view('hospitals.index',compact('facilities',
+            'state_id', 'lga_id','facility_name', 'geo_codes', 'ward_id','facility_level_id', 
+            'ownership_id','operational_status_id','registration_status_id', 'license_status_id'));  
     }
        
   
     public function create()
     {
-        //get state list
-        $lst_states = Cache::remember('lst_states', 60, function () {
-        return DB::table('ou_states')
-                ->select('id','name')
-                ->orderByRaw('name ASC')
-                ->get();
-        });
-
-        //get facility types
-        $lst_level_of_care = Cache::remember('lst_level_of_care', 60, function () {
-            return DB::table('lst_level_of_care')
-                    ->select('id','name')
-                    ->get();
-        });
-        //get ownership
-        $lst_ownerships= Cache::remember('lst_ownerships', 60, function () {
-            return DB::table('lst_ownerships')
-                    ->select('id','name')
-                    ->get();
-        });
-        //get opertion statuss
-        $lst_oparational_status= Cache::remember('lst_oparational_status', 60, function () {
-            return DB::table('lst_oparational_status')
-                    ->select('id','status')
-                    ->where('category','1')
-                    ->get();
-        });
-        
-        //get registratoin statuss
-        $lst_registration_status= Cache::remember('lst_registration_status', 60, function () {
-        return DB::table('lst_registration_status')
-                ->select('id','status')
-                ->get();
-        });
-        //get license statuss
-        $lst_license_status= Cache::remember('lst_license_status', 60, function () {
-            return DB::table('lst_license_status')
-                    ->select('id','status')
-                    ->get();
-        });
         //get hospital services
         $lst_services = DB::table('lst_hosp_services')
                     ->get();
         
-        return view('hospitals.create',compact('lst_level_of_care','lst_states','lst_ownerships','lst_oparational_status',
-        'lst_registration_status','lst_license_status','lst_services')); 
+        return view('hospitals.create',compact('lst_services')); 
     }
     
     public function store(Request $request)
@@ -225,53 +184,11 @@ class HospitalsController extends Controller
             foreach ($services as $s) {
                 $current_services[] = $s->service_id;
             }
-                 
-            //get state list
-            $lst_states = Cache::remember('lst_states', 60, function () {
-            return DB::table('ou_states')
-                    ->select('id','name')
-                    ->orderByRaw('name ASC')
-                    ->get();
-            });
-
-            //get facility types
-            $lst_level_of_care = Cache::remember('lst_level_of_care', 60, function () {
-                return DB::table('lst_level_of_care')
-                        ->select('id','name')
-                        ->get();
-            });
-            //get ownership
-            $lst_ownerships= Cache::remember('lst_ownerships', 60, function () {
-                return DB::table('lst_ownerships')
-                        ->select('id','name')
-                        ->get();
-            });
-            //get opertion statuss
-            $lst_oparational_status= Cache::remember('lst_oparational_status', 60, function () {
-                return DB::table('lst_oparational_status')
-                        ->select('id','status')
-                        ->where('category','1')
-                        ->get();
-            });
-            //get registration status
-            $lst_registration_status= Cache::remember('lst_registration_status', 60, function () {
-                return DB::table('lst_registration_status')
-                        ->select('id','status')
-                        ->get();
-                });
-            //get license statuss
-            $lst_license_status= Cache::remember('lst_license_status', 60, function () {
-                return DB::table('lst_license_status')
-                        ->select('id','status')
-                        ->get();
-            });
-
+           
              //get hospital services
             $lst_services = DB::table('lst_hosp_services')->get();
-
            
-            return view('hospitals.edit',compact('hosp','current_services','lst_level_of_care','lst_states','lst_ownerships','lst_oparational_status',
-            'lst_registration_status','lst_license_status','lst_services')); 
+            return view('hospitals.edit',compact('hosp','current_services','lst_services')); 
     }
     
   
@@ -465,40 +382,101 @@ class HospitalsController extends Controller
         return redirect()->route('hospitals.index');
     }
 
-    public function destroy($id)
-    {
-        //
-    }
-
+ 
     public function search(Request $request)
     {
         $state_id = $request->state_id;
         $lga_id = $request->lga_id;
-        $facility_name = $request->facility_name;
+        $ward_id = $request->ward_id;
+        $facility_name =$request->facility_name;
+        $geo_codes = $request->geo_codes;
+        $facility_level_id = $request->facility_level_id;
+        $ownership_id = $request->ownership_id;
+        $operational_status_id = $request->operational_status_id;
+        $registration_status_id = $request->registration_status_id;
+        $license_status_id = $request->license_status_id;
+    
+        if ($geo_codes == 0){
+            $cond = "<>";
+            $value = 'XXX';
+        }
+        if ($geo_codes == 1){
+            $cond = "<>";
+            $value = '';
+        }
+        if ($geo_codes == 2){
+            $cond = "=";
+            $value = '';
+        }
 
-         $facilities = DB::table('hospital_details')
+
+        if ($ward_id == 0){
+            $ward_id ='';
+        }
+        if($facility_level_id == 0){
+            $facility_level_id = '';
+        }
+        if($ownership_id==0 ){
+            $ownership_id=''; 
+        }
+        if($operational_status_id==0){
+            $operational_status_id='';
+        }
+        if($registration_status_id==0){
+            $registration_status_id='';
+        }
+        if($license_status_id==0){
+            $license_status_id='';
+        }
+
+
+        $facilities = DB::table('hospital_details')
             ->where('state_id','like','%'.$state_id.'%')
             ->where('lga_id','like','%'.$lga_id.'%')
+            ->where('ward_id','like','%'.$ward_id.'%')
+            ->where('facility_level_id','like','%'.$facility_level_id.'%')
+            ->where('ownership_id','like','%'.$ownership_id.'%')
+            ->where('operational_status_id','like','%'.$operational_status_id.'%')
+            ->where('registration_status_id','like','%'.$registration_status_id.'%')
+            ->where('license_status_id','like','%'.$license_status_id.'%')
             ->Where('facility_name', 'like', '%' .  $facility_name . '%')
-            ->Where('state_id', 'like', '%' .  Auth::user()->state_id . '%')
-            ->orderByRaw('state','lga','facility_name')
+            ->where('latitude',$cond,$value)
+            ->orderBy('state')
+            ->orderBy('lga')
+            ->orderBy('facility_name')
             ->paginate(20);
 
-        $facilities->appends([
-            'state_id'=>$request->state_id,
-            'lga_id'=>$request->lga_id,
-            'facility_name'=>$request->facility_name,
-        ]);
+        //  dd($facilities);
 
-        //get state list
-        $lst_states = Cache::remember('lst_states', 60, function () {
-            return DB::table('ou_states')
-                    ->select('id','name')
-                    ->orderByRaw('name ASC')
-                    ->get();
-        });
-      
-        return view('hospitals.index',compact('facilities','lst_states','state_id','facility_name'));       
+        $facilities->appends([
+            'state_id' => $request->state_id,
+            'lga_id' => $request->lga_id,
+            'ward_id' => $request->ward_id,
+            'facility_name' =>$request->facility_name,
+            'geo_codes' => $request->geo_codes,
+            'facility_level_id' => $request->facility_level_id,
+            'ownership_id' => $request->ownership_id,
+            'operational_status_id' => $request->operational_status_id,
+            'registration_status_id' => $request->registration_status_id,
+            'license_status_id' => $request->license_status_id,
+        ]);
+        
+        //return original values from request
+        $state_id = $request->state_id;
+        $lga_id = $request->lga_id;
+        $ward_id = $request->ward_id;
+        $facility_name =$request->facility_name;
+        $geo_codes = $request->geo_codes;
+        $facility_level_id = $request->facility_level_id;
+        $ownership_id = $request->ownership_id;
+        $operational_status_id = $request->operational_status_id;
+        $registration_status_id = $request->registration_status_id;
+        $license_status_id = $request->license_status_id;
+
+        
+        return view('hospitals.index',compact('facilities',
+        'state_id', 'lga_id','facility_name', 'geo_codes', 'ward_id','facility_level_id', 
+        'ownership_id','operational_status_id','registration_status_id', 'license_status_id'));    
     }
 
     public function getServices(Request $request)
@@ -519,6 +497,86 @@ class HospitalsController extends Controller
       return $services;
     }
 
+
+    public function export(Request $request){
+        $state_id = $request->state_id2;
+        $lga_id = $request->lga_id2;
+        $ward_id = $request->ward_id2;
+        $facility_name =$request->facility_name2;
+        $geo_codes = $request->geo_codes2;
+        $facility_level_id = $request->facility_level_id2;
+        $ownership_id = $request->ownership_id2;
+        $operational_status_id = $request->operational_status_id2;
+        $registration_status_id = $request->registration_status_id2;
+        $license_status_id = $request->license_status_id2;
+    
+        if ($geo_codes == 0){
+            $cond = "<>";
+            $value = 'XXX';
+        }
+        if ($geo_codes == 1){
+            $cond = "<>";
+            $value = '';
+        }
+        if ($geo_codes == 2){
+            $cond = "=";
+            $value = '';
+        }
+
+
+        if ($ward_id == 0){
+            $ward_id ='';
+        }
+        if($facility_level_id == 0){
+            $facility_level_id = '';
+        }
+        if($ownership_id==0 ){
+            $ownership_id=''; 
+        }
+        if($operational_status_id==0){
+            $operational_status_id='';
+        }
+        if($registration_status_id==0){
+            $registration_status_id='';
+        }
+        if($license_status_id==0){
+            $license_status_id='';
+        }
+
+
+        $facilities = DB::table('hospital_details')
+            ->select('unique_id','registration_no','start_date','facility_name','state','lga','ward','ownership',
+            'facility_level','longitude','latitude','operation_status','registration_status','license_status')
+            ->where('state_id','like','%'.$state_id.'%')
+            ->where('lga_id','like','%'.$lga_id.'%')
+            ->where('ward_id','like','%'.$ward_id.'%')
+            ->where('facility_level_id','like','%'.$facility_level_id.'%')
+            ->where('ownership_id','like','%'.$ownership_id.'%')
+            ->where('operational_status_id','like','%'.$operational_status_id.'%')
+            ->where('registration_status_id','like','%'.$registration_status_id.'%')
+            ->where('license_status_id','like','%'.$license_status_id.'%')
+            ->Where('facility_name', 'like', '%' .  $facility_name . '%')
+            ->where('latitude',$cond,$value)
+            ->orderBy('state')
+            ->orderBy('lga')
+            ->orderBy('facility_name')
+            ->get();
+
+
+        $column_header = array("unique_id","reg_number","start_date","facility_name","state","lga","ward","ownership",
+        "facility_level","longitude","latitude","operation_status","registration_status","license_status");
+        
+    
+        if ($request->format == 'xls'){
+            $down_filename = 'data.xlsx';
+        }
+        if ($request->format == 'csv'){
+            $down_filename = 'data.csv';
+        }
+     
+        return Excel::download(new HFExport( $facilities, $column_header), $down_filename );
+
+    }
 
 
 

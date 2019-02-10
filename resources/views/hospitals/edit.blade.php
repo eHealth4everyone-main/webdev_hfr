@@ -93,7 +93,7 @@
                                 <select class="form-control select2 dynamic" id="state_id" name ="state_id" data-dependent="lga_id" disabled required>
                                     <option value="">--Select State--</option>
                                     
-                                    @foreach($lst_states as $st)
+                                    @foreach(getStates() as $st)
                                         <option value="{{$st->id}}">{{$st->name}}</option>
                                     @endforeach
                                     
@@ -154,7 +154,7 @@
                                 <div class="col-sm-8">
                                 <select class="form-control select2" id="facility_level_id"  name="facility_level_id" style="width: 100%;">
                                     <option value="">--Select Level of Care--</option>
-                                    @foreach($lst_level_of_care as $st)
+                                    @foreach(getLevelOfcare() as $st)
                                     <option value="{{$st->id}}">{{$st->name}}</option>
                                     @endforeach
                                 </select>
@@ -189,13 +189,13 @@
 
 
                         <div class="form-group" >
-                                <div class="col-sm-6">
+                            <div class="col-sm-6">
                                 <div class="form-group {{ $errors->has('ownership_id') ? 'has-error' : '' }}" >
                                 <label class="col-sm-4 control-label">Ownership:<font color="red">*</font> </label></label>
                                 <div class="col-sm-8">
                                 <select class="form-control select2" id="ownership_id"  name="ownership_id" style="width: 100%;">
                                     <option value="">--Select Ownership--</option>
-                                    @foreach($lst_ownerships as $st)
+                                    @foreach(getOwnership() as $st)
                                     <option value="{{$st->id}}">{{$st->name}}</option>
                                     @endforeach
                                     
@@ -208,9 +208,9 @@
                                 </div>
                                  
                                 </div>
-                                </div>
+                            </div>
                            
-                                    <div class="col-sm-6">
+                            <div class="col-sm-6">
                                 <div class="form-group {{ $errors->has('ownership_type_id') ? 'has-error' : '' }}" >
                                 <label class="col-sm-4 control-label">Ownership Type:<font color="red">*</font></label>
                                 <div class="col-sm-8">
@@ -226,7 +226,7 @@
                                  
                                 </div>
                             </div> 
-                        
+                        </div>
                        
                         <div class="form-group">
                             <label for="house_no" class="col-sm-2 control-label"> Physical Location:</label>
@@ -396,7 +396,7 @@
                                 <div class="col-sm-8">
                                 <select class="form-control select2" id="operational_status_id" name="operational_status_id" style="width: 100%;">
                                 <option value="">--Select Operation Status--</option>
-                                @foreach($lst_oparational_status as $st)
+                                @foreach(getOperationalStatus() as $st)
                                 <option value="{{$st->id}}">{{$st->status}}</option>
                                 @endforeach
                             </select>
@@ -418,7 +418,7 @@
                         <div class="col-sm-4">
                             <select class="form-control select2" id="registration_status_id" name="registration_status_id" style="width: 100%;">
                                 <option value="0">--Select Registration Status--</option>
-                                @foreach($lst_registration_status as $st)
+                                @foreach(getRegistrationStatus() as $st)
                                 <option value="{{$st->id}}">{{$st->status}}</option>
                                 @endforeach
                             </select>
@@ -427,7 +427,7 @@
                         <div class="col-sm-4">
                             <select class="form-control select2" id="license_status_id" name="license_status_id" style="width: 100%;">
                                 <option value="0">--Select License Status--</option>
-                                @foreach($lst_license_status as $st)
+                                @foreach(getLicenseStatus() as $st)
                                     <option value="{{$st->id}}">{{$st->status}}</option>
                                 @endforeach
                             </select>
@@ -1080,12 +1080,12 @@
             if($(this).val() == 1){
                 $('#registration_status_id').val(6).change();
                 $('#license_status_id').val(4).change();     
-                $('#reg_license_status').hide();
+                // $('#reg_license_status').hide();
             }
             else{
                 $('#registration_status_id').val(0).change();
                 $('#license_status_id').val(0).change(); 
-                $('#reg_license_status').show();
+                // $('#reg_license_status').show();
             }          
         }
     });

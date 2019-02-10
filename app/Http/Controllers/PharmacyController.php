@@ -53,8 +53,8 @@ class PharmacyController extends Controller
                             ->get();
                 });
                 //get regulatory status
-                $lst_regulatory_status= Cache::remember('lst_regulatory_status', 60, function () {
-                return DB::table('lst_regulatory_status')
+                $lst_registration_status= Cache::remember('lst_registration_status', 60, function () {
+                return DB::table('lst_registration_status')
                         ->select('id','status')
                         ->get();
                 });
@@ -79,7 +79,7 @@ class PharmacyController extends Controller
                 
 
                 return view('pharmacy.create',compact('lst_states','lst_ownerships','lst_oparational_status',
-                'lst_regulatory_status','lst_license_status','lst_premises_type','lst_outlet_category'));        
+                'lst_registration_status','lst_license_status','lst_premises_type','lst_outlet_category'));        
     }
 
  

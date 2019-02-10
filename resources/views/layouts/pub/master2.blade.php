@@ -26,56 +26,17 @@
 		<!-- Google Fonts
 		============================================ -->		
         <link href='https://fonts.googleapis.com/css?family=Raleway:400,300,500,600,700,800' rel='stylesheet' type='text/css'>
-	   
-		<!-- Bootstrap CSS
-		============================================ -->		
         <link rel="stylesheet" href="{{asset("design/css/bootstrap.min.css")}}">
-        
-		<!-- Color Swithcer CSS
-		============================================ -->
-        <link rel="stylesheet" href="{{asset("design/css/color-switcher.css")}}">
-        
-		<!-- Fontawsome CSS
-		============================================ -->
+
         <link rel="stylesheet" href="{{asset("design/css/font-awesome.min.css")}}">
-        
-		<!-- Owl Carousel CSS
-		============================================ -->
-        <link rel="stylesheet" href="{{asset("design/css/owl.carousel.css")}}">
-        
-		<!-- jquery-ui CSS
-		============================================ -->
+	
         <link rel="stylesheet" href="{{asset("design/css/jquery-ui.css")}}">
-        
-		<!-- Meanmenu CSS
-		============================================ -->
-        <link rel="stylesheet" href="{{asset("design/css/meanmenu.min.css")}}">
-        
-		<!-- Animate CSS
-		============================================ -->
-        <link rel="stylesheet" href="{{asset("design/css/animate.css")}}">
-        
-	        
-		<!-- Metarial Iconic Font CSS
-		============================================ -->
+
         <link rel="stylesheet" href="{{asset("design/css/material-design-iconic-font.css")}}">
-        <link rel="stylesheet" href="{{asset("design/css/material-design-iconic-font.min.css")}}">
-        
-		<!-- Slick CSS
-		============================================ -->
-        <link rel="stylesheet" href="{{asset("design/css/slick.css")}}">
-        
-		<!-- Style CSS
-		============================================ -->
+       
         <link rel="stylesheet" href="{{asset("design/style.css")}}">
-        
-		<!-- Color CSS
-		============================================ -->
         <link rel="stylesheet" href="{{asset("design/css/color.css")}}">
-        
-		<!-- Responsive CSS
-		============================================ -->
-        <link rel="stylesheet" href="{{asset("design/css/responsive.css")}}">
+    	
         <link rel="stylesheet" href="{{asset("/dist/css/select2.min.css")}}">
 	
         @yield("custom_css")
@@ -253,69 +214,14 @@
 
 
 
+<script src="{{asset("design/js/vendor/jquery-1.12.4.min.js")}}"></script>
+        	
+<script src="{{asset("design/js/bootstrap.min.js")}}"></script>
+ 
+<script src="{{asset("design/js/jquery.scrollUp.min.js")}}"></script>
         
-		<!-- jquery
-		============================================ -->		
-        <script src="{{asset("design/js/vendor/jquery-1.12.4.min.js")}}"></script>
-        
-		<!-- bootstrap JS
-		============================================ -->		
-        <script src="{{asset("design/js/bootstrap.min.js")}}"></script>
-              
-		<!-- meanmenu JS
-		============================================ -->		
-        <script src="{{asset("design/js/jquery.meanmenu.js")}}"></script>
-		
-		<!-- wow JS
-		============================================ -->		
-        <script src="{{asset("design/js/wow.min.js")}}"></script>
-        
-		<!-- owl.carousel JS
-		============================================ -->		
-        <script src="{{asset("design/js/owl.carousel.min.js")}}"></script>
-        
-		<!-- scrollUp JS
-		============================================ -->		
-        <script src="{{asset("design/js/jquery.scrollUp.min.js")}}"></script>
-        
-		<!-- Waypoints JS
-		============================================ -->		
-        <script src="{{asset("design/js/waypoints.min.js")}}"></script>
-        
-		<!-- Counterup JS
-		============================================ -->		
-        <script src="{{asset("design/js/jquery.counterup.min.js")}}"></script>
-        
-		<!-- Slick JS
-		============================================ -->		
-        <script src="{{asset("design/js/slick.min.js")}}"></script>
-        
-        
-		<!-- Textilate JS
-		============================================ -->		
-        <script src="{{asset("design/js/textilate.js")}}"></script>
-        
-		<!-- Lettering JS
-		============================================ -->		
-        <script src="{{asset("design/js/lettering.js")}}"></script>
-        
-        
-		<!-- Mail Chimp JS
-		============================================ -->		
-        <script src="{{asset("design/js/jquery.ajaxchimp.min.js")}}"></script>
-        
-		<!-- plugins JS
-		============================================ -->		
-        <script src="{{asset("design/js/plugins.js")}}"></script>
-        
-		<!-- StyleSwitch JS
-		============================================ -->	
-        <script src="{{asset("design/js/styleswitch.js")}}"></script>
-        
-	    <!-- main JS
-		============================================ -->		
-        <script src="{{asset("design/js/main.js")}}"></script>
-        <script src="{{asset("dist/js/select2.full.min.js")}}"></script>
+<script src="{{asset("design/js/main.js")}}"></script>
+<script src="{{asset("dist/js/select2.full.min.js")}}"></script>
 
         <script>
     

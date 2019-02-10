@@ -1,13 +1,5 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-*/
 
 //home
 Route::get('/', 'HomeController@index')->name('home');
@@ -21,8 +13,8 @@ Route::get('contactus', 'ContactController@openContactForm')->name('open_contact
 Route::post('contactus', 'ContactController@store')->name('storecontact');
 
 Route::get('facilities/hospitals', 'FacilityListingController@index')->name('listhosp');
-Route::get('facilities/searchlist', 'FacilityListingController@searchFacilities')->name('searchFacilities');
-Route::get('facilities/hospitalssearch', 'FacilityListingController@searchHospitals')->name('searchHospitals');
+Route::get('facilities/search', 'FacilityListingController@getHospitals')->name('searchFacilities');
+Route::get('facilities/hospitals-search', 'FacilityListingController@searchHospital')->name('searchHospitals');
 Route::post('facilities/details','FacilityListingController@showDetails')->name('facilitydetails');
 
 //summary tables
@@ -39,9 +31,9 @@ Route::post('statistics/populationindex/filter', 'SummaryChartsController@popula
 //download facilies
 Route::get('download/facilities', 'DownloadController@openRegistrationForm')->name('openRegistrationForm');
 Route::post('download/facilities', 'DownloadController@store')->name('saveDownloadUserRecords');
-Route::get('download/facilitylist', 'DownloadController@downloadFacilities')->name('downloadFacilitiesList');
-Route::get('download/filter', 'DownloadController@filter')->name('downloadFacilityFilter');
-Route::get('downloads/excel/{type}/{state}/{format}', 'DownloadController@export')->name('export');
+Route::get('download/facility-list', 'DownloadController@index')->name('downloadFacilitiesList');
+Route::get('download/filter', 'DownloadController@filter')->name('download.filter');
+Route::post('downloads/export-data', 'DownloadController@export')->name('download.export');
 Route::get('download/validate', 'DownloadController@getValidationForm')->name('getValidateForm');
 Route::post('download/validate', 'DownloadController@validateToken')->name('validateToken');
 
@@ -49,6 +41,9 @@ Route::post('download/validate', 'DownloadController@validateToken')->name('vali
 //routes to populate lgas and wards
 Route::post('hosp/fetchLga', 'GeneralController@getLgaList')->name('getLgaList');
 Route::post('hosp/fetctWards', 'GeneralController@getWardList')->name('getWardList');
+
+Route::post('hosp/services', 'GeneralController@getServices')->name('getServices');
+
 
 Route::post('hospitals/servicesavailable','HospitalsController@getservices')->name('hospitals.getServices');
 Route::post('hospitals/servicesavailable/history','HospitalsController@getservicesHistory')->name('hospitals.getServicesHistory');
@@ -95,6 +90,7 @@ Route::middleware(["auth"])->group(function(){
             Route::post('admin/hospitals/search','HospitalsController@search')->name('searchHospitalsAdmin');
             Route::get('admin/hospitals/service/master','HospitalServiceController@Index')->name('hospServices.index');
             Route::post('admin/hospitals/delete','HospitalsController@InitiateDelete')->name('hospitals.InitiateDelete');
+            Route::post('admin/hospitals/export', 'HospitalsController@export')->name('hospitals.export');
 
             //my requests
             Route::get('admin/hospitals/myrequest/pending','Approval\MyRequestController@myPendingRequest')->name('myrequest.pending');
@@ -162,7 +158,6 @@ Route::middleware(["auth"])->group(function(){
 
             //download
             Route::get('admin/download/list', 'DownloadController@guestDownloadRequests')->name('downloadList');
-            Route::get('admin/downloads/hospitals/{state}/{format}', 'DownloadController@exportHospitals')->name('export.hosptitals');
     });
 
     Route::get('admin/newuser/changepassword','UserController@newUserChangePasswordForm')->name('newuser.PasswordForm');

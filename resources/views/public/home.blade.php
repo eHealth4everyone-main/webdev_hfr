@@ -1,4 +1,4 @@
-@extends("layouts.pub.master")
+@extends("layouts.pub.master_home")
 
 @section('custom_css')
 <link href="https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">

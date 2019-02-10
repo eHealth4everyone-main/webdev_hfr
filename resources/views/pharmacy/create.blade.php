@@ -192,11 +192,11 @@
                             </select>
                             
                         </div>
-                        <label class="col-sm-2 control-label">Regulatory Status:</label>
+                        <label class="col-sm-2 control-label">Registration Status:</label>
                         <div class="col-sm-4">
-                            <select class="form-control select2" id="regulatory_status_id" name="regulatory_status_id" style="width: 100%;">
-                                <option value="">--Select Regulatory Status--</option>
-                                @foreach($lst_regulatory_status as $st)
+                            <select class="form-control select2" id="regulatory_status_id" name="registration_status_id" style="width: 100%;">
+                                <option value="">--Select Registration Status--</option>
+                                @foreach($lst_registration_status as $st)
                                 <option value="{{$st->id}}">{{$st->status}}</option>
                                 @endforeach
                             </select>

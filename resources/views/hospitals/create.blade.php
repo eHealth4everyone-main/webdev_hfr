@@ -84,15 +84,22 @@
                             </div>
                             <label class="col-sm-2 control-label">State:<font color="red">*</font> </label></label>
                             <div class="col-sm-4">
-                                <select class="form-control select2 dynamic" id="state_id" name ="state_id" data-dependent="lga_id" disabled required>
-                                    <option value="">--Select State--</option>
-                                    
-                                    @foreach($lst_states as $st)
-                                        <option value="{{ $st->id }}">{{ $st->name }}</option>
-                                    @endforeach
-                                    
-                                </select>
-                                <input type="hidden" name="state_id" value="{{ Auth::user()->state_id }}" />
+                                    @if (Auth::user()->state_id == 1 )
+                                    <select class="form-control select2" id="state_id" name ="state_id">
+                                        <option value="1">--Select State--</option>
+                                        @foreach(getStates() as $st)
+                                            <option value="{{$st->id}}">{{$st->name}}</option>
+                                        @endforeach
+                                    </select>
+                                @else
+                                    <select class="form-control select2 dynamic" id="state_id" name ="state_id" disabled required>                                
+                                        @foreach(getStates() as $st)
+                                            <option value="{{ $st->id }}">{{ $st->name }}</option>
+                                        @endforeach
+                                        
+                                    </select>
+                                    <input type="hidden" name="state_id" value="{{ Auth::user()->state_id }}" />
+                                @endif
                             </div>
                         </div>
 
@@ -140,7 +147,7 @@
                                 <div class="col-sm-8">
                                 <select class="form-control select2" id="facility_level_id"  name="facility_level_id" style="width: 100%;">
                                         <option value="">--Select Level of Care--</option>
-                                        @foreach($lst_level_of_care as $st)
+                                        @foreach(getLevelOfCare() as $st)
                                                 <option value="{{ $st->id }}" {{ (old('facility_level_id') == $st->id ? "selected":"") }}>{{ $st->name }}</option>
                                         @endforeach
                                     </select>
@@ -180,7 +187,7 @@
                                 <div class="col-sm-8">
                                 <select class="form-control select2" id="ownership_id"  name="ownership_id" style="width: 100%;">
                                         <option value="">--Select Ownership--</option>
-                                        @foreach($lst_ownerships as $st)
+                                        @foreach(getOwnership() as $st)
                                                 <option value="{{ $st->id }}" {{ (old('ownership_id') == $st->id ? "selected":"") }}>{{ $st->name }}</option>
                                                 
                                         @endforeach
@@ -382,7 +389,7 @@
                                 <div class="col-sm-8">
                                 <select class="form-control select2" id="operational_status_id" name="operational_status_id" style="width: 100%;">
                                 <option value="">--Select Operation Status--</option>
-                                @foreach($lst_oparational_status as $st)
+                                @foreach(getOperationalStatus() as $st)
                                         <option value="{{ $st->id }}" {{ (old('operational_status_id') == $st->id ? "selected":"") }}>{{ $st->status }}</option>
                                 @endforeach
                             </select>
@@ -403,7 +410,7 @@
                         <div class="col-sm-4">
                             <select class="form-control select2" id="registration_status_id" name="registration_status_id" style="width: 100%;">
                                 <option value="0">--Select Registration Status--</option>
-                                @foreach($lst_registration_status as $st)
+                                @foreach(getRegistrationStatus() as $st)
                                     <option value="{{ $st->id }}" {{ (old('registration_status_id') == $st->id ? "selected":"") }}>{{ $st->status }}</option>
                                 @endforeach
                             </select>
@@ -412,7 +419,7 @@
                         <div class="col-sm-4">
                             <select class="form-control select2" id="license_status_id" name="license_status_id" style="width: 100%;">
                                 <option value="0">--Select License Status--</option>
-                                @foreach($lst_license_status as $st)
+                                @foreach(getLicenseStatus() as $st)
                                     <option value="{{ $st->id }}" {{ (old('license_status_id') == $st->id ? "selected":"") }}>{{ $st->status }}</option>
                                 @endforeach
                             </select>
@@ -1024,12 +1031,12 @@
         if($(this).val() == 1){
             $('#registration_status_id').val(6).change();
             $('#license_status_id').val(4).change();     
-            $('#reg_license_status').hide();
+            // $('#reg_license_status').hide();
         }
         else{
             $('#registration_status_id').val(0).change();
             $('#license_status_id').val(0).change(); 
-            $('#reg_license_status').show();
+            // $('#reg_license_status').show();
         }
     });
 

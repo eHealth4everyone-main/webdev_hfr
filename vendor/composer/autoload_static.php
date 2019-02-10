@@ -81,6 +81,7 @@ class ComposerStaticInit89286e8f0a69b1ffd229a0bd4c93e992
         '801c31d8ed748cfa537fa45402288c95' => __DIR__ . '/..' . '/psy/psysh/src/functions.php',
         '377b22b161c09ed6e5152de788ca020a' => __DIR__ . '/..' . '/spatie/laravel-permission/src/helpers.php',
         '0b47d6d4a00ca9112ba3953b49e7c9a4' => __DIR__ . '/..' . '/yajra/laravel-datatables-oracle/src/helper.php',
+        'b4e3f29b106af37a2bb239f73cdf68c7' => __DIR__ . '/../..' . '/app/helpers.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -533,7 +534,11 @@ class ComposerStaticInit89286e8f0a69b1ffd229a0bd4c93e992
         'App\\Http\\Composers\\MyApprovalsCountComposer' => __DIR__ . '/../..' . '/app/Http/Composers/MyApprovalsCountComposer.php',
         'App\\Http\\Composers\\MyRequestsCountComposer' => __DIR__ . '/../..' . '/app/Http/Composers/MyRequestsCountComposer.php',
         'App\\Http\\Controllers\\AdminHomeController' => __DIR__ . '/../..' . '/app/Http/Controllers/AdminHomeController.php',
-        'App\\Http\\Controllers\\ApprovalController' => __DIR__ . '/../..' . '/app/Http/Controllers/ApprovalController.php',
+        'App\\Http\\Controllers\\Approval\\MyRequestController' => __DIR__ . '/../..' . '/app/Http/Controllers/Approval/MyRequestController.php',
+        'App\\Http\\Controllers\\Approval\\PublishController' => __DIR__ . '/../..' . '/app/Http/Controllers/Approval/PublishController.php',
+        'App\\Http\\Controllers\\Approval\\UpdatedRecordsController' => __DIR__ . '/../..' . '/app/Http/Controllers/Approval/UpdatedRecordsController.php',
+        'App\\Http\\Controllers\\Approval\\ValidateController' => __DIR__ . '/../..' . '/app/Http/Controllers/Approval/ValidateController.php',
+        'App\\Http\\Controllers\\Approval\\VerifyController' => __DIR__ . '/../..' . '/app/Http/Controllers/Approval/VerifyController.php',
         'App\\Http\\Controllers\\Auth\\ForgotPasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/ForgotPasswordController.php',
         'App\\Http\\Controllers\\Auth\\LoginController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/LoginController.php',
         'App\\Http\\Controllers\\Auth\\RegisterController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/RegisterController.php',
@@ -553,7 +558,6 @@ class ComposerStaticInit89286e8f0a69b1ffd229a0bd4c93e992
         'App\\Http\\Controllers\\ImagingServiceController' => __DIR__ . '/../..' . '/app/Http/Controllers/ImagingServiceController.php',
         'App\\Http\\Controllers\\LabController' => __DIR__ . '/../..' . '/app/Http/Controllers/LabController.php',
         'App\\Http\\Controllers\\LgaController' => __DIR__ . '/../..' . '/app/Http/Controllers/LgaController.php',
-        'App\\Http\\Controllers\\MyRequestController' => __DIR__ . '/../..' . '/app/Http/Controllers/MyRequestController.php',
         'App\\Http\\Controllers\\NotificationController' => __DIR__ . '/../..' . '/app/Http/Controllers/NotificationController.php',
         'App\\Http\\Controllers\\PharmacyController' => __DIR__ . '/../..' . '/app/Http/Controllers/PharmacyController.php',
         'App\\Http\\Controllers\\ResourceController' => __DIR__ . '/../..' . '/app/Http/Controllers/ResourceController.php',
@@ -580,6 +584,7 @@ class ComposerStaticInit89286e8f0a69b1ffd229a0bd4c93e992
         'App\\Notifications\\FacilityVerifiedLevel2' => __DIR__ . '/../..' . '/app/Notifications/FacilityVerifiedLevel2.php',
         'App\\Notifications\\Send2faCode' => __DIR__ . '/../..' . '/app/Notifications/Send2faCode.php',
         'App\\Notifications\\SendDownloadVerificationCode' => __DIR__ . '/../..' . '/app/Notifications/SendDownloadVerificationCode.php',
+        'App\\Notifications\\SendEmailNewUser' => __DIR__ . '/../..' . '/app/Notifications/SendEmailNewUser.php',
         'App\\Notifications\\UpdateRequest' => __DIR__ . '/../..' . '/app/Notifications/UpdateRequest.php',
         'App\\Notifications\\VerificationRejectedLevel1' => __DIR__ . '/../..' . '/app/Notifications/VerificationRejectedLevel1.php',
         'App\\Notifications\\VerificationRejectedLevel2' => __DIR__ . '/../..' . '/app/Notifications/VerificationRejectedLevel2.php',

@@ -170,7 +170,7 @@ body {
     transition: all 0.3s ease 0s
 }
 .section-margin {margin: 120px 0 140px 0}
-.section-padding {padding: 120px 0}
+.section-padding {padding: 50px 0}
 .section-bottom-padding {padding: 0 0 120px 0}
 .section-top-padding {padding: 120px 0 0 0}
 .section-title {
@@ -1142,7 +1142,7 @@ body {
 /*----------------------------------------*/
 /*  7. Latest News Area
 /*----------------------------------------*/
-.latest-area {padding: 120px 0 70px;}
+.latest-area {padding: 50px 0 70px;}
 .single-latest-text > h3 {
     font-family: raleway;
     font-size: 22px;

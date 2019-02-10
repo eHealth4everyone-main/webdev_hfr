@@ -27,6 +27,7 @@
 		============================================ -->		
         <link href='https://fonts.googleapis.com/css?family=Raleway:400,300,500,600,700,800' rel='stylesheet' type='text/css'>
 	   
+			
         <link rel="stylesheet" href="{{asset("design/css/bootstrap.min.css")}}">
 
         <link rel="stylesheet" href="{{asset("design/css/font-awesome.min.css")}}">
@@ -71,7 +72,7 @@
                                 </div>
                         </div>
                     </div>
-                    <div class="header-logo-menu sticker">
+                    <div class="header-logo-menu ">
                         <div class="container">
                             <div class="row">
                                 <div class="col-md-3 col-sm-12">
@@ -429,22 +430,23 @@
 
 
         
-<script src="{{asset("design/js/vendor/jquery-1.12.4.min.js")}}"></script>
+	
+        <script src="{{asset("design/js/vendor/jquery-1.12.4.min.js")}}"></script>
         	
-<script src="{{asset("design/js/bootstrap.min.js")}}"></script>
- 
-<script src="{{asset("design/js/jquery.scrollUp.min.js")}}"></script>
-        
-<script src="{{asset("design/js/main.js")}}"></script>
-<script src="{{asset("dist/js/select2.full.min.js")}}"></script>
+        <script src="{{asset("design/js/bootstrap.min.js")}}"></script>
+     	
+        <script src="{{asset("design/js/jquery.scrollUp.min.js")}}"></script>
+        		
+        <script src="{{asset("design/js/main.js")}}"></script>
+        <script src="{{asset("dist/js/select2.full.min.js")}}"></script>
 
-<script>
+        <script>
+    
+            $('.select2').select2() 
 
-    $('.select2').select2() 
+        </script>
 
-</script>
-
-@stack("custom_scripts")
+        @stack("custom_scripts")
 </body>
 
 </html>

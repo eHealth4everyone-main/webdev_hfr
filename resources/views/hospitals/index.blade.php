@@ -17,41 +17,107 @@ Hospitals and Clinics
     <div class="box-header with-border">
         <form class="form-horizontal"  action="{{route('searchHospitalsAdmin')}}" method="post">
             @csrf
-            <div class="form-group">
-                    <div class="col-sm-4">  
-                        @if (Auth::user()->state_id == 1 )
-                            <select class="form-control select2" id="state_id" name ="state_id">
-                                <option value="">--Select State--</option>
-                                @foreach($lst_states as $st)
-                                    <option value="{{$st->id}}">{{$st->name}}</option>
-                                @endforeach
-                            </select>
-                        @else
-                            <select class="form-control select2 dynamic" id="state_id" name ="state_id" disabled required>                                
-                                @foreach($lst_states as $st)
-                                    <option value="{{ $st->id }}">{{ $st->name }}</option>
-                                @endforeach
-                                
-                            </select>
-                            <input type="hidden" name="state_id" value="{{ Auth::user()->state_id }}" />
-                        @endif
-                    </div>
+
+                <div class="form-group">
+                        <div class="col-sm-3">  
+                                @if (Auth::user()->state_id == 1 )
+                                    <select class="form-control select2" id="state_id" name ="state_id">
+                                        <option value="1">--Select State--</option>
+                                        @foreach(getStates() as $st)
+                                            <option value="{{$st->id}}">{{$st->name}}</option>
+                                        @endforeach
+                                    </select>
+                                @else
+                                    <select class="form-control select2 dynamic" id="state_id" name ="state_id" disabled required>                                
+                                        @foreach(getStates() as $st)
+                                            <option value="{{ $st->id }}">{{ $st->name }}</option>
+                                        @endforeach
+                                        
+                                    </select>
+                                    <input type="hidden" name="state_id" value="{{ Auth::user()->state_id }}" />
+                                @endif
+                            </div>
                     
-                    <div class="col-sm-3">
-                        <select class="form-control select2" id="lga_id" name="lga_id">
-                            
+                        <div class="col-sm-3">
+                            <select class="form-control select2" id="lga_id" name="lga_id">
+                                <option value="1">--Select LGA--</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-3">
+                            <select class="form-control select2" id="ward_id" name="ward_id">
+                                <option value="0">--Select Ward--</option>
+                            </select>
+                        </div>
+          
+                        <div class="col-sm-3">
+                            <select class="form-control select2" id="facility_level_id"  name="facility_level_id" style="width: 100%;">
+                                    <option value="0">--Select Facility Level--</option>
+                                    @foreach(getLevelOfCare() as $st)
+                                            <option value="{{ $st->id }}">{{ $st->name }}</option>
+                                    @endforeach
+                            </select>        
+                        </div>
+                     
+          
+                    </div>
+                <div class="form-group">
+                        <div class="col-sm-3">
+                                <select class="form-control select2" id="ownership_id"  name="ownership_id" style="width: 100%;">
+                                    <option value="0">--Select Ownership--</option>
+                                    @foreach(getOwnership() as $st)
+                                        <option value="{{$st->id}}">{{$st->name}}</option>
+                                    @endforeach
+                                    
+                                </select>
+                            </div> 
+                  <div class="col-sm-3">
+                        <select class="form-control select2" id="operational_status_id" name ="operational_status_id">
+                            <option value="0">--Select Operational Status--</option>
+                            @foreach(getOperationalStatus() as $st)
+                                    <option value="{{ $st->id }}">{{ $st->status }}</option>
+                            @endforeach
+                        </select>
+                  </div>
+                  <div class="col-sm-3">
+                        <select class="form-control select2" id="registration_status_id" name="registration_status_id" style="width: 100%;">
+                            <option value="0">--Select Registration Status--</option>
+                            @foreach(getRegistrationStatus() as $st)
+                                <option value="{{ $st->id }}" >{{ $st->status }}</option>
+                            @endforeach
                         </select>
                     </div>
-                                  
-                    <div class="col-sm-4" >
-                        <input class="form-control input-sm" type="text" name="facility_name" id="facility_name" class="form-control" placeholder="Hospital or Clinic Name">
+                    <div class="col-sm-3">
+                            <select class="form-control select2" id="license_status_id" name="license_status_id" style="width: 100%;">
+                                <option value="0">--Select License Status--</option>
+                                @foreach(getLicenseStatus() as $st)
+                                    <option value="{{ $st->id }}" >{{ $st->status }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+    
+              </div>
+              <div class="form-group">
+                    <div class="col-sm-3">
+                            <select class="form-control select2" id="geo_codes" name="geo_codes">
+                                <option value="0">--Select Coordinates--</option>
+                                <option value="1">With Coordinates</option>
+                                <option value="2">With No Coordinates</option>                            
+                            </select>
                     </div>
                     
+                  
+                    <div class="col-sm-6" >
+                        <input class="form-control input-sm"type="text" name="facility_name" id="facility_name" class="form-control" placeholder="Facility name">
+                    </div>
+                    <div class="col-sm-1"></div>        
                     <div class="col-sm-1">
-                        <button type="submit" class="btn btn-success pull-right btn-sm">Search</button>
+                        <button type="button" class="btn btn-sm pull-right btn-block" id='reset'>Reset</button>
                     </div>
-                    
-                </div>
+                    <div class="col-sm-1">
+                        <button type="submit" class="btn btn-success btn-block btn-sm">Search</button>
+                    </div>
+              </div>
+
             </form>
         </div>
         
@@ -63,7 +129,7 @@ Hospitals and Clinics
                         <th>State</th>
                         <th>LGA</th>
                         <th>Ward</th>
-                        <th>Unique ID</th>
+                        <th>Facility ID</th>
                         <th>Facility Name</th>
                         <th>Facility Level</th>
                         <th>Ownership</th>
@@ -159,12 +225,24 @@ Hospitals and Clinics
         </div>
             {{-- download buttons  --}}
             <div class="btn-group pull-right">
-                    <a href="{{route('export.hosptitals',['state'=>auth::user()->state_id,'format'=>'csv'])}}">
-                        <button type="button" class="btn btn-info btn-sm">Download CSV</button>
-                    </a>
-                    <a href="{{route('export.hosptitals',['state'=>auth::user()->state_id,'format'=>'excel'])}}">
-                        <button type="button" class="btn btn-primary btn-sm">Download Excel</button>
-                    </a>
+                <form class="form-horizontal"  action="{{route('hospitals.export')}}" method="post">
+                        @csrf
+
+                        <input type="hidden"  name="state_id2" value="{{ $state_id }}">
+                        <input type="hidden"  name="lga_id2" value="{{ $lga_id }}">
+                        <input type="hidden"  name="facility_name2" value="{{ $facility_name }}">
+                        <input type="hidden"  name="geo_codes2" value="{{ $geo_codes }}">
+                        <input type="hidden"  name="facility_level_id2" value="{{ $facility_level_id  }}">
+                        <input type="hidden"  name="ownership_id2" value="{{ $ownership_id }}">
+                        <input type="hidden"  name="operational_status_id2" value="{{ $operational_status_id }}">
+                        <input type="hidden"  name="registration_status_id2" value="{{ $registration_status_id }}">
+                        <input type="hidden"  name="license_status_id2" value="{{ $license_status_id }}">
+           
+
+                        <button type="submit" class="btn btn-info btn-sm" name='format' value='csv'>Download CSV</button>
+                        <button type="submit" class="btn btn-primary btn-sm" name='format' value='xls'>Download Excel</button>
+
+                </form>
             </div>
 
       
@@ -242,10 +320,26 @@ Hospitals and Clinics
     @include('partials.notification')
     
     <script>
-        $("#state_id").val({{Auth::user()->state_id}}).change();
-
+        
         $(document).ready( function () {
             $("#state_id").val({{Auth::user()->state_id}}).change();
+            $("#geo_codes").val({{$geo_codes}}).change();
+            $("#facility_name").val("{{$facility_name}}");
+            $("#facility_level_id").val({{$facility_level_id}}).change();
+            $("#ownership_id").val({{$ownership_id}}).change();
+            $("#operational_status_id").val({{$operational_status_id}}).change();
+            $("#registration_status_id").val({{$registration_status_id}}).change();
+            $("#license_status_id").val({{$license_status_id}}).change();
+        
+            $("#reset").click(function(){
+                $("#geo_codes").val(0).change();
+                $("#facility_name").val("");
+                $("#facility_level_id").val(0).change();
+                $("#ownership_id").val(0).change();
+                $("#operational_status_id").val(0).change();
+                $("#registration_status_id").val(0).change();
+                $("#license_status_id").val(0).change();
+            });
             
         });
         
