@@ -44,19 +44,19 @@ class AdminHomeController extends Controller
                     if($s->state == $s2->state){
                         $columns[0] = $s2->state;
                         $looped_states[] = $s2->state;
-                        if ($s2->status == "Facility Newly Created"){
+                        if ($s2->status == "Pending Creation"){
                             $columns[1] = $s2->count;
                         }
                         if ($s2->status == "Facility Creation Rejected"){
                             $columns[2] = $s2->count;
                         }
-                        if ($s2->status == "Facility Update Requested"){
+                        if ($s2->status == "Pending Update"){
                             $columns[3] = $s2->count;                       
                         }
                         if ($s2->status =="Facility Update Rejected"){
                             $columns[4] = $s2->count;                       
                         }
-                        if ($s2->status == "Facility Deletion Requested"){
+                        if ($s2->status == "Pending Deletion"){
                             $columns[5] = $s2->count;                       
                         }
                         if ($s2->status == "Facility Deletion Rejected"){

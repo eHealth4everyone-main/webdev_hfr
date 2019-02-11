@@ -268,6 +268,8 @@ Hospitals and Clinics
                     <input type="hidden" id="facility_id" name="facility_id">
                     <input type="hidden" id="facility_name_to_del" name="facility_name_to_del">
                     <input type="hidden" id="state_id_del" name="state_id_del">
+                    <input type="hidden"  name="null">
+
 
                     <div class="panel-body">
                         

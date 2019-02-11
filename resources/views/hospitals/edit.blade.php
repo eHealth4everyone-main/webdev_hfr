@@ -12,6 +12,8 @@
 <form class="form-horizontal" action="{{route('hospitals.update',$hosp->id)}}" method="POST">
     @csrf
     @method("PUT")   
+  
+    <input type="hidden"  name="null">
     
     <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
         {{-- Tab One   --}}
@@ -99,12 +101,7 @@
                                     
                                 </select>
                                 <input type="hidden" name="state_id" value="{{$hosp->state_id}}">
-                                <input type="hidden" name="verified_by" value="">
-                                <input type="hidden" name="verified_at" value="">
-                                <input type="hidden" name="validated_at" value="">
-                                <input type="hidden" name="validated_by" value="">
-                                <input type="hidden" name="published_by" value="">
-                                <input type="hidden" name="published_at" value="">
+                               
 
                             </div>
                         </div>
