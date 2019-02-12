@@ -35,16 +35,16 @@
                 </div>
         </div>
 
-       <div class="row">
+       <div class="row" hidden>
             <table  id="fac_status_table">
                     <thead>
                     <tr>
                         <th></th>
-                        <th>Facility Newly Created</th>
+                        <th>Pending Creation</th>
                         <th>Facility Creation Rejected</th>
-                        <th>Facility Update Requested</th>
+                        <th>Pending Update</th>
                         <th>Facility Update Rejected</th>
-                        <th>Facility Deletion Requested</th>
+                        <th>Pending Deletion</th>
                         <th>Facility Deletion Rejected</th>
                         <th>Facility Verified</th>
                         <th>Facility Validated</th>
