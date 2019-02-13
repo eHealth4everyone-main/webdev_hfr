@@ -146,7 +146,7 @@
                     <tr>
                         <th>State</th>
                         <th>LGA</th>
-                        <th>Ward</th>
+                        {{-- <th>Ward</th> --}}
                         <th>Facility ID</th>
                         <th>Facility Name</th>
                         @if($facility_type_id == 1 OR $facility_type_id == 3)
@@ -163,7 +163,7 @@
                             <tr>
                                 <td>{{$fac->state}}</td>
                                 <td>{{$fac->lga}}</td>
-                                <td>{{$fac->ward}}</td>
+                                {{-- <td>{{$fac->ward}}</td> --}}
                                 <td>{{$fac->unique_id}}</td>
                                 <td>{{$fac->facility_name}}</td>
 
