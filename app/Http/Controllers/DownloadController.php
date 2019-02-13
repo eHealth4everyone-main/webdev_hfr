@@ -15,9 +15,9 @@ use App\Notifications\SendDownloadVerificationCode;
 class DownloadController extends Controller
 {
     public function index (Request $request){
-        if (!$request->session()->has('download_verify')){
-            return redirect()->route('openRegistrationForm');
-        }
+        // if (!$request->session()->has('download_verify')){
+        //     return redirect()->route('openRegistrationForm');
+        // }
 
 
         $facilities = DB::table('hospital_details')
@@ -103,7 +103,7 @@ class DownloadController extends Controller
             'facility_level','longitude','latitude','operation_status','registration_status','license_status')
             ->where('state_id','like','%'.$state_id.'%')
             ->where('lga_id','like','%'.$lga_id.'%')
-            ->where('ward_id','like','%'.$ward_id.'%')
+            ->where(DB::Raw("IFNULL(ward_id, '')"),'like','%'.$ward_id.'%')
             ->where('facility_level_id','like','%'.$facility_level_id.'%')
             ->where('ownership_id','like','%'.$ownership_id.'%')
             ->where('operational_status_id','like','%'.$operational_status_id.'%')
@@ -218,7 +218,7 @@ class DownloadController extends Controller
             'facility_level','longitude','latitude','operation_status','registration_status','license_status')
             ->where('state_id','like','%'.$state_id.'%')
             ->where('lga_id','like','%'.$lga_id.'%')
-            ->where('ward_id','like','%'.$ward_id.'%')
+            ->where(DB::Raw("IFNULL(ward_id, '')"),'like','%'.$ward_id.'%')
             ->where('facility_level_id','like','%'.$facility_level_id.'%')
             ->where('ownership_id','like','%'.$ownership_id.'%')
             ->where('operational_status_id','like','%'.$operational_status_id.'%')

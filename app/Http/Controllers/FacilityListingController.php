@@ -112,7 +112,7 @@ class FacilityListingController extends Controller
         $facilities = DB::table('hospital_details')
             ->where('state_id','like','%'.$state_id.'%')
             ->where('lga_id','like','%'.$lga_id.'%')
-            ->where('ward_id','like','%'.$ward_id.'%')
+            ->where(DB::Raw("IFNULL(ward_id, '')"),'like','%'.$ward_id.'%')
             ->where('facility_level_id','like','%'.$facility_level_id.'%')
             ->where('ownership_id','like','%'.$ownership_id.'%')
             ->where('operational_status_id','like','%'.$operational_status_id.'%')

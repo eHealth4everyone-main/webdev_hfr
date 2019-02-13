@@ -1,4 +1,4 @@
-@extends("layouts.pub.master2")
+@extends("layouts.pub.master")
 
 @section('custom_css')
 
