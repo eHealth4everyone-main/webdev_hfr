@@ -57,7 +57,8 @@ Route::get('resources', 'ResourceController@public_index')->name('public_resourc
 Route::get('login/token', 'Auth\TokenController@getToken');
 Route::post('login/token', 'Auth\TokenController@postToken')->name('login.token');
 
-
+//send mails
+Route::get('sendmail-test','MailController@basic_email');
 
 Auth::routes();
 

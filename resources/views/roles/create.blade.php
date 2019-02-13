@@ -302,7 +302,7 @@
                                             <input type='checkbox'name='permissions[]' value='61'> Publish Facility                                               
                                         </div>
                                         <div class="col-sm-2">                               
-                                                                                                   
+                                            <input type='checkbox'name='permissions[]' value='63'> Receive Feedback                                                                                                                                                
                                         </div>
                                         <div class="col-sm-2"></div>                              
                                </div>
