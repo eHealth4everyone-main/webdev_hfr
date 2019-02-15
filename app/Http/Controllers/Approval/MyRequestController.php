@@ -57,53 +57,12 @@ class MyRequestController extends Controller
             foreach ($services as $s) {
                 $current_services[] = $s->service_id;
             }
-                 
-            //get state list
-            $lst_states = Cache::remember('lst_states', 60, function () {
-            return DB::table('ou_states')
-                    ->select('id','name')
-                    ->orderByRaw('name ASC')
-                    ->get();
-            });
-
-            //get facility types
-            $lst_level_of_care = Cache::remember('lst_level_of_care', 60, function () {
-                return DB::table('lst_level_of_care')
-                        ->select('id','name')
-                        ->get();
-            });
-            //get ownership
-            $lst_ownerships= Cache::remember('lst_ownerships', 60, function () {
-                return DB::table('lst_ownerships')
-                        ->select('id','name')
-                        ->get();
-            });
-            //get opertion statuss
-            $lst_oparational_status= Cache::remember('lst_oparational_status', 60, function () {
-                return DB::table('lst_oparational_status')
-                        ->select('id','status')
-                        ->where('category','1')
-                        ->get();
-            });
-            //get regulatory statuss
-            $lst_registration_status= Cache::remember('lst_registration_status', 60, function () {
-                return DB::table('lst_registration_status')
-                        ->select('id','status')
-                        ->get();
-            });
-            //get license statuss
-            $lst_license_status= Cache::remember('lst_license_status', 60, function () {
-                return DB::table('lst_license_status')
-                        ->select('id','status')
-                        ->get();
-            });
 
              //get hospital services
             $lst_services = DB::table('lst_hosp_services')->get();
 
          
-            return view('approvals.edit_hospital',compact('hosp','current_services','lst_level_of_care','lst_states','lst_ownerships','lst_oparational_status',
-            'lst_registration_status','lst_license_status','lst_services')); 
+            return view('approvals.edit_hospital',compact('hosp','current_services','lst_services')); 
     }
     
     public function updateRequest(Request $request)
@@ -174,10 +133,15 @@ class MyRequestController extends Controller
                 $hosp->status_id = 1;
                 $hosp->requested_by = Auth::user()->id;
                 $hosp->requested_at = Carbon::now()->format('Y-m-d H:i:s');
-                $hosp->request_note = "";
-                $hosp->verify_note = "";
-                $hosp->validate_note = "";
-                $hosp->publish_note = "";
+                $hosp->verified_by= $request->verified_by;
+                $hosp->verified_at= $request->verified_at;
+                $hosp->verify_note = '';
+                $hosp->validated_by = $request->validated_by;
+                $hosp->validated_at = $request->validated_at;
+                $hosp->validate_note = '';
+                $hosp->published_by = $request->published_by;
+                $hosp->published_at = $request->published_at;
+                $hosp->publish_note = ''; 
                 $hosp->start_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->start_date))); 
                 $hosp->operational_days = $hosp->arrayValuesTostring($request->operational_days);
                 $hosp->save();
@@ -212,7 +176,7 @@ class MyRequestController extends Controller
             }
         }
 
-        // MOdify request that have been rejected, this is the request for updating existing facility
+        // Modify request that have been rejected or that have not being verified, this is the request for updating existing facility
         if(in_array($request->status_id,[8,10])){ 
             
             //restore main table data before being updated. Delete data in history and copy data from main
@@ -246,13 +210,18 @@ class MyRequestController extends Controller
                 $hosp = hs_hospital_history::find($request->id);
                 $hosp->fill($request->all());
                 $hosp->status_id = 8;
-                $hosp->request_note = "";
                 $hosp->requested_at = Carbon::now()->format('Y-m-d H:i:s');  
                 $hosp->requested_by = Auth::user()->id;
                 $hosp->request_note = "";
-                $hosp->verify_note = "";
-                $hosp->validate_note = "";
-                $hosp->publish_note = "";
+                $hosp->verified_by= $request->verified_by;
+                $hosp->verified_at= $request->verified_at;
+                $hosp->verify_note = '';
+                $hosp->validated_by = $request->validated_by;
+                $hosp->validated_at = $request->validated_at;
+                $hosp->validate_note = '';
+                $hosp->published_by = $request->published_by;
+                $hosp->published_at = $request->published_at;
+                $hosp->publish_note = ''; 
                 $hosp->start_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->start_date))); 
                 $hosp->operational_days = $hosp->arrayValuesTostring($request->operational_days);
                 $hosp->save();
@@ -416,5 +385,46 @@ class MyRequestController extends Controller
         return redirect()->back();
     }
 
+    //resubmit delete request after rejection
+    public function resubmit(Request $request){ 
+        $hs_tracking = new hs_status_tracking;
+        $hs_tracking->hospital_id = $request->facility_id;
+        $hs_tracking->user_id = Auth::user()->id;
+        $hs_tracking->status_id = '15';
+        $hs_tracking->note = $request->reason;
+        $hs_tracking->created_at = Carbon::now()->format('Y-m-d H:i:s');
+       
+        $hosp = new hs_hospital_history;
+        $hosp = hs_hospital_history::findOrFail($request->facility_id); 
+        $hosp->status_id = '15';
+        $hosp->requested_at = Carbon::now()->format('Y-m-d H:i:s');
+        $hosp->requested_by = Auth::user()->id; 
+        $hosp->request_note = $request->reason;
+        $hosp->verified_by= $request->verified_by;
+        $hosp->verified_at= $request->verified_at;
+        $hosp->verify_note = '';
+        $hosp->validated_by = $request->validated_by;
+        $hosp->validated_at = $request->validated_at;
+        $hosp->validate_note = '';
+        $hosp->published_by = $request->published_by;
+        $hosp->published_at = $request->published_at;
+        $hosp->publish_note = ''; 
+       
+        DB::beginTransaction();
+        try {
+            hs_hospital_history::disableAuditing();  
+            $hs_tracking->save();
+            $hosp->save();
+            hs_hospital_history::enableAuditing();        
+            
+                DB::commit();
+        } catch (\Exception $ex) {
+            DB::rollback();
+            return response()->json(['error' => $ex->getMessage()], 500);
+        }
+
+        session()->flash("alert-success", "Delete request re-submitted successfully!");
+        return redirect()->route('myrequest.pending');
+    }
 
 }

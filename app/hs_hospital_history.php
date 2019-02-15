@@ -16,7 +16,7 @@ class hs_hospital_history extends Model implements Auditable
     protected $auditExclude = ['status_id', 'created_by','requested_by','request_note', 'requested_at',
                                 'verified_by', 'verified_at', 'verify_note',
                                 'validated_by', 'validated_at', 'validate_note', 
-                                'published_by', 'published_at', 'publish_note'];
+                                'published_by', 'published_at', 'publish_note',];
 
     public function arrayValuesTostring($val)
     {

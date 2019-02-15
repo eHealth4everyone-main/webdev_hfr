@@ -4,7 +4,7 @@
 Imaging Services
 
 @if(auth()->user()->hasPermissionTo(36))
-    <button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#myModal">
+    <button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#addModal">
       Add Service
     </button>
 @endif
@@ -52,12 +52,12 @@ Imaging Services
 @endsection 
 
 
-@include('imaging.service.create')
-@include('imaging.service.edit')
-@include('imaging.service.delete')
+@include('masters.imaging_services.create')
+@include('masters.imaging_services.edit')
+@include('masters.imaging_services.delete')
 
 @push('bk_script')
-@include('partials.notification_md')
+@include('partials.notification')
 
 <script>
   $(document).ready(function(){
@@ -67,53 +67,21 @@ Imaging Services
       "info":     true
     } );
 
-    $("#save").click(function(){
-      var _token = $('input[name="_token"]').val();
-      $( '#service-error' ).html( "" );
-
-      $.ajax({
-        url: "{{route('service.store')}}",
-        method: 'post',
-        data: {service: $('#service').val(), _token:_token },
-        
-        success: function(result){
-          if(result.errors){
-                if(result.errors.service){
-                    $( '#service-error' ).html(result.errors.service[0]);
-                }
-          }
-
-          if(result.success){
-            $.notify({
-              message: result.success
-            },{
-              type: 'success',
-              delay: 1000,
-              offset:{
-                  y:60,
-                  x:20
-              },
-           });
-           $('#myModal').modal('hide');
-          }
-         
-
-          },
-
-
-        });
-      });
+    $('#addModal').on('show.bs.modal', function (event) {
+      $('#name').focus();
+    });
 
    $('#editModal').on('show.bs.modal', function (event) {
+      $('#service_name1').focus();
+
       var button = $(event.relatedTarget)
-      
       var id = button.data('id')
       var service=button.data('service')
       
       var modal = $(this)
       
-      modal.find('.modal-body #service').val(service)
       modal.find('.modal-body #id').val(id)
+      modal.find('.modal-body #service_name1').val(service)
     });
     
     $('#deleteModal').on('show.bs.modal', function (event) {

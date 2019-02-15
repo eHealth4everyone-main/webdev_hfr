@@ -61,7 +61,11 @@ My Approved Requests
                 <Strong>Remarks: </Strong>{{ $r->publish_note }} <br>
           </td>
       
-          <td>{{$r->status}}</td>
+          <td>
+            @if (in_array($r->status_id,[2,4,6,8,9,11,13,15,16,18,20]))
+                <span class="label label-success"> {{$r->status}}</span>
+            @endif
+          </td>
     
         </tr>
         @endforeach

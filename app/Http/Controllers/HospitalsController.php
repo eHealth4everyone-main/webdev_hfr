@@ -253,15 +253,15 @@ class HospitalsController extends Controller
         $hosp->requested_by = Auth::user()->id;
         $hosp->requested_at = Carbon::now()->format('Y-m-d H:i:s');  
         $hosp->request_note = '';
-        $hosp->verified_by= $request->null;
-        $hosp->verified_at= $request->null;
-        $hosp->verify_note = $request->null;
-        $hosp->validated_by = $request->null;
-        $hosp->validated_at = $request->null;
-        $hosp->validate_note = $request->null;
-        $hosp->published_by = $request->null;
-        $hosp->published_at = $request->null;
-        $hosp->publish_note = $request->null; 
+        $hosp->verified_by= $request->verified_by;
+        $hosp->verified_at= $request->verified_at;
+        $hosp->verify_note = '';
+        $hosp->validated_by = $request->validated_by;
+        $hosp->validated_at = $request->validated_at;
+        $hosp->validate_note = '';
+        $hosp->published_by = $request->published_by;
+        $hosp->published_at = $request->published_at;
+        $hosp->publish_note = ''; 
         $hosp->start_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->start_date))); 
         $hosp->operational_days = $hosp->arrayValuesTostring($request->operational_days);
         

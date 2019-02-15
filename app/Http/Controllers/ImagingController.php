@@ -74,8 +74,8 @@ class ImagingController extends Controller
         
         $this->validate($request, $rules, $customMessages);
         
-        $sign = new Signature;
-        $im = new Imaging;
+        // $sign = new Signature;
+        // $im = new Imaging;
         
         $max = $sign::where('id','>', 1)->max('id');
         $ids = $max + 1; //auto increment id
@@ -142,13 +142,13 @@ class ImagingController extends Controller
    
     public function show($id)
     {
-        $imagings =Signature::findorfail($id);
+        // $imagings =Signature::findorfail($id);
         return view('imaging.show', compact("imagings"));
     }
 
     public function edit($id)
     {
-        $imagings =Signature::findorfail($id);
+        // $imagings =Signature::findorfail($id);
         return view('imaging.edit', compact("imagings"));
     }
 

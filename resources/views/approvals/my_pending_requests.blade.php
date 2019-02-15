@@ -77,8 +77,17 @@ My Pending Requests
             Pending
         @endif
       </td>
-    
-        <td>{{$r->status}}</td>
+        <td>
+            @if (in_array($r->status_id,[1,8,15]))
+                <span class="label label-info"> {{$r->status}}</span>
+            @endif
+            @if (in_array($r->status_id,[2,4,6,9,11,13,16,18,20]))
+                <span class="label label-success"> {{$r->status}}</span>
+            @endif
+            @if (in_array($r->status_id,[3,5,7,10,12,14,17,19,21]))
+               <span class="label label-danger"> {{$r->status}}</span>
+            @endif
+        </td>
 
           <td>
             @if (in_array($r->status_id,[1,3,8,10]))
@@ -100,6 +109,14 @@ My Pending Requests
                       Delete Request
                   </button>
                 </a>
+            @endif
+            @if ($r->status_id == 17)
+                 <a href="#">
+                      <button class="btn btn-warning btn-sm"  type="button"  data-toggle="modal" data-target="#delete_resubmit"
+                          data-id_del="{{$r->id}}" data-unique_id_del="{{$r->unique_id}}" data-facility_name_del="{{$r->facility_name}}" data-state_id_del="{{$r->state_id}}"> 
+                          Resubmit
+                      </button>
+                  </a>
             @endif
     
           </td>
@@ -142,7 +159,68 @@ My Pending Requests
       </div>
     </div>
 </div> 
-  
+
+<!-- Modal delete re submit request -->
+<div class="modal fade" id="delete_resubmit" tabindex="-1" role="dialog">
+    <div class="modal-dialog " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Resubmit Delete Request</h4>
+                <div class='notifications top-right'></div>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{{route('myrequest.resubmit')}}">
+                    @csrf
+                    <input type="hidden" id="facility_id" name="facility_id">
+                    <input type="hidden" id="facility_name_to_del" name="facility_name_to_del">
+                    <input type="hidden" id="state_id_del" name="state_id_del">
+                    <input type="hidden"  name="null">
+
+
+                    <div class="panel-body">
+                        
+                        <div class="panel-group" id="accordion_d">
+                            {{-- panel one --}}
+                            <div class="panel panel-default">
+                              
+                                <div id="collapse1d" class="panel-collapse collapse in">
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            <label class="col-md-4">Unique_id:</label>
+                                            <div class="col-md-8" id="unique_id_del"></div>
+                                        </div>
+                                        <div class="row">
+                                            <label class="col-md-4 text-md-right">Facility Name:</label>
+                                            <div class="col-md-8" id="facility_name_del">    </div>
+                                        </div>
+                                      
+                                        <div class="row">
+                                            <label class="col-md-4">Reason for Delete:<font color="red">*</font></label>
+                                            <div class="col-md-8">
+                                                <textarea class="form-control" rows="3" name="reason" placeholder="Please enter reason" required></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                           
+                        </div> 
+                        
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Re Submit Request</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+                
+            </div><!--modal body ends -->
+        </div><!--/.modal-content -->
+    </div>
+</div> <!--/.modal -->
+
 
 @endsection 
   
@@ -170,7 +248,18 @@ My Pending Requests
         modal.find('.modal-body #hosp_id').val(button.data('id'));
         modal.find('.modal-body #status_id').val(button.data('status'));
     })//end
-      
+    
+      $('#delete_resubmit').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget)
+            var modal = $(this)
+        
+            modal.find('.modal-body #unique_id_del').text(button.data('unique_id_del'));
+            modal.find('.modal-body #facility_name_del').text(button.data('facility_name_del'));
+            modal.find('.modal-body #facility_id').val(button.data('id_del'));   
+            modal.find('.modal-body #facility_name_to_del').val(button.data('facility_name_del'));
+            modal.find('.modal-body #state_id_del').val(button.data('state_id_del'));
+          
+        });//end
 </script>
 
 @endpush

@@ -20,7 +20,7 @@ class VerifyController extends Controller
     {
         $pending = DB::table('hospital_details_history')
             ->where('state_id', '=',Auth::user()->state_id)
-            ->whereNotIn('status_id',[6,13,20])
+            ->whereNotIn('status_id',[3,6,10,13,17,20])
             ->orderby('updated_at','desc')
             ->get();
      

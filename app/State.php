@@ -4,7 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ou_state extends Model
+class State extends Model
 {
+    protected $table = 'ou_states';
  
 }

@@ -40,16 +40,16 @@
                                 <li><a href="{{route('wards.index')}}"><i class="fa fa-gear"></i> Wards</a></li>
                             @endif
                             @if(auth()->user()->hasPermissionTo(31))
-                                <li><a href="{{route('hospServices.index')}}"><i class="fa fa-gear"></i> Hospital Services</a></li>
+                                <li><a href="{{route('hospital-services.index')}}"><i class="fa fa-gear"></i> Hospital Services</a></li>
                             @endif
                             @if(auth()->user()->hasPermissionTo(35))
-                                <li><a href="{{route('service.index')}}"><i class="fa fa-gear"></i> Imaging Services</a></li>
+                                <li><a href="{{route('imaging-services.index')}}"><i class="fa fa-gear"></i> Imaging Services</a></li>
                             @endif
                             @if(auth()->user()->hasPermissionTo(39))
-                                <li><a href="{{route('equip.index')}}"><i class="fa fa-gear"></i> Laboratory Equipments</a></li>
+                                <li><a href="{{route('equipments.index')}}"><i class="fa fa-gear"></i> Laboratory Equipments</a></li>
                             @endif
                             @if(auth()->user()->hasPermissionTo(43))
-                                <li><a href="{{route('certification.index')}}"><i class="fa fa-gear"></i> Laboratory Certification</a></li>
+                                <li><a href="{{route('certifications.index')}}"><i class="fa fa-gear"></i> Laboratory Certification</a></li>
                             @endif
                         </ul>
                     </li>

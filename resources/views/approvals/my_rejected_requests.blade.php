@@ -59,7 +59,11 @@ My Rejected Requests
               <Strong>Remarks: </Strong>{{ $r->publish_note }} <br>
               <Strong>Date: </Strong>{{ ($r->published_at ? date('d M Y', strtotime($r->published_at )) : '') }} <br>               
         </td>
-         <td>{{$r->status}}</td>
+         <td>   
+            @if (in_array($r->status_id,[3,5,7,10,12,14,17,19,21]))
+               <span class="label label-danger"> {{$r->status}}</span>
+            @endif
+          </td>
 
     
           </tr>

@@ -13,7 +13,13 @@
     @csrf
     @method("PUT")   
   
-    <input type="hidden"  name="null">
+    <input type="hidden" name="verified_by" value="">
+    <input type="hidden" name="verified_at" value="">
+    <input type="hidden" name="validated_at" value="">
+    <input type="hidden" name="validated_by" value="">
+    <input type="hidden" name="published_by" value="">
+    <input type="hidden" name="published_at" value="">">
+
     
     <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
         {{-- Tab One   --}}

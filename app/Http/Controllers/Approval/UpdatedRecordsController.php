@@ -19,9 +19,9 @@ class UpdatedRecordsController extends Controller
             ->where('event', '=', 'updated')
             ->where('auditable_type','=','App\hs_hospital_history')
             ->where('auditable_id','=',$id)
-            ->where('url','like','%'. $id . '%')            
             ->orderBy('id', 'DESC')
             ->first();
+          
     
         $hosp = hs_hospital_history::find($id);
         $audit = $hosp->audits()->find($audit_id->id);

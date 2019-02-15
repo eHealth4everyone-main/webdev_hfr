@@ -57,8 +57,6 @@ Route::get('resources', 'ResourceController@public_index')->name('public_resourc
 Route::get('login/token', 'Auth\TokenController@getToken');
 Route::post('login/token', 'Auth\TokenController@postToken')->name('login.token');
 
-//send mails
-Route::get('sendmail-test','MailController@basic_email');
 
 Auth::routes();
 
@@ -89,7 +87,6 @@ Route::middleware(["auth"])->group(function(){
             //hospitals
             Route::resource('admin/hospitals','HospitalsController');
             Route::post('admin/hospitals/search','HospitalsController@search')->name('searchHospitalsAdmin');
-            Route::get('admin/hospitals/service/master','HospitalServiceController@Index')->name('hospServices.index');
             Route::post('admin/hospitals/delete','HospitalsController@InitiateDelete')->name('hospitals.InitiateDelete');
             Route::post('admin/hospitals/export', 'HospitalsController@export')->name('hospitals.export');
 
@@ -100,6 +97,7 @@ Route::middleware(["auth"])->group(function(){
             Route::get('admin/hospitals/myrequest/update/{id}','Approval\MyRequestController@editRequest')->name('myrequest.edit');
             Route::put('admin/hospitals/myrequest/updates','Approval\MyRequestController@updateRequest')->name('myrequest.update');
             Route::post('admin/hospitals/myrequest/delete','Approval\MyRequestController@deleteRequest')->name('myrequest.delete');
+            Route::post('admin/hospitals/myrequest/delete-resubmit','Approval\MyRequestController@resubmit')->name('myrequest.resubmit');
 
             //approvals
             Route::get('admin/hospitals/approvals/verify','Approval\VerifyController@index')->name('verify.pending');
@@ -117,36 +115,21 @@ Route::middleware(["auth"])->group(function(){
 
             //general
             Route::post('admin/facilities/ownership','GeneralController@getOwnershipType')->name('getOwnershipType');
-            Route::post('admin/facilities/facilityleveloption','GeneralController@getFacilityLevelOption')->name('getFacilityLevelOption');
-            Route::post('admin/facilities/facilityspecializedoption','GeneralController@getSpecializedOptions')->name('getSpecializedOptions');
+            Route::post('admin/facilities/facility-level-option','GeneralController@getFacilityLevelOption')->name('getFacilityLevelOption');
+            Route::post('admin/facilities/facilitys-pecialized-option','GeneralController@getSpecializedOptions')->name('getSpecializedOptions');
         
             //laboratory
             Route::resource('admin/laboratory','LabController');
             Route::post('lab/equips', 'LabController@fetchEquips')->name('lab.fetchEquips');
             Route::post('lab/cert', 'LabController@fetchCert')->name('lab.fetchCert');
             
-            //equipments
-            Route::get('admin/equipments','EquipmentController@index')->name('equip.index');
-
-            //lab certification
-            Route::get('admin/cert','CertificationController@index')->name('certification.index');
-
-            //LGA and States
-            Route::get('admin/lgas','LgaController@index')->name('lgas.index');
-            Route::get('admin/states','StateController@index')->name('states.index');
-
-            //wards
-            Route::get('admin/wards','WardController@index')->name('wards.index');
-
             //Pharmacy
             Route::resource('admin/pharmacies','PharmacyController');
 
             //Imaging and Radiology premises
-            Route::resource('admin/imaging/service','ImagingServiceController');
             Route::resource('admin/imaging','ImagingController');
             Route::post('admin/imaging/services', 'ImagingController@fetchServices')->name('imaging.fetchServices');
             
-
             //resources
             Route::get('admin/resources', 'ResourceController@index')->name('resources');
             Route::get('admin/resources/upload', 'ResourceController@upload')->name('upload');
@@ -159,14 +142,19 @@ Route::middleware(["auth"])->group(function(){
 
             //download
             Route::get('admin/download/list', 'DownloadController@guestDownloadRequests')->name('downloadList');
+
+            //** ***** masters routes ******** */
+            Route::resource('admin/masters/imaging-services','ImagingServiceController');
+            Route::resource('admin/masters/hospital-services','HospitalServiceController');
+            Route::resource('admin/masters/equipments','EquipmentController');
+            Route::resource('admin/masters/certifications','CertificationController');
+            Route::resource('admin/masters/states','StateController');
+            Route::resource('admin/masters/lgas','LgaController');
+            Route::resource('admin/masters/wards','WardController');
     });
 
-    Route::get('admin/newuser/changepassword','UserController@newUserChangePasswordForm')->name('newuser.PasswordForm');
-    Route::post('admin/newuser/changepassword','UserController@newUserChangePassword')->name('newuser.ChangePassword');
+    Route::get('admin/new-user/change-password','UserController@newUserChangePasswordForm')->name('newuser.PasswordForm');
+    Route::post('admin/new-user/change-password','UserController@newUserChangePassword')->name('newuser.ChangePassword');
 
 });
-
-
-
-
 
