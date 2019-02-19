@@ -27,8 +27,8 @@ class AdminHomeController extends Controller
         };
        
 
-        $num_downloads = DB::select("SELECT date_format(created_at,'%b %y') as name,month(created_at) mon,COUNT(id) y 
-        FROM downloads group by name,mon order by mon limit 12");
+        $num_downloads = DB::select("SELECT date_format(created_at,'%b %y') as name,month(created_at) mon,year(created_at) year, COUNT(id) y 
+                FROM downloads group by name,mon,year order by year,mon asc  limit 12");
 
         $status = DB::select("select state,status,count(id) count from hospital_details_history group by state,status");
 

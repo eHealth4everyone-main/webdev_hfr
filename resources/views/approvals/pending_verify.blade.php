@@ -85,14 +85,14 @@ Facility Verification
     
         </td>
         <td>
-           @if (in_array($r->status_id,[1,8,15]))
-                <span class="label label-info"> {{$r->status}}</span>
+           @if (in_array($p->status_id,[1,8,15]))
+                <span class="label label-info"> {{$p->status}}</span>
             @endif
-            @if (in_array($r->status_id,[2,4,6,9,11,13,16,18,20]))
-                <span class="label label-success"> {{$r->status}}</span>
+            @if (in_array($p->status_id,[2,4,6,9,11,13,16,18,20]))
+                <span class="label label-success"> {{$p->status}}</span>
             @endif
-            @if (in_array($r->status_id,[3,5,7,10,12,14,17,19,21]))
-               <span class="label label-danger"> {{$r->status}}</span>
+            @if (in_array($p->status_id,[3,5,7,10,12,14,17,19,21]))
+               <span class="label label-danger"> {{$p->status}}</span>
             @endif
         </td>
         <td>

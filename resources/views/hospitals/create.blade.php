@@ -82,7 +82,7 @@
                                     <input type="text" class="form-control pull-right" id="datepicker" name="start_date" value="{{old('start_date')}}">
                                 </div>
                             </div>
-                            <label class="col-sm-2 control-label">State:<font color="red">*</font> </label></label>
+                            <label class="col-sm-2 control-label">State:<font color="red">*</font> </label>
                             <div class="col-sm-4">
                                     @if (Auth::user()->state_id == 1 )
                                     <select class="form-control select2" id="state_id" name ="state_id">
