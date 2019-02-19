@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Lga;
+use App\State;
 
 class LgaController extends Controller
 {
@@ -20,15 +21,21 @@ class LgaController extends Controller
     {              
         $request->validate([
             'name' => 'required|string|max:40',
-            'short_code' => 'required|string|max:2',
+            'state_id' => 'required',
+            'lga_code' => 'required|string|max:2',
         ]);
 
-        $state = new ou_state;
-        $state->name = $request->name;
-        $state->short_code= $request->short_code;
-        $state->save();
+        $state = State::find($request->state_id);
 
-        session()->flash("alert-success", "State added successfully!");        
+        $lga = new Lga;
+        $lga->name = $request->name;
+        $lga->lga_code= $request->lga_code;
+        $lga->state_code= $state->num_code;
+        $lga->map_code= $state->num_code .'_'. $request->lga_code;
+        $lga->state_id= $request->state_id;
+        $lga->save();
+
+        session()->flash("alert-success", "LGA added successfully!");        
         return back();
     }
 
@@ -36,22 +43,28 @@ class LgaController extends Controller
     {
         $request->validate([
             'name1' => 'required|string|max:40',
-            'short_code1' => 'required|string|max:2',
+            'state_id1' => 'required',
+            'lga_code1' => 'required|string|max:2',
         ]);
 
-        $state = ou_state::findOrFail($request->id);
-        $state->name = $request->name1;
-        $state->short_code= $request->short_code1;
-        $state->save();
+        $state = State::find($request->state_id1);
 
-        session()->flash("alert-success", "State updated successfully!");
+        $lga = Lga::find($request->id1);
+        $lga->name = $request->name1;
+        $lga->lga_code= $request->lga_code1;
+        $lga->state_code= $state->num_code;
+        $lga->map_code= $state->num_code .'_'. $request->lga_code1;
+        $lga->state_id= $request->state_id1;
+        $lga->save();
+
+        session()->flash("alert-success", "LGA updated successfully!");
         return back();
     }
 
     public function destroy(Request $request)
     {
-        ou_state::destroy($request->state_id);
-        session()->flash("alert-success", "State deleted successfully!");
+        Lga::destroy($request->lga_id);
+        session()->flash("alert-success", "LGA deleted successfully!");
         return back();
     }
 
