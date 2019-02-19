@@ -121,7 +121,7 @@ Facility Verification
                             </button>
                     </a>  
                 @elseif ($p->action === "UPDATE FACILITY") 
-                    <a href="{{route('view.updated_records',['id'=>$p->id,'stage'=>'approve'])}}">
+                    <a href="{{route('view.updated_records',['id'=>$p->id,'stage'=>'1'])}}">
                         <button class="btn btn-success btn-sm"  type="button" > Review</button>
                     </a>
                 @else

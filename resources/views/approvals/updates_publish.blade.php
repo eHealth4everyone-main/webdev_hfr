@@ -28,9 +28,9 @@
             <tr>  
                 {{-- check if values are not empty --}}
                 @if(!($audit['old']=="" and $audit['new']=="")) 
-                  {{-- check if attribute is not status id --}}
-                  @if($attr != 'status_id'  AND $attr != 'requested_by' AND $attr != 'approved_by' AND $attr != 'verified_lv1_by' AND $attr != 'verified_lv2_by'AND $attr != 'update_no') 
-                    <td><label>{{array_search($attr,$lookup)}}</label></td>
+                  {{-- check if attribute is not status_id,requested_by... --}}
+                  @if(!in_array($attr,['status_id','requested_by']))
+                   <td><label>{{array_search($attr,$lookup)}}</label></td>
                     <td>Updated from </td>
                     
                     @if($attr === 'state_id') 
@@ -62,13 +62,13 @@
                     <td>to</td>
                     <td>{{$new_values->facility_level_option}}</td>
                     @elseif($attr === 'operational_status_id')
-                    <td>{{$old_values->operational_status  ==""? 'null': $old_values->operational_status}}</td>
+                    <td>{{$old_values->operation_status  ==""? 'null': $old_values->operation_status}}</td>
                     <td>to</td>
-                    <td>{{$new_values->operational_status}}</td>
-                    @elseif($attr === 'regulatory_status_id')
-                    <td>{{$old_values->regulatory_status ==""? 'null': $old_values->regulatory_status}}</td>
+                    <td>{{$new_values->operation_status}}</td>
+                    @elseif($attr === 'registration_status_id')
+                    <td>{{$old_values->registration_status ==""? 'null': $old_values->registration_status}}</td>
                     <td>to</td>
-                    <td>{{$new_values->regulatory_status ==""? 'null': $new_values->regulatory_status}}</td>
+                    <td>{{$new_values->registration_status ==""? 'null': $new_values->registration_status}}</td>
                     @elseif($attr ==='license_status_id')
                     <td>{{$old_values->license_status ==""? 'null': $old_values->license_status}}</td>
                     <td>to</td>

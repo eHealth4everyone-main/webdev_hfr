@@ -58,7 +58,7 @@ class UpdatedRecordsController extends Controller
         "Hospital/ Clinic Level"=>"facility_level_id","Facility Level Options"=>"facility_level_option_id","Specialized Options"=>"facility_level_options_category_id",
         "Latitude"=>"longitude","Longitude"=>"latitude","Postal Address"=>"postal_address","Phone Number"=>"phone_number","Facility Close Date"=>"close_date",
         "Email Address"=>"email_address","Website"=>"website","Days of Operation"=>"operational_days","Hours of Operation"=>"operational_hours","Operation Status"=>"operational_status_id",
-        "Regulatory Status"=>"regulatory_status_id","License Status"=>"license_status_id","Medical Doctors"=>"doctors","Pharmacists"=>"pharmacists","Out Patient"=>"outpatient",
+        "Registration Status"=>"registration_status_id","License Status"=>"license_status_id","Medical Doctors"=>"doctors","Pharmacists"=>"pharmacists","Out Patient"=>"outpatient",
         "Dentists"=>"dentist","Pharmacy Technicians"=>"pharmacy_technicians","Number of Nurses (Single Qualified)"=>"nurses","Laboratory Scientists"=>"lab_scientists","In Patient"=>"inpatient",
         "Number of Midwifes (Single Qualified)"=>"midwifes","Laboratory Technicians"=>"lab_technicians","Number of Nurse and Midwife (Double Qualified)"=>"nurse_midwife","Health Records/HIM Officers"=>"him_officers",
         "Community Health Officer"=>"community_health_officer","Community Health Extension Worker"=>"community_extension_workers","Junior Com Health Extension Worker"=>"jun_community_extension_worker",
@@ -70,15 +70,15 @@ class UpdatedRecordsController extends Controller
         $hosp_id = $id;
         $name=($hosp->facility_name);
 
-        if ($stage=='approve'){
+        if ($stage=='1'){
             return view('approvals.updates_verify',compact('audits','lookup','old_values','new_values','hosp_id','name','old_services','new_services')); 
         }
 
-        if ($stage=='verify1'){
+        if ($stage=='2'){
             return view('approvals.updates_validate',compact('audits','lookup','old_values','new_values','hosp_id','name','old_services','new_services')); 
         }
 
-        if ($stage=='verify2'){
+        if ($stage=='3'){
             return view('approvals.updates_publish',compact('audits','lookup','old_values','new_values','hosp_id','name','old_services','new_services')); 
         }
     }
