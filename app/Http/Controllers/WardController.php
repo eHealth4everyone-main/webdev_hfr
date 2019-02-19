@@ -4,69 +4,61 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Yajra\Datatables\Datatables;
+use App\Ward;
 
-use App\ou_ward;
 
 class WardController extends Controller
 {
-  
+
     public function index()
     {
         $wards = DB::table('wards')
-            ->paginate(20);
+            ->orderByRaw('state,lga,name ASC')
+            ->paginate(300);
 
-        return view('wards.index', compact("wards"));
+        return view('masters.wards.index', compact("wards"));
     }
 
-
-    public function create()
-    {
-        //
-    }
-
-    public function store(Request $request)
-    {
-        //
-    }
 
    
-    public function show($id)
-    {
-        //
+    public function store(Request $request)
+    {              
+        $request->validate([
+            'name' => 'required|string|max:100',
+            'state_id' => 'required',
+            'lga_id' => 'required',
+        ]);
+
+        $ward = new Ward;
+        $ward->name = $request->name;
+        $ward->lga_id= $request->lga_id;
+        $ward->save();
+
+        session()->flash("alert-success", "Ward added successfully!");        
+        return back();
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
+    public function update(Request $request)
     {
-        //
+        $request->validate([
+            'name1' => 'required|string|max:100',
+            'state_id1' => 'required',
+            'lga_id1' => 'required',
+        ]);
+
+        $ward = Ward::find($request->id1);
+        $ward->name = $request->name1;
+        $ward->lga_id= $request->lga_id1;
+        $ward->save();
+
+        session()->flash("alert-success", "Ward updated successfully!");
+        return back();
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
+    public function destroy(Request $request)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        Ward::destroy($request->ward_id);
+        session()->flash("alert-success", "Ward deleted successfully!");
+        return back();
     }
 }

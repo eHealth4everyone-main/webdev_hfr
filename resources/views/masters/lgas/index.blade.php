@@ -67,15 +67,14 @@ Local Government Areas (LGAs)
 @include('partials.notification')
 
 <script>
-    $(document).ready( function () {
+  $(document).ready( function () {
       $('#table1').DataTable( {
         "paging":   true,
         "ordering": true,
         "info":     true
     });
 
-
-  } );
+  });
 
   $('#editModal').on('show.bs.modal', function (event) {
       $('#name1').focus();

@@ -88,7 +88,7 @@
                                     <div class="input-group-addon">
                                         <i class="fa fa-calendar"></i>
                                     </div>
-                                    <input type="text" class="form-control pull-right" id="datepicker" name="start_date" value="{{$hosp->start_date}}">
+                                    <input type="text" class="form-control pull-right" id="datepicker" name="start_date" value="{{$hosp->start_date}}" autocomplete="off">
                                 </div>
                             </div>
                             <label class="col-sm-2 control-label">State:<font color="red">*</font> </label></label>

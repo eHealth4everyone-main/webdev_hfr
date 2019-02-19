@@ -235,7 +235,8 @@
                 
                 //Date picker
                 $('#datepicker').datepicker({
-                    autoclose: true
+                    autoclose: true,
+                    endDate: new Date(),
                 })                                                   
             })
        
