@@ -7,10 +7,9 @@
               @csrf
               @method("DELETE")
               <div class="modal-body">
-                  <p class="text-center">
-                    Are you sure you want to delete this LGA?
-                  </p>
-                    <input type="hidden" name="lga_id" id="lga_id" value="">  
+                  <div id="message"></div>
+
+                  <input type="hidden" name="lga_id" id="lga_id" value="">  
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">No</button>

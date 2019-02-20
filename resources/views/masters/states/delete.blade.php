@@ -7,9 +7,8 @@
               @csrf
               @method("DELETE")
               <div class="modal-body">
-                  <p class="text-center">
-                    Are you sure you want to delete this State?
-                  </p>
+                  <div id="message"></div>
+
                     <input type="hidden" name="state_id" id="state_id" value="">  
               </div>
               <div class="modal-footer">

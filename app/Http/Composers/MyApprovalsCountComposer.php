@@ -5,7 +5,7 @@ namespace App\Http\Composers;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
 use Auth;
-use App\hs_hospital_history;
+use App\HospitalHistory;
 
 
 class MyApprovalsCountComposer
@@ -14,7 +14,7 @@ class MyApprovalsCountComposer
         protected $hosp;
 
 
-        public function __construct(hs_hospital_history $hosp)
+        public function __construct(HospitalHistory $hosp)
         {
                 $this->hosp = $hosp;
         }

@@ -7,10 +7,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use App\Exports\HFExport;
 use Maatwebsite\Excel\Facades\Excel;
-use App\hs_hospital;
-use App\hs_hospital_history;
-use App\hs_hospital_service_history;
-use App\hs_status_tracking;
+use App\Hospital;
+use App\HospitalHistory;
+use App\HospitalServiceHistory;
+use App\StatusTracking;
 use Carbon\Carbon;
 use Auth;
 use App\Notifications\CreateRequest;
@@ -107,7 +107,7 @@ class HospitalsController extends Controller
         
         $start_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->start_date)));
      
-        $hosp = new hs_hospital_history;
+        $hosp = new HospitalHistory;
         $hosp->fill($request->all());
         $hosp->unique_id = $hosp->generateUniqueID($request->lga_id,'1',$request->facility_level_id,$request->ownership_id);
         $hosp->start_date = $start_date;
@@ -128,7 +128,7 @@ class HospitalsController extends Controller
             $hosp_id = $hosp->id;
             
             //insert in status tracking table
-            $status = new hs_status_tracking;
+            $status = new StatusTracking;
             $status->hospital_id = $hosp_id;
             $status->user_id = Auth::user()->id;
             $status->status_id = 1;
@@ -138,7 +138,7 @@ class HospitalsController extends Controller
             //insert services
             if (!empty($services)){
                     foreach ($services as $id){
-                        $hosp_services = new hs_hospital_service_history;
+                        $hosp_services = new HospitalServiceHistory;
                         $hosp_services->service_id = $id;
                         $hosp_services->hospital_id = $hosp_id; 
                         $hosp_services->save();
@@ -173,7 +173,7 @@ class HospitalsController extends Controller
     
     public function edit($id)
     {
-            $hosp =hs_hospital::findorfail($id);
+            $hosp =Hospital::findorfail($id);
 
             $services = DB::table('hs_hospital_services')
                     ->select('service_id')
@@ -246,8 +246,8 @@ class HospitalsController extends Controller
         ]);
         
         //update records in history with new changes
-        $hosp = new hs_hospital_history;
-        $hosp = hs_hospital_history::findOrFail($id);
+        $hosp = new HospitalHistory;
+        $hosp = HospitalHistory::findOrFail($id);
         $hosp->fill($request->all());
         $hosp->status_id = 8;
         $hosp->requested_by = Auth::user()->id;
@@ -266,7 +266,7 @@ class HospitalsController extends Controller
         $hosp->operational_days = $hosp->arrayValuesTostring($request->operational_days);
         
         //insert in status tracking
-        $status = new hs_status_tracking;
+        $status = new StatusTracking;
         $status->hospital_id = $id;
         $status->user_id = Auth::user()->id;
         $status->status_id = 8;
@@ -301,11 +301,11 @@ class HospitalsController extends Controller
             $services_equal = $hosp->array_equal($services_before, $services_update);
 
             if(!$services_equal){ 
-                hs_hospital_service_history::where('hospital_id', $id)->delete();
+                HospitalServiceHistory::where('hospital_id', $id)->delete();
 
                 if (!empty($services_update)){
                     foreach ($services_update as $service_id){
-                        $hosp_services = new hs_hospital_service_history;
+                        $hosp_services = new HospitalServiceHistory;
                         $hosp_services->service_id = $service_id;
                         $hosp_services->hospital_id = $id; 
                         $hosp_services->save();
@@ -340,15 +340,15 @@ class HospitalsController extends Controller
     }
     
     public function InitiateDelete(Request $request){ 
-        $hs_tracking = new hs_status_tracking;
+        $hs_tracking = new StatusTracking;
         $hs_tracking->hospital_id = $request->facility_id;
         $hs_tracking->user_id = Auth::user()->id;
         $hs_tracking->status_id = '15';
         $hs_tracking->note = $request->reason;
         $hs_tracking->created_at = Carbon::now()->format('Y-m-d H:i:s');
        
-        $hosp = new hs_hospital_history;
-        $hosp = hs_hospital_history::findOrFail($request->facility_id); 
+        $hosp = new HospitalHistory;
+        $hosp = HospitalHistory::findOrFail($request->facility_id); 
         $hosp->status_id = '15';
         $hosp->requested_at = Carbon::now()->format('Y-m-d H:i:s');
         $hosp->requested_by = Auth::user()->id; 
@@ -365,10 +365,10 @@ class HospitalsController extends Controller
        
         DB::beginTransaction();
         try {
-            hs_hospital_history::disableAuditing();  
+            HospitalHistory::disableAuditing();  
             $hs_tracking->save();
             $hosp->save();
-            hs_hospital_history::enableAuditing();        
+            HospitalHistory::enableAuditing();        
             
                 DB::commit();
         } catch (\Exception $ex) {

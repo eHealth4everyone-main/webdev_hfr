@@ -28,8 +28,7 @@
             <tr>  
                 {{-- check if values are not empty --}}
                 @if(!($audit['old']=="" and $audit['new']=="")) 
-                  {{-- check if attribute is not status_id,requested_by... --}}
-                  @if(!in_array($attr,['status_id','requested_by']))
+                
                    <td><label>{{array_search($attr,$lookup)}}</label></td>
                     <td>Updated from </td>
                     
@@ -79,7 +78,7 @@
                     <td>{{$audit['new']}}</td>
                     @endif
   
-                  @endif
+                 
                 @endif
               </tr>
             @endforeach

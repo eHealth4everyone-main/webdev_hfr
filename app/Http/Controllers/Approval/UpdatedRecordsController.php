@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Auth;
-use App\hs_hospital_history;
+use App\HospitalHistory;
 
 
 class UpdatedRecordsController extends Controller
@@ -17,13 +17,13 @@ class UpdatedRecordsController extends Controller
         $audit_id = DB::table('audits')
             ->select('id')
             ->where('event', '=', 'updated')
-            ->where('auditable_type','=','App\hs_hospital_history')
+            ->where('auditable_type','=','App\HospitalHistory')
             ->where('auditable_id','=',$id)
             ->orderBy('id', 'DESC')
             ->first();
           
     
-        $hosp = hs_hospital_history::find($id);
+        $hosp = HospitalHistory::find($id);
         $audit = $hosp->audits()->find($audit_id->id);
         $audits= $audit->getModified();
 

@@ -9,7 +9,7 @@
   
           <div class="modal-body">
               <div class="panel-body">
-              <form action="{{route('service.update','id')}}" method="post">
+              <form action="{{route('imaging-services.update','id')}}" method="post">
                   @csrf
                   @method("PUT")
                   <input type="hidden" name="id" id="id">

@@ -40,7 +40,7 @@ Local Government Areas (LGAs)
                     @endif
                     @if(auth()->user()->hasPermissionTo(54))
                       <a href="#">
-                        <button class="btn btn-danger btn-sm" data-id="{{$lga->id}}" type="button" data-toggle="modal" data-target="#deleteModal" > Delete</button>
+                        <button class="btn btn-danger btn-sm" data-id="{{$lga->id}}" data-name="{{$lga->name}}" type="button" data-toggle="modal" data-target="#deleteModal" > Delete</button>
                       </a>
                     @endif
                   </td>
@@ -92,9 +92,10 @@ Local Government Areas (LGAs)
     
     $('#deleteModal').on('show.bs.modal', function (event) {
       var button = $(event.relatedTarget) 
-      
       var id = button.data('id')
+      var message =  "Are you sure you want to delete '".concat(button.data('name'), "' LGA?") ;
       var modal = $(this)
+      modal.find('.modal-body #message').text(message);
       modal.find('.modal-body #lga_id').val(id)
     })
 

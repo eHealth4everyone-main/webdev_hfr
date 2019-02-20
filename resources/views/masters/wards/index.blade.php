@@ -39,7 +39,7 @@ Wards
                       @endif
                       @if(auth()->user()->hasPermissionTo(58))
                         <a href="#">
-                          <button class="btn btn-danger btn-sm" data-id="{{$w->id}}" type="button" data-toggle="modal" data-target="#deleteModal" > Delete</button>
+                          <button class="btn btn-danger btn-sm" data-id="{{$w->id}}" data-name="{{$w->name}}"  type="button" data-toggle="modal" data-target="#deleteModal" > Delete</button>
                         </a>
                       @endif
                   </td>
@@ -134,7 +134,9 @@ Wards
       var button = $(event.relatedTarget) 
       
       var id = button.data('id')
+      var message =  "Are you sure you want to delete '".concat(button.data('name'), "' ward?") ;
       var modal = $(this)
+      modal.find('.modal-body #message').text(message);
       modal.find('.modal-body #ward_id').val(id)
   })
 

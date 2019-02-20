@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\lst_imaging_service;
+use App\ImagingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -11,7 +11,7 @@ class ImagingServiceController extends Controller
 
     public function index()
     {
-        $services =lst_imaging_service::orderBy('name')->get();
+        $services =ImagingService::orderBy('name')->get();
         return view('masters.imaging_services.index', compact("services"));
     }
 
@@ -23,7 +23,7 @@ class ImagingServiceController extends Controller
         ]);
 
 
-        $service = new lst_imaging_service;
+        $service = new ImagingService;
         $service->name = $request->name;
         $service->save();
 
@@ -37,7 +37,7 @@ class ImagingServiceController extends Controller
             'service_name1' => 'required|max:100',
         ]);
         
-        $service=lst_imaging_service::findOrFail($request->id);
+        $service=ImagingService::findOrFail($request->id);
         $service->name = $request->service_name1;
         $service->save();
 
@@ -47,7 +47,7 @@ class ImagingServiceController extends Controller
 
     public function destroy(Request $request)
     {
-        lst_imaging_service::destroy($request->service_id);
+        ImagingService::destroy($request->service_id);
         session()->flash("alert-success", "Service deleted successfully!");
         return back();
     }

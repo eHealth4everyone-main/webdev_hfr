@@ -3,20 +3,15 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Support\Facades\DB;
+use OwenIt\Auditing\Contracts\Auditable;
 
-
-class hs_hospital_history extends Model implements Auditable 
+class Hospital extends Model implements Auditable 
 {
     use \OwenIt\Auditing\Auditable;
-    
-    protected $table = 'hs_hospitals_history';
+    protected $table = 'hs_hospitals';
     protected $guarded = ["unique_id","start_date","operational_days","status_id","created_by","services"];
-    protected $auditExclude = ['status_id', 'created_by','requested_by','request_note', 'requested_at',
-                                'verified_by', 'verified_at', 'verify_note',
-                                'validated_by', 'validated_at', 'validate_note', 
-                                'published_by', 'published_at', 'publish_note',];
+
 
     public function arrayValuesTostring($val)
     {
@@ -57,16 +52,5 @@ class hs_hospital_history extends Model implements Auditable
 
         return $id;
     }
-
-    public function getUpdateNumber($state_id){
-        $update = DB::select("Select update_no+1 num from hs_hospitals_history where id = ". $state_id ."");
-
-        return $update[0]->num;
-    }
-    
-    function array_equal($a, $b) {
-        return (is_array($a) && is_array($b) && array_diff($a, $b) === array_diff($b, $a));
-    }
-
 
 }

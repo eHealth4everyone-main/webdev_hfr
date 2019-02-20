@@ -40,7 +40,7 @@ States
                     @endif
                     @if(auth()->user()->hasPermissionTo(50))
                       <a href="#">
-                        <button class="btn btn-danger btn-sm" data-id="{{$st->id}}" type="button" data-toggle="modal" data-target="#deleteModal" > Delete</button>
+                        <button class="btn btn-danger btn-sm" data-id="{{$st->id}}" data-name="{{$st->name}}" type="button" data-toggle="modal" data-target="#deleteModal" > Delete</button>
                       </a>
                     @endif
                   </td>
@@ -90,9 +90,10 @@ States
     
     $('#deleteModal').on('show.bs.modal', function (event) {
       var button = $(event.relatedTarget) 
-      
       var id = button.data('id')
+      var message =  "Are you sure you want to delete '".concat(button.data('name'), "' State?") ;
       var modal = $(this)
+      modal.find('.modal-body #message').text(message);
       modal.find('.modal-body #state_id').val(id)
     })
 

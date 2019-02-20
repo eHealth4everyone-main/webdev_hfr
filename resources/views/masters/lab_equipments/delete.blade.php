@@ -3,13 +3,12 @@
         <div class="modal-dialog modal-sm" role="document">
           <div class="modal-content">
            
-          <form action="{{route('wards.destroy','id')}}" method="post">
+          <form action="{{route('equipments.destroy','id')}}" method="post">
               @csrf
               @method("DELETE")
               <div class="modal-body">
                   <div id="message"></div>
-
-                    <input type="hidden" name="ward_id" id="ward_id" value="">  
+                  <input type="hidden" name="equip_id" id="equip_id" value="">  
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">No</button>

@@ -5,11 +5,11 @@ namespace App\Http\Controllers\Approval;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
-use App\hs_status_tracking;
+use App\StatusTracking;
 use Auth;
 use Carbon\Carbon;
-use App\hs_hospital_history;
-use App\hs_hospital_service_history;
+use App\HospitalHistory;
+use App\HospitalServiceHistory;
 use App\audit;
 use App\Notifications\FacilityVerifiedLevel2;
 use App\Notifications\VerificationRejectedLevel2;
@@ -62,15 +62,15 @@ class ValidateController extends Controller
 
         $date = Carbon::now()->format('Y-m-d H:i:s');
 
-        hs_hospital_history::disableAuditing();        
-        $hosp = new hs_hospital_history();
-        $hosp = hs_hospital_history::findOrFail($request->id);
+        HospitalHistory::disableAuditing();        
+        $hosp = new HospitalHistory();
+        $hosp = HospitalHistory::findOrFail($request->id);
         $hosp->status_id = $status_id;
         $hosp->validated_by = Auth::user()->id;
         $hosp->validated_at = $date;
         $hosp->validate_note = $request->notes;
         
-        $status = new hs_status_tracking;
+        $status = new StatusTracking;
         $status->hospital_id = $request->id;
         $status->user_id = Auth::user()->id;
         $status->status_id = $status_id;
@@ -88,7 +88,7 @@ class ValidateController extends Controller
             return response()->json(['error' => $ex->getMessage()], 500);
         }
 
-        hs_hospital_history::enableAuditing();
+        HospitalHistory::enableAuditing();
 
         //****** send notifications *********
         //get users with verification level 2 access
@@ -131,15 +131,15 @@ class ValidateController extends Controller
             $action="Recall Delete Validation";
         }
   
-        hs_hospital_history::disableAuditing();       
-        $hosp = new hs_hospital_history;
-        $hosp = hs_hospital_history::findOrFail($request->hosp_id);
+        HospitalHistory::disableAuditing();       
+        $hosp = new HospitalHistory;
+        $hosp = HospitalHistory::findOrFail($request->hosp_id);
         $hosp->status_id = $status_id;
         $hosp->validated_by = $request->validated_by;
         $hosp->validated_at = $request->validated_at;
         $hosp->validate_note = $request->validate_note;
    
-        $status = new hs_status_tracking;
+        $status = new StatusTracking;
         $status->hospital_id = $request->hosp_id;
         $status->user_id = Auth::user()->id;
         $status->status_id = $status_id;
@@ -158,7 +158,7 @@ class ValidateController extends Controller
             return response()->json(['error' => $ex->getMessage()], 500);
         }
 
-        hs_hospital_history::enableAuditing();
+        HospitalHistory::enableAuditing();
 
 
         session()->flash("alert-success", "Validation recalled successfully!");

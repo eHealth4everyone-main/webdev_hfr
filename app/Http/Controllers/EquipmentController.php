@@ -3,75 +3,51 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\lst_equipment;
+use App\LaboratoryEquipment;
 
 class EquipmentController extends Controller
 {
  
     public function index()
-    {
-        $equip =lst_equipment::all();
-        return view('laboratory.equipments.index', compact("equip"));
+    { 
+        $equips =LaboratoryEquipment::orderBy('name','ASC')->get();
+        return view('masters.lab_equipments.index',compact('equips')); 
     }
 
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
-    {
-        //
+    {              
+        $request->validate([
+            'name' => 'required|string|max:100',
+        ]);
+
+
+        $eq = new LaboratoryEquipment;
+        $eq->name = $request->name;
+        $eq->save();
+
+        session()->flash("alert-success", "Laboratory equipment added successfully!");        
+        return back();
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    public function update(Request $request)
     {
-        //
+        $request->validate([
+            'name1' => 'required|string|max:100',
+        ]);
+
+        $eq = LaboratoryEquipment::find($request->id);
+        $eq->name = $request->name1;
+        $eq->save();
+        session()->flash("alert-success", "Laboratory equipment updated successfully!");
+        return back();
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
+    public function destroy(Request $request)
     {
-        //
+        LaboratoryEquipment::destroy($request->equip_id);
+        session()->flash("alert-success", "Laboratory equipment deleted successfully!");
+        return back();
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
+   
 }

@@ -3,77 +3,54 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\lst_certificate;
+use App\LaboratoryCertificate;
 
 class CertificationController extends Controller
 {
 
     public function index()
     {
-        $cert =lst_certificate::all();
-        
-        return view('laboratory.certificate.index', compact("cert"));
+        $certificates =LaboratoryCertificate::orderBy('name','ASC')->get();
+        return view('masters.lab_certificates.index',compact('certificates')); 
     }
 
-
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
-    {
-        //
+    {              
+        $request->validate([
+            'name' => 'required|string|max:100',
+            'type' => 'required',
+        ]);
+
+
+        $cer = new LaboratoryCertificate;
+        $cer->name = $request->name;
+        $cer->type = $request->type;
+        $cer->save();
+
+        session()->flash("alert-success", "Laboratory certification added successfully!");        
+        return back();
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    public function update(Request $request)
     {
-        //
+        $request->validate([
+            'name1' => 'required|string|max:100',
+            'type1' => 'required',
+        ]);
+
+        $cer = LaboratoryCertificate::find($request->id);
+        $cer->name = $request->name1;
+        $cer->type = $request->type1;
+        $cer->save();
+        session()->flash("alert-success", "Laboratory certification updated successfully!");
+        return back();
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
+    public function destroy(Request $request)
     {
-        //
+        LaboratoryCertificate::destroy($request->certification_id);
+        session()->flash("alert-success", "Laboratory certification deleted successfully!");
+        return back();
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
 }

@@ -5,13 +5,13 @@ namespace App\Http\Controllers\Approval;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
-use App\hs_status_tracking;
+use App\StatusTracking;
 use Auth;
 use Carbon\Carbon;
-use App\hs_hospital;
-use App\hs_hospital_history;
-use App\hs_hospital_service;
-use App\hs_hospital_service_history;
+use App\Hospital;
+use App\HospitalHistory;
+use App\HospitalService;
+use App\HospitalServiceHistory;
 use App\audit;
 use App\Notifications\FacilityApproved;
 use App\Notifications\ApprovalRejected;
@@ -70,17 +70,17 @@ class PublishController extends Controller
         DB::beginTransaction();
         try {
             $date = Carbon::now()->format('Y-m-d H:i:s');
-            hs_hospital_history::disableAuditing();      
-            $hosp = new hs_hospital_history();
-            $hosp = hs_hospital_history::findOrFail($request->id);
+            HospitalHistory::disableAuditing();      
+            $hosp = new HospitalHistory();
+            $hosp = HospitalHistory::findOrFail($request->id);
             $hosp->status_id = $status_id;
             $hosp->published_by = Auth::user()->id;
             $hosp->published_at = $date;
             $hosp->publish_note = $request->notes;
             $hosp->save();
-            hs_hospital_history::enableAuditing();
+            HospitalHistory::enableAuditing();
         
-            $status = new hs_status_tracking;
+            $status = new StatusTracking;
             $status->hospital_id = $request->id;
             $status->user_id = Auth::user()->id;
             $status->status_id = $status_id;
@@ -91,11 +91,11 @@ class PublishController extends Controller
 
            //insert new facility data to main table after published
            if($status_id == 6){
-                $hosp_history = new hs_hospital_history;
-                $hosp_history = hs_hospital_history::find($request->id);
+                $hosp_history = new HospitalHistory;
+                $hosp_history = HospitalHistory::find($request->id);
 
                 //copy data from  history to main
-                $hosp_main = new hs_hospital;  
+                $hosp_main = new Hospital;  
                 $hosp_main -> fill($hosp_history->toArray());
                 $hosp_main -> unique_id = $hosp_history->unique_id;
                 $hosp_main -> start_date = $hosp_history->start_date;
@@ -111,7 +111,7 @@ class PublishController extends Controller
                 //insert services
                 if(!empty($services)){
                     foreach ($services as $service){
-                        $hosp_services = new hs_hospital_service;
+                        $hosp_services = new HospitalService;
                         $hosp_services->service_id = $service->service_id;
                         $hosp_services->hospital_id = $request->id; 
                         $hosp_services->save();
@@ -123,12 +123,12 @@ class PublishController extends Controller
 
             //update hospital, and hospital services to main table
             if($status_id == 13){
-                $hosp_history = new hs_hospital_history;
-                $hosp_history = hs_hospital_history::find($request->id);
+                $hosp_history = new HospitalHistory;
+                $hosp_history = HospitalHistory::find($request->id);
 
                 //copy data from  history to main
-                $hosp_main = new hs_hospital;  
-                $hosp_main = hs_hospital::find($request->id);
+                $hosp_main = new Hospital;  
+                $hosp_main = Hospital::find($request->id);
                 $hosp_main -> fill($hosp_history->toArray());
                 $hosp_main -> start_date = $hosp_history->start_date;
                 $hosp_main -> status_id = $hosp_history->status_id;
@@ -146,7 +146,7 @@ class PublishController extends Controller
                     
                     //add new services 
                     foreach ($services as $service){
-                        $hosp_services = new hs_hospital_service;
+                        $hosp_services = new HospitalService;
                         $hosp_services->service_id = $service->service_id;
                         $hosp_services->hospital_id = $request->id; 
                         $hosp_services->save();
@@ -157,8 +157,8 @@ class PublishController extends Controller
 
             //Delete facility after final delete request published
             if($status_id == 20){
-                hs_hospital_service::where('hospital_id', $request->id)->delete();
-                hs_hospital::destroy($request->id);
+                HospitalService::where('hospital_id', $request->id)->delete();
+                Hospital::destroy($request->id);
             }
 
             DB::commit();
