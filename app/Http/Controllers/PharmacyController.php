@@ -6,8 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 
-use App\Pharmacie;
-use App\hs_hospital;
+use App\Pharmacy;
+use App\HospitalHistory;
 
 
 class PharmacyController extends Controller
@@ -15,73 +15,23 @@ class PharmacyController extends Controller
     public function index()
     {
         $pharmacies = DB::table('pharmacy_details')
-            ->select('state','lga','ward','unique_id','facility_name','ownership','id')
-            ->orderByRaw('state','lga','facility_name')
-            ->paginate(15);
+            ->orderBy('state')
+            ->orderBy('lga')
+            ->orderBy('facility_name')
+            ->paginate(20);
+    
+
+        list($state_id, $lga_id,$facility_name, $geo_codes, $ward_id,$ownership_id,$operational_status_id,
+        $registration_status_id, $license_status_id) = [1,1,"",0,0,0,0,0,0,0,0];
         
-        //get state list
-        $lst_states = Cache::remember('lst_states', 60, function () {
-        return DB::table('ou_states')
-                ->select('id','name')
-                ->orderByRaw('name ASC')
-                ->get();
-        });
-        return view('pharmacy.index', compact('pharmacies','lst_states'));
+        return view('pharmacy.index',compact('pharmacies','state_id', 'lga_id','facility_name', 'geo_codes',
+         'ward_id', 'ownership_id','operational_status_id','registration_status_id', 'license_status_id'));  
     }
 
     public function create()
     {
-            //get state list
-            $lst_states = Cache::remember('lst_states', 60, function () {
-                return DB::table('ou_states')
-                        ->select('id','name')
-                        ->orderByRaw('name ASC')
-                        ->get();
-                });
-        
-                //get ownership
-                $lst_ownerships= Cache::remember('lst_ownerships', 60, function () {
-                    return DB::table('lst_ownerships')
-                            ->select('id','name')
-                            ->get();
-                });
-                //get opertion statuss
-                $lst_oparational_status= Cache::remember('lst_oparational_status', 60, function () {
-                    return DB::table('lst_oparational_status')
-                            ->select('id','status')
-                            ->where('category','1')
-                            ->get();
-                });
-                //get regulatory status
-                $lst_registration_status= Cache::remember('lst_registration_status', 60, function () {
-                return DB::table('lst_registration_status')
-                        ->select('id','status')
-                        ->get();
-                });
-                //get license status
-                $lst_license_status= Cache::remember('lst_license_status', 60, function () {
-                    return DB::table('lst_license_status')
-                            ->select('id','status')
-                            ->get();
-                });
-                 //get outlet category
-                $lst_outlet_category= Cache::remember('lst_outlet_category', 60, function () {
-                    return DB::table('lst_outlet_category')
-                            ->select('id','name')
-                            ->get();
-                });
-                 //get premises types
-                 $lst_premises_type= Cache::remember('lst_premises_type', 60, function () {
-                    return DB::table('lst_premises_type')
-                            ->select('id','name')
-                            ->get();
-                });
-                
-
-                return view('pharmacy.create',compact('lst_states','lst_ownerships','lst_oparational_status',
-                'lst_registration_status','lst_license_status','lst_premises_type','lst_outlet_category'));        
+        return view('pharmacy.create');        
     }
-
  
     public function store(Request $request)
     {
@@ -115,12 +65,11 @@ class PharmacyController extends Controller
             'pharmacists'=>'nullable|numeric',
             'pharmacy_technicians'=>'nullable|numeric',
         ]);
-    
-        
+     
         $start_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->start_date)));
 
-        $hosp = new hs_hospital;
-        $ph = new Pharmacie;
+        $hosp = new HospitalHistory;
+        $ph = new Pharmacy;
         $ph->fill($request->all());
         $ph->unique_id = $hosp->generateUniqueID($request->lga_id,'2','0',$request->ownership_id);
         $ph->start_date = $start_date;
@@ -131,11 +80,7 @@ class PharmacyController extends Controller
         return redirect()->back();
     }
 
-    public function show($id)
-    {
-        
-    }
-
+ 
 
     public function edit($id)
     {
@@ -145,12 +90,92 @@ class PharmacyController extends Controller
     public function update(Request $request, $id)
     {
     
-     
 
     }
 
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        Pharmacy::destroy($request->fac_id);
+        session()->flash("alert-success", "Pharmacy deleted successfully!");
+        return back();
     }
+
+    public function search(Request $request)
+    {
+        $state_id = $request->state_id;
+        $lga_id = $request->lga_id;
+        $ward_id = $request->ward_id;
+        $facility_name =$request->facility_name;
+        $geo_codes = $request->geo_codes;
+        $ownership_id = $request->ownership_id;
+        $operational_status_id = $request->operational_status_id;
+        $registration_status_id = $request->registration_status_id;
+        $license_status_id = $request->license_status_id;
+    
+        if ($geo_codes == 0){
+            $cond = "<>";
+            $value = 'XXX';
+        }
+        if ($geo_codes == 1){
+            $cond = "<>";
+            $value = '';
+        }
+        if ($geo_codes == 2){
+            $cond = "=";
+            $value = '';
+        }
+
+
+        if ($ward_id == 0){
+            $ward_id ='';
+        }
+     
+        if($ownership_id==0 ){
+            $ownership_id=''; 
+        }
+        if($operational_status_id==0){
+            $operational_status_id='';
+        }
+        if($registration_status_id==0){
+            $registration_status_id='';
+        }
+        if($license_status_id==0){
+            $license_status_id='';
+        }
+
+
+        $pharmacies = DB::table('pharmacy_details')
+            ->where('state_id','like','%'.$state_id.'%')
+            ->where('lga_id','like','%'.$lga_id.'%')
+            ->where(DB::Raw("IFNULL(ward_id, '')"),'like','%'.$ward_id.'%')
+            ->where('ownership_id','like','%'.$ownership_id.'%')
+            ->where(DB::Raw("IFNULL(operational_status_id, '')"),'like','%'.$operational_status_id.'%')
+            ->where(DB::Raw("IFNULL(registration_status_id, '')"),'like','%'.$registration_status_id.'%')
+            ->where(DB::Raw("IFNULL(license_status_id, '')"),'like','%'.$license_status_id.'%')
+            ->Where('facility_name', 'like', '%' .  $facility_name . '%')
+            ->where(DB::Raw("IFNULL(latitude, '')"),$cond,$value)
+            ->orderBy('state')
+            ->orderBy('lga')
+            ->orderBy('facility_name')
+            ->paginate(20)
+            ->appends($request->all());
+
+   
+        //return original values from request
+        $state_id = $request->state_id;
+        $lga_id = $request->lga_id;
+        $ward_id = $request->ward_id;
+        $facility_name =$request->facility_name;
+        $geo_codes = $request->geo_codes;
+        $facility_level_id = $request->facility_level_id;
+        $ownership_id = $request->ownership_id;
+        $operational_status_id = $request->operational_status_id;
+        $registration_status_id = $request->registration_status_id;
+        $license_status_id = $request->license_status_id;
+
+        
+        return view('pharmacy.index',compact('pharmacies','state_id', 'lga_id','facility_name', 'geo_codes', 'ward_id', 
+        'ownership_id','operational_status_id','registration_status_id', 'license_status_id'));    
+    }
+
 }

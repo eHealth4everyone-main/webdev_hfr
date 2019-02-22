@@ -4,13 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\HospitalService;
+use App\HospitalServiceMaster;
 
 class HospitalServiceController extends Controller
 {
     public function index()
     {
-        $services =HospitalService::orderBy('name','ASC')->get();
+        $services =HospitalServiceMaster::orderBy('name','ASC')->get();
       
         return view('masters.hospital_services.index',compact('services')); 
     }
@@ -23,7 +23,7 @@ class HospitalServiceController extends Controller
         ]);
 
 
-        $service = new HospitalService;
+        $service = new HospitalServiceMaster;
         $service->name = $request->name;
         $service->service_category_id= $request->service_category_id;
         $service->save();
@@ -39,7 +39,7 @@ class HospitalServiceController extends Controller
             'name1' => 'required|string|max:100',
         ]);
 
-        $service = HospitalService::find($request->id1);
+        $service = HospitalServiceMaster::find($request->id1);
         $service->name = $request->name1;
         $service->service_category_id= $request->service_category_id1;
         $service->save();
@@ -50,7 +50,7 @@ class HospitalServiceController extends Controller
 
     public function destroy(Request $request)
     {
-        HospitalService::destroy($request->service_id);
+        HospitalServiceMaster::destroy($request->service_id);
         session()->flash("alert-success", "Hospital service deleted successfully!");
         return back();
     }

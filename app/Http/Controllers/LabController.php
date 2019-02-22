@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Cache;
+use App\Laboratory;
+use App\HospitalHistory;
 
 class LabController extends Controller
 {
@@ -12,307 +13,258 @@ class LabController extends Controller
     public function index()
     {
         $labs = DB::table('laboratory_details')
-            ->select('state','lga','ward','unique_id','facility_name','facility_level','ownership','id')
-            ->orderByRaw('state','lga','facility_name')
-            ->paginate(15);
-        //get state list
+            ->orderBy('state')
+            ->orderBy('lga')
+            ->orderBy('facility_name')
+            ->paginate(20);
+
+        list($state_id, $lga_id,$facility_name, $geo_codes, $ward_id, 
+        $facility_level_id , $ownership_id,$operational_status_id,$registration_status_id,
+        $license_status_id) = [1,1,"",0,0,0,0,0,0,0,0];
         
-        $lst_states = Cache::remember('lst_states', 60, function () {
-        return DB::table('ou_states')
-                ->select('id','name')
-                ->orderByRaw('name ASC')
-                ->get();
-        });
-
-        return view('laboratory.index', compact("labs"));
-    }
-    public function public_index()
-    {
-        $labs =DB::table('laboratory')->get();
-        return view('public.labList', compact("labs"));
+        return view('laboratory.index',compact('labs',
+        'state_id', 'lga_id','facility_name', 'geo_codes', 'ward_id','facility_level_id', 
+        'ownership_id','operational_status_id','registration_status_id', 'license_status_id'));  
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
-        return view('lab.create');                
+        return view('laboratory.create');                
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+ 
     public function store(Request $request)
     {
         $rules = [
-            'sig_unique_id'=>'unique',
-            'cac_reg'=>'nullable',
-            'comm_date'=>'nullable|date',
-            'reg_fac_name'=>'required',
+            'unique_id'=>'unique',
+            'registration_no'=>'nullable',
+            'start_date'=>'nullable|date',
+            'facility_name'=>'required',
             'alt_facility_name'=>'nullable',
-            'state'=>'required',
-            'lga'=>'required',
+            'state_id'=>'required',
+            'lga_id'=>'required',
+            'ward_id'=>'required',
             'email_address'=>'nullable|email',
             'website'=>'nullable',
             'operational_days'=>'nullable',
-            'hr_operation'=>'nullable',
             'operational_hours'=>'nullable',
-            'hs_level'=>'required',
-            'hs_ownership'=>'required',
-            'hs_op_status'=>'required',
-            'lb_state'=>'required',
-            'lb_hr'=>'numeric',
-            'lb_lab_tech'=>'numeric'
+            'facility_level_id'=>'required',
+            'ownership_id'=>'required',
+            'phone_number'=>'nullable',
+            'medical_laboratory_number'=>'numeric|nullable',
+            'house_no'=>'nullable',
+            'street_name'=>'nullable',
+            'operational_status_id'=>'required',
+            'registration_status_id'=>'nullable',
+            'accreditation_status_id'=>'nullable',
+            'license_status_id'=>'nullable',
+            'laboratory_scientists'=>'nullable|numeric',
+            'laboratory_technicians'=>'nullable|numeric',
+            'quality_assurance'=>'nullable',
+            'premises_type_id'=>'nullable',
+            'postal_address'=>'nullable',
+            'longitude'=>'nullable|numeric|between:2.483,20',
+            'latitude'=>'nullable|numeric|between:3.883,13.867',
         ];
+
         $customMessages = [
-            'reg_fac_name.required' => 'The Facility name field is required',
-            'state.required' => 'The State field is required',
-            'lga.required' => 'The LGA field is required',
-            'hs_level.required' => 'The Laboratory level field is required',
-            'hs_ownership.required' => 'The Ownership field is required',
-            'hs_op_status.required' => 'The Operation status field is required',
-            'lb_state.required' => 'The Instituion/Standalone field is required',            
-            'lb_hr.numeric' => 'The Laboratory Scientists field must be a number',
-            'lb_lab_tech.numeric' => 'The Laboratory Technicians field must be a number'
+            'state_id.required' => 'The State field is required',
+            'lga_id.required' => 'The LGA field is required',
+            'ownership_id.required' => 'The Ownership field is required',
+            'operational_status_id.required' => 'The Operation status field is required',
+            'premises_type_id.required' => 'The Instituion/ Standalone field is required',          
         ];
-        
+
         $this->validate($request, $rules, $customMessages);
         
-        $sign = new Signature;
-        $lab = new Lab;
+        $start_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->start_date)));
         
-        $max = $sign::where('id','>', 1)->max('id');
-        $ids = $max + 1; //auto increment id
-        $num_of_fac = $sign::where('state',$request->state)
-        ->where('lga',$request->lga)
-        ->count();
-        $num_of_fac = $num_of_fac + 1; //get serial number of the next HF in LGA
-        
-        $UniqueID = $sign->makeID($request->state,$request->lga,"3",$request->hs_level,$request->hs_ownership,$num_of_fac);
-        
-        $regdate = date('Y-m-d', strtotime(str_replace('-', '/', $request->comm_date)));
-        $cert_date_nat = date('Y-m-d', strtotime(str_replace('-', '/', $request->lb_dt_cert_ng)));
-        $exp_date_nat = date('Y-m-d', strtotime(str_replace('-', '/', $request->lb_dt_exp_cert_ng)));
-        $cert_date_int = date('Y-m-d', strtotime(str_replace('-', '/', $request->lb_dt_cert_int)));
-        $exp_date_int = date('Y-m-d', strtotime(str_replace('-', '/', $request->lb_dt_exp_cert_int)));
+        $hosp = new HospitalHistory;
+        $lab = new Laboratory;
+        $lab->fill($request->all());
+        $lab->unique_id = $hosp->generateUniqueID($request->lga_id,'3',$request->facility_level_id, $request->ownership_id);
+        $lab->start_date = $start_date;
+        $lab->operational_days = $hosp->arrayValuesTostring($request->operational_days);
 
+        DB::beginTransaction();
+        try {
+            $lab->save();
         
-        $opdays = $sign->arrayValuesTostring($request->operational_days);
-        $lab_equips = $sign->arrayValuesTostring($request->lab_equip);
-        
-        $sign->id=$ids;
-        $sign->sig_unique_id=$UniqueID;
-        $sign->fac_tpye='3';
-        $sign->cac_reg= $request->cac_reg;
-        $sign->comm_date=$regdate;
-        $sign->reg_fac_name= strtoupper($request->reg_fac_name);
-        $sign->alt_facility_name = strtoupper($request->alt_facility_name);
-        $sign->state = $request->state;
-        $sign->lga = $request->lga;
-        $sign->ward = $request->ward;
-        $sign->house_no = $request->house_no;
-        $sign->street_name = $request->street_name;
-        $sign->longitude = $request->longitude;
-        $sign->latitude = $request->latitude;
-        $sign->postal_address = $request->postal_address;
-        $sign->phone_number = $request->phone_number;
-        $sign->email_address = $request->email_address;
-        $sign->website = $request->website;
-        $sign->operational_days = $opdays;
-        $sign->hr_operation = $request->hr_operation;
-        $sign->operational_hours = $request->operational_hours;
-        $sign->save();
-        
-        $lab->lb_id = $ids;     
-        $lab->lb_hs_unique_id = "";
-        $lab->lb_sig_unique_id = $UniqueID;
-        $lab->lb_state = $request->lb_state;
-        $lab->lb_reg_num = $request->lb_reg_num;
-        $lab->lb_level = $request->hs_level;
-        $lab->lb_owner = $request->hs_ownership;
-        $lab->lb_owner_type = $request->hs_ownership_type;
-        $lab->lb_owner_dt = $request->hs_ownership_details;
-        $lab->lb_op_status = $request->hs_op_status;
-        $lab->lb_reg_status = $request->hs_reg_status;
-        $lab->lb_acc_status = $request->lb_acc_status;
-        $lab->lb_lic_status = $request->hs_lic_status;
-        $lab->lb_cert_ng = $request->national;
-        $lab->lb_cert_ng_type = $request->nat_cert;
-        $lab->lb_dt_cert_ng = $cert_date_nat;
-        $lab->lb_dt_exp_cert_ng = $exp_date_nat;
-        $lab->lb_cert_int = $request->international;
-        $lab->lb_cert_int_type = $request->int_cert;
-        $lab->lb_dt_cert_int = $cert_date_int;
-        $lab->lb_dt_exp_cert_int = $exp_date_int;
-        $lab->lb_enrol = $request->lb_enrol;
-        $lab->lb_hr = $request->lb_hr;
-        //$lab->lb_dt_created = $request
-        $lab->lb_flag_old = 'No';
-        $lab->statecode = $request->state;
-        $lab->lb_lab_tech = $request->lb_lab_tech;
-        $lab->lb_flag = '0';
-        $lab->lb_eq_id = $lab_equips;
-        $lab->save();
-        
+            DB::commit();
+        } catch (\Exception $ex) {
+            DB::rollback();
+            return response()->json(['error' => $ex->getMessage()], 500);
+        }
+
         session()->flash("alert-success","Laboratory Information Saved Successfully!");
-        return redirect()->back();
-    }
-
-
-    public function show($id)
-    {
-        $labs =Signature::findorfail($id);
-        return view('lab.show', compact("labs")); 
-    }
-
-    public function edit($id)
-    {
-        $labs =Signature::findorfail($id);
-        return view('lab.edit', compact("labs")); 
+        return redirect()->route('laboratory.index');
     }
 
    
+    public function edit($id)
+    {
+        $labs =Laboratory::findorfail($id);
+        return view('laboratory.edit', compact('labs')); 
+    }
+
     public function update(Request $request, $id)
     {
         $rules = [
-            'sig_unique_id'=>'unique',
-            'cac_reg'=>'nullable',
-            'comm_date'=>'nullable|date',
-            'reg_fac_name'=>'required',
+            'unique_id'=>'unique',
+            'registration_no'=>'nullable',
+            'start_date'=>'nullable|date',
+            'facility_name'=>'required',
             'alt_facility_name'=>'nullable',
-            'state'=>'required',
-            'lga'=>'required',
+            'state_id'=>'required',
+            'lga_id'=>'required',
+            'ward_id'=>'required',
             'email_address'=>'nullable|email',
             'website'=>'nullable',
             'operational_days'=>'nullable',
-            'hr_operation'=>'nullable',
             'operational_hours'=>'nullable',
-            'hs_level'=>'required',
-            'hs_ownership'=>'required',
-            'hs_op_status'=>'required',
-            'lb_state'=>'required',
-            'lb_hr'=>'numeric',
-            'lb_lab_tech'=>'numeric'
+            'facility_level_id'=>'required',
+            'ownership_id'=>'required',
+            'phone_number'=>'nullable',
+            'medical_laboratory_number'=>'numeric|nullable',
+            'house_no'=>'nullable',
+            'street_name'=>'nullable',
+            'operational_status_id'=>'required',
+            'registration_status_id'=>'nullable',
+            'accreditation_status_id'=>'nullable',
+            'license_status_id'=>'nullable',
+            'laboratory_scientists'=>'nullable|numeric',
+            'laboratory_technicians'=>'nullable|numeric',
+            'quality_assurance'=>'nullable',
+            'premises_type_id'=>'nullable',
+            'postal_address'=>'nullable',
+            'longitude'=>'nullable|numeric|between:2.483,20',
+            'latitude'=>'nullable|numeric|between:3.883,13.867',
         ];
+
         $customMessages = [
-            'reg_fac_name.required' => 'The Facility name field is required',
-            'state.required' => 'The State field is required',
-            'lga.required' => 'The LGA field is required',
-            'hs_level.required' => 'The Laboratory level field is required',
-            'hs_ownership.required' => 'The Ownership field is required',
-            'hs_op_status.required' => 'The Operation status field is required',
-            'lb_state.required' => 'The Instituion/Standalone field is required',            
-            'lb_hr.numeric' => 'The Laboratory Scientists field must be a number',
-            'lb_lab_tech.numeric' => 'The Laboratory Technicians field must be a number'
+            'state_id.required' => 'The State field is required',
+            'lga_id.required' => 'The LGA field is required',
+            'ownership_id.required' => 'The Ownership field is required',
+            'operational_status_id.required' => 'The Operation status field is required',
+            'premises_type_id.required' => 'The Instituion/ Standalone field is required',          
         ];
-        
+
         $this->validate($request, $rules, $customMessages);
+             
+        $start_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->start_date)));
         
-        $sign = new Signature;
-        $lab = new Lab;
-        
-        
-        $regdate = date('Y-m-d', strtotime(str_replace('-', '/', $request->comm_date)));
-        $cert_date_nat = date('Y-m-d', strtotime(str_replace('-', '/', $request->lb_dt_cert_ng)));
-        $exp_date_nat = date('Y-m-d', strtotime(str_replace('-', '/', $request->lb_dt_exp_cert_ng)));
-        $cert_date_int = date('Y-m-d', strtotime(str_replace('-', '/', $request->lb_dt_cert_int)));
-        $exp_date_int = date('Y-m-d', strtotime(str_replace('-', '/', $request->lb_dt_exp_cert_int)));
+        $hosp = new HospitalHistory;
+        $lab= Laboratory::findOrFail($id);   
+        $lab->fill($request->all());
+        $lab->start_date = $start_date;
+        $lab->operational_days = $hosp->arrayValuesTostring($request->operational_days);
 
-        $opdays = $sign->arrayValuesTostring($request->operational_days);
-        $lab_equips = $sign->arrayValuesTostring($request->lab_equip);
+        DB::beginTransaction();
+        try {
+            $lab->save();
         
-        $sign=Signature::findOrFail($id);
-        $sign->cac_reg= $request->cac_reg;
-        $sign->comm_date=$regdate;
-        $sign->reg_fac_name= strtoupper($request->reg_fac_name);
-        $sign->alt_facility_name = strtoupper($request->alt_facility_name);
-        $sign->state = $request->state;
-        $sign->lga = $request->lga;
-        $sign->ward = $request->ward;
-        $sign->house_no = $request->house_no;
-        $sign->street_name = $request->street_name;
-        $sign->longitude = $request->longitude;
-        $sign->latitude = $request->latitude;
-        $sign->postal_address = $request->postal_address;
-        $sign->phone_number = $request->phone_number;
-        $sign->email_address = $request->email_address;
-        $sign->website = $request->website;
-        $sign->operational_days = $opdays;
-        $sign->hr_operation = $request->hr_operation;
-        $sign->operational_hours = $request->operational_hours;
-        $sign->save();
-        
-        $lab=Lab::findOrFail($id);   
-        $lab->lb_hs_unique_id = "";
-        $lab->lb_state = $request->lb_state;
-        $lab->lb_reg_num = $request->lb_reg_num;
-        $lab->lb_level = $request->hs_level;
-        $lab->lb_owner = $request->hs_ownership;
-        $lab->lb_owner_type = $request->hs_ownership_type;
-        $lab->lb_owner_dt = $request->hs_ownership_details;
-        $lab->lb_op_status = $request->hs_op_status;
-        $lab->lb_reg_status = $request->hs_reg_status;
-        $lab->lb_acc_status = $request->lb_acc_status;
-        $lab->lb_lic_status = $request->hs_lic_status;
-        $lab->lb_cert_ng = $request->national;
-        $lab->lb_cert_ng_type = $request->nat_cert;
-        $lab->lb_dt_cert_ng = $cert_date_nat;
-        $lab->lb_dt_exp_cert_ng = $exp_date_nat;
-        $lab->lb_cert_int = $request->international;
-        $lab->lb_cert_int_type = $request->int_cert;
-        $lab->lb_dt_cert_int = $cert_date_int;
-        $lab->lb_dt_exp_cert_int = $exp_date_int;
-        $lab->lb_enrol = $request->lb_enrol;
-        $lab->lb_hr = $request->lb_hr;
-        //$lab->lb_dt_created = $request
-        $lab->lb_flag_old = 'No';
-        $lab->statecode = $request->state;
-        $lab->lb_lab_tech = $request->lb_lab_tech;
-        $lab->lb_flag = '0';
-        $lab->lb_eq_id = $lab_equips;
-        $lab->save();
-        
-        session()->flash("alert-success","Record Updated Saved Successfully!");
-        return redirect()->back();
-    }
-
-    public function destroy($id)
-    {
-        //
-    }
-
-    public function fetchEquips(Request $request)
-    {
-        $data = DB::table('tbl_lab_equipment')
-                ->select('lab_eq_id','lab_eq_name')        
-                ->get();
-        
-        $output = '';
-        foreach($data as $row)
-        {
-            $output .= '<option value="'.$row->lab_eq_id.'">'.$row->lab_eq_name.'</option>';
+            DB::commit();
+        } catch (\Exception $ex) {
+            DB::rollback();
+            return response()->json(['error' => $ex->getMessage()], 500);
         }
-        return $output;
-    }
-    public function fetchCert(Request $request)
-    {
-        $data = DB::table('tbl_lab_certificate')
-                ->select('lc_id','lc_name')
-                ->where('lc_cert_type',$request->type)     
-                ->get();
 
-        $output = '<option value="">Select Certification </option>';
-        foreach($data as $row)
-        {
-            $output .= '<option value="'.$row->lc_id.'">'.$row->lc_name.'</option>';
-        }
-        return $output;
+        session()->flash("alert-success","Laboratory Information Updated Successfully!");
+        return redirect()->route('laboratory.index');
     }
+
+    public function destroy(Request $request)
+    {
+        Laboratory::destroy($request->fac_id);
+        session()->flash("alert-success", "Laboratory facility deleted successfully!");
+        return back();
+    }
+
+ 
+    public function search(Request $request)
+    {
+        $state_id = $request->state_id;
+        $lga_id = $request->lga_id;
+        $ward_id = $request->ward_id;
+        $facility_name =$request->facility_name;
+        $geo_codes = $request->geo_codes;
+        $facility_level_id = $request->facility_level_id;
+        $ownership_id = $request->ownership_id;
+        $operational_status_id = $request->operational_status_id;
+        $registration_status_id = $request->registration_status_id;
+        $license_status_id = $request->license_status_id;
+    
+        if ($geo_codes == 0){
+            $cond = "<>";
+            $value = 'XXX';
+        }
+        if ($geo_codes == 1){
+            $cond = "<>";
+            $value = '';
+        }
+        if ($geo_codes == 2){
+            $cond = "=";
+            $value = '';
+        }
+
+
+        if ($ward_id == 0){
+            $ward_id ='';
+        }
+        if($facility_level_id == 0){
+            $facility_level_id = '';
+        }
+        if($ownership_id==0 ){
+            $ownership_id=''; 
+        }
+        if($operational_status_id==0){
+            $operational_status_id='';
+        }
+        if($registration_status_id==0){
+            $registration_status_id='';
+        }
+        if($license_status_id==0){
+            $license_status_id='';
+        }
+
+
+        $labs = DB::table('laboratory_details')
+            ->where('state_id','like','%'.$state_id.'%')
+            ->where('lga_id','like','%'.$lga_id.'%')
+            ->where(DB::Raw("IFNULL(ward_id, '')"),'like','%'.$ward_id.'%')
+            ->where('facility_level_id','like','%'.$facility_level_id.'%')
+            ->where('ownership_id','like','%'.$ownership_id.'%')
+            ->where('operational_status_id','like','%'.$operational_status_id.'%')
+            ->where('registration_status_id','like','%'.$registration_status_id.'%')
+            ->where('license_status_id','like','%'.$license_status_id.'%')
+            ->Where('facility_name', 'like', '%' .  $facility_name . '%')
+            ->where(DB::Raw("IFNULL(latitude, '')"),$cond,$value)
+            ->orderBy('state')
+            ->orderBy('lga')
+            ->orderBy('facility_name')
+            ->paginate(20)
+            ->appends($request->all());
+
+        // dd($request->all());
+
+   
+        //return original values from request
+        $state_id = $request->state_id;
+        $lga_id = $request->lga_id;
+        $ward_id = $request->ward_id;
+        $facility_name =$request->facility_name;
+        $geo_codes = $request->geo_codes;
+        $facility_level_id = $request->facility_level_id;
+        $ownership_id = $request->ownership_id;
+        $operational_status_id = $request->operational_status_id;
+        $registration_status_id = $request->registration_status_id;
+        $license_status_id = $request->license_status_id;
+
+        
+        return view('laboratory.index',compact('labs',
+        'state_id', 'lga_id','facility_name', 'geo_codes', 'ward_id','facility_level_id', 
+        'ownership_id','operational_status_id','registration_status_id', 'license_status_id'));    
+    }
+
     
 }

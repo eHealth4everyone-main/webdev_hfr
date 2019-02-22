@@ -1,5 +1,8 @@
 @extends("layouts.master")
 
+@section("bk_css")
+    <link rel="stylesheet" href="{{asset("dist/iCheck/minimal/green.css")}}"/>
+@endsection 
 
 @section("content")
 
@@ -13,7 +16,7 @@
             <div class="panel-heading" role="tab" id="headingOne">
                 <h4 class="panel-title">
                     <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                        Pharmaceutical Information
+
                     </a>
                 </h4>
             </div>
@@ -33,7 +36,7 @@
                                     <div class="input-group-addon">
                                         <i class="fa fa-calendar"></i>
                                     </div>
-                                    <input type="text" class="form-control pull-right" id="datepicker" name="start_date" value="{{old('start_date')}}">
+                                    <input type="text" class="form-control pull-right" id="datepicker" name="start_date" value="{{old('start_date')}}" autocomplete="off">
                                 </div>
                             </div>
                         </div>
@@ -62,7 +65,7 @@
                                 <select class="form-control select2 dynamic" id="state_id" name ="state_id" data-dependent="lga_id" required>
                                     <option value="">--Select State--</option>
                                     
-                                    @foreach($lst_states as $st)
+                                    @foreach(getStates() as $st)
                                     <option value="{{$st->id}}">{{$st->name}}</option>
                                     @endforeach
                                     
@@ -134,20 +137,37 @@
                         
                         
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Days of Operation:</label>
-                            <div class="col-sm-10">
-                                <select class="form-control select2" name="operational_days[]" multiple="multiple" data-placeholder="Select days of operation"
-                                style="width: 100%;">
-                                <option value="Monday" >Monday</option>
-                                <option value="Tuesday" >Tuesday</option>
-                                <option value="Wednesday" >Wednesday</option>
-                                <option value="Thursday" >Thursday</option>
-                                <option value="Friday" >Friday</option>
-                                <option value="Saturday" >Saturday</option>
-                                <option value="Sunday" >Sunday</option>
-                            </select>
+                                <label class="col-sm-2 control-label">Days of Operation:</label>
+                                <div class="col-sm-2">                               
+                                        <input type='checkbox' id='all_days' value='' >Select all
+                                </div>
+                                <div class="col-sm-2">                               
+                                        <input type='checkbox' id='d1' name='operational_days[]' value='Monday' {{ (is_array(old('operational_days')) && in_array("Monday", old('operational_days'))) ? "checked":"" }}> Monday
+                                </div>
+                                <div class="col-sm-2">                               
+                                        <input type='checkbox' id='d2' name='operational_days[]' value='Tuesday' {{ (is_array(old('operational_days')) && in_array("Tuesday", old('operational_days'))) ? "checked":"" }}> Tuesday
+                                </div>
+                                <div class="col-sm-2">                               
+                                        <input type='checkbox' id='d3' name='operational_days[]' value='Wednesday'{{ (is_array(old('operational_days')) && in_array("Wednesday", old('operational_days'))) ? "checked":"" }}> Wednesday
+                                </div> 
                         </div>
-                    </div>
+    
+                        <div class="form-group">
+                                <label class="col-sm-2 control-label"></label>
+                                <div class="col-sm-2">                               
+                                        <input type='checkbox' id='d4'  name='operational_days[]' value='Thursday'{{ (is_array(old('operational_days')) && in_array("Thursday", old('operational_days'))) ? "checked":"" }}>Thursday
+                                </div> 
+                                <div class="col-sm-2">                               
+                                        <input type='checkbox' id='d5' name='operational_days[]' value='Friday' {{ (is_array(old('operational_days')) && in_array("Friday", old('operational_days'))) ? "checked":"" }}> Friday
+                                </div> 
+                                <div class="col-sm-2">                               
+                                        <input type='checkbox'id='d6'  name='operational_days[]' value='Saturday'{{ (is_array(old('operational_days')) && in_array("Saturday", old('operational_days'))) ? "checked":"" }} > Saturday
+                                </div> 
+                                <div class="col-sm-2">                               
+                                        <input type='checkbox' id='d7' name='operational_days[]' value='Sunday'{{ (is_array(old('operational_days')) && in_array("Sunday", old('operational_days'))) ? "checked":"" }}> Sunday
+                                </div> 
+                        </div>
+
                     <div class="form-group">
                         <label class="col-sm-2 control-label">Hours of Operation:</label>
                         <div class="col-sm-4">
@@ -160,7 +180,7 @@
                         <div class="col-sm-4">
                             <select class="form-control select2" id="ownership_id"  name="ownership_id" style="width: 100%;" required>
                                 <option value="">--Select Ownership--</option>
-                                @foreach($lst_ownerships as $st)
+                                @foreach(getOwnership() as $st)
                                 <option value="{{$st->id}}">{{$st->name}}</option>
                                 @endforeach
                                 
@@ -186,7 +206,7 @@
                         <div class="col-sm-4">
                             <select class="form-control select2" id="operational_status_id" name="operational_status_id" style="width: 100%;" required>
                                 <option value="">--Select Operation Status--</option>
-                                @foreach($lst_oparational_status as $st)
+                                @foreach(getOperationalStatus() as $st)
                                 <option value="{{$st->id}}">{{$st->status}}</option>
                                 @endforeach
                             </select>
@@ -196,7 +216,7 @@
                         <div class="col-sm-4">
                             <select class="form-control select2" id="regulatory_status_id" name="registration_status_id" style="width: 100%;">
                                 <option value="">--Select Registration Status--</option>
-                                @foreach($lst_registration_status as $st)
+                                @foreach(getRegistrationStatus() as $st)
                                 <option value="{{$st->id}}">{{$st->status}}</option>
                                 @endforeach
                             </select>
@@ -207,7 +227,7 @@
                         <div class="col-sm-4">
                             <select class="form-control select2" id="license_status_id" name="license_status_id" style="width: 100%;">
                                 <option value="">--Select License Status--</option>
-                                @foreach($lst_license_status as $st)
+                                @foreach(getLicenseStatus() as $st)
                                 <option value="{{$st->id}}">{{$st->status}}</option>
                                 @endforeach
                             </select>
@@ -218,7 +238,7 @@
                         <div class="col-sm-4">
                             <select class="form-control select2" id="outlet_category_id" name="outlet_category_id" style="width: 100%;" required>
                                 <option value="">--Select Outlet Category--</option>
-                                @foreach($lst_outlet_category as $st)
+                                @foreach(getOutletCategory() as $st)
                                     <option value="{{$st->id}}">{{$st->name}}</option>
                                 @endforeach
                             </select>
@@ -227,7 +247,7 @@
                         <div class="col-sm-4">
                             <select class="form-control select2" id="premises_type_id" name="premises_type_id" style="width: 100%;" required>
                                 <option value="">--Select Premises Type--</option>
-                                @foreach($lst_premises_type as $st)
+                                @foreach(getPremisesType() as $st)
                                     <option value="{{$st->id}}">{{$st->name}}</option>
                                 @endforeach
                             </select>
@@ -269,8 +289,33 @@
 @include('partials.dynamic_state_script')
 @include('partials.notification')
 
+<script src="{{asset("dist/iCheck/icheck.min.js")}}"></script>
+
 <script>
     
+
+    $(document).ready(function () {
+      
+      $('#start_date').datepicker({
+          autoclose: true            
+      })
+  
+      $('input').iCheck({
+          checkboxClass: 'icheckbox_minimal-green',
+          increaseArea: '20%' // optional
+      });
+
+      $('#all_days').on('ifChecked', function(event){
+          $('#d1, #d2, #d3, #d4, #d5,#d6, #d7').iCheck('check');
+      });
+      $('#all_days').on('ifUnchecked', function(event){
+          $('#d1, #d2, #d3, #d4, #d5,#d6, #d7').iCheck('uncheck');
+      });
+
+
+      
+      
+  });
 
     //get ownership  type ownership_type_id
     $("#ownership_id").change(function(){

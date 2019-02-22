@@ -17,10 +17,7 @@ Facility Verification
 @if(!$pending->isEmpty())
 
 <div class="box">
-  {{-- <div class="box-header">
-    <h3 class="box-title">Users</h3>
-  </div> --}}
-  <!-- /.box-header -->
+
 <div class="box-body">
   <table id="table1" class="table table-bordered table-striped" style="width:100%">
     <thead>

@@ -7,6 +7,7 @@ Facility Validation
 @endsection
 
 @section("content")
+
 @if($pending->isEmpty())
     <div class="callout callout-success">
         <p>You do not have pending requests</p>
@@ -17,10 +18,7 @@ Facility Validation
 @if(!$pending->isEmpty())
 
 <div class="box">
-  {{-- <div class="box-header">
-    <h3 class="box-title">Users</h3>
-  </div> --}}
-  <!-- /.box-header -->
+
 <div class="box-body">
   <table id="table1" class="table table-bordered table-striped" style="width:100%">
     <thead>
@@ -224,7 +222,8 @@ Facility Validation
         </div>
     </div> 
 
-@push('bk_script')
+
+    @push('bk_script')
 @include('partials.notification')
  
 

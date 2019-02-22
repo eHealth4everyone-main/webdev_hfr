@@ -6,10 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class HospitalService extends Model
 {
-    protected $table = 'lst_hosp_services';
-
-    public function ServiceCategory()
-    {
-        return $this->belongsTo('App\HospitalServiceCategory','service_category_id');
-    }
+    protected $table = 'hs_hospital_services';
 }

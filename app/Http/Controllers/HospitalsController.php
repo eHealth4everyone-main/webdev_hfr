@@ -43,7 +43,6 @@ class HospitalsController extends Controller
   
     public function create()
     {
-        //get hospital services
         $lst_services = DB::table('lst_hosp_services')
                     ->get();
         
@@ -66,8 +65,8 @@ class HospitalsController extends Controller
             'ownership_type_id'=>'required',
             'facility_level_id'=>'required',
             'facility_level_option_id'=>'nullable',
-            'longitude'=>'nullable',
-            'latitude'=>'nullable',
+            'longitude'=>'nullable|numeric|between:2.483,20',
+            'latitude'=>'nullable|numeric|between:3.883,13.867',
             'physical_location'=>'nullable|max:100',
             'postal_address'=>'nullable|max:100',
             'phone_number'=>'nullable|max:20',
@@ -166,7 +165,7 @@ class HospitalsController extends Controller
      
         
         session()->flash("alert-success", "Request Sent Successfully!");
-        return redirect()->back();
+        return redirect()->route('hospitals.index');
     }
     
     
@@ -207,8 +206,8 @@ class HospitalsController extends Controller
             'ownership_type_id'=>'required',
             'facility_level_id'=>'required',
             'facility_level_option_id'=>'nullable',
-            'longitude'=>'nullable',
-            'latitude'=>'nullable',
+            'longitude'=>'nullable|numeric|between:2.483,20',
+            'latitude'=>'nullable|numeric|between:3.883,13.867',
             'physical_location'=>'nullable|max:100',
             'postal_address'=>'nullable|max:100',
             'phone_number'=>'nullable|max:20',
@@ -455,26 +454,14 @@ class HospitalsController extends Controller
             ->where('registration_status_id','like','%'.$registration_status_id.'%')
             ->where('license_status_id','like','%'.$license_status_id.'%')
             ->Where('facility_name', 'like', '%' .  $facility_name . '%')
+            ->where(DB::Raw("IFNULL(latitude, '')"),$cond,$value)
             ->where('latitude',$cond,$value)
             ->orderBy('state')
             ->orderBy('lga')
             ->orderBy('facility_name')
-            ->paginate(20);
+            ->paginate(20)
+            ->appends($request->all());
 
-        //  dd($facilities);
-
-        $facilities->appends([
-            'state_id' => $request->state_id,
-            'lga_id' => $request->lga_id,
-            'ward_id' => $request->ward_id,
-            'facility_name' =>$request->facility_name,
-            'geo_codes' => $request->geo_codes,
-            'facility_level_id' => $request->facility_level_id,
-            'ownership_id' => $request->ownership_id,
-            'operational_status_id' => $request->operational_status_id,
-            'registration_status_id' => $request->registration_status_id,
-            'license_status_id' => $request->license_status_id,
-        ]);
         
         //return original values from request
         $state_id = $request->state_id;

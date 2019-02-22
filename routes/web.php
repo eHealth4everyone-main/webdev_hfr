@@ -85,10 +85,10 @@ Route::middleware(["auth"])->group(function(){
      
 
             //hospitals
-            Route::resource('admin/hospitals','HospitalsController');
-            Route::post('admin/hospitals/search','HospitalsController@search')->name('searchHospitalsAdmin');
+            Route::get('admin/hospitals/search','HospitalsController@search')->name('searchHospitalsAdmin');
             Route::post('admin/hospitals/delete','HospitalsController@InitiateDelete')->name('hospitals.InitiateDelete');
             Route::post('admin/hospitals/export', 'HospitalsController@export')->name('hospitals.export');
+            Route::resource('admin/hospitals','HospitalsController')->except(['show','destroy']);
 
             //my requests
             Route::get('admin/hospitals/myrequest/pending','Approval\MyRequestController@myPendingRequest')->name('myrequest.pending');
@@ -119,17 +119,17 @@ Route::middleware(["auth"])->group(function(){
             Route::post('admin/facilities/facilitys-pecialized-option','GeneralController@getSpecializedOptions')->name('getSpecializedOptions');
         
             //laboratory
-            Route::resource('admin/laboratory','LabController');
-            Route::post('lab/equips', 'LabController@fetchEquips')->name('lab.fetchEquips');
-            Route::post('lab/cert', 'LabController@fetchCert')->name('lab.fetchCert');
+            Route::get('admin/laboratory/search','LabController@search')->name('laboratory.search');
+            Route::resource('admin/laboratory','LabController')->except(['show']);
             
             //Pharmacy
-            Route::resource('admin/pharmacies','PharmacyController');
+            Route::get('admin/pharmacies/search','PharmacyController@search')->name('pharmacy.search');
+            Route::resource('admin/pharmacies','PharmacyController')->except(['show']);
 
             //Imaging and Radiology premises
-            Route::resource('admin/imaging','ImagingController');
-            Route::post('admin/imaging/services', 'ImagingController@fetchServices')->name('imaging.fetchServices');
-            
+            Route::get('admin/imaging/search','ImagingController@search')->name('imaging.search');
+            Route::resource('admin/imaging','ImagingController')->except(['show']);
+       
             //resources
             Route::get('admin/resources', 'ResourceController@index')->name('resources');
             Route::get('admin/resources/upload', 'ResourceController@upload')->name('upload');

@@ -6,7 +6,7 @@ Hospitals and Clinics
 @if(auth()->user()->hasPermissionTo(2))
 <a href="{{route('hospitals.create')}}">
     <button type="button" class="btn btn-primary pull-right">
-        Create Hospital or Clinic
+        Add Hospital or Clinic
     </button>
 </a>
 @endif
@@ -15,7 +15,7 @@ Hospitals and Clinics
 @section("content")
 <div class="box">
     <div class="box-header with-border">
-        <form class="form-horizontal"  action="{{route('searchHospitalsAdmin')}}" method="post">
+        <form class="form-horizontal"  action="{{route('searchHospitalsAdmin')}}" method="get">
             @csrf
 
                 <div class="form-group">
@@ -119,7 +119,7 @@ Hospitals and Clinics
               </div>
 
             </form>
-        </div>
+    </div>
         
         <div class="box-body">
          
