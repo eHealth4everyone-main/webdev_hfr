@@ -282,7 +282,7 @@
                                 <div class="form-group {{ $errors->has('phone_number') ? 'has-error' : '' }}" >
                                 <label for="phone_number" class="col-sm-4 control-label">Phone Number:</label>
                                 <div class="col-sm-8">
-                                <input type="text" class="form-control"  id="phone_number" name="phone_number"  value="{{$hosp->phone_number}}">
+                                <input type="text" class="form-control"  id="phone_number" name="phone_number"  value="{{$hosp->phone_number}}" data-inputmask='"mask": "0999-999-9999"' data-mask>
                                         @if ($errors->has('phone_number'))
                                             <span class="help-block">
                                                 {{ $errors->first('phone_number') }}
@@ -297,7 +297,7 @@
                                 <div class="form-group {{ $errors->has('alternate_number') ? 'has-error' : '' }}" >
                                 <label for="postal_address" class="col-sm-4 control-label">Alternate Number:</label>
                                 <div class="col-sm-8">
-                                <input type="text" class="form-control"  id="alternate_number"  name="alternate_number" value="{{ $hosp->alternate_number}}">
+                                <input type="text" class="form-control"  id="alternate_number"  name="alternate_number" value="{{ $hosp->alternate_number}}" data-inputmask='"mask": "0999-999-9999"' data-mask>
                                         @if ($errors->has('alternate_number'))
                                             <span class="help-block">
                                                 {{ $errors->first('alternate_number') }}
@@ -896,6 +896,7 @@
 @include('partials.notification')
 
 <script src="{{asset("dist/iCheck/icheck.min.js")}}"></script>
+<script src="{{asset("dist/Inputmask5/jquery.inputmask.js")}}"></script>
 
 <script>
     $(document).ready(function(){
@@ -910,6 +911,8 @@
         $('#all_days').on('ifUnchecked', function(event){
             $('#d1, #d2, #d3, #d4, #d5,#d6, #d7').iCheck('uncheck');
         });
+
+        $('[data-mask]').inputmask();
 
     });
 </script>

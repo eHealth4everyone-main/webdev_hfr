@@ -74,22 +74,79 @@ class PharmacyController extends Controller
         $ph->unique_id = $hosp->generateUniqueID($request->lga_id,'2','0',$request->ownership_id);
         $ph->start_date = $start_date;
         $ph->operational_days = $hosp->arrayValuesTostring($request->operational_days);
-        $ph->save();
+        
+        DB::beginTransaction();
+        try {
+            $ph->save();
+
+            DB::commit();
+        } catch (\Exception $ex) {
+            DB::rollback();
+            return response()->json(['error' => $ex->getMessage()], 500);
+        }
     
-        session()->flash("alert-success", "Information Saved Successfully!");
+        session()->flash("alert-success", "Pharmacy Information Saved Successfully!");
         return redirect()->back();
     }
 
- 
 
     public function edit($id)
     {
-      
+        $pharmacy =Pharmacy::findorfail($id);
+        return view('pharmacy.edit', compact("pharmacy"));
     }
 
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'registration_no'=>'nullable',
+            'start_date'=>'nullable|date',
+            'pharmacists_reg_number'=>'nullable',
+            'facility_name'=>'required|max:200',
+            'alt_facility_name'=>'nullable|max:200',
+            'state_id'=>'required',
+            'lga_id'=>'required',
+            'ward_id'=>'required',
+            'ownership_id'=>'required',
+            'ownership_type_id'=>'required',
+            'ownership_details'=>'nullable',
+            'house_no'=>'nullable',
+            'street_name'=>'nullable',
+            'longitude'=>'nullable',
+            'latitude'=>'nullable',
+            'postal_address'=>'nullable',
+            'phone_number'=>'nullable',
+            'email_address'=>'nullable|email',
+            'website'=>'nullable',
+            'operational_days'=>'nullable',
+            'operational_hours'=>'nullable',
+            'operational_status_id'=>'required',
+            'regulatory_status_id'=>'nullable',
+            'license_status_id'=>'nullable',
+            'outlet_category_id'=>'nullable',
+            'premises_type_id'=>'nullable',
+            'pharmacists'=>'nullable|numeric',
+            'pharmacy_technicians'=>'nullable|numeric',
+        ]);
     
+        $hosp = new HospitalHistory;
+        $ph = Pharmacy::findorfail($id);
+        $ph->fill($request->all());
+        $ph->start_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->start_date)));
+        $ph->operational_days = $hosp->arrayValuesTostring($request->operational_days);
+    
+        DB::beginTransaction();
+        try {
+            $ph->save();
+
+            DB::commit();
+        } catch (\Exception $ex) {
+            DB::rollback();
+            return response()->json(['error' => $ex->getMessage()], 500);
+        }
+
+        session()->flash("alert-success", "Pharmacy Information Updated Successfully!");
+        return redirect()->back();
 
     }
 

@@ -3,7 +3,7 @@
           <div class="modal-content">
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-              <h4 class="modal-title">Edit User Information</h4>
+              <h4 class="modal-title">Update User Information</h4>
               <div class='notifications top-right'></div>
             </div>
             <div class="modal-body">
@@ -13,7 +13,7 @@
                         @csrf
                     
                         <div class="form-group row">
-                            <label for="firstname1" class="col-md-4 col-form-label text-md-right">{{ __('Fist Name') }}</label>
+                            <label for="firstname1" class="col-md-4 col-form-label text-md-right">{{ __('Fist Name') }} <font color="red">*</font></label>
     
                             <div class="col-md-8">
                                 <input id="firstname1" type="text" class="form-control" name="firstname1" value="{{ old('firstname') }}" required autofocus>
@@ -24,7 +24,7 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                                <label for="lastname1" class="col-md-4 col-form-label text-md-right">{{ __('Last Name') }}</label>
+                                <label for="lastname1" class="col-md-4 col-form-label text-md-right">{{ __('Last Name') }} <font color="red">*</font></label>
     
                                 <div class="col-md-8">
                                     <input id="lastname1" type="text" class="form-control" name="lastname1" value="{{ old('lastname1') }}" required>
@@ -37,7 +37,7 @@
     
     
                         <div class="form-group row">
-                            <label for="email1" class="col-md-4 col-form-label text-md-right">{{ __('E-Mail Address') }}</label>
+                            <label for="email1" class="col-md-4 col-form-label text-md-right">{{ __('E-Mail Address') }} <font color="red">*</font></label>
     
                             <div class="col-md-8">
                                 <input id="email1" type="email" class="form-control" name="email1" value="{{ old('email1') }}" disabled>
@@ -51,7 +51,7 @@
                                 <label for="mobile1" class="col-md-4 col-form-label text-md-right">{{ __('Mobile Number') }}</label>
         
                                 <div class="col-md-8">
-                                    <input id="mobile1" type="text" class="form-control{{ $errors->has('mobile1') ? ' is-invalid' : '' }}" name="mobile1" value="{{ old('mobile1') }}" required>
+                                    <input id="mobile1" type="text" class="form-control{{ $errors->has('mobile1') ? ' is-invalid' : '' }}" name="mobile1" value="{{ old('mobile1') }}" data-inputmask='"mask": "0999-999-9999"' data-mask>
         
                                     <span class="text-danger">
                                          <strong id="mobile-error1"></strong>
@@ -81,7 +81,7 @@
                                 </div>
                         </div>
                         <div class="form-group row">
-                                <label for="role1" class="col-md-4 col-form-label text-md-right">{{ __('User Role') }}</label>
+                                <label for="role1" class="col-md-4 col-form-label text-md-right">{{ __('User Role') }} <font color="red">*</font></label>
                                 <div class="col-md-8">
                                         <select class="form-control select2"  class="form-control" id="role1" name="role1[]" multiple="multiple" data-placeholder="Select Role" required data-width="100%">
                                             @foreach($roles as $role)
@@ -95,7 +95,7 @@
                                 <input id="UserID" name="UserID" type="hidden">
                         </div> 
                         <div class="form-group row">
-                                <label for="state_id1" class="col-md-4 col-form-label text-md-right">{{ __('State Permission') }}</label>
+                                <label for="state_id1" class="col-md-4 col-form-label text-md-right">{{ __('State Permission') }} <font color="red">*</font></label>
                                 <div class="col-md-8">
                                         <select class="form-control select2"  class="form-control" id="state_id1" name="state_id1" data-placeholder="Select State" required data-width="100%">
                                             <option value="1">All States</option>    
@@ -109,7 +109,7 @@
                                 </div>
                         </div>    
                         <div class="form-group row">
-                                <label for="state_id" class="col-md-4 col-form-label text-md-right">{{ __('LGA Permission') }}</label>
+                                <label for="state_id" class="col-md-4 col-form-label text-md-right">{{ __('LGA Permission') }} <font color="red">*</font></label>
                                 <div class="col-md-8">
                                         <select class="form-control select2"  class="form-control" id="lga_id1" name="lga_id1" data-placeholder="Select LGA" required data-width="100%">   
                                             

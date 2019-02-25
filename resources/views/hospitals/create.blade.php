@@ -240,7 +240,7 @@
                                 <div class="form-group {{ $errors->has('latitude') ? 'has-error' : '' }}" >
                                     <label for="latitude" class="col-sm-4 control-label">Latitude:</label>
                                     <div class="col-sm-8">
-                                        <input type="text" class="form-control"  id="latitude" name="latitude"  value="{{old('latitude')}}" placeholder="N 003.12345">
+                                        <input type="text" class="form-control"  id="latitude" name="latitude"  value="{{old('latitude')}}" placeholder="003.12345">
                                         @if ($errors->has('latitude'))
                                         <span class="help-block">
                                             {{ $errors->first('latitude') }}
@@ -255,7 +255,7 @@
                                 <div class="form-group {{ $errors->has('longitude') ? 'has-error' : '' }}" >
                                     <label for="longitude" class="col-sm-4 control-label">Longitude:</label>
                                     <div class="col-sm-8">
-                                        <input type="text" class="form-control"  id="longitude" name="longitude" value="{{old('longitude')}}" placeholder="E 007.12345">
+                                        <input type="text" class="form-control"  id="longitude" name="longitude" value="{{old('longitude')}}" placeholder="007.12345">
                                         @if ($errors->has('longitude'))
                                         <span class="help-block">
                                             {{ $errors->first('longitude') }}
@@ -274,7 +274,7 @@
                                 <div class="form-group {{ $errors->has('phone_number') ? 'has-error' : '' }}" >
                                     <label for="phone_number" class="col-sm-4 control-label">Phone Number:</label>
                                     <div class="col-sm-8">
-                                        <input type="text" class="form-control"  id="phone_number" name="phone_number"  value="{{old('phone_number')}}" placeholder="Official number">
+                                        <input type="text" class="form-control"  id="phone_number" name="phone_number"  value="{{old('phone_number')}}" data-inputmask='"mask": "0999-999-9999"' data-mask>
                                         @if ($errors->has('phone_number'))
                                         <span class="help-block">
                                             {{ $errors->first('phone_number') }}
@@ -289,7 +289,7 @@
                                 <div class="form-group {{ $errors->has('alternate_number') ? 'has-error' : '' }}" >
                                     <label for="postal_address" class="col-sm-4 control-label">Alternate Number:</label>
                                     <div class="col-sm-8">
-                                        <input type="text" class="form-control"  id="alternate_number"  name="alternate_number" value="{{old('alternate_number')}}">
+                                        <input type="text" class="form-control"  id="alternate_number"  name="alternate_number" value="{{old('alternate_number')}}" data-inputmask='"mask": "0999-999-9999"' data-mask>
                                         @if ($errors->has('alternate_number'))
                                         <span class="help-block">
                                             {{ $errors->first('alternate_number') }}
@@ -903,6 +903,8 @@
 @include('partials.notification')
 
 <script src="{{asset("dist/iCheck/icheck.min.js")}}"></script>
+<script src="{{asset("dist/Inputmask5/jquery.inputmask.js")}}"></script>
+
 
 <script>
     $(document).ready(function(){
@@ -918,6 +920,11 @@
             $('#d1, #d2, #d3, #d4, #d5,#d6, #d7').iCheck('uncheck');
         });
         
+        // $("#phone_number").inputmask();
+        // $("#alternate_number").inputmask();
+
+        $('[data-mask]').inputmask();
+
     });
 </script>
 <script>

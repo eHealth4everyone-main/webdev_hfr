@@ -155,7 +155,6 @@ class ImagingController extends Controller
         $hosp = new HospitalHistory;
         $im = Imaging::find($id);
         $im->fill($request->all());
-        $im->unique_id = $hosp->generateUniqueID($request->lga_id,'4',$request->facility_level_id, $request->ownership_id);
         $im->start_date = $start_date;
         $im->operational_days = $hosp->arrayValuesTostring($request->operational_days);
 

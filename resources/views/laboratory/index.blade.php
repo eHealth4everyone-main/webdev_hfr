@@ -15,15 +15,26 @@ Laboratory Premises
 @endsection
 
 @section("content")
-<div class="box">
-    <div class="box-header with-border">
+    
+    <div class="box box-default collapsed-box box-solid">
+            <div class="box-header with-border">
+              <h3 class="box-title">Search</h3>
+
+              <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
+                </button>
+              </div>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+           <div class="box-header with-border">
         <form class="form-horizontal"  action="{{route('pharmacy.search')}}" method="get">
             @csrf
 
                 <div class="form-group">
                         <div class="col-sm-3">  
                     
-                                    <select class="form-control select2" id="state_id" name ="state_id">
+                                    <select class="form-control select2" id="state_id" name ="state_id"  style="width: 100%;">
                                         <option value="1">--Select State--</option>
                                         @foreach(getStates() as $st)
                                             <option value="{{$st->id}}">{{$st->name}}</option>
@@ -33,12 +44,12 @@ Laboratory Premises
                             </div>
                     
                         <div class="col-sm-3">
-                            <select class="form-control select2" id="lga_id" name="lga_id">
+                            <select class="form-control select2" id="lga_id" name="lga_id"  style="width: 100%;">
                                 <option value="1">--Select LGA--</option>
                             </select>
                         </div>
                         <div class="col-sm-3">
-                            <select class="form-control select2" id="ward_id" name="ward_id">
+                            <select class="form-control select2" id="ward_id" name="ward_id"  style="width: 100%;">
                                 <option value="0">--Select Ward--</option>
                             </select>
                         </div>
@@ -92,7 +103,7 @@ Laboratory Premises
               </div>
               <div class="form-group">
                     <div class="col-sm-3">
-                            <select class="form-control select2" id="geo_codes" name="geo_codes">
+                            <select class="form-control select2" id="geo_codes" name="geo_codes"  style="width: 100%;">
                                 <option value="0">--Select Coordinates--</option>
                                 <option value="1">With Coordinates</option>
                                 <option value="2">With No Coordinates</option>                            
@@ -114,6 +125,14 @@ Laboratory Premises
 
             </form>
     </div>
+            </div>
+            
+    </div>
+         
+        
+       
+<div class="box">
+   
         <div class="box-body">
 
           <table id="table1" class="table table-bordered table-striped">

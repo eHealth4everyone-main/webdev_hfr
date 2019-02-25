@@ -13,7 +13,7 @@
                         @csrf
     
                         <div class="form-group row">
-                            <label for="firstname" class="col-md-4 col-form-label text-md-right">{{ __('Fist Name') }}</label>
+                            <label for="firstname" class="col-md-4 col-form-label text-md-right">{{ __('Fist Name') }}<font color="red">*</font></label>
     
                             <div class="col-md-8">
                                 <input id="firstname" type="text" class="form-control{{ $errors->has('firstname') ? ' is-invalid' : '' }}" name="firstname" value="{{ old('firstname') }}" required autofocus>
@@ -24,7 +24,7 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                                <label for="lastname" class="col-md-4 col-form-label text-md-right">{{ __('Last Name') }}</label>
+                                <label for="lastname" class="col-md-4 col-form-label text-md-right">{{ __('Last Name') }} <font color="red">*</font></label>
     
                                 <div class="col-md-8">
                                     <input id="lastname" type="text" class="form-control{{ $errors->has('lastname') ? ' is-invalid' : '' }}" name="lastname" value="{{ old('lastname') }}" required>
@@ -38,7 +38,7 @@
                       
     
                         <div class="form-group row">
-                            <label for="email" class="col-md-4 col-form-label text-md-right">{{ __('E-Mail Address') }}</label>
+                            <label for="email" class="col-md-4 col-form-label text-md-right">{{ __('E-Mail Address') }} <font color="red">*</font></label>
     
                             <div class="col-md-8">
                                 <input id="email" type="email" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" value="{{ old('email') }}" required>
@@ -52,7 +52,7 @@
                                 <label for="mobile" class="col-md-4 col-form-label text-md-right">{{ __('Mobile Number') }}</label>
         
                                 <div class="col-md-8">
-                                    <input id="mobile" type="text" class="form-control{{ $errors->has('mobile') ? ' is-invalid' : '' }}" name="mobile" value="{{ old('mobile') }}" required>
+                                    <input id="mobile" type="text" class="form-control{{ $errors->has('mobile') ? ' is-invalid' : '' }}" name="mobile" value="{{ old('mobile') }}" data-inputmask='"mask": "0999-999-9999"' data-mask>
         
                                     <span class="text-danger">
                                          <strong id="email-error"></strong>
@@ -83,7 +83,7 @@
                         </div>
     
                         <div class="form-group row">
-                                <label for="role" class="col-md-4 col-form-label text-md-right">{{ __('User Role') }}</label>
+                                <label for="role" class="col-md-4 col-form-label text-md-right">{{ __('User Role') }} <font color="red">*</font></label>
                                 <div class="col-md-8">
                                         <select class="form-control select2"  class="form-control" id="role" name="role[]" multiple="multiple" data-placeholder="Select Role" required data-width="100%">
                                                 @foreach($roles as $role)
@@ -96,7 +96,7 @@
                                 </div>
                         </div>
                         <div class="form-group row">
-                                <label for="state_id" class="col-md-4 col-form-label text-md-right">{{ __('State Permission') }}</label>
+                                <label for="state_id" class="col-md-4 col-form-label text-md-right">{{ __('State Permission') }} <font color="red">*</font></label>
                                 <div class="col-md-8">
                                         <select class="form-control select2"  class="form-control" id="state_id" name="state_id" data-placeholder="Select State" required data-width="100%">
                                             <option value="1">All States</option>    
@@ -110,7 +110,7 @@
                                 </div>
                         </div> 
                         <div class="form-group row">
-                                <label for="state_id" class="col-md-4 col-form-label text-md-right">{{ __('LGA Permission') }}</label>
+                                <label for="state_id" class="col-md-4 col-form-label text-md-right">{{ __('LGA Permission') }} <font color="red">*</font></label>
                                 <div class="col-md-8">
                                         <select class="form-control select2"  class="form-control" id="lga_id" name="lga_id" data-placeholder="Select LGA" required data-width="100%">   
                                             

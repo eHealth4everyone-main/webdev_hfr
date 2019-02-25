@@ -90,6 +90,7 @@ Users
 @push("bk_script")
 
 @include('partials.notification')
+<script src="{{asset("dist/Inputmask5/jquery.inputmask.js")}}"></script>
 
 
 <script>
@@ -100,6 +101,9 @@ Users
         "info":     true
     } );
   
+    $('[data-mask]').inputmask();
+
+
       //if fill lga after state change
       $('#state_id').change(function(){
             if($(this).val() != '')

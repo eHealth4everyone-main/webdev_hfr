@@ -51,7 +51,7 @@ class HospitalsController extends Controller
     
     public function store(Request $request)
     {
-       
+     
         $request->validate([
             'registration_no'=>'nullable|max:20',
             'start_date'=>'nullable|date',
@@ -69,8 +69,8 @@ class HospitalsController extends Controller
             'latitude'=>'nullable|numeric|between:3.883,13.867',
             'physical_location'=>'nullable|max:100',
             'postal_address'=>'nullable|max:100',
-            'phone_number'=>'nullable|max:20',
-            'alternate_number'=>'nullable|max:20',
+            'phone_number'=>'nullable|min:13',
+            'alternate_number'=>'nullable|min:13',
             'email_address'=>'nullable|email',
             'website'=>'nullable|max:100|url',
             'operational_days'=>'nullable',

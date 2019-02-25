@@ -44,7 +44,7 @@ class GeneralController extends Controller
                 ->orderByRaw('id')
                 ->get();
     
-        $output = '<option value="0">--Select Ownership Type--</option>';
+        $output = '<option value="">--Select Ownership Type--</option>';
         foreach($data as $row)
         {
             $output .= '<option value="'.$row->id.'">'.$row->type.'</option>';
