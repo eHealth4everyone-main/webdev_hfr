@@ -15,12 +15,12 @@ Pharmaceutical Premises
 
 @section("content")
 
-<div class="box box-default collapsed-box box-solid">
+<div class="box box-default">
   <div class="box-header with-border">
     <h3 class="box-title">Search</h3>
 
     <div class="box-tools pull-right">
-      <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
+      <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
       </button>
     </div>
   </div>
@@ -67,7 +67,7 @@ Pharmaceutical Premises
               <div class="form-group">
                     
                 <div class="col-sm-3">
-                      <select class="form-control select2" id="operational_status_id" name ="operational_status_id">
+                      <select class="form-control select2" id="operational_status_id" name ="operational_status_id" style="width: 100%;">
                           <option value="0">--Select Operational Status--</option>
                           @foreach(getLabOperationalStatus() as $st)
                                   <option value="{{ $st->id }}">{{ $st->status }}</option>
@@ -105,12 +105,15 @@ Pharmaceutical Premises
                   <div class="col-sm-9" >
                       <input class="form-control input-sm"type="text" name="facility_name" id="facility_name" class="form-control" placeholder="Pharmacy name">
                   </div>
-                  <div class="col-sm-1"></div>        
-                  <div class="col-sm-1">
-                      <button type="button" class="btn btn-sm pull-right btn-block" id='reset'>Reset</button>
-                  </div>
-                  <div class="col-sm-1">
-                      <button type="submit" class="btn btn-success btn-block btn-sm">Search</button>
+                  <div class="col-sm-3">
+                      <div class="form-group">
+                          <div class="col-sm-6">
+                              <button type="button" class="btn btn-sm pull-right btn-block" id='reset'>Reset</button>
+                          </div>
+                          <div class="col-sm-6">
+                              <button type="submit" class="btn btn-success btn-block btn-sm">Search</button>
+                          </div>
+                      </div>
                   </div>
             </div>
 

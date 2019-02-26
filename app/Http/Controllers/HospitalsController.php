@@ -51,7 +51,6 @@ class HospitalsController extends Controller
     
     public function store(Request $request)
     {
-     
         $request->validate([
             'registration_no'=>'nullable|max:20',
             'start_date'=>'nullable|date',
@@ -118,8 +117,6 @@ class HospitalsController extends Controller
        
         $services = $request->services;
         
-       
-
         DB::beginTransaction();
         try {
             $hosp->save();

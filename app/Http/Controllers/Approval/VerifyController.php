@@ -140,55 +140,69 @@ class VerifyController extends Controller
 
     public function recall(Request $request)
     {
-
-
-        if($request->action == "CREATE FACILITY"){
-            $status_id = 1;
-            $action="Recall Create Verification";
-        }
-        elseif($request->action == "UPDATE FACILITY"){
-            $status_id = 8;
-            $action="Recall Update Verification";
+        if($this->isVerified($request->hosp_id)){
+            if($request->action == "CREATE FACILITY"){
+                $status_id = 1;
+                $action="Recall Create Verification";
+            }
+            elseif($request->action == "UPDATE FACILITY"){
+                $status_id = 8;
+                $action="Recall Update Verification";
+            }
+            else{
+                $status_id = 15;
+                $action="Recall Delete Verification";
+            }
+    
+        
+            $date = Carbon::now()->format('Y-m-d H:i:s');
+    
+            HospitalHistory::disableAuditing();       
+            $hosp = new HospitalHistory;
+            $hosp = HospitalHistory::findOrFail($request->hosp_id);
+            $hosp->status_id = $status_id;
+            $hosp->verified_by = $request->verified_by;
+            $hosp->verified_at = $request->verified_at;
+            $hosp->verify_note = $request->verified_note;
+        
+            $status = new StatusTracking;
+            $status->hospital_id = $request->hosp_id;
+            $status->user_id = Auth::user()->id;
+            $status->status_id = $status_id;
+            $status->created_at =  $date;
+            $status->note = $action;
+    
+            DB::beginTransaction();
+            try {
+                $hosp->save();
+                $status->save();
+         
+                DB::commit();
+            } catch (\Exception $ex) {
+                DB::rollback();
+                return response()->json(['error' => $ex->getMessage()], 500);
+            }
+    
+            HospitalHistory::enableAuditing();
+    
+            session()->flash("alert-success", "Verification recalled successfully!");
         }
         else{
-            $status_id = 15;
-            $action="Recall Delete Verification";
+            session()->flash("alert-success", "Can not recall validated or published request!");
         }
 
-    
-        $date = Carbon::now()->format('Y-m-d H:i:s');
-
-        HospitalHistory::disableAuditing();       
-        $hosp = new HospitalHistory;
-        $hosp = HospitalHistory::findOrFail($request->hosp_id);
-        $hosp->status_id = $status_id;
-        $hosp->verified_by = $request->verified_by;
-        $hosp->verified_at = $request->verified_at;
-        $hosp->verify_note = $request->verified_note;
-    
-        $status = new StatusTracking;
-        $status->hospital_id = $request->hosp_id;
-        $status->user_id = Auth::user()->id;
-        $status->status_id = $status_id;
-        $status->created_at =  $date;
-        $status->note = $action;
-
-        DB::beginTransaction();
-        try {
-            $hosp->save();
-            $status->save();
-     
-            DB::commit();
-        } catch (\Exception $ex) {
-            DB::rollback();
-            return response()->json(['error' => $ex->getMessage()], 500);
-        }
-
-        HospitalHistory::enableAuditing();
-
-
-        session()->flash("alert-success", "Verification recalled successfully!");
         return redirect()->route('verify.pending');
+       
+    }
+
+    private function isVerified($id){
+        $hosp = HospitalHistory::find($id);
+       
+        if (in_array($hosp->status_id,[2,9,16])){
+            return true;
+        }else{
+            return false;
+        }
     }
 
 }

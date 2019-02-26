@@ -117,52 +117,66 @@ class ValidateController extends Controller
      
     public function recall(Request $request)
     {
-   
-        if($request->action == "CREATE FACILITY"){
-            $status_id = 2;
-            $action="Recall Create Validation";
-        }
-        elseif($request->action == "UPDATE FACILITY"){
-            $status_id = 9;
-            $action="Recall Update Validation";
+        if($this->isValidated($request->hosp_id)){
+
+            if($request->action == "CREATE FACILITY"){
+                $status_id = 2;
+                $action="Recall Create Validation";
+            }
+            elseif($request->action == "UPDATE FACILITY"){
+                $status_id = 9;
+                $action="Recall Update Validation";
+            }
+            else{
+                $status_id = 16;
+                $action="Recall Delete Validation";
+            }
+      
+            HospitalHistory::disableAuditing();       
+            $hosp = new HospitalHistory;
+            $hosp = HospitalHistory::findOrFail($request->hosp_id);
+            $hosp->status_id = $status_id;
+            $hosp->validated_by = $request->validated_by;
+            $hosp->validated_at = $request->validated_at;
+            $hosp->validate_note = $request->validate_note;
+       
+            $status = new StatusTracking;
+            $status->hospital_id = $request->hosp_id;
+            $status->user_id = Auth::user()->id;
+            $status->status_id = $status_id;
+            $status->created_at =  Carbon::now()->format('Y-m-d H:i:s');
+            $status->note = $action;
+    
+    
+            DB::beginTransaction();
+            try {
+                $hosp->save();
+                $status->save();
+         
+                DB::commit();
+            } catch (\Exception $ex) {
+                DB::rollback();
+                return response()->json(['error' => $ex->getMessage()], 500);
+            }
+    
+            HospitalHistory::enableAuditing();
+    
+            session()->flash("alert-success", "Validation recalled successfully!");
         }
         else{
-            $status_id = 16;
-            $action="Recall Delete Validation";
+            session()->flash("alert-success", "Can not recall validated or published request!");
         }
-  
-        HospitalHistory::disableAuditing();       
-        $hosp = new HospitalHistory;
-        $hosp = HospitalHistory::findOrFail($request->hosp_id);
-        $hosp->status_id = $status_id;
-        $hosp->validated_by = $request->validated_by;
-        $hosp->validated_at = $request->validated_at;
-        $hosp->validate_note = $request->validate_note;
    
-        $status = new StatusTracking;
-        $status->hospital_id = $request->hosp_id;
-        $status->user_id = Auth::user()->id;
-        $status->status_id = $status_id;
-        $status->created_at =  Carbon::now()->format('Y-m-d H:i:s');
-        $status->note = $action;
-
-
-        DB::beginTransaction();
-        try {
-            $hosp->save();
-            $status->save();
-     
-            DB::commit();
-        } catch (\Exception $ex) {
-            DB::rollback();
-            return response()->json(['error' => $ex->getMessage()], 500);
-        }
-
-        HospitalHistory::enableAuditing();
-
-
-        session()->flash("alert-success", "Validation recalled successfully!");
-        return redirect()->route('validate.pending');
+        return redirect()->route('validate.pending');       
     }
 
+    private function isValidated($id){
+        $hosp = HospitalHistory::find($id);
+       
+        if (in_array($hosp->status_id,[4,11,18])){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }
