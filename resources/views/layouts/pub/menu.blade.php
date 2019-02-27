@@ -16,7 +16,7 @@
                         <li><a >Facilities List</a>
                             <ul class="sub-menu">
                                 <li><a href="{{route('list.hospitals')}}">Hospitals and Clinics</a></li>
-                                <li><a href="{{route('latest.updates')}}">Facility Updates</a></li>
+                                <li><a href="{{route('latest.updates')}}">Facilities Updates</a></li>
                             </ul>
                         </li>
                      
