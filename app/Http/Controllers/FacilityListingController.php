@@ -4,8 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Cache;
-
+use Carbon\Carbon;
 
 class FacilityListingController extends Controller
 {
@@ -32,8 +31,90 @@ class FacilityListingController extends Controller
         'ownership_id','operational_status_id','registration_status_id', 'license_status_id','service_type'));    
     }
 
-  
+    public function updates()
+    {
+        $facilities="none";
+        
+        return view('public.facilities_updates',compact('facilities'));    
+    }
 
+    public function getUpdates(Request $request)
+    {
+     
+       //New Facilities Created This Month
+        if ($request->report == 1){
+            $facilities = DB::table('hospital_details')
+            ->where('created_at', '>=', Carbon::now()->startOfMonth())
+            ->orderBy('state')
+            ->orderBy('lga')
+            ->orderBy('facility_name')
+            ->get();   
+            $report=$facilities->count()." Facilities were created this Month";    
+        }
+
+        //New Facilities Created Last Month
+        if ($request->report == 2){
+            $facilities = DB::table('hospital_details')
+            ->whereBetween('created_at', [Carbon::now()->startOfMonth()->subMonth(), Carbon::now()->startOfMonth()])
+            ->orderBy('state')
+            ->orderBy('lga')
+            ->orderBy('facility_name')
+            ->get();   
+            $report=$facilities->count()." Facilities were created in the last Month";
+        }
+
+        //New Facilities Created Last 3 Months
+        if ($request->report == 3){
+            $facilities = DB::table('hospital_details')
+            ->whereBetween('created_at', [Carbon::now()->subMonth(4), Carbon::now()->subMonth(1)])
+            ->orderBy('state')
+            ->orderBy('lga')
+            ->orderBy('facility_name')
+            ->get();
+            $report=$facilities->count()." Facilities were created in the last 3 Month";
+        }
+
+        //Facilities Updated This Month 
+        if ($request->report == 4){
+            $facilities = DB::table('hospital_details')
+            ->where('updated_at', '>=', Carbon::now()->startOfMonth())
+            ->orderBy('state')
+            ->orderBy('lga')
+            ->orderBy('facility_name')
+            ->get();  
+
+            $report=$facilities->count()." Facilities were updated this Month";
+        }
+
+        //Facilities Updated Last Month
+        if ($request->report == 5){
+            $facilities = DB::table('hospital_details')
+            ->whereBetween('updated_at', [Carbon::now()->startOfMonth()->subMonth(), Carbon::now()->startOfMonth()])
+            ->orderBy('state')
+            ->orderBy('lga')
+            ->orderBy('facility_name')
+            ->get();  
+            $report=$facilities->count()." Facilities were updated in the last Month";
+        }
+    
+        //Facilities Updated Last 3 Month
+        if ($request->report == 6){
+            $facilities = DB::table('hospital_details')
+            ->whereBetween('updated_at', [Carbon::now()->subMonth(4), Carbon::now()->subMonth(1)])
+            ->orderBy('state')
+            ->orderBy('lga')
+            ->orderBy('facility_name')
+            ->get();  
+            $report=$facilities->count()." Facilities were updated in the last 3 Month";
+        }
+
+
+     
+
+
+        
+        return view('public.facilities_updates',compact('facilities','report'));     
+    }
   
     public function getHospitals(Request $request)
     {

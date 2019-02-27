@@ -8,7 +8,7 @@
             message: '{{session("alert-success")}}'
         },{
             type:'success',
-            delay: 3000,
+            delay: 5000,
             // animate: {
             //         enter: 'animated fadeInRight',
 		    //         exit: 'animated fadeOutRight'
@@ -27,7 +27,7 @@
             message: '{{session("alert-danger")}}'
         },{
             type:'danger',
-            delay: 3000,
+            delay: 5000,
             // animate: {
             //         enter: 'animated fadeInRight',
 		    //         exit: 'animated fadeOutRight'
@@ -41,7 +41,7 @@
     
     
     @if($errors->any())  
-    var delay = 3000; 
+    var delay = 5000; 
         @foreach($errors->all() as $error)   
             $.notify({
                 message: '{{$error}}'

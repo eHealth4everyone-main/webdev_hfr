@@ -1,7 +1,7 @@
 @extends("layouts.pub.master")
 
 @section('custom_css')
-
+  <link rel="stylesheet"   href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css"/>
 @endsection
 
 

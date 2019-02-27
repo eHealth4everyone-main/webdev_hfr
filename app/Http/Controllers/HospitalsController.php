@@ -33,11 +33,11 @@ class HospitalsController extends Controller
             
             list($state_id, $lga_id,$facility_name, $geo_codes, $ward_id, 
             $facility_level_id , $ownership_id,$operational_status_id,$registration_status_id,
-            $license_status_id) = [1,1,"",0,0,0,0,0,0,0,0];
+            $license_status_id,$searched) = [1,1,"",0,0,0,0,0,0,0,0,0];
             
             return view('hospitals.index',compact('facilities',
             'state_id', 'lga_id','facility_name', 'geo_codes', 'ward_id','facility_level_id', 
-            'ownership_id','operational_status_id','registration_status_id', 'license_status_id'));  
+            'ownership_id','operational_status_id','registration_status_id', 'license_status_id','searched'));  
     }
        
   
@@ -452,7 +452,6 @@ class HospitalsController extends Controller
             ->where('license_status_id','like','%'.$license_status_id.'%')
             ->Where('facility_name', 'like', '%' .  $facility_name . '%')
             ->where(DB::Raw("IFNULL(latitude, '')"),$cond,$value)
-            ->where('latitude',$cond,$value)
             ->orderBy('state')
             ->orderBy('lga')
             ->orderBy('facility_name')
@@ -471,11 +470,12 @@ class HospitalsController extends Controller
         $operational_status_id = $request->operational_status_id;
         $registration_status_id = $request->registration_status_id;
         $license_status_id = $request->license_status_id;
+        $searched = 1;
 
         
         return view('hospitals.index',compact('facilities',
         'state_id', 'lga_id','facility_name', 'geo_codes', 'ward_id','facility_level_id', 
-        'ownership_id','operational_status_id','registration_status_id', 'license_status_id'));    
+        'ownership_id','operational_status_id','registration_status_id', 'license_status_id','searched'));    
     }
 
     public function getServices(Request $request)
@@ -508,7 +508,7 @@ class HospitalsController extends Controller
         $operational_status_id = $request->operational_status_id2;
         $registration_status_id = $request->registration_status_id2;
         $license_status_id = $request->license_status_id2;
-    
+   
         if ($geo_codes == 0){
             $cond = "<>";
             $value = 'XXX';
@@ -521,7 +521,6 @@ class HospitalsController extends Controller
             $cond = "=";
             $value = '';
         }
-
 
         if ($ward_id == 0){
             $ward_id ='';
@@ -541,40 +540,35 @@ class HospitalsController extends Controller
         if($license_status_id==0){
             $license_status_id='';
         }
-
-
-        $facilities = DB::table('hospital_details')
+        
+        $facilityList = DB::table('hospital_details')
             ->select('unique_id','registration_no','start_date','facility_name','state','lga','ward','ownership',
             'facility_level','longitude','latitude','operation_status','registration_status','license_status')
             ->where('state_id','like','%'.$state_id.'%')
             ->where('lga_id','like','%'.$lga_id.'%')
-            ->where(DB::Raw("IFNULL(ward_id, '')"),'like','%'.$ward_id.'%')         
+            ->where(DB::Raw("IFNULL(ward_id, '')"),'like','%'.$ward_id.'%')
             ->where('facility_level_id','like','%'.$facility_level_id.'%')
             ->where('ownership_id','like','%'.$ownership_id.'%')
             ->where('operational_status_id','like','%'.$operational_status_id.'%')
             ->where('registration_status_id','like','%'.$registration_status_id.'%')
             ->where('license_status_id','like','%'.$license_status_id.'%')
-            ->Where('facility_name', 'like', '%' .  $facility_name . '%')
-            ->where('latitude',$cond,$value)
+            ->where('facility_name', 'like', '%' .  $facility_name . '%')
+            ->where(DB::Raw("IFNULL(latitude, '')"),$cond,$value)
             ->orderBy('state')
             ->orderBy('lga')
-            ->orderBy('facility_name')
             ->get();
-
 
         $column_header = array("unique_id","reg_number","start_date","facility_name","state","lga","ward","ownership",
         "facility_level","longitude","latitude","operation_status","registration_status","license_status");
-        
     
         if ($request->format == 'xls'){
-            $down_filename = 'data.xlsx';
+            $filename = 'data.xlsx';
         }
         if ($request->format == 'csv'){
-            $down_filename = 'data.csv';
+            $filename = 'data.csv';
         }
-     
-        return Excel::download(new HFExport( $facilities, $column_header), $down_filename );
-
+        
+        return Excel::download(new HFExport( $facilityList, $column_header), $filename );
     }
 
 
