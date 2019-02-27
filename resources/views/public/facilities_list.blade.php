@@ -299,6 +299,9 @@
                 $("#pediatrics").empty();
                 $("#dental").empty();
 
+                $days = button.data('operational_days');
+                $operational_days = $days.replace(/\,/g, ", ");
+
                 modal.find('.modal-body #unique_id').text(button.data('unique_id'));
                 modal.find('.modal-body #state_unique_id').text(button.data('state_unique_id'));
                 modal.find('.modal-body #registration_no').text(button.data('registration_no'));
@@ -320,7 +323,7 @@
                 modal.find('.modal-body #alternate_number').text(button.data('alternate_number'));
                 modal.find('.modal-body #email_address').text(button.data('email_address'));
                 modal.find('.modal-body #website').text(button.data('website'));
-                modal.find('.modal-body #operational_days').text(button.data('operational_days'));
+                modal.find('.modal-body #operational_days').text($operational_days);
                 modal.find('.modal-body #operational_hours').text(button.data('operational_hours'));
                 modal.find('.modal-body #operation_status').text(button.data('operation_status'));
                 modal.find('.modal-body #registration_status').text(button.data('registration_status'));
