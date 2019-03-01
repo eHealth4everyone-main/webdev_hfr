@@ -34,8 +34,7 @@ Route::post('statistics/populationindex/filter', 'SummaryChartsController@popula
 Route::get('download/facilities', 'DownloadController@openRegistrationForm')->name('openRegistrationForm');
 Route::post('download/facilities', 'DownloadController@store')->name('saveDownloadUserRecords');
 Route::get('download/facility-list', 'DownloadController@index')->name('downloadFacilitiesList');
-Route::get('download/filter', 'DownloadController@filter')->name('download.filter');
-Route::post('downloads/export-data', 'DownloadController@export')->name('download.export');
+Route::get('download/export-data', 'DownloadController@export')->name('download.export');
 Route::get('download/validate', 'DownloadController@getValidationForm')->name('getValidateForm');
 Route::post('download/validate', 'DownloadController@validateToken')->name('validateToken');
 

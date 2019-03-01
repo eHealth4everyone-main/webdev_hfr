@@ -247,17 +247,7 @@ Hospitals and Clinics
             <div class="btn-group pull-right">
                 <form class="form-horizontal"  action="{{route('hospitals.export')}}" method="post">
                     @csrf
-
-                    <input type="hidden"  name="state_id2" value="{{ $state_id }}">
-                    <input type="hidden"  name="lga_id2" value="{{ $lga_id }}">
-                    <input type="hidden"  name="facility_name2" value="{{ $facility_name }}">
-                    <input type="hidden"  name="geo_codes2" value="{{ $geo_codes }}">
-                    <input type="hidden"  name="facility_level_id2" value="{{ $facility_level_id  }}">
-                    <input type="hidden"  name="ownership_id2" value="{{ $ownership_id }}">
-                    <input type="hidden"  name="operational_status_id2" value="{{ $operational_status_id }}">
-                    <input type="hidden"  name="registration_status_id2" value="{{ $registration_status_id }}">
-                    <input type="hidden"  name="license_status_id2" value="{{ $license_status_id }}">
-
+                    
                     <button type="submit" class="btn btn-info btn-sm" name='format' value='csv'>Download CSV</button>
                     <button type="submit" class="btn btn-primary btn-sm" name='format' value='xls'>Download Excel</button>
 
@@ -372,19 +362,20 @@ Hospitals and Clinics
            
 
             //get wards
-            var lgaID = {{$lga_id}};
-            var _token = $('input[name="_token"]').val();
-            $.ajax({
-                url:"{{route('getWardList')}}",
-                method:"POST",
-                data:{lgaId:lgaID,_token:_token},
-                success:function(result)
-                {
-                    $('#ward_id').html(result);
-                    $('#ward_id').val({{$ward_id}});
-                }         
-            });
-         
+            if({{ $lga_id}} != ''){
+                var lgaID = {{$lga_id}};
+                var _token = $('input[name="_token"]').val();
+                $.ajax({
+                    url:"{{route('getWardList')}}",
+                    method:"POST",
+                    data:{lgaId:lgaID,_token:_token},
+                    success:function(result)
+                    {
+                        $('#ward_id').html(result);
+                        $('#ward_id').val({{$ward_id}});
+                    }         
+                });
+            }
          
         });
         

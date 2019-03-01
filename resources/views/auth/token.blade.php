@@ -40,7 +40,7 @@
                 </div>
                 <div class="form-group {{ $errors->has('token') ? 'has-error' : '' }}">
                     <div class="input-group">
-                        <span class="input-group-addon"><i class="fa fa-qrcode"></i></span>
+                        <span class="input-group-addon"><i class="fa fa-puzzle-piece"></i></span>
                         <input id="token" type="text" class="form-control" name="token" value="{{ old('token') }}" placeholder="Enter Token" required autofocus>
                     </div>
                     @if ($errors->has('token'))

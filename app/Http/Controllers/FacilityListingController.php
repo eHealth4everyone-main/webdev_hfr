@@ -19,16 +19,21 @@ class FacilityListingController extends Controller
             ->paginate(20);
 
         //set values facility list when no filter
-
-        list($state_id, $lga_id, $facility_type_id,$facility_name, $geo_codes, $ward_id, 
-            $facility_level_id , $ownership_id,$operational_status_id,$registration_status_id,
-            $license_status_id,$service_type) = [1,1,1,"",0,0,0,0,0,0,0,0];
-
-      
+        $data['state_id'] = 1;
+        $data['lga_id'] = 1;
+        $data['ward_id'] = 1;
+        $data['facility_name'] = "";
+        $data['geo_codes'] = 0;
+        $data['facility_level_id'] = 0;
+        $data['ownership_id'] = 0;
+        $data['operational_status_id'] = 0;
+        $data['registration_status_id'] = 0;
+        $data['license_status_id'] = 0;
+        $data['service_type'] = 0;
+        $data['service_category_id'] = 0;
+        $data['searched'] = 0;
         
-        return view('public.facilities_list',compact('facilities',
-        'state_id', 'lga_id', 'facility_type_id','facility_name', 'geo_codes', 'ward_id','facility_level_id', 
-        'ownership_id','operational_status_id','registration_status_id', 'license_status_id','service_type'));    
+        return view('public.facilities_list',compact('facilities','data'));    
     }
 
     public function updates()
@@ -122,7 +127,6 @@ class FacilityListingController extends Controller
         $lga_id = $request->lga_id;
         $ward_id = $request->ward_id;
         $facility_name =$request->facility_name;
-        $facility_type_id = $request->facility_type_id;
         $facility_level_id = $request->facility_level_id;
         $ownership_id = $request->ownership_id;
         $operational_status_id = $request->operational_status_id;
@@ -209,7 +213,6 @@ class FacilityListingController extends Controller
             ->orderBy('facility_name')
             ->paginate(20);
 
-        //  dd($facilities);
 
         $facilities->appends([
             'state_id' => $request->state_id,
@@ -229,23 +232,23 @@ class FacilityListingController extends Controller
         ]);
         
         //return original values from request
-        $state_id = $request->state_id;
-        $lga_id = $request->lga_id;
-        $ward_id = $request->ward_id;
-        $facility_name =$request->facility_name;
-        $geo_codes = $request->geo_codes;
-        $facility_type_id = $request->facility_type_id;
-        $facility_level_id = $request->facility_level_id;
-        $ownership_id = $request->ownership_id;
-        $operational_status_id = $request->operational_status_id;
-        $registration_status_id = $request->registration_status_id;
-        $license_status_id = $request->license_status_id;
-        $service_type = $request->service_type;
+        $data['state_id'] = $request->state_id;
+        $data['lga_id'] = $request->lga_id;
+        $data['ward_id'] = $request->ward_id;
+        $data['facility_name'] = $request->facility_name;
+        $data['geo_codes'] = $request->geo_codes;
+        $data['facility_level_id'] = $request->facility_level_id;
+        $data['ownership_id'] = $request->ownership_id;
+        $data['operational_status_id'] = $request->operational_status_id;
+        $data['registration_status_id'] = $request->registration_status_id;
+        $data['license_status_id'] = $request->license_status_id;
+        $data['service_type'] = $request->service_type;
+        $data['service_category_id'] = $request->service_category_id;
+        $data['searched'] = 1;
 
-        
-        return view('public.facilities_list',compact('facilities',
-        'state_id', 'lga_id', 'facility_type_id','facility_name', 'geo_codes', 'ward_id','facility_level_id', 
-        'ownership_id','operational_status_id','registration_status_id', 'license_status_id','service_type'));     
+       
+
+        return view('public.facilities_list',compact('facilities','data'));     
     }
 
     private function getLabs(Request $request)

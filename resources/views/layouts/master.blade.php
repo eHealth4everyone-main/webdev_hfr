@@ -221,8 +221,7 @@
         <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script>
        
         <script type="text/javascript" src="{{asset("dist/multiselect-master/js/bootstrap-multiselect.js")}}"></script>
-        {{-- <script type="text/javascript" src="{{asset("dist/MultiSelect/jquery.multiselect.js")}}"></script> --}}
-
+      
         
         <script>
             $(document).ready(function () {

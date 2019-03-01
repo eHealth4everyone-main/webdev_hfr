@@ -16,10 +16,10 @@
             @csrf
 
             <div class="form-group">
-                 <label class="col-sm-3  control-label" >Facility Updates Report</label>
-                <div class="col-sm-7">
+                 {{-- <label class="col-sm-3  control-label" >Facility Updates Report</label> --}}
+                <div class="col-sm-10">
                     <select class="form-control select2" id="report" name="report" required>
-                        <option value="">--Select One--</option>
+                        <option value="">--Select Report--</option>
                         <option value="1">New Facilities Created This Month </option>
                         <option value="2">New Facilities Created Last Month </option>
                         <option value="3">New Facilities Created Last 3 Months </option>
@@ -30,7 +30,7 @@
                     </select>
                 </div>
                 <div class="col-sm-2">
-                        <button type="submit" class="btn btn-success pull-right  btn-block btn-sm">View Report</button>
+                        <button type="submit" class="btn btn-success pull-right  btn-block btn-sm">Generate</button>
                 </div> 
             </div>
 
