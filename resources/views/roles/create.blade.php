@@ -1,8 +1,7 @@
 @extends("layouts.master")
 
-@section('bk_css')
-
-@endsection
+@section("bk_css")
+@endsection 
 
 @section('content-title')
 
@@ -27,9 +26,9 @@
                     <div class="box-body">
                
                             <div class="form-group row">
-                                    <label style="text-align: right;" class="col-md-2 col-form-label text-md-right">Role:<font color="red">*</font> </label>
+                                    <label style="text-align: right;" class="col-md-2 col-form-label text-md-right">Role name:<font color="red">*</font> </label>
                                     <div class="col-md-8">
-                                            <input id="role" type="text" class="form-control" name="role" required autofocus>
+                                            <input id="role" type="text" class="form-control" name="name" required autofocus>
                                     <span class="text-danger">
                                         <strong id="role-error"></strong>
                                     </span>
@@ -334,10 +333,13 @@
 
     <script type="text/javascript">
         $(document).ready(function() {
-            $('#check_all').click(function() {
-                var c = this.checked;
-                $(':checkbox').prop('checked',c);
-            });
+
+            
+
+                $('#check_all').click(function() {
+                        var c = this.checked;
+                        $(':checkbox').prop('checked',c);
+                });
         });
 
     </script>

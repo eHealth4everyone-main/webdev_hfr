@@ -26,10 +26,8 @@ class RoleController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request);
-
         $request->validate([
-            'role' => 'required|string|max:50',
+            'name' => 'unique:roles|required|string|max:50',
             'description' => 'required|string|max:100',
             'permissions' => 'required',
         ]);
@@ -37,7 +35,7 @@ class RoleController extends Controller
         // dd($request->permissions);
 
         $role = Role::create([
-            'name' => $request->role,
+            'name' => $request->name,
             'description' => $request->description
             ]);
         $role->givePermissionTo($request->permissions);
@@ -49,8 +47,7 @@ class RoleController extends Controller
 
     public function edit($id)
     {
-        $roles=Role::where('id',$id)
-                ->get();
+        $roles=Role::where('id',$id)->get();
 
         $permissionz = DB::select("SELECT permission_id id FROM role_has_permissions where role_id = ".$id."");
         
@@ -70,12 +67,10 @@ class RoleController extends Controller
     public function update(Request $request)
     {
         $request->validate([
-            'role' => 'required|string|max:50',
+            'name' => 'unique:roles|required|string|max:50',
             'description' => 'required|string|max:100',
             'permissions' => 'required',
         ]);
-
-        // dd($request->all());
 
         $role = Role::findOrfail($request->id);
         $role->name = $request->role;
@@ -89,8 +84,14 @@ class RoleController extends Controller
 
     }
     
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+       
+        $role = Role::find($request->role_id);
+        $role->syncPermissions([]);
+
+        Role::destroy($request->role_id);
+        session()->flash("alert-success", "Role deleted successfully!");
+        return back();
     }
 }

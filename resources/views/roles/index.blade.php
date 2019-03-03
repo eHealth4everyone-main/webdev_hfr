@@ -6,7 +6,7 @@ User Roles
 @if(auth()->user()->hasPermissionTo(22))
   <a href="{{route('roles.create')}}">
       <button type="button" class="btn btn-primary pull-right">
-              Create Role
+              Add User Role
       </button>
   </a>
 @endif
@@ -40,9 +40,11 @@ User Roles
               </a>
             @endif
             @if(auth()->user()->hasPermissionTo(24))
-              <a href="">
-                  <button class="btn btn-danger btn-sm"  type="button">Delete</button>
-              </a>
+            
+                <a href="#">
+                    <button class="btn btn-danger btn-sm" data-id="{{$role->id}}" data-name="{{$role->name}}" type="button" data-toggle="modal" data-target="#deleteModal" > Delete</button>
+                  </a>
+          
             @endif
               
             </td>
@@ -59,7 +61,8 @@ User Roles
 @endsection 
 
 
-@include('roles.show')
+
+@include('roles.delete')
 
 @push("bk_script")
 @include('partials.notification')
@@ -73,26 +76,19 @@ User Roles
     } );
     
 
-    //show role
-    $('#showrole').on('show.bs.modal', function (event) {
-      var modal = $(this)      
+
+    $('#deleteModal').on('show.bs.modal', function (event) {
       var button = $(event.relatedTarget) 
-      var permissions= button.data('permissions')  
-      
-      $( "#perms" ).text();        
-      
-      jQuery.each( permissions, function( i, val ) {
-        
-        $( "#perms" ).append('<span class="label label-default">'+ val +'</span> &nbsp');
-        // //list 5 elements then break
-        // if (i > 1 && (i % 5 === 0)) {
-          //   $( "#perms" ).append('<p>');                
-            // }
-          });
-        });//end edit
+      var id = button.data('id')
+      var message =  "Are you sure you want to delete '".concat(button.data('name'), "' Role?") ;
+      var modal = $(this)
+      modal.find('.modal-body #message').text(message);
+      modal.find('.modal-body #role_id').val(id)
+    })
+
         
         
-      });
-    </script>
+  });
+</script>
     
-    @endpush
+@endpush

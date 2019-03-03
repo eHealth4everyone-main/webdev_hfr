@@ -81,6 +81,7 @@ Route::middleware(["auth"])->group(function(){
             Route::post('admin/roles', 'RoleController@store')->name('roles.store');
             Route::get('admin/roles/{id}/edit', 'RoleController@edit')->name('roles.edit');
             Route::post('admin/roles/update', 'RoleController@update')->name('roles.update');
+            Route::delete('admin/roles/delete', 'RoleController@destroy')->name("roles.destroy");
 
             //users
             Route::get('admin/users', 'UserController@index')->name('users.index');
@@ -160,6 +161,14 @@ Route::middleware(["auth"])->group(function(){
             Route::resource('admin/masters/states','StateController');
             Route::resource('admin/masters/lgas','LgaController');
             Route::resource('admin/masters/wards','WardController');
+
+            //reports
+            Route::get('admin/reports/facility-list/updates-select','FacilityStatusReportController@updateSelection')->name('updates.selection');
+            Route::get('admin/reports/facility-list/updates','FacilityStatusReportController@getUpdatesReport')->name('updates.report');
+            Route::post('admin/reports/facility-list/updates-download','FacilityStatusReportController@updatesDownload')->name('updates.download');
+
+
+
     });
 
     Route::get('admin/new-user/change-password','UserController@newUserChangePasswordForm')->name('newuser.PasswordForm');

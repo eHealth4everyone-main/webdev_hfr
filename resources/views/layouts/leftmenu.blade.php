@@ -172,6 +172,21 @@
                         </a>
                     @endif
                 </li>
+                <li  class="treeview"> 
+                        
+                            <a href="#">
+                                <i class="fa  fa-file-text"></i>
+                                <span>Reports</span>
+                                <span class="pull-right-container">
+                                        <span class="label label-success pull-right">+</span>
+                                </span>
+                            </a>
+                      
+                        <ul class="treeview-menu">
+                            <li><a href="{{route('updates.selection')}}"><i class="fa fa-file-text-o"></i>Facility List Updates</a></li>
+
+                        </ul>
+                    </li>
           
             </ul>
         </section>
