@@ -130,10 +130,7 @@
             
             
         </div>
-        {{-- <div role="alert" class="alert alert-success"> 
-            A total of {{$facilities->total()}} record(s) found  
-            
-        </div> --}}
+    
         <div class="box-body">                
             
             
@@ -174,20 +171,7 @@
         });
         
         
-        
-        $("#service_category_id").change(function(){
-            var id= $('#service_category_id').val();
-            var _token = $('input[name="_token"]').val();
-            $.ajax({
-                url:"{{route('getServices')}}",
-                method:"POST",
-                data:{id:id, _token:_token},
-                success:function(result)
-                {
-                    $('#services').html(result);
-                }         
-            })
-        });
+    
         
         
         

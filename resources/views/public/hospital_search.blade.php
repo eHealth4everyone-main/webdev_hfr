@@ -1,4 +1,4 @@
-@extends("layouts.pub.master2")
+@extends("layouts.pub.master")
 
 @section('custom_css')
 
@@ -101,7 +101,10 @@
           </div>
     </div> <!-- /contanier-->
 </div> <!-- / -->
-      
+    
+
+@include('hospitals.details_modal')
+
 @endsection 
 
 @push('custom_scripts')

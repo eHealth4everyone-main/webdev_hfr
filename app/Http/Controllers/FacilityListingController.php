@@ -9,7 +9,7 @@ use Carbon\Carbon;
 class FacilityListingController extends Controller
 {
    
-    public function index()
+    public function getHospitals()
     {
        
         $facilities = DB::table('hospital_details')
@@ -33,95 +33,10 @@ class FacilityListingController extends Controller
         $data['service_category_id'] = 0;
         $data['searched'] = 0;
         
-        return view('public.facilities_list',compact('facilities','data'));    
+        return view('public.list_hospitals',compact('facilities','data'));    
     }
 
-    public function updates()
-    {
-        $facilities="none";
-        
-        return view('public.facilities_updates',compact('facilities'));    
-    }
-
-    public function getUpdates(Request $request)
-    {
-     
-       //New Facilities Created This Month
-        if ($request->report == 1){
-            $facilities = DB::table('hospital_details')
-            ->where('created_at', '>=', Carbon::now()->startOfMonth())
-            ->orderBy('state')
-            ->orderBy('lga')
-            ->orderBy('facility_name')
-            ->get();   
-            $report=$facilities->count()." Facilities were created this Month";    
-        }
-
-        //New Facilities Created Last Month
-        if ($request->report == 2){
-            $facilities = DB::table('hospital_details')
-            ->whereBetween('created_at', [Carbon::now()->startOfMonth()->subMonth(), Carbon::now()->startOfMonth()])
-            ->orderBy('state')
-            ->orderBy('lga')
-            ->orderBy('facility_name')
-            ->get();   
-            $report=$facilities->count()." Facilities were created in the last Month";
-        }
-
-        //New Facilities Created Last 3 Months
-        if ($request->report == 3){
-            $facilities = DB::table('hospital_details')
-            ->whereBetween('created_at', [Carbon::now()->subMonth(4), Carbon::now()->subMonth(1)])
-            ->orderBy('state')
-            ->orderBy('lga')
-            ->orderBy('facility_name')
-            ->get();
-            $report=$facilities->count()." Facilities were created in the last 3 Month";
-        }
-
-        //Facilities Updated This Month 
-        if ($request->report == 4){
-            $facilities = DB::table('hospital_details')
-            ->where('updated_at', '>=', Carbon::now()->startOfMonth())
-            ->orderBy('state')
-            ->orderBy('lga')
-            ->orderBy('facility_name')
-            ->get();  
-
-            $report=$facilities->count()." Facilities were updated this Month";
-        }
-
-        //Facilities Updated Last Month
-        if ($request->report == 5){
-            $facilities = DB::table('hospital_details')
-            ->whereBetween('updated_at', [Carbon::now()->startOfMonth()->subMonth(), Carbon::now()->startOfMonth()])
-            ->orderBy('state')
-            ->orderBy('lga')
-            ->orderBy('facility_name')
-            ->get();  
-            $report=$facilities->count()." Facilities were updated in the last Month";
-        }
-    
-        //Facilities Updated Last 3 Month
-        if ($request->report == 6){
-            $facilities = DB::table('hospital_details')
-            ->whereBetween('updated_at', [Carbon::now()->subMonth(4), Carbon::now()->subMonth(1)])
-            ->orderBy('state')
-            ->orderBy('lga')
-            ->orderBy('facility_name')
-            ->get();  
-            $report=$facilities->count()." Facilities were updated in the last 3 Month";
-        }
-
-
-     
-
-
-        
-        return view('public.facilities_updates',compact('facilities','report'));     
-    }
-  
-    public function getHospitals(Request $request)
+    public function searchHospitals(Request $request)
     {
         $state_id = $request->state_id;
         $lga_id = $request->lga_id;
@@ -248,67 +163,321 @@ class FacilityListingController extends Controller
 
        
 
-        return view('public.facilities_list',compact('facilities','data'));     
+        return view('public.list_hospitals',compact('facilities','data'));     
     }
 
-    private function getLabs(Request $request)
+   
+    public function getPharmacy()
     {
-        if ($facility_type_id==2){
-            $facilities = DB::table('pharmacy_details')
-            ->where('state_id','like','%'.$state_id2.'%')
-            ->where('lga_id','like','%'.$lga_id.'%')
-            ->Where('facility_name', 'like', '%' .  $facility_name . '%')
-            ->where('latitude',$cond,$value)
-            ->orderByRaw('state','lga','facility_name')
+       
+        $facilities = DB::table('pharmacy_details')
+            ->orderBy('state')
+            ->orderBy('lga')
+            ->orderBy('facility_name')
             ->paginate(20);
 
-            $facilities->appends([
-                'state_id'=>$request->state_id,
-                'lga_id'=>$request->lga_id,
-                'facility_name'=>$request->facility_name,
-                'facility_type_id' => $request->facility_type_id,
-                'geo_codes' => $geo_codes,
-            ]);
-        }
-        if ($facility_type_id==3){
-
-            $facilities = DB::table('laboratory_details')
-            ->where('state_id','like','%'.$state_id2.'%')
-            ->where('lga_id','like','%'.$lga_id.'%')
-            ->Where('facility_name', 'like', '%' .  $facility_name . '%')
-            ->where('latitude',$cond,$value)
-            ->orderByRaw('state','lga','facility_name')
-            ->paginate(20);
-
-            $facilities->appends([
-                'state_id'=>$request->state_id,
-                'lga_id'=>$request->lga_id,
-                'facility_name'=>$request->facility_name,
-                'facility_type_id' => $request->facility_type_id,
-                'geo_codes' => $geo_codes,
-            ]);
-           
-        }
-        if ($facility_type_id==4){
-            $facilities = DB::table('imaging_details')
-            ->where('state_id','like','%'.$state_id2.'%')
-            ->where('lga_id','like','%'.$lga_id.'%')
-            ->Where('facility_name', 'like', '%' .  $facility_name . '%')
-            ->where('latitude',$cond,$value)
-            ->orderByRaw('state','lga','facility_name')
-            ->paginate(20);
-
-            $facilities->appends([
-                'state_id'=>$request->state_id,
-                'lga_id'=>$request->lga_id,
-                'facility_name'=>$request->facility_name,
-                'facility_type_id' => $request->facility_type_id,
-                'geo_codes' => $geo_codes,
-            ]);
-        }
-
+        //set values facility list when no filter
+        $data['state_id'] = 1;
+        $data['lga_id'] = 1;
+        $data['ward_id'] = 1;
+        $data['facility_name'] = "";
+        $data['geo_codes'] = 0;
+        $data['ownership_id'] = 0;
+        $data['operational_status_id'] = 0;
+        $data['registration_status_id'] = 0;
+        $data['license_status_id'] = 0;
+        $data['searched'] = 0;
+        
+        return view('public.list_pharmacy',compact('facilities','data'));    
     }
 
+    public function searchPharmacy(Request $request)
+    {
+        $state_id = $request->state_id;
+        $lga_id = $request->lga_id;
+        $ward_id = $request->ward_id;
+        $facility_name =$request->facility_name;
+        $ownership_id = $request->ownership_id;
+        $operational_status_id = $request->operational_status_id;
+        $registration_status_id = $request->registration_status_id;
+        $license_status_id = $request->license_status_id;
+    
+        if ( $request->geo_codes == 0){
+            $cond = "<>";
+            $value = 'XXX';
+        }
+        if ( $request->geo_codes == 1){
+            $cond = "<>";
+            $value = '';
+        }
+        if ( $request->geo_codes == 2){
+            $cond = "=";
+            $value = '';
+        }
+
+
+        if ($ward_id == 0){
+            $ward_id ='';
+        }
+        if($ownership_id==0 ){
+            $ownership_id=''; 
+        }
+        if($operational_status_id==0){
+            $operational_status_id='';
+        }
+        if($registration_status_id==0){
+            $registration_status_id='';
+        }
+        if($license_status_id==0){
+            $license_status_id='';
+        }
+
+  
+
+        $facilities = DB::table('pharmacy_details')
+            ->where('state_id','like','%'.$state_id.'%')
+            ->where('lga_id','like','%'.$lga_id.'%')
+            ->where(DB::Raw("IFNULL(ward_id, '')"),'like','%'.$ward_id.'%')
+            ->where('ownership_id','like','%'.$ownership_id.'%')
+            ->where('operational_status_id','like','%'.$operational_status_id.'%')
+            ->where('registration_status_id','like','%'.$registration_status_id.'%')
+            ->where('license_status_id','like','%'.$license_status_id.'%')
+            ->Where('facility_name', 'like', '%' .  $facility_name . '%')
+            ->where('latitude',$cond,$value)
+            ->orderBy('state')
+            ->orderBy('lga')
+            ->orderBy('facility_name')
+            ->paginate(20)
+            ->appends($request->all());
+
+        
+        //return original values from request
+        $data['state_id'] = $request->state_id;
+        $data['lga_id'] = $request->lga_id;
+        $data['ward_id'] = $request->ward_id;
+        $data['facility_name'] = $request->facility_name;
+        $data['geo_codes'] = $request->geo_codes;
+        $data['ownership_id'] = $request->ownership_id;
+        $data['operational_status_id'] = $request->operational_status_id;
+        $data['registration_status_id'] = $request->registration_status_id;
+        $data['license_status_id'] = $request->license_status_id;
+        $data['searched'] = 1;
+    
+
+        return view('public.list_pharmacy',compact('facilities','data'));     
+    }
+
+    public function getLab()
+    {
+       
+        $facilities = DB::table('laboratory_details')
+            ->orderBy('state')
+            ->orderBy('lga')
+            ->orderBy('facility_name')
+            ->paginate(20);
+
+        //set values facility list when no filter
+        $data['state_id'] = 1;
+        $data['lga_id'] = 1;
+        $data['ward_id'] = 1;
+        $data['facility_name'] = "";
+        $data['geo_codes'] = 0;
+        $data['facility_level_id'] = 0;
+        $data['ownership_id'] = 0;
+        $data['operational_status_id'] = 0;
+        $data['registration_status_id'] = 0;
+        $data['license_status_id'] = 0;
+        $data['accreditation_status_id'] = 0;
+        $data['searched'] = 0;
+        
+        return view('public.list_labs',compact('facilities','data'));    
+    }
+
+    public function searchLab(Request $request)
+    {
+        $state_id = $request->state_id;
+        $lga_id = $request->lga_id;
+        $ward_id = $request->ward_id;
+        $facility_name =$request->facility_name;
+        $facility_level_id = $request->facility_level_id;
+        $ownership_id = $request->ownership_id;
+        $operational_status_id = $request->operational_status_id;
+        $registration_status_id = $request->registration_status_id;
+        $license_status_id = $request->license_status_id;
+        $accreditation_status_id = $request->accreditation_status_id;
+
+    
+        if ( $request->geo_codes == 0){
+            $cond = "<>";
+            $value = 'XXX';
+        }
+        if ( $request->geo_codes == 1){
+            $cond = "<>";
+            $value = '';
+        }
+        if ( $request->geo_codes == 2){
+            $cond = "=";
+            $value = '';
+        }
+
+
+        if ($ward_id == 0){
+            $ward_id ='';
+        }
+        if($facility_level_id == 0){
+            $facility_level_id = '';
+        }
+        if($ownership_id==0 ){
+            $ownership_id=''; 
+        }
+        if($operational_status_id==0){
+            $operational_status_id='';
+        }
+        if($registration_status_id==0){
+            $registration_status_id='';
+        }
+        if($license_status_id==0){
+            $license_status_id='';
+        }
+        if($accreditation_status_id==0){
+            $accreditation_status_id='';
+        }
+        
+        $facilities = DB::table('laboratory_details')
+            ->where('state_id','like','%'.$state_id.'%')
+            ->where('lga_id','like','%'.$lga_id.'%')
+            ->where(DB::Raw("IFNULL(ward_id, '')"),'like','%'.$ward_id.'%')
+            ->where('facility_level_id','like','%'.$facility_level_id.'%')
+            ->where('ownership_id','like','%'.$ownership_id.'%')
+            ->where('operational_status_id','like','%'.$operational_status_id.'%')
+            ->where('registration_status_id','like','%'.$registration_status_id.'%')
+            ->where('license_status_id','like','%'.$license_status_id.'%')
+            ->where('accreditation_status_id','like','%'.$accreditation_status_id.'%')
+            ->Where('facility_name', 'like', '%' .  $facility_name . '%')
+            ->where('latitude',$cond,$value)
+            ->orderBy('state')
+            ->orderBy('lga')
+            ->orderBy('facility_name')
+            ->paginate(20)
+            ->appends($request->all());
+        
+        //return original values from request
+        $data['state_id'] = $request->state_id;
+        $data['lga_id'] = $request->lga_id;
+        $data['ward_id'] = $request->ward_id;
+        $data['facility_name'] = $request->facility_name;
+        $data['geo_codes'] = $request->geo_codes;
+        $data['facility_level_id'] = $request->facility_level_id;
+        $data['ownership_id'] = $request->ownership_id;
+        $data['operational_status_id'] = $request->operational_status_id;
+        $data['registration_status_id'] = $request->registration_status_id;
+        $data['license_status_id'] = $request->license_status_id;
+        $data['accreditation_status_id'] = $request->accreditation_status_id;
+        $data['searched'] = 1;
+
+        return view('public.list_labs',compact('facilities','data'));     
+    }
+
+
+    public function getImaging()
+    {
+       
+        $facilities = DB::table('imaging_details')
+            ->orderBy('state')
+            ->orderBy('lga')
+            ->orderBy('facility_name')
+            ->paginate(20);
+
+        //set values facility list when no filter
+        $data['state_id'] = 1;
+        $data['lga_id'] = 1;
+        $data['ward_id'] = 1;
+        $data['facility_name'] = "";
+        $data['geo_codes'] = 0;
+        $data['ownership_id'] = 0;
+        $data['operational_status_id'] = 0;
+        $data['registration_status_id'] = 0;
+        $data['license_status_id'] = 0;
+        $data['searched'] = 0;
+        
+        return view('public.list_imaging',compact('facilities','data'));    
+    }
+
+    public function searchImaging(Request $request)
+    {
+        $state_id = $request->state_id;
+        $lga_id = $request->lga_id;
+        $ward_id = $request->ward_id;
+        $facility_name =$request->facility_name;
+        $ownership_id = $request->ownership_id;
+        $operational_status_id = $request->operational_status_id;
+        $registration_status_id = $request->registration_status_id;
+        $license_status_id = $request->license_status_id;
+    
+        if ( $request->geo_codes == 0){
+            $cond = "<>";
+            $value = 'XXX';
+        }
+        if ( $request->geo_codes == 1){
+            $cond = "<>";
+            $value = '';
+        }
+        if ( $request->geo_codes == 2){
+            $cond = "=";
+            $value = '';
+        }
+
+
+        if ($ward_id == 0){
+            $ward_id ='';
+        }
+        if($ownership_id==0 ){
+            $ownership_id=''; 
+        }
+        if($operational_status_id==0){
+            $operational_status_id='';
+        }
+        if($registration_status_id==0){
+            $registration_status_id='';
+        }
+        if($license_status_id==0){
+            $license_status_id='';
+        }
+
+  
+
+        $facilities = DB::table('imaging_details')
+            ->where('state_id','like','%'.$state_id.'%')
+            ->where('lga_id','like','%'.$lga_id.'%')
+            ->where(DB::Raw("IFNULL(ward_id, '')"),'like','%'.$ward_id.'%')
+            ->where('ownership_id','like','%'.$ownership_id.'%')
+            ->where('operational_status_id','like','%'.$operational_status_id.'%')
+            ->where('registration_status_id','like','%'.$registration_status_id.'%')
+            ->where('license_status_id','like','%'.$license_status_id.'%')
+            ->Where('facility_name', 'like', '%' .  $facility_name . '%')
+            ->where('latitude',$cond,$value)
+            ->orderBy('state')
+            ->orderBy('lga')
+            ->orderBy('facility_name')
+            ->paginate(20)
+            ->appends($request->all());
+
+        
+        //return original values from request
+        $data['state_id'] = $request->state_id;
+        $data['lga_id'] = $request->lga_id;
+        $data['ward_id'] = $request->ward_id;
+        $data['facility_name'] = $request->facility_name;
+        $data['geo_codes'] = $request->geo_codes;
+        $data['ownership_id'] = $request->ownership_id;
+        $data['operational_status_id'] = $request->operational_status_id;
+        $data['registration_status_id'] = $request->registration_status_id;
+        $data['license_status_id'] = $request->license_status_id;
+        $data['searched'] = 1;
+    
+
+        return view('public.list_imaging',compact('facilities','data'));     
+    }
     //search hospital from top banner search option
     public function searchHospital(Request $request)
     {
@@ -328,6 +497,91 @@ class FacilityListingController extends Controller
         ]);
 
         return view('public.hospital_search',compact("facilities"));        
+    }
+
+    public function getUpdates(Request $request)
+    {
+     
+       //New Facilities Created This Month
+        if ($request->report == 1){
+            $facilities = DB::table('hospital_details')
+            ->where('created_at', '>=', Carbon::now()->startOfMonth())
+            ->orderBy('state')
+            ->orderBy('lga')
+            ->orderBy('facility_name')
+            ->get();   
+            $report=$facilities->count()." Facilities were created this Month";    
+        }
+
+        //New Facilities Created Last Month
+        if ($request->report == 2){
+            $facilities = DB::table('hospital_details')
+            ->whereBetween('created_at', [Carbon::now()->startOfMonth()->subMonth(), Carbon::now()->startOfMonth()])
+            ->orderBy('state')
+            ->orderBy('lga')
+            ->orderBy('facility_name')
+            ->get();   
+            $report=$facilities->count()." Facilities were created in the last Month";
+        }
+
+        //New Facilities Created Last 3 Months
+        if ($request->report == 3){
+            $facilities = DB::table('hospital_details')
+            ->whereBetween('created_at', [Carbon::now()->subMonth(4), Carbon::now()->subMonth(1)])
+            ->orderBy('state')
+            ->orderBy('lga')
+            ->orderBy('facility_name')
+            ->get();
+            $report=$facilities->count()." Facilities were created in the last 3 Month";
+        }
+
+        //Facilities Updated This Month 
+        if ($request->report == 4){
+            $facilities = DB::table('hospital_details')
+            ->where('updated_at', '>=', Carbon::now()->startOfMonth())
+            ->orderBy('state')
+            ->orderBy('lga')
+            ->orderBy('facility_name')
+            ->get();  
+
+            $report=$facilities->count()." Facilities were updated this Month";
+        }
+
+        //Facilities Updated Last Month
+        if ($request->report == 5){
+            $facilities = DB::table('hospital_details')
+            ->whereBetween('updated_at', [Carbon::now()->startOfMonth()->subMonth(), Carbon::now()->startOfMonth()])
+            ->orderBy('state')
+            ->orderBy('lga')
+            ->orderBy('facility_name')
+            ->get();  
+            $report=$facilities->count()." Facilities were updated in the last Month";
+        }
+    
+        //Facilities Updated Last 3 Month
+        if ($request->report == 6){
+            $facilities = DB::table('hospital_details')
+            ->whereBetween('updated_at', [Carbon::now()->subMonth(4), Carbon::now()->subMonth(1)])
+            ->orderBy('state')
+            ->orderBy('lga')
+            ->orderBy('facility_name')
+            ->get();  
+            $report=$facilities->count()." Facilities were updated in the last 3 Month";
+        }
+
+
+     
+
+
+        
+        return view('public.facilities_updates',compact('facilities','report'));     
+    }
+  
+    public function updates()
+    {
+        $facilities="none";
+        
+        return view('public.facilities_updates',compact('facilities'));    
     }
 
  

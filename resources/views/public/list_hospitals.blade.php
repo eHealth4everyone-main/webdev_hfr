@@ -12,8 +12,15 @@
         
         <div class="box-header">
             
-            <form class="form-horizontal"  action="{{route('searchFacilities')}}" method="GET">
+            <form class="form-horizontal"  action="{{route('search.hospitals')}}" method="GET">
                 @csrf
+
+                <div class="form-group">
+                        <div class="col-sm-12">
+                            <h4>Hospitals and Clinics</h4> 
+                        </div>
+                </div>
+
                 <div class="form-group">
                   
                     <div class="col-sm-3">
@@ -136,94 +143,99 @@
             
             
         </div>
-        {{-- <div role="alert" class="alert alert-success"> 
-            A total of {{$facilities->total()}} record(s) found  
-            
-        </div> --}}
+   
         <div class="box-body">                
-            
+            @if ($facilities->total()==0)
+                <div role="alert" class="alert alert-success"> 
+                    No records found!
+                </div>
+            @else
             <table id="hosp" class="table table-bordered table-striped">
-                <thead>
-                    <tr>
-                        <th>State</th>
-                        <th>LGA</th>
-                        {{-- <th>Ward</th> --}}
-                        <th>Facility ID</th>
-                        <th>Facility Name</th>
-                        <th>Facility Level</th>
-                        <th>Ownership</th>
-                        <th>Details</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    
-                    @foreach($facilities as $fac)
-                    <tr>
-                        <td>{{$fac->state}}</td>
-                        <td>{{$fac->lga}}</td>
-                        {{-- <td>{{$fac->ward}}</td> --}}
-                        <td>{{$fac->unique_id}}</td>
-                        <td>{{$fac->facility_name}}</td>
-                        <td>{{$fac->facility_level}}</td>
-                        <td>{{$fac->ownership}}</td>
-                        <td>
-                            
-                            <a href="#">
-                                <button class="btn btn-success btn-sm"  type="button" data-toggle="modal" data-target="#view_details"
-                                data-id="{{$fac->id}}" data-unique_id="{{$fac->unique_id}}" data-registration_no="{{$fac->registration_no}}" data-start_date="{{$fac->start_date}}"
-                                data-facility_name="{{$fac->facility_name}}" data-alt_facility_name="{{$fac->alt_facility_name}}" data-state="{{$fac->state}}"
-                                data-lga="{{$fac->lga}}" data-ward="{{$fac->ward}}" data-ownership="{{$fac->ownership}}" data-ownership_type="{{$fac->ownership_type}}"
-                                data-facility_level="{{$fac->facility_level}}" data-facility_level_option="{{$fac->facility_level_option}}"
-                                data-physical_location="{{$fac->physical_location}}" data-alternate_number="{{$fac->alternate_number}}" data-longitude="{{$fac->longitude}}" data-latitude="{{$fac->latitude}}"
-                                data-postal_address="{{$fac->postal_address}}" data-phone_number="{{$fac->phone_number}}" data-email_address="{{$fac->email_address}}"
-                                data-website="{{$fac->website}}" data-operational_days="{{$fac->operational_days}}" data-operational_hours="{{$fac->operational_hours}}"
-                                data-operation_status="{{$fac->operation_status}}" data-registration_status="{{$fac->registration_status}}" data-license_status="{{$fac->license_status}}"
-                                data-doctors="{{$fac->doctors}}" data-pharmacists="{{$fac->pharmacists}}" data-dentist="{{$fac->dentist}}" data-pharmacy_technicians="{{$fac->pharmacy_technicians}}"
-                                data-nurses="{{$fac->nurses}}" data-lab_scientists="{{$fac->lab_scientists}}" data-midwifes="{{$fac->midwifes}}" data-lab_technicians="{{$fac->lab_technicians}}"
-                                data-nurse_midwife="{{$fac->nurse_midwife}}" data-him_officers="{{$fac->him_officers}}" data-community_health_officer="{{$fac->community_health_officer}}"
-                                data-community_extension_workers="{{$fac->community_extension_workers}}" data-jun_community_extension_worker="{{$fac->jun_community_extension_worker}}"
-                                data-dental_technicians="{{$fac->dental_technicians}}" data-env_health_officers="{{$fac->env_health_officers}}" data-inpatient="{{$fac->inpatient}}"
-                                data-outpatient="{{$fac->outpatient}}" data-beds="{{$fac->beds}}" data-onsite_laboratory="{{$fac->onsite_laboratory}}"
-                                data-onsite_imaging="{{$fac->onsite_imaging}}" data-onsite_pharmarcy="{{$fac->onsite_pharmarcy}}" data-mortuary_services="{{$fac->mortuary_services}}"
-                                data-attendants = "{{ $fac->attendants }}" data-ambulance_services="{{ $fac->ambulance_services }}" data-state_unique_id="{{ $fac->state_unique_id }}" 
-                                data-outpatient = "{{ $fac->outpatient }}" data-inpatient="{{ $fac->inpatient }}" >
-                                View
-                            </button>
-                        </a> 
+                    <thead>
+                        <tr>
+                            <th>State</th>
+                            <th>LGA</th>
+                            {{-- <th>Ward</th> --}}
+                            <th>Facility ID</th>
+                            <th>Facility Name</th>
+                            <th>Facility Level</th>
+                            <th>Ownership</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
                         
-                    </td>
-                </tr>
-                @endforeach
-                
-            </tbody>
-        </table>
+                        @foreach($facilities as $fac)
+                        <tr>
+                            <td>{{$fac->state}}</td>
+                            <td>{{$fac->lga}}</td>
+                            {{-- <td>{{$fac->ward}}</td> --}}
+                            <td>{{$fac->unique_id}}</td>
+                            <td>{{$fac->facility_name}}</td>
+                            <td>{{$fac->facility_level}}</td>
+                            <td>{{$fac->ownership}}</td>
+                            <td>
+                                
+                                <a href="#">
+                                    <button class="btn btn-success btn-sm"  type="button" data-toggle="modal" data-target="#view_details"
+                                    data-id="{{$fac->id}}" data-unique_id="{{$fac->unique_id}}" data-registration_no="{{$fac->registration_no}}" data-start_date="{{$fac->start_date}}"
+                                    data-facility_name="{{$fac->facility_name}}" data-alt_facility_name="{{$fac->alt_facility_name}}" data-state="{{$fac->state}}"
+                                    data-lga="{{$fac->lga}}" data-ward="{{$fac->ward}}" data-ownership="{{$fac->ownership}}" data-ownership_type="{{$fac->ownership_type}}"
+                                    data-facility_level="{{$fac->facility_level}}" data-facility_level_option="{{$fac->facility_level_option}}"
+                                    data-physical_location="{{$fac->physical_location}}" data-alternate_number="{{$fac->alternate_number}}" data-longitude="{{$fac->longitude}}" data-latitude="{{$fac->latitude}}"
+                                    data-postal_address="{{$fac->postal_address}}" data-phone_number="{{$fac->phone_number}}" data-email_address="{{$fac->email_address}}"
+                                    data-website="{{$fac->website}}" data-operational_days="{{$fac->operational_days}}" data-operational_hours="{{$fac->operational_hours}}"
+                                    data-operation_status="{{$fac->operation_status}}" data-registration_status="{{$fac->registration_status}}" data-license_status="{{$fac->license_status}}"
+                                    data-doctors="{{$fac->doctors}}" data-pharmacists="{{$fac->pharmacists}}" data-dentist="{{$fac->dentist}}" data-pharmacy_technicians="{{$fac->pharmacy_technicians}}"
+                                    data-nurses="{{$fac->nurses}}" data-lab_scientists="{{$fac->lab_scientists}}" data-midwifes="{{$fac->midwifes}}" data-lab_technicians="{{$fac->lab_technicians}}"
+                                    data-nurse_midwife="{{$fac->nurse_midwife}}" data-him_officers="{{$fac->him_officers}}" data-community_health_officer="{{$fac->community_health_officer}}"
+                                    data-community_extension_workers="{{$fac->community_extension_workers}}" data-jun_community_extension_worker="{{$fac->jun_community_extension_worker}}"
+                                    data-dental_technicians="{{$fac->dental_technicians}}" data-env_health_officers="{{$fac->env_health_officers}}" data-inpatient="{{$fac->inpatient}}"
+                                    data-outpatient="{{$fac->outpatient}}" data-beds="{{$fac->beds}}" data-onsite_laboratory="{{$fac->onsite_laboratory}}"
+                                    data-onsite_imaging="{{$fac->onsite_imaging}}" data-onsite_pharmarcy="{{$fac->onsite_pharmarcy}}" data-mortuary_services="{{$fac->mortuary_services}}"
+                                    data-attendants = "{{ $fac->attendants }}" data-ambulance_services="{{ $fac->ambulance_services }}" data-state_unique_id="{{ $fac->state_unique_id }}" 
+                                    data-outpatient = "{{ $fac->outpatient }}" data-inpatient="{{ $fac->inpatient }}" >
+                                    View
+                                </button>
+                            </a> 
+                            
+                        </td>
+                    </tr>
+                    @endforeach
+                    
+                </tbody>
+            </table>
+            
+            @endif
         
     </div>
     <!-- /.box-body -->
     <div class="box-footer">
         <div class="row">
             
-            @php
-            $perpage = $facilities->perpage();
-            $currentpage = $facilities->currentpage();
-            $from = ($currentpage-1)*$perpage+1;
-            
-            if ($facilities->currentpage() == $facilities->lastpage()) {
-                $to = $facilities->total();
-            } else {
-                $to = $currentpage*$perpage;
-            }
-            @endphp
-            
-            <div class="col-md-4">
-                Showing {{$from}} to {{$to}} of {{$facilities->total()}} entries
+                @if ($facilities->total()> 0)
+                @php
+                $perpage = $facilities->perpage();
+                $currentpage = $facilities->currentpage();
+                $from = ($currentpage-1)*$perpage+1;
                 
-            </div>
-            <div class="col-md-8">
-                <div class="pull-right">
-                    {{$facilities->links()}}                  
+                if ($facilities->currentpage() == $facilities->lastpage()) {
+                    $to = $facilities->total();
+                } else {
+                    $to = $currentpage*$perpage;
+                }
+                @endphp
+                
+                <div class="col-md-4">
+                    Showing {{$from}} to {{$to}} of {{$facilities->total()}} entries
+                    
                 </div>
-            </div>
+                <div class="col-md-8">
+                    <div class="pull-right">
+                        {{$facilities->links()}}                  
+                    </div>
+                </div>
+            @endif
             
         </div>
     </div>
@@ -231,6 +243,8 @@
 </div> <!-- / -->
 
 
+<!-- Show facility details on click view in public facility list -->
+@include('hospitals.details_modal')
 
 @endsection 
 

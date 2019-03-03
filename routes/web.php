@@ -12,12 +12,20 @@ Route::get('about', 'HomeController@about')->name('about');
 Route::get('contactus', 'ContactController@openContactForm')->name('open_contact_form');
 Route::post('contactus', 'ContactController@store')->name('storecontact');
 
-Route::get('facilities/list-hospitals', 'FacilityListingController@index')->name('list.hospitals');
-Route::get('facilities/latest-updates', 'FacilityListingController@updates')->name('latest.updates');
+Route::get('facilities/hospitals-list', 'FacilityListingController@getHospitals')->name('list.hospitals');
+Route::get('facilities/hospitals-search', 'FacilityListingController@searchHospitals')->name('search.hospitals');
+Route::get('facilities/pharmacies-list', 'FacilityListingController@getPharmacy')->name('list.pharmacy');
+Route::get('facilities/pharmacies-search', 'FacilityListingController@searchPharmacy')->name('search.pharmacy');
+Route::get('facilities/laboratory-list', 'FacilityListingController@getLab')->name('list.laboratory');
+Route::get('facilities/laboratory-search', 'FacilityListingController@searchLab')->name('search.laboratory');
+Route::get('facilities/imaging-list', 'FacilityListingController@getImaging')->name('list.imaging');
+Route::get('facilities/imaging-search', 'FacilityListingController@searchImaging')->name('search.imaging');
+
 Route::get('facilities/latest-updates/view', 'FacilityListingController@getUpdates')->name('view.updates');
-Route::get('facilities/search', 'FacilityListingController@getHospitals')->name('searchFacilities');
-Route::get('facilities/hospitals-search', 'FacilityListingController@searchHospital')->name('searchHospitals');
-Route::post('facilities/details','FacilityListingController@showDetails')->name('facilitydetails');
+Route::get('facilities/latest-updates', 'FacilityListingController@updates')->name('latest.updates');
+Route::get('facilities/hospital-search', 'FacilityListingController@searchHospital')->name('searchHospitals');
+
+
 
 //summary tables
 Route::get('statistics/tables', 'SummaryTablesController@index')->name('statistics');

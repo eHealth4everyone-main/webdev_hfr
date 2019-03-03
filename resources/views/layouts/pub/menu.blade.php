@@ -15,7 +15,10 @@
                         </li>
                         <li><a >Facilities List</a>
                             <ul class="sub-menu">
-                                <li><a href="{{route('list.hospitals')}}">Hospitals and Clinics</a></li>
+                                <li><a href="{{route('list.hospitals')}}">Hospitals & Clinics</a></li>
+                                <li><a href="{{route('list.pharmacy')}}">Pharmaceuticals</a></li>
+                                <li><a href="{{route('list.laboratory')}}">Laboratories </a></li>
+                                <li><a href="{{route('list.imaging')}}">Radiologies/Imagings</li>
                                 <li><a href="{{route('latest.updates')}}">Facilities Updates</a></li>
                             </ul>
                         </li>

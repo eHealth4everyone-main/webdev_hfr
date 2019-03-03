@@ -169,8 +169,6 @@
         <!--End of Main Wrapper Area--> 
         
 
-<!-- Show facility details on click view in public facility list -->
-@include('hospitals.details_modal')
 
 
 
