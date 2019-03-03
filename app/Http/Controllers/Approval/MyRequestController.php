@@ -46,6 +46,7 @@ class MyRequestController extends Controller
 
     public function editRequest($id)
     {
+        if($this->isNotVerified($id)){
             $hosp =HospitalHistory::find($id);
 
             $services = DB::table('hs_hospital_services_history')
@@ -61,8 +62,13 @@ class MyRequestController extends Controller
              //get hospital services
             $lst_services = DB::table('lst_hosp_services')->get();
 
-         
             return view('approvals.edit_hospital',compact('hosp','current_services','lst_services')); 
+        }
+        else{
+            session()->flash("alert-success", "You can not update a verified request!");
+            return redirect()->route('myrequest.pending');
+        }
+            
     }
     
     public function updateRequest(Request $request)
@@ -119,7 +125,7 @@ class MyRequestController extends Controller
             'outpatient'=>'nullable',
             'inpatient'=>'nullable',
         ]);
-       
+    
         // Update rejected create request, or update create request for reqeust that have not been verified yet
         if(in_array($request->status_id,[3,1])){  
             DB::beginTransaction();
@@ -278,110 +284,116 @@ class MyRequestController extends Controller
         }
         
         session()->flash("alert-success", "Request Updated Successfully!");
+           
         return redirect()->route('myrequest.pending');
     }
     
     
     public function deleteRequest(Request $request){
-     
-        // Delete my pending verification or rejected verification for new facility
-        if(in_array($request->status_id,[1,3])){  
 
-            //delete hosp and services in history
-            DB::beginTransaction();
-            try {
-                HospitalHistory::destroy($request->hosp_id);
-                HospitalServiceHistory::where('hospital_id', $request->hosp_id)->delete();
-                DB::commit();
-            } catch (\Exception $ex) {
-                DB::rollback();
-                return response()->json(['error' => $ex->getMessage()], 500);
-            }
-        }
-    
-
-        // Delete pending verification or rejected verification for update requests
-        //restore main table data before being udpated. Delete data in history and copy data from main to history
-        if(in_array($request->status_id, [8,10])){ 
-            DB::beginTransaction();
-            try {
-                HospitalHistory::disableAuditing();
+        if($this->isNotVerified($request->hosp_id)){
+            // Delete my pending verification or rejected verification for new facility
+            if(in_array($request->status_id,[1,3])){  
 
                 //delete hosp and services in history
-                HospitalHistory::destroy($request->hosp_id);
-                HospitalServiceHistory::where('hospital_id', $request->hosp_id)->delete();
+                DB::beginTransaction();
+                try {
+                    HospitalHistory::destroy($request->hosp_id);
+                    HospitalServiceHistory::where('hospital_id', $request->hosp_id)->delete();
+                    DB::commit();
+                } catch (\Exception $ex) {
+                    DB::rollback();
+                    return response()->json(['error' => $ex->getMessage()], 500);
+                }
+            }
 
-                $hosp_main = new Hospital;
-                $hosp_main = Hospital::find($request->hosp_id);
+            // Delete pending verification or rejected verification for update requests
+            //restore main table data before being udpated. Delete data in history and copy data from main to history
+            if(in_array($request->status_id, [8,10])){ 
+                DB::beginTransaction();
+                try {
+                    HospitalHistory::disableAuditing();
 
-                //restore data from main tables to history
-                $hosp_history = new HospitalHistory;
-                $hosp_history ->fill($hosp_main->toArray());
-                $hosp_history ->unique_id = $hosp_main->unique_id;
-                $hosp_history ->start_date = $hosp_main->start_date;
-                $hosp_history ->status_id = $hosp_main->status_id;
-                $hosp_history ->created_by = $hosp_main->created_by;
-                $hosp_history ->operational_days =  $hosp_main->operational_days;        
-                $hosp_history ->save();
+                    //delete hosp and services in history
+                    HospitalHistory::destroy($request->hosp_id);
+                    HospitalServiceHistory::where('hospital_id', $request->hosp_id)->delete();
 
-                //copy services data from main to services history table
-                $services = DB::select("SELECT service_id FROM hs_hospital_services WHERE hospital_id = ". $request->hosp_id . ""); 
-    
-                if(!empty($services)){
-                    //add new services 
-                    foreach ($services as $service){
-                        $hosp_services = new HospitalServiceHistory;
-                        $hosp_services->service_id = $service->service_id;
-                        $hosp_services->hospital_id = $request->hosp_id; 
-                        $hosp_services->save();
+                    $hosp_main = new Hospital;
+                    $hosp_main = Hospital::find($request->hosp_id);
+
+                    //restore data from main tables to history
+                    $hosp_history = new HospitalHistory;
+                    $hosp_history ->fill($hosp_main->toArray());
+                    $hosp_history ->unique_id = $hosp_main->unique_id;
+                    $hosp_history ->start_date = $hosp_main->start_date;
+                    $hosp_history ->status_id = $hosp_main->status_id;
+                    $hosp_history ->created_by = $hosp_main->created_by;
+                    $hosp_history ->operational_days =  $hosp_main->operational_days;        
+                    $hosp_history ->save();
+
+                    //copy services data from main to services history table
+                    $services = DB::select("SELECT service_id FROM hs_hospital_services WHERE hospital_id = ". $request->hosp_id . ""); 
+        
+                    if(!empty($services)){
+                        //add new services 
+                        foreach ($services as $service){
+                            $hosp_services = new HospitalServiceHistory;
+                            $hosp_services->service_id = $service->service_id;
+                            $hosp_services->hospital_id = $request->hosp_id; 
+                            $hosp_services->save();
+                        }
                     }
+
+
+                    HospitalHistory::enableAuditing();
+                    DB::commit();
+                } catch (\Exception $ex) {
+                    DB::rollback();
+                    return response()->json(['error' => $ex->getMessage()], 500);
                 }
 
+            }
+            
+            // Delete request for facility delition
+            if(in_array($request->status_id, [15,17])){ 
 
-                HospitalHistory::enableAuditing();
-                DB::commit();
-            } catch (\Exception $ex) {
-                DB::rollback();
-                return response()->json(['error' => $ex->getMessage()], 500);
+                DB::beginTransaction();
+                try {
+                    HospitalHistory::disableAuditing();
+                    $hosp_main = new Hospital;
+                    $hosp_main = Hospital::find($request->hosp_id);
+
+                    $hosp = new HospitalHistory;
+                    $hosp = HospitalHistory::find($request->hosp_id);
+                    $hosp->status_id = $hosp_main->status_id;
+                    $hosp->verified_by =  $hosp_main->verified_by;
+                    $hosp->verified_at = $hosp_main->verified_at;
+                    $hosp->verify_note = $hosp_main->verified_note;
+                    $hosp->validated_by = $hosp_main->validate_by;
+                    $hosp->validated_at = $hosp_main->validate_at;
+                    $hosp->validate_note = $hosp_main->validate_note;
+                    $hosp->published_by = $hosp_main->published_by;
+                    $hosp->published_at = $hosp_main->published_at;
+                    $hosp->publish_note = $hosp_main->published_note;
+                    $hosp->save();      
+
+                    HospitalHistory::enableAuditing();
+
+                    DB::commit();
+                } catch (\Exception $ex) {
+                    DB::rollback();
+                    return response()->json(['error' => $ex->getMessage()], 500);
+                }
+
             }
 
+
+            session()->flash("alert-success", "Request Deleted Successfully!");
         }
-        
-        // Delete request for facility delition
-        if(in_array($request->status_id, [15,17])){ 
-
-            DB::beginTransaction();
-            try {
-                HospitalHistory::disableAuditing();
-                $hosp_main = new Hospital;
-                $hosp_main = Hospital::find($request->hosp_id);
-
-                $hosp = new HospitalHistory;
-                $hosp = HospitalHistory::find($request->hosp_id);
-                $hosp->status_id = $hosp_main->status_id;
-                $hosp->verified_by =  $hosp_main->verified_by;
-                $hosp->verified_at = $hosp_main->verified_at;
-                $hosp->verify_note = $hosp_main->verified_note;
-                $hosp->validated_by = $hosp_main->validate_by;
-                $hosp->validated_at = $hosp_main->validate_at;
-                $hosp->validate_note = $hosp_main->validate_note;
-                $hosp->published_by = $hosp_main->published_by;
-                $hosp->published_at = $hosp_main->published_at;
-                $hosp->publish_note = $hosp_main->published_note;
-                $hosp->save();      
-
-                HospitalHistory::enableAuditing();
-
-                DB::commit();
-            } catch (\Exception $ex) {
-                DB::rollback();
-                return response()->json(['error' => $ex->getMessage()], 500);
-            }
-
+        else{
+            session()->flash("alert-success", "You can not delete a verified request!");
         }
 
-
-        session()->flash("alert-success", "Request Deleted Successfully!");
         return redirect()->back();
     }
 
@@ -425,6 +437,18 @@ class MyRequestController extends Controller
 
         session()->flash("alert-success", "Delete request re-submitted successfully!");
         return redirect()->route('myrequest.pending');
+    }
+
+    //method to check if the request has been verified or validated. if request has been verified
+    //the requester must not be able to delete or update the request
+    private function isNotVerified($id){
+        $hosp = HospitalHistory::find($id);
+       
+        if (in_array($hosp->status_id,[1,3,8,10])){
+            return true;
+        }else{
+            return false;
+        }
     }
 
 }
