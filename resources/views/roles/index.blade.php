@@ -49,7 +49,7 @@ User Roles
               
             </td>
           </tr>
-        </tr>
+      
         @endforeach
         
       </tbody>

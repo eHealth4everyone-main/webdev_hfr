@@ -15,9 +15,9 @@ use App\Notifications\SendDownloadVerificationCode;
 class DownloadController extends Controller
 {
     public function index (Request $request){
-        // if (!$request->session()->has('download_verify')){
-        //     return redirect()->route('openRegistrationForm');
-        // }
+        if (!$request->session()->has('download_verify')){
+            return redirect()->route('openRegistrationForm');
+        }
 
 
         //set values facility list when no filter

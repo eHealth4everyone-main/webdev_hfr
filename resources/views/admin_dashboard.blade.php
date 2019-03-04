@@ -35,35 +35,40 @@
                 </div>
         </div>
 
-       <div class="row" hidden>
+       <div class="row" >
             <table  id="fac_status_table">
                     <thead>
                     <tr>
                         <th></th>
                         <th>Pending Creation</th>
+                        <th>Facility Verified</th>
                         <th>Facility Creation Rejected</th>
+                        <th>Facility Validated</th>
+                        <th>Facility Created</th>
                         <th>Pending Update</th>
                         <th>Facility Update Rejected</th>
+                        <th>Facility Updated</th>
                         <th>Pending Deletion</th>
                         <th>Facility Deletion Rejected</th>
-                        <th>Facility Verified</th>
-                        <th>Facility Validated</th>
-                        <th>Facility Published</th>
+                        <th>Facility Deleted</th>
                     </tr>
                     </thead>
                     <tbody>
-                        @foreach($facility_status as $s)
+                        @foreach($facility_status as $status)
                             <tr>
-                                <td> {{ $s[0] }} </td>
-                                <td> {{ $s[1] }} </td>
-                                <td> {{ $s[2] }} </td>
-                                <td> {{ $s[3] }} </td>
-                                <td> {{ $s[4] }} </td>
-                                <td> {{ $s[5] }} </td>
-                                <td> {{ $s[6] }} </td>
-                                <td> {{ $s[7] }} </td>
-                                <td> {{ $s[8] }} </td>
-                                <td> {{ $s[9] }} </td>
+                             <td>{{ $status->state }}</td>
+                             <td>{{ $status->Pending_Creation }}</td>
+                             <td>{{ $status->Facility_Verified }}</td>
+                             <td>{{ $status->Facility_Creation_Rejected }}</td>
+                             <td>{{ $status->Facility_Validated }}</td>
+                             <td>{{ $status->Facility_Created }}</td>
+                             <td>{{ $status->Pending_Update }}</td>
+                             <td>{{ $status->Facility_Update_Rejected }}</td>
+                             <td>{{ $status->Facility_Updated }}</td>
+                             <td>{{ $status->Pending_Deletion }}</td>
+                             <td>{{ $status->Facility_Deletion_Rejected }}</td>
+                             <td>{{ $status->Facility_Deleted }}</td>
+
                             </tr>
                         @endforeach
                     <tbody>

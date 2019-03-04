@@ -163,9 +163,15 @@ Route::middleware(["auth"])->group(function(){
             Route::resource('admin/masters/wards','WardController');
 
             //reports
-            Route::get('admin/reports/facility-list/updates-select','FacilityStatusReportController@updateSelection')->name('updates.selection');
-            Route::get('admin/reports/facility-list/updates','FacilityStatusReportController@getUpdatesReport')->name('updates.report');
-            Route::post('admin/reports/facility-list/updates-download','FacilityStatusReportController@updatesDownload')->name('updates.download');
+            Route::get('admin/reports/facility-list/updates-select','FacilityReportController@updateSelection')->name('updates.selection');
+            Route::get('admin/reports/facility-list/updates','FacilityReportController@getUpdatesReport')->name('updates.report');
+            Route::post('admin/reports/facility-list/updates-download','FacilityReportController@updatesDownload')->name('updates.download');
+            Route::get('admin/reports/facility-services/list','FacilityReportController@servicesIndex')->name('services.index');
+            Route::get('admin/reports/facility-services/report','FacilityReportController@getServicesReport')->name('services.report');
+            Route::post('admin/reports/facility-services/download','FacilityReportController@servicesDownload')->name('services.download');
+            Route::get('admin/reports/facility-status/list','FacilityReportController@statusIndex')->name('status.index');
+            Route::get('admin/reports/facility-status/report','FacilityReportController@getStatusReport')->name('status.report');
+            Route::post('admin/reports/facility-status/download','FacilityReportController@statusDownload')->name('status.download');
 
 
 
