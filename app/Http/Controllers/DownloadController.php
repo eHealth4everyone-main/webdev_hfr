@@ -15,13 +15,12 @@ use App\Notifications\SendDownloadVerificationCode;
 class DownloadController extends Controller
 {
     public function index (Request $request){
-        if (!$request->session()->has('download_verify')){
-            return redirect()->route('openRegistrationForm');
-        }
+        // if (!$request->session()->has('download_verify')){
+        //     return redirect()->route('openRegistrationForm');
+        // }
 
 
         //set values facility list when no filter
-        $data['state_id'] = 1;
         $data['lga_id'] = 1;
         $data['ward_id'] = 1;
         $data['facility_name'] = "";
@@ -34,14 +33,12 @@ class DownloadController extends Controller
         $data['service_type'] = 0;
         $data['service_category_id'] = 0;
         $data['facility_type_id'] = 0;
-        $data['searched'] = 0;
         
         return view('public.download_list',compact('data'));     
     }
 
     
     public function export(Request $request){
-        $state_id = $request->state_id;
         $lga_id = $request->lga_id;
         $ward_id = $request->ward_id;
         $facility_name =$request->facility_name;
@@ -100,7 +97,7 @@ class DownloadController extends Controller
         $facilities = DB::table('hospital_details')
             ->select('unique_id','registration_no','start_date','facility_name','state','lga','ward','ownership',
             'facility_level','longitude','latitude','operation_status','registration_status','license_status')
-            ->where('state_id','like','%'.$state_id.'%')
+            ->whereIn('state_id',$request->state)
             ->where('lga_id','like','%'.$lga_id.'%')
             ->where(DB::Raw("IFNULL(ward_id, '')"),'like','%'.$ward_id.'%')
             ->where('facility_level_id','like','%'.$facility_level_id.'%')

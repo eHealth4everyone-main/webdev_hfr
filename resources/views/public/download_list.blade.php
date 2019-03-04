@@ -1,7 +1,7 @@
 @extends("layouts.pub.master")
 
 @section('custom_css')
-
+    <link rel="stylesheet" href="{{asset("dist/jQuery-MultiSelect-master/jquery.multiselect.css")}}">
 @endsection
 
 
@@ -23,10 +23,9 @@
                         </select>
                     </div>
                     <div class="col-sm-4">
-                        <select class="form-control select2" id="state_id" name ="state_id">
-                            <option value="1">All States</option>
+                        <select class="form-control" id="state_id" multiple="multiple" name ="state[]" required>
                             @foreach(getStates() as $st)
-                            <option value="{{$st->id}}"  {{ ($st->id == $data['state_id'] ? "selected":"") }}>{{$st->name}}</option>
+                            <option value="{{$st->id}}" >{{$st->name}}</option>
                             @endforeach
                         </select>
                     </div>
@@ -150,6 +149,7 @@
 @push('custom_scripts')
 @include('partials.dynamic_state_script')
 @include('partials.notification')
+<script src="{{asset("dist/jQuery-MultiSelect-master/jquery.multiselect.js")}}"></script>
 
 <script>
     $(document).ready( function () {
@@ -172,7 +172,15 @@
         
         
     
-        
+        $('#state_id').multiselect({
+            columns  : 4,
+            search   : true,
+            selectAll: true,
+            texts    : {
+                placeholder: 'Select States',
+                search     : 'Search States'
+            }
+        });
         
         
         
