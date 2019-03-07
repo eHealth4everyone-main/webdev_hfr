@@ -34,12 +34,12 @@
                     
                     <div class="col-sm-3">
                         <select class="form-control select2" id="lga_id" name="lga_id">
-                            <option value="1">--Select LGA--</option>
+                            <option value="1" selected>--Select LGA--</option>
                         </select>
                     </div>
                     <div class="col-sm-2">
                         <select class="form-control select2" id="ward_id" name="ward_id">
-                            <option value="0">--Select Ward--</option>
+                            <option value="1" selected>--Select Ward--</option>
                         </select>
                     </div>
                     
@@ -257,36 +257,39 @@
         //get lgas
         if({{ $data['searched'] }} == 1){
             var stateID = {{ $data['state_id'] }};
-            var _token = $('input[name="_token"]').val();
-            $.ajax({
-                url:"{{route('getLgaList')}}",
-                method:"POST",
-                data:{id:stateID, _token:_token},
-                success:function(result)    
-                {
-                    $('#lga_id').html(result);
-                    $("#lga_id").val({{ $data['lga_id']}}).change();               
-                }         
-            });
             
+            if(stateID > 1){
+                var _token = $('input[name="_token"]').val();
+                $.ajax({
+                    url:"{{route('getLgaList')}}",
+                    method:"POST",
+                    data:{id:stateID, _token:_token},
+                    success:function(result)    
+                    {
+                        $('#lga_id').html(result);
+                        $("#lga_id").val({{ $data['lga_id']}}).change();               
+                    }         
+                });
+            }
             
+            //get wards
+            if({{ $data['lga_id']  }} > 1 ){
+                var lgaID = {{ $data['lga_id']}};
+                var _token = $('input[name="_token"]').val();
+                $.ajax({
+                    url:"{{route('getWardList')}}",
+                    method:"POST",
+                    data:{lgaId:lgaID,_token:_token},
+                    success:function(result)
+                    {
+                        $('#ward_id').html(result);
+                        $('#ward_id').val({{$data['ward_id']}}).change();
+                    }         
+                });
+            }
         }   
         
-        //get wards
-        if({{ $data['lga_id']  }} != ''){
-            var lgaID = {{ $data['lga_id']}};
-            var _token = $('input[name="_token"]').val();
-            $.ajax({
-                url:"{{route('getWardList')}}",
-                method:"POST",
-                data:{lgaId:lgaID,_token:_token},
-                success:function(result)
-                {
-                    $('#ward_id').html(result);
-                    $('#ward_id').val({{$data['ward_id']}}).change();
-                }         
-            });
-        }
+     
         
         $("#service_category_id").change(function(){
             var id= $('#service_category_id').val();
@@ -306,6 +309,8 @@
         $("#reset").click(function(){
             $("#geo_codes").val(0).change();
             $("#state_id").val(1).change();
+            $("#lga_id").val(1).change();
+            $("#ward_id").val(1).change();
             $("#facility_name").val("");
             $("#facility_level_id").val(0).change();
             $("#ownership_id").val(0).change();

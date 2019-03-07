@@ -35,7 +35,7 @@
                 </div>
         </div>
 
-       <div class="row" >
+       <div class="row" hidden>
             <table  id="fac_status_table">
                     <thead>
                     <tr>

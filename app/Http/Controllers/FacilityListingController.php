@@ -72,9 +72,6 @@ class FacilityListingController extends Controller
             $inpatient = '';
         }
 
-        if ($ward_id == 0){
-            $ward_id ='';
-        }
         if($facility_level_id == 0){
             $facility_level_id = '';
         }

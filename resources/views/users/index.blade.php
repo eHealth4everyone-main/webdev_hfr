@@ -59,12 +59,12 @@ Users
             @if(auth()->user()->hasPermissionTo(20))
                 @if ($user->status == 1)
                   <a href="#">
-                    <button class="btn btn-danger btn-sm"  type="button" data-toggle="modal" data-target="#disableUser" data-id="{{$user->id}}" data-status="{{$user->status}}">Block</button>
+                    <button class="btn btn-danger btn-sm"  type="button" data-toggle="modal" data-target="#disableUser" data-id="{{$user->id}}" data-status="{{$user->status}}"  data-fname="{{$user->firstname}}"  data-lname="{{$user->lastname}}">Block</button>
                   </a>
                 @endif
                 @if ($user->status == 0)
                 <a href="#">
-                  <button class="btn btn-primary btn-sm"  type="button" data-toggle="modal" data-target="#disableUser" data-id="{{$user->id}}" data-status="{{$user->status}}">Activate</button>
+                  <button class="btn btn-primary btn-sm"  type="button" data-toggle="modal" data-target="#disableUser" data-id="{{$user->id}}" data-status="{{$user->status}}"  data-fname="{{$user->firstname}}"  data-lname="{{$user->lastname}}">Activate</button>
                 </a>
                 @endif
             @endif
@@ -82,7 +82,7 @@ Users
   
 @include('users.adduser')
 @include('users.edituser')
-@include('users.delete')
+@include('users.block')
 @include('users.show') 
   
 @endsection 
@@ -191,7 +191,7 @@ Users
 
 
 
-      //delete
+      //block
       $('#disableUser').on('show.bs.modal', function (event) {
       var button = $(event.relatedTarget) 
       var id = button.data('id')
@@ -200,10 +200,12 @@ Users
       modal.find('.modal-body #userid').val(id)
       modal.find('.modal-body #status').val(status)
       if(status == 1){
-        modal.find('.modal-body #message').text('Are you sure you want to block user?')
+        var message =  "Are you sure you want to block '".concat(button.data('fname')," ",button.data('lname'), "'?") ;
+        modal.find('.modal-body #message').text(message)
       }
       if(status == 0){
-        modal.find('.modal-body #message').text('Are you sure you want to activate user?')
+        var message =  "Are you sure you want to activate user '".concat(button.data('fname')," ",button.data('lname'), "'?") ;
+        modal.find('.modal-body #message').text(message)
       }
 
       })//end
