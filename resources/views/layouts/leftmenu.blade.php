@@ -98,7 +98,7 @@
                             <li><a href="{{ route('validate.pending') }}"><i class="fa  fa-check"></i>Validation  <font color="orange">[{{ $approval_count[1] }}]</font></a></li>
                         @endif
                         @if(auth()->user()->hasPermissionTo(61))
-                            <li><a href="{{route('publish.pending')}}"><i class="fa  fa-check"></i>Publish  <font color="orange">[{{ $approval_count[2] }}]</font></a></li>
+                            <li><a href="{{route('publish.pending')}}"><i class="fa  fa-check"></i>Publication  <font color="orange">[{{ $approval_count[2] }}]</font></a></li>
                         @endif
                     
                     </ul>

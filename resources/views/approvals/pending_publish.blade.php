@@ -2,7 +2,7 @@
 
 
 @section('content-title')
-Facility Publishing
+Facility Publication
 
 @endsection
 

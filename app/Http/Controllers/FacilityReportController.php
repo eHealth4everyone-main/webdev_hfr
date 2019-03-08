@@ -183,26 +183,22 @@ class FacilityReportController extends Controller
 
       if ($request->state_id ==1){
         $facility_status = DB::table('facility_status_state_pivot')
-            ->select('state','Pending_Creation','Facility_Verified','Facility_Creation_Rejected','Facility_Validated',
-            'Facility_Created','Pending_Update','Facility_Update_Rejected','Facility_Updated','Pending_Deletion',
-            'Facility_Deletion_Rejected','Facility_Deleted')
+            ->select('state','New_Facility_Requested','Update_Requested','Deletion_Requested','Request_Verified','Request_Validated','Facility_Created',
+            'Facility_Updated','Facility_Deleted','Verification_Rejected','Validation_Rejected','Publishing_Rejected')
             ->get();
 
-        $column_header = array("state","Pending_Creation","Facility_Verified","Facility_Creation_Rejected","Facility_Validated",
-            "Facility_Created","Pending_Update","Facility_Update_Rejected","Facility_Updated","Pending_Deletion",
-            "Facility_Deletion_Rejected","Facility_Deleted");
+        $column_header = array('lga','New Facility Requested','Update Requested','Deletion Requested','Request Verified','Request Validated','Facility Created',
+        'Facility Updated','Facility Deleted','Verification Rejected','Validation Rejected','Publishing Rejected');
       }
       else{
         $facility_status = DB::table('facility_status_lga_pivot')
-            ->select('lga','Pending_Creation','Facility_Verified','Facility_Creation_Rejected','Facility_Validated',
-            'Facility_Created','Pending_Update','Facility_Update_Rejected','Facility_Updated','Pending_Deletion',
-            'Facility_Deletion_Rejected','Facility_Deleted')
+            ->select('lga','New_Facility_Requested','Update_Requested','Deletion_Requested','Request_Verified','Request_Validated','Facility_Created',
+            'Facility_Updated','Facility_Deleted','Verification_Rejected','Validation_Rejected','Publishing_Rejected')
             ->where('state_id','like','%'.$request->state_id.'%')
             ->get();
         
-        $column_header = array("lga","Pending_Creation","Facility_Verified","Facility_Creation_Rejected","Facility_Validated",
-            "Facility_Created","Pending_Update","Facility_Update_Rejected","Facility_Updated","Pending_Deletion",
-            "Facility_Deletion_Rejected","Facility_Deleted");
+        $column_header = array('lga','New Facility Requested','Update Requested','Deletion Requested','Request Verified','Request Validated','Facility Created',
+        'Facility Updated','Facility Deleted','Verification Rejected','Validation Rejected','Publishing Rejected');
       }
             
         return Excel::download(new HFExport( $facility_status, $column_header), "data.xlsx");

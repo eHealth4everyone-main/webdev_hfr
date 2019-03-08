@@ -47,17 +47,17 @@ Facilities Status Summary
                                     @else
                                         <th>LGA</th>                                        
                                     @endif
-                                    <th>Pending Creation</th>
-                                    <th>Facility Verified</th>
-                                    <th>Facility Creation Rejected</th>
-                                    <th>Facility Validated</th>
-                                    <th>Facility Created</th>
-                                    <th>Pending Update</th>
-                                    <th>Facility Update Rejected</th>
-                                    <th>Facility Updated</th>
-                                    <th>Pending Deletion</th>
-                                    <th>Facility Deletion Rejected</th>
-                                    <th>Facility Deleted</th>
+                                    <th>New Facility Requests</th>
+                                    <th>Update Requests</th>
+                                    <th>Deletion Requests </th>
+                                    <th>Verified Requests</th>
+                                    <th>Validated Requests</th>
+                                    <th>Created Facilities</th>
+                                    <th>Updated Facilities</th>
+                                    <th>Deleted Facilities</th>
+                                    <th>Rejected Verifications </th>
+                                    <th>Rejected Validations</th>
+                                    <th>Rejected Publications</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -68,17 +68,17 @@ Facilities Status Summary
                                             @else
                                                 <td>{{ $status->lga }}</td>
                                             @endif
-                                         <td>{{ $status->Pending_Creation }}</td>
-                                         <td>{{ $status->Facility_Verified }}</td>
-                                         <td>{{ $status->Facility_Creation_Rejected }}</td>
-                                         <td>{{ $status->Facility_Validated }}</td>
-                                         <td>{{ $status->Facility_Created }}</td>
-                                         <td>{{ $status->Pending_Update }}</td>
-                                         <td>{{ $status->Facility_Update_Rejected }}</td>
-                                         <td>{{ $status->Facility_Updated }}</td>
-                                         <td>{{ $status->Pending_Deletion }}</td>
-                                         <td>{{ $status->Facility_Deletion_Rejected }}</td>
-                                         <td>{{ $status->Facility_Deleted }}</td>
+                                            <td>{{ $status->New_Facility_Requested }}</td>
+                                            <td>{{ $status->Update_Requested }}</td>
+                                            <td>{{ $status->Deletion_Requested }}</td>
+                                            <td>{{ $status->Request_Verified }}</td>
+                                            <td>{{ $status->Request_Validated }}</td>
+                                            <td>{{ $status->Facility_Created }}</td>
+                                            <td>{{ $status->Facility_Updated }}</td>
+                                            <td>{{ $status->Facility_Deleted }}</td>
+                                            <td>{{ $status->Verification_Rejected }}</td>
+                                            <td>{{ $status->Validation_Rejected }}</td>
+                                            <td>{{ $status->Publishing_Rejected }}</td>
             
                                         </tr>
                                     @endforeach
