@@ -23,11 +23,10 @@ Facility Verification
     <thead>
       <tr>
         <th>Facility Name</th>
-        <th>Request Type</th>
-        <th>Submitted By</th>
-        <th>Verified By</th>
-        <th>Validated By</th> 
-        <th>Published By</th>        
+        <th>Requested By</th>
+        <th>Verification</th>
+        <th>Validation</th>
+        <th>Publication</th>       
         <th>Status</th>        
         <th>Actions</th>
       </tr>
@@ -35,49 +34,71 @@ Facility Verification
     <tbody>
       @foreach($pending as $p)
       <tr>
-    
-        <td>{{$p->facility_name}}</td>
-        <td>{{$p->action}}</td>
+        <td> {{$p->facility_name}} <br><br> <strong>Request:</strong>  
+            <span class="label label-default">{{$p->action}} </span>
+        </td>
         <td>
-            <Strong>Name: </Strong>{{$p->requested_by}} <br>
+            <Strong></Strong>{{$p->requested_by}} <br>
             <Strong>E-mail: </Strong>{{$p->requested_email}} <br>
             <Strong>Mobile: </Strong>{{ $p->requested_mobile }} <br>
             <Strong>Date: </Strong>{{ ($p->requested_at? date('d M Y', strtotime($p->requested_at)) : '') }} <br>   
-            <Strong>Remarks: </Strong>{{ $p->request_note }} <br>
+            @if ($p->request_note != '')
+                <Strong>Remarks: </Strong>{{ $p->request_note }} <br>                
+            @endif
         </td>
         <td>
            
         
                 @if ($p->verified_email != "" )
-                    <Strong>Name: </Strong>{{$p->verified_by}} <br>
+                    @if (in_array($p->status_id,[2,9,16,4,11,18,5,12,19,7,14,21])) 
+                        <span class="label label-success"> Accepted </span> <br>
+                    @endif
+                    @if (in_array($p->status_id,[3,10,17])) 
+                        <span class="label label-danger"> Rejected </span> <br>
+                    @endif
+                    <Strong>Remarks: </Strong>{{ $p->verify_note }} <br>
+                    <Strong>Date: </Strong>{{ ($p->verified_at? date('d M Y', strtotime($p->verified_at)) : '') }} <br>     
+                    <Strong>By: </Strong>{{$p->verified_by}} <br>
                     <Strong>E-mail: </Strong>{{$p->verified_email}} <br>
                     <Strong>Mobile: </Strong>{{ $p->verified_mobile }} <br>
-                    <Strong>Date: </Strong>{{ ($p->verified_at? date('d M Y', strtotime($p->verified_at)) : '') }} <br>     
-                    <Strong>Remarks: </Strong>{{ $p->verify_note }} <br>
                 @else
-                    Pending
-                @endif    </td>
+                    Pending Verification
+                @endif   
+                
+            </td>
         <td>
             @if ($p->validated_email != "" )
-                <Strong>Name: </Strong>{{$p->validated_by}} <br>
+                @if (in_array($p->status_id,[4,11,18,7,14,21])) 
+                    <span class="label label-success"> Accepted </span> <br>
+                @endif
+                @if (in_array($p->status_id,[5,12,19])) 
+                    <span class="label label-danger"> Rejected </span> <br>
+                @endif
+                <Strong>Remarks: </Strong>{{ $p->validate_note }} <br>
+                <Strong>Date: </Strong>{{ ($p->validated_at? date('d M Y', strtotime($p->validated_at)) : '') }} <br>
+                <Strong>By: </Strong>{{$p->validated_by}} <br>
                 <Strong>E-mail: </Strong>{{ $p->validated_email }} <br>
                 <Strong>Mobile: </Strong>{{ $p->validated_mobile }} <br>
-                <Strong>Date: </Strong>{{ ($p->validated_at? date('d M Y', strtotime($p->validated_at)) : '') }} <br>
-                <Strong>Remarks: </Strong>{{ $p->validate_note }} <br>
+             
             @else
-                Pending
+                Pending Validation
             @endif
    
         </td>
         <td>
             @if ($p->published_by != "" )
-                <Strong>Name: </Strong>{{$p->published_by}} <br>
+           
+                @if ($p->published_email !="") 
+                    <span class="label label-danger"> Rejected </span> <br>
+                @endif
+                <Strong>Remarks: </Strong>{{ $p->publish_note }} <br>
+                <Strong>Date: </Strong>{{  ($p->published_at? date('d M Y', strtotime($p->published_at)) : '')}} <br>  
+                <Strong>By: </Strong>{{$p->published_by}} <br>
                 <Strong>E-mail: </Strong>{{$p->published_email}} <br>
                 <Strong>Mobile: </Strong>{{ $p->published_mobile }} <br>
-                <Strong>Date: </Strong>{{  ($p->published_at? date('d M Y', strtotime($p->published_at)) : '')}} <br>  
-                <Strong>Remarks: </Strong>{{ $p->publish_note }} <br>
+                
             @else
-                Pending
+                Pending Pulication
             @endif
     
         </td>

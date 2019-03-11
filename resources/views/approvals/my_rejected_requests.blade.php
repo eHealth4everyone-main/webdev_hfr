@@ -26,43 +26,73 @@ My Rejected Requests
     <thead>
       <tr>
           <th>Facility Name</th>
-          <th>Request Type</th>
-          <th>Verified By</th>
-          <th>Validated By</th>
-          <th>Published By</th>
+          <th>Verification</th>
+          <th>Validation</th>
+          <th>Publication</th>
           <th>Status</th>
       </tr>
     </thead>
     <tbody>
         @foreach($myrequests as $r)
         <tr>
-          <td>{{$r->facility_name}}</td>
-          <td>{{$r->action}}</td>
+            <td> {{$r->facility_name}} <br><br> <strong>Request:</strong>  
+              <span class="label label-default">{{$r->action}} </span>
+          </td>
           <td>
-              <Strong>Name: </Strong>{{$r->verified_by}} <br>
-              <Strong>E-mail: </Strong>{{$r->verified_email}} <br>
-              <Strong>Mobile: </Strong>{{ $r->verified_mobile }} <br>
-              <Strong>Remarks: </Strong>{{ $r->verify_note }} <br>
-              <Strong>Date: </Strong>{{ ($r->verified_at ? date('d M Y', strtotime($r->verified_at )) : '')}} <br>                
+              @if ($r->verified_email != "" )
+                @if (in_array($r->status_id,[2,9,16,4,11,18,5,12,19,7,14,21])) 
+                  <span class="label label-success"> Accepted </span> <br>
+                @endif
+                @if (in_array($r->status_id,[3,10,17])) 
+                  <span class="label label-danger"> Rejected </span> <br>
+                @endif
+                <Strong>Remarks: </Strong>{{ $r->verify_note }} <br>
+                <Strong>Date: </Strong>{{ ($r->verified_at? date('d M Y', strtotime($r->verified_at)) : '') }} <br>   
+                <Strong>By: </Strong>{{$r->verified_by}} <br>
+                <Strong>E-mail: </Strong>{{$r->verified_email}} <br>
+                <Strong>Mobile: </Strong>{{ $r->verified_mobile }} <br>
+              @else
+                  Pending Verification
+              @endif          
          </td>
          <td>
-              <Strong>Name: </Strong>{{$r->validated_by}} <br>
-              <Strong>E-mail: </Strong>{{$r->validated_email}} <br>
-              <Strong>Mobile: </Strong>{{ $r->validated_mobile }} <br>
-              <Strong>Remarks: </Strong>{{ $r->validate_note }} <br>
-              <Strong>Date: </Strong>{{ ($r->validated_at ? date('d M Y', strtotime($r->validated_at )) : '')}} <br>                
+            @if ($r->validated_email != "" )
+                @if (in_array($r->status_id,[4,11,18,7,14,21])) 
+                  <span class="label label-success"> Accepted </span> <br>
+                @endif
+                @if (in_array($r->status_id,[5,12,19])) 
+                  <span class="label label-danger"> Rejected </span> <br>
+                @endif
+                <Strong>Remarks: </Strong>{{ $r->validate_note }} <br>
+                <Strong>Date: </Strong>{{ ($r->validated_at? date('d M Y', strtotime($r->validated_at)) : '') }} <br>
+                <Strong>By: </Strong>{{$r->validated_by}} <br>
+                <Strong>E-mail: </Strong>{{ $r->validated_email }} <br>
+                <Strong>Mobile: </Strong>{{ $r->validated_mobile }} <br>
+            @else
+                Pending Validation
+            @endif               
         </td>
         <td>
-              <Strong>Name: </Strong>{{$r->published_by}} <br>
-              <Strong>E-mail: </Strong>{{$r->published_email}} <br>
-              <Strong>Mobile: </Strong>{{ $r->published_mobile }} <br>
-              <Strong>Remarks: </Strong>{{ $r->publish_note }} <br>
-              <Strong>Date: </Strong>{{ ($r->published_at ? date('d M Y', strtotime($r->published_at )) : '') }} <br>               
+            @if ($r->published_by !="")
+                @if (in_array($r->status_id,[6,13,20])) 
+                  <span class="label label-success"> Accepted </span> <br>
+                @endif
+                @if (in_array($r->status_id,[7,14,21])) 
+                  <span class="label label-danger"> Rejected </span> <br>
+                @endif
+                <Strong>Remarks: </Strong>{{ $r->publish_note }} <br>
+                <Strong>Date: </Strong>{{ ($r->published_at? date('d M Y', strtotime($r->validated_at)) : '') }} <br>
+                <Strong>By: </Strong>{{ $r->published_by }} <br>
+                <Strong>E-mail: </Strong>{{ $r->published_email }} <br>
+                <Strong>Mobile: </Strong>{{ $r->published_mobile }} <br>
+            @else
+                Pending Publication
+            @endif              
         </td>
          <td>   
-            @if (in_array($r->status_id,[3,5,7,10,12,14,17,19,21]))
+           
                <span class="label label-danger"> {{$r->status}}</span>
-            @endif
+          
           </td>
 
     

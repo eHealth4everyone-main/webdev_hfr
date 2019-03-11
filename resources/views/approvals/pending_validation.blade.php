@@ -24,11 +24,10 @@ Facility Validation
     <thead>
       <tr>
         <th>Facility Name</th>
-        <th>Request Type</th>
         <th>Requested By</th>
-        <th>Verified By</th>
-        <th>Validated By</th>
-        <th>Published By</th>
+        <th>Verification</th>
+        <th>Validation</th>
+        <th>Publication</th>
         <th>Status</th>        
         <th>Actions</th>
       </tr>
@@ -36,42 +35,67 @@ Facility Validation
     <tbody>
       @foreach($pending as $p)
       <tr>
-            <td>{{$p->facility_name}}</td>
-            <td>{{$p->action}}</td>
+            <td> {{$p->facility_name}} <br><br> <strong>Request:</strong>  
+                <span class="label label-default">{{$p->action}} </span>
+            </td>
             <td>
-                <Strong>Name: </Strong>{{$p->requested_by}} <br>
+                <Strong></Strong>{{$p->requested_by}} <br>
                 <Strong>E-mail: </Strong>{{$p->requested_email}} <br>
                 <Strong>Mobile: </Strong>{{ $p->requested_mobile }} <br>
                 <Strong>Date: </Strong>{{ ($p->requested_at? date('d M Y', strtotime($p->requested_at)) : '') }} <br>   
-                <Strong>Remarks: </Strong>{{ $p->request_note }} <br>
+                @if ($p->request_note != '')
+                    <Strong>Remarks: </Strong>{{ $p->request_note }} <br>                
+                @endif
             </td>
             <td>
-                <Strong>Name: </Strong>{{$p->verified_by}} <br>
-                <Strong>E-mail: </Strong>{{$p->verified_email}} <br>
-                <Strong>Mobile: </Strong>{{ $p->verified_mobile }} <br>
-                <Strong>Date: </Strong>{{ ($p->verified_at? date('d M Y', strtotime($p->verified_at)) : '') }} <br>     
-                <Strong>Remarks: </Strong>{{ $p->verify_note }} <br>
+                @if ($p->verified_email != "" )
+                    @if (in_array($p->status_id,[2,9,16,4,11,18,5,12,19,7,14,21])) 
+                        <span class="label label-success"> Accepted </span> <br>
+                    @endif
+                    @if (in_array($p->status_id,[3,10,17])) 
+                        <span class="label label-danger"> Rejected </span> <br>
+                    @endif
+                    <Strong>Remarks: </Strong>{{ $p->verify_note }} <br>
+                    <Strong>Date: </Strong>{{ ($p->verified_at? date('d M Y', strtotime($p->verified_at)) : '') }} <br>     
+                    <Strong>By: </Strong>{{$p->verified_by}} <br>
+                    <Strong>E-mail: </Strong>{{$p->verified_email}} <br>
+                    <Strong>Mobile: </Strong>{{ $p->verified_mobile }} <br>
+                @else
+                    Pending Verification
+                @endif  
             </td>
             <td>
-                    @if ($p->validated_email != "" )
-                        <Strong>Name: </Strong>{{$p->validated_by}} <br>
-                        <Strong>E-mail: </Strong>{{ $p->validated_email }} <br>
-                        <Strong>Mobile: </Strong>{{ $p->validated_mobile }} <br>
-                        <Strong>Date: </Strong>{{ ($p->validated_at? date('d M Y', strtotime($p->validated_at)) : '') }} <br>
-                        <Strong>Remarks: </Strong>{{ $p->validate_note }} <br>
-                    @else
-                        Pending
-                    @endif              
-              </td>
+                @if ($p->validated_email != "" )
+                    @if (in_array($p->status_id,[4,11,18,7,14,21])) 
+                        <span class="label label-success"> Accepted </span> <br>
+                    @endif
+                    @if (in_array($p->status_id,[5,12,19])) 
+                        <span class="label label-danger"> Rejected </span> <br>
+                    @endif
+                    <Strong>Remarks: </Strong>{{ $p->validate_note }} <br>
+                    <Strong>Date: </Strong>{{ ($p->validated_at? date('d M Y', strtotime($p->validated_at)) : '') }} <br>
+                    <Strong>By: </Strong>{{$p->validated_by}} <br>
+                    <Strong>E-mail: </Strong>{{ $p->validated_email }} <br>
+                    <Strong>Mobile: </Strong>{{ $p->validated_mobile }} <br>
+                @else
+                        Pending Validation
+                @endif              
+            </td>
             <td>
                 @if ($p->published_by !="")
-                    <Strong>Name: </Strong>{{ $p->published_by }} <br>
-                    <Strong>E-mail: </Strong>{{ $p->published_email }} <br>
-                    <Strong>Mobile: </Strong>{{ $p->published_mobile }} <br>
-                    <Strong>Date: </Strong>{{ ($p->published_at? date('d M Y', strtotime($p->validated_at)) : '') }} <br>
+                    @if (in_array($p->status_id,[6,13,20])) 
+                        <span class="label label-success"> Accepted </span> <br>
+                    @endif
+                    @if (in_array($p->status_id,[7,14,21])) 
+                        <span class="label label-danger"> Rejected </span> <br>
+                    @endif
                     <Strong>Remarks: </Strong>{{ $p->publish_note }} <br>
+                    <Strong>Date: </Strong>{{  ($p->published_at? date('d M Y', strtotime($p->published_at)) : '')}} <br>  
+                    <Strong>By: </Strong>{{$p->published_by}} <br>
+                    <Strong>E-mail: </Strong>{{$p->published_email}} <br>
+                    <Strong>Mobile: </Strong>{{ $p->published_mobile }} <br>
                 @else
-                    Pending
+                    Pending Publication
                 @endif
           
             </td>
@@ -153,7 +177,7 @@ Facility Validation
                 </a>
             @endif
 
-          </td>
+        </td>
         </tr>
         @endforeach
         
@@ -189,7 +213,6 @@ Facility Validation
         </div><!--/.modal-content -->
     </div>
 </div><!--/.modal -->
-@endsection 
 
  
 <!-- Modal Recall Validation -->
@@ -220,10 +243,12 @@ Facility Validation
             
           </div>
         </div>
-    </div> 
+</div> 
+
+@endsection 
 
 
-    @push('bk_script')
+@push('bk_script')
 @include('partials.notification')
  
 
@@ -347,7 +372,7 @@ Facility Validation
             modal.find('.modal-body #action').val(button.data('action'));
         })//end
         
-    </script>
+</script>
 
 
 @endpush
