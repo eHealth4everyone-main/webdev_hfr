@@ -30,6 +30,10 @@ class VerifyController extends Controller
     public function store(Request $request)
     {
        
+        HospitalHistory::disableAuditing();       
+        $hosp = new HospitalHistory;
+        $hosp = HospitalHistory::findOrFail($request->id);
+
         if($request->action == "approve"){
             if($request->requested_action == "CREATE FACILITY"){
                 $status_id = 2;
@@ -46,6 +50,13 @@ class VerifyController extends Controller
                 $action="Delete Verified";
                 $message = "Facility Deletion Verified";
             }
+             //clear publish and validate fields after reqest rejected then re submiited
+             $hosp->validated_by =  $request->validated_by;
+             $hosp->validated_at =  $request->validated_at;
+             $hosp->validate_note = $request->validate_note;
+             $hosp->published_by = $request->published_by;
+             $hosp->published_at = $request->published_at;
+             $hosp->publish_note = $request->publish_note;
         }
 
         if($request->action == "reject"){
@@ -68,9 +79,6 @@ class VerifyController extends Controller
     
         $date = Carbon::now()->format('Y-m-d H:i:s');
 
-        HospitalHistory::disableAuditing();       
-        $hosp = new HospitalHistory;
-        $hosp = HospitalHistory::findOrFail($request->id);
         $hosp->status_id = $status_id;
         $hosp->verified_by = Auth::user()->id;
         $hosp->verified_at = $date;

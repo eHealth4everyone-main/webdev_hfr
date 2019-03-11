@@ -444,7 +444,7 @@ class MyRequestController extends Controller
     private function isNotVerified($id){
         $hosp = HospitalHistory::find($id);
        
-        if (in_array($hosp->status_id,[1,3,8,10])){
+        if (in_array($hosp->status_id,[1,3,8,10,15,17])){
             return true;
         }else{
             return false;

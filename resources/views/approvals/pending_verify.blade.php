@@ -205,7 +205,13 @@ Facility Verification
             </div>
             <div class="modal-body">
                 <form method="POST" action="{{route('verify.store')}}">
-                   
+                        <input type="hidden" id="validated_by" name="validated_by" >   
+                        <input type="hidden" id="validated_at" name="validated_at">   
+                        <input type="hidden" id="validate_note" name="validate_note" >  
+                        <input type="hidden" id="published_by" name="published_by" >   
+                        <input type="hidden" id="published_at" name="published_at">   
+                        <input type="hidden" id="publish_note" name="publish_note" >  
+                        
                     @include('approvals.details_modal_body')
 
                 </form>

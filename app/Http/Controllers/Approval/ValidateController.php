@@ -29,7 +29,12 @@ class ValidateController extends Controller
 
     public function store(Request $request)
     {
+        $date = Carbon::now()->format('Y-m-d H:i:s');
        
+        HospitalHistory::disableAuditing();        
+        $hosp = new HospitalHistory();
+        $hosp = HospitalHistory::findOrFail($request->id);
+
         if($request->action == "approve"){
             if($request->requested_action == "CREATE FACILITY"){
                 $status_id = 4;
@@ -43,6 +48,11 @@ class ValidateController extends Controller
                 $status_id = 18;
                 $message = "Facility Deletion Validated";
             }
+
+            //clear publish fields after reqest rejected at publish level and then re submiited
+            $hosp->published_by = $request->published_by;
+            $hosp->published_at = $request->published_at;
+            $hosp->publish_note = $request->publish_note;
         }
 
         if($request->action == "reject"){
@@ -60,11 +70,7 @@ class ValidateController extends Controller
             }
         }
 
-        $date = Carbon::now()->format('Y-m-d H:i:s');
 
-        HospitalHistory::disableAuditing();        
-        $hosp = new HospitalHistory();
-        $hosp = HospitalHistory::findOrFail($request->id);
         $hosp->status_id = $status_id;
         $hosp->validated_by = Auth::user()->id;
         $hosp->validated_at = $date;
