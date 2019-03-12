@@ -20,7 +20,7 @@ class UserController extends Controller
 
         public function index()
         {
-            $users =User::get();
+            $users = User::get();
             $roles=Role::get();
             
             $lst_states = Cache::remember('lst_states', 60, function () {

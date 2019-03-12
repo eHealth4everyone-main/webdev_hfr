@@ -17,6 +17,7 @@ use App\Notifications\CreateRequest;
 use App\Notifications\UpdateRequest;
 use App\Notifications\DeleteRequest;
 use App\User;
+use App\ApprovalNotifications;
 
 
 class HospitalsController extends Controller
@@ -159,19 +160,8 @@ class HospitalsController extends Controller
         }
 
          //****** send notifications *********
-
-         //get users with approval access
-        // $users = DB::select("SELECT u.id FROM users u
-        //         JOIN model_has_roles r on r.model_id = u.id
-        //         JOIN role_has_permissions p on p.role_id = r.role_id
-        //         WHERE p.permission_id = 59 and u.state_id = ". $request->state_id ."");
-        
-        // foreach ($users as $user){
-        //     $user = user::find($user->id);
-        //     $user->notify(new CreateRequest($request->facility_name, $hosp_id));
-        // }  
-        // ****** notifiction end*****
-     
+         $notify = new ApprovalNotifications;
+         $notify->sendFacilityCreateRequestNotification($request->state_id);
         
         session()->flash("alert-success", "Request Sent Successfully!");
         return redirect()->route('hospitals.index');
@@ -256,6 +246,7 @@ class HospitalsController extends Controller
         //update records in history with new changes
         $hosp = new HospitalHistory;
         $hosp = HospitalHistory::findOrFail($id);
+        $state_id = $hosp['state_id'];
         $hosp->fill($request->all());
         $hosp->status_id = 8;
         $hosp->requested_by = Auth::user()->id;
@@ -342,6 +333,10 @@ class HospitalsController extends Controller
         //     $user->notify(new UpdateRequest($request->facility_name, $id));
         // }  
         // ****** notifiction end*****
+        
+         //****** send notifications *********
+         $notify = new ApprovalNotifications;
+         $notify->sendFacilityUpdateRequestNotification($state_id);
 
         session()->flash("alert-success", "Request Sent Successfully!");
         return redirect()->route('hospitals.index');
@@ -357,12 +352,13 @@ class HospitalsController extends Controller
        
         $hosp = new HospitalHistory;
         $hosp = HospitalHistory::findOrFail($request->facility_id); 
+        $state_id = $hosp['state_id'];
         $hosp->status_id = '15';
         $hosp->requested_at = Carbon::now()->format('Y-m-d H:i:s');
         $hosp->requested_by = Auth::user()->id; 
         $hosp->request_note = $request->reason;
-        $hosp->verified_by= $request->null;
-        $hosp->verified_at= $request->null;
+        $hosp->verified_by = $request->null;
+        $hosp->verified_at = $request->null;
         $hosp->verify_note = $request->null;
         $hosp->validated_by = $request->null;
         $hosp->validated_at = $request->null;
@@ -370,7 +366,7 @@ class HospitalsController extends Controller
         $hosp->published_by = $request->null;
         $hosp->published_at = $request->null;
         $hosp->publish_note = $request->null;
-       
+
         DB::beginTransaction();
         try {
             HospitalHistory::disableAuditing();  
@@ -385,21 +381,10 @@ class HospitalsController extends Controller
         }
        
         
-        //****** send notifications *********
-
-        //get users with approval access
-        // $users = DB::select("SELECT u.id FROM users u
-        //     JOIN model_has_roles r on r.model_id = u.id
-        //     JOIN role_has_permissions p on p.role_id = r.role_id
-        //     WHERE p.permission_id = 59 and u.state_id = ". $request->state_id_del ."");
-            
-        // $name = $request->facility_name_to_del;
-        // foreach ($users as $user){
-        //     $user = user::find($user->id);
-        //     $user->notify(new DeleteRequest($name, $request->facility_id));
-        // }  
-        // ****** notifiction end*****
-
+        //****** send notifications *********     
+        $notify = new ApprovalNotifications;
+        $notify->sendFacilityDeleteRequestNotification($state_id);
+ 
 
         session()->flash("alert-success", "Delete request initiated successfully!");
         return redirect()->route('hospitals.index');

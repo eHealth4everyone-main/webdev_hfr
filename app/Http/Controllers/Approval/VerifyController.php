@@ -11,8 +11,7 @@ use Carbon\Carbon;
 use App\HospitalHistory;
 use App\HospitalServiceHistory;
 use App\audit;
-use App\Notifications\FacilityVerifiedLevel1;
-use App\Notifications\VerificationRejectedLevel1;
+use App\ApprovalNotifications;
 
 class VerifyController extends Controller
 {
@@ -29,7 +28,7 @@ class VerifyController extends Controller
 
     public function store(Request $request)
     {
-       
+     
         HospitalHistory::disableAuditing();       
         $hosp = new HospitalHistory;
         $hosp = HospitalHistory::findOrFail($request->id);
@@ -39,16 +38,19 @@ class VerifyController extends Controller
                 $status_id = 2;
                 $action="Create Verified";
                 $message = "Facility Creation Verified";
+                $mail_message = "Facility creation request has been verified. Please login to the system to review and validate the request.";
             }
             elseif($request->requested_action == "UPDATE FACILITY"){
                 $status_id = 9;
                 $action="Update Verified";
                 $message = "Facility Update Verified";
+                $mail_message = "Facility update request has been verified. Please login to the system to review and validate the request.";
             }
             else{
                 $status_id = 16;
                 $action="Delete Verified";
                 $message = "Facility Deletion Verified";
+                $mail_message = "Facility deletion request has been verified. Please login to the system to review and validate the request.";
             }
              //clear publish and validate fields after reqest rejected then re submiited
              $hosp->validated_by =  $request->validated_by;
@@ -64,19 +66,22 @@ class VerifyController extends Controller
                 $status_id = 3;
                 $action="Create Verification Rejected";
                 $message = "Facility Creation Rejected";
+                $mail_message = "Verifier has rejected facility creation request. Please login to the system to review your request.";
             }
             elseif($request->requested_action == "UPDATE FACILITY"){
                 $status_id = 10;
                 $action="Update Verification Rejected";
                 $message = "Facility Update Rejected";
+                $mail_message = "Verifier has rejected facility update request. Please login to the system to review your request.";
             }
             else{
                 $status_id = 17;
                 $action="Delete Verification Rejected";
                 $message = "Facility Deletion Rejected";
+                $mail_message = "Verifier has rejected facility deletion request. Please login to the system to review your request.";
             }
-        }
-    
+        }        
+
         $date = Carbon::now()->format('Y-m-d H:i:s');
 
         $hosp->status_id = $status_id;
@@ -104,44 +109,10 @@ class VerifyController extends Controller
 
         HospitalHistory::enableAuditing();
 
-
-        //****** send notifications *********
-        //get users with verification level 1 access
-        // if($request->action == "approve"){
-        //     $users = DB::select("SELECT u.id FROM users u
-        //             JOIN model_has_roles r on r.model_id = u.id
-        //             JOIN role_has_permissions p on p.role_id = r.role_id
-        //             WHERE p.permission_id = 60 and u.state_id = ". $hosp->state_id ."");
-            
-        //     foreach ($users as $user){
-        //         $user = user::find($user->id);
-        //         $user->notify(new FacilityApproved($message,$request->id));
-        //     }  
-        // }
-
-
-        // if($request->action == "reject"){ // if rejected send notification to requester
-        //     if($request->requested_action == "CREATE FACILITY"){
-        //         $userid = $hosp->created_by;
-        //     }
-        //     else{
-        //         $userid = $hosp->requested_by;
-        //     }
-
-        //     $user = user::find($userid);
-        //     $user->notify(new ApprovalRejected($message,$request->id));
-        // }
-
-
-        //mark as read the notification
-        // $notification_id = DB::select("select id from notifications where type like '%teRequest' and 
-        // notifiable_id=". Auth::user()->id ." and data like '%" . $request->id . "%' and read_at is null");
-
-        // if (!empty($notification_id)){
-        //     auth()->user()->unreadNotifications->where('id', $notification_id[0]->id)->markAsRead();
-        // }
-
-        // ****** notifiction end *****
+        //send notifications
+        $notify = new ApprovalNotifications;
+        $notify->sendVerificationNotification($mail_message,$request->action,$hosp->requested_by);
+     
         session()->flash("alert-success", $message);
         return redirect()->route('verify.pending');
     }

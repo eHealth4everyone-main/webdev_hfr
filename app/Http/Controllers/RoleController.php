@@ -67,13 +67,13 @@ class RoleController extends Controller
     public function update(Request $request)
     {
         $request->validate([
-            'name' => 'unique:roles|required|string|max:50',
+            'name' => 'required|string|max:50',
             'description' => 'required|string|max:100',
             'permissions' => 'required',
         ]);
 
         $role = Role::findOrfail($request->id);
-        $role->name = $request->role;
+        $role->name = $request->name;
         $role->description = $request->description;
         $role->save();
 

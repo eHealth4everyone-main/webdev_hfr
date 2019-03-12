@@ -7,59 +7,37 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class CreateRequest extends Notification
+class CreateRequest extends Notification implements ShouldQueue
 {
     use Queueable;
 
     /**
-     * Create a new notification instance.
-     *
-     * @return void
+     * this notification will be sent to verifiers after
+     * a new facility request have been submitted
      */
- 
-    public function __construct($facility_name,$facility_id)
-    {
-        $this->facility_name = $facility_name;
-        $this->facility_id = $facility_id;
-    }
 
-    /**
-     * Get the notification's delivery channels.
-     *
-     * @param  mixed  $notifiable
-     * @return array
-     */
+    
+    public function __construct()
+    {
+    }
+ 
+
     public function via($notifiable)
     {
-        return ['database'];
+        return ['mail'];
     }
 
-    /**
-     * Get the mail representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
-     */
+
     public function toMail($notifiable)
     {
-        return (new MailMessage)
-                    ->line('New facility is created')
-                    ->action('Login', url('/'))
-                    ->line('Please login to review the facility');
-    }
+        $url = url('admin/hospitals/approvals/verify');
 
-    /**
-     * Get the array representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return array
-     */
-    public function toArray($notifiable)
-    {
-        return [
-            'action' => 'New facility creation requested',
-            'facility_name' => $this->facility_name,
-            'facility_id' => $this->facility_id,
-        ];
+        return (new MailMessage)
+        ->subject('Facility Verification Request')
+        ->greeting('Hello,')
+        ->line('New facility have been created. Please login to the system to review and verify the request.')
+        ->action('Click Here to Login', $url);
     }
+ 
+  
 }

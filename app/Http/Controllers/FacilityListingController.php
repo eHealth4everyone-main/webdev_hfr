@@ -118,7 +118,7 @@ class FacilityListingController extends Controller
             ->where(DB::Raw("IFNULL(outpatient, '')"),'like','%'.$outpatient.'%')
             ->where(DB::Raw("IFNULL(inpatient, '')"),'like','%'.$inpatient.'%')
             ->Where('facility_name', 'like', '%' .  $facility_name . '%')
-            ->where('latitude',$cond,$value)
+            ->where(DB::Raw("IFNULL(latitude, '')"),$cond,$value)
             ->wherein('id',$hospital_with_services)
             ->orderBy('state')
             ->orderBy('lga')

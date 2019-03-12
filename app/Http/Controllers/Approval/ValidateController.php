@@ -11,8 +11,7 @@ use Carbon\Carbon;
 use App\HospitalHistory;
 use App\HospitalServiceHistory;
 use App\audit;
-use App\Notifications\FacilityVerifiedLevel2;
-use App\Notifications\VerificationRejectedLevel2;
+use App\ApprovalNotifications;
 
 
 class ValidateController extends Controller
@@ -39,14 +38,17 @@ class ValidateController extends Controller
             if($request->requested_action == "CREATE FACILITY"){
                 $status_id = 4;
                 $message = "Facility Creation Validated";
+                $mail_message = "Facility creation request has been validated. Please login to the system to review and Publish the request.";
             }
             elseif($request->requested_action == "UPDATE FACILITY"){
                 $status_id = 11;
                 $message = "Facility Update Validated";
+                $mail_message = "Facility update request has been validated. Please login to the system to review and Publish the request.";
             }
             else{
                 $status_id = 18;
                 $message = "Facility Deletion Validated";
+                $mail_message = "Facility deletion request has been validated. Please login to the system to review and Publish the request.";
             }
 
             //clear publish fields after reqest rejected at publish level and then re submiited
@@ -59,17 +61,20 @@ class ValidateController extends Controller
             if($request->requested_action == "CREATE FACILITY"){
                 $status_id = 5;
                 $message = "Facility Validation Rejected";
+                $mail_message = "Validator has rejected facility creation request. Please login to the system to review your request.";
             }
             elseif($request->requested_action == "UPDATE FACILITY"){
                 $status_id = 12;
                 $message = "Facility Validation Rejected";
+                $mail_message = "Validator has rejected facility update request. Please login to the system to review your request.";
             }
             else{
                 $status_id = 19;
                 $message = "Facility Validation Rejected";
+                $mail_message = "Validator has rejected facility deletion request. Please login to the system to review your request.";
             }
         }
-
+     
 
         $hosp->status_id = $status_id;
         $hosp->validated_by = Auth::user()->id;
@@ -97,24 +102,8 @@ class ValidateController extends Controller
         HospitalHistory::enableAuditing();
 
         //****** send notifications *********
-        //get users with verification level 2 access
-        // if($request->action == "approve"){      
-        //     $users = DB::select("SELECT u.id FROM users u
-        //     JOIN model_has_roles r on r.model_id = u.id
-        //     JOIN role_has_permissions p on p.role_id = r.role_id
-        //     WHERE p.permission_id = 61 and u.state_id = ". $hosp->state_id ."");
-            
-        //     foreach ($users as $user){
-        //         $user = user::find($user->id);
-        //         $user->notify(new FacilityVerifiedLevel1($message,$request->id));
-        //     }  
-        // }
-        // if($request->action == "reject"){ // if rejected send notification to approver
-        //     $userid = $hosp->approved_by;
-
-        //     $user = user::find($userid);
-        //     $user->notify(new VerificationRejectedLevel1($message,$request->id));
-        // }
+        $notify = new ApprovalNotifications;
+        $notify->sendValidationNotification($mail_message,$request->action);
 
         session()->flash("alert-success", $message);
         return redirect()->route('validate.pending');
