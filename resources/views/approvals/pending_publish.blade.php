@@ -23,20 +23,19 @@ Facility Publication
     <thead>
       <tr>
             <th>Facility Name</th>
+            <th>Request Type</th>
             <th>Requested By</th>
             <th>Verification</th>
             <th>Validation</th>
             <th>Publication</th>
-            <th>Status</th>        
             <th>Actions</th>
       </tr>
     </thead>
     <tbody>
       @foreach($pending as $p)
       <tr>
-            <td> {{$p->facility_name}} <br><br> <strong>Request:</strong>  
-                <span class="label label-default">{{$p->action}} </span>
-            </td>
+            <td> {{$p->facility_name}} </td>
+            <td><span class="label label-default">{{$p->action}} </span></td>
             <td>
                 <Strong></Strong>{{$p->requested_by}} <br>
                 <Strong>E-mail: </Strong>{{$p->requested_email}} <br>
@@ -88,70 +87,64 @@ Facility Publication
                 @endif
             </td>
 
-        <td>
-           @if (in_array($p->status_id,[1,8,15]))
-                <span class="label label-info"> {{$p->status}}</span>
-            @endif
-            @if (in_array($p->status_id,[2,4,6,9,11,13,16,18,20]))
-                <span class="label label-success"> {{$p->status}}</span>
-            @endif
-            @if (in_array($p->status_id,[3,5,7,10,12,14,17,19,21]))
-               <span class="label label-danger"> {{$p->status}}</span>
-            @endif
-        </td>
+ 
 
         <td>
-            @if ($p->action === "CREATE FACILITY")
-            <a href="#">
-                <button class="btn btn-success btn-sm"  type="button" data-toggle="modal" data-target="#view_details"
-                    data-id="{{$p->id}}" data-unique_id="{{$p->unique_id}}" data-registration_no="{{$p->registration_no}}" data-start_date="{{$p->start_date}}"
-                    data-facility_name="{{$p->facility_name}}" data-alt_facility_name="{{$p->alt_facility_name}}" data-state="{{$p->state}}"
-                    data-lga="{{$p->lga}}" data-ward="{{$p->ward}}" data-ownership="{{$p->ownership}}" data-ownership_type="{{$p->ownership_type}}"
-                    data-facility_level="{{$p->facility_level}}" data-facility_level_option="{{$p->facility_level_option}}"
-                    data-physical_location="{{$p->physical_location}}" data-alternate_number="{{$p->alternate_number}}" data-longitude="{{$p->longitude}}" data-latitude="{{$p->latitude}}"
-                    data-postal_address="{{$p->postal_address}}" data-phone_number="{{$p->phone_number}}" data-email_address="{{$p->email_address}}"
-                    data-website="{{$p->website}}" data-operational_days="{{$p->operational_days}}" data-operational_hours="{{$p->operational_hours}}"
-                    data-operation_status="{{$p->operation_status}}" data-registration_status="{{$p->registration_status}}" data-license_status="{{$p->license_status}}"
-                    data-doctors="{{$p->doctors}}" data-pharmacists="{{$p->pharmacists}}" data-dentist="{{$p->dentist}}" data-pharmacy_technicians="{{$p->pharmacy_technicians}}"
-                    data-nurses="{{$p->nurses}}" data-lab_scientists="{{$p->lab_scientists}}" data-midwifes="{{$p->midwifes}}" data-lab_technicians="{{$p->lab_technicians}}"
-                    data-nurse_midwife="{{$p->nurse_midwife}}" data-him_officers="{{$p->him_officers}}" data-community_health_officer="{{$p->community_health_officer}}"
-                    data-community_extension_workers="{{$p->community_extension_workers}}" data-jun_community_extension_worker="{{$p->jun_community_extension_worker}}"
-                    data-dental_technicians="{{$p->dental_technicians}}" data-env_health_officers="{{$p->env_health_officers}}" data-inpatient="{{$p->inpatient}}"
-                    data-outpatient="{{$p->outpatient}}" data-beds="{{$p->beds}}" data-onsite_laboratory="{{$p->onsite_laboratory}}"
-                    data-onsite_imaging="{{$p->onsite_imaging}}" data-onsite_pharmarcy="{{$p->onsite_pharmarcy}}" data-mortuary_services="{{$p->mortuary_services}}"
-                    data-attendants = "{{ $p->attendants }}" data-ambulance_services="{{ $p->ambulance_services }}" data-state_unique_id="{{ $p->state_unique_id }}" 
-                    data-outpatient = "{{ $p->outpatient }}" data-inpatient="{{ $p->inpatient }}" data-action="{{$p->action}}">
-                    Review
-                </button>
-            </a>  
-        @elseif ($p->action === "UPDATE FACILITY") 
-            <a href="{{route('view.updated_records',['id'=>$p->id,'stage'=>'3'])}}">
-                <button class="btn btn-success btn-sm"  type="button" > Review</button>
-            </a>
-        @else
-        <a href="#">
-            <button class="btn btn-success btn-sm"  type="button" data-toggle="modal" data-target="#view_details"
-                data-id="{{$p->id}}" data-unique_id="{{$p->unique_id}}" data-registration_no="{{$p->registration_no}}" data-start_date="{{$p->start_date}}"
-                data-facility_name="{{$p->facility_name}}" data-alt_facility_name="{{$p->alt_facility_name}}" data-state="{{$p->state}}"
-                data-lga="{{$p->lga}}" data-ward="{{$p->ward}}" data-ownership="{{$p->ownership}}" data-ownership_type="{{$p->ownership_type}}"
-                data-facility_level="{{$p->facility_level}}" data-facility_level_option="{{$p->facility_level_option}}"
-                data-physical_location="{{$p->physical_location}}" data-alternate_number="{{$p->alternate_number}}" data-longitude="{{$p->longitude}}" data-latitude="{{$p->latitude}}"
-                data-postal_address="{{$p->postal_address}}" data-phone_number="{{$p->phone_number}}" data-email_address="{{$p->email_address}}"
-                data-website="{{$p->website}}" data-operational_days="{{$p->operational_days}}" data-operational_hours="{{$p->operational_hours}}"
-                data-operation_status="{{$p->operation_status}}" data-registration_status="{{$p->registration_status}}" data-license_status="{{$p->license_status}}"
-                data-doctors="{{$p->doctors}}" data-pharmacists="{{$p->pharmacists}}" data-dentist="{{$p->dentist}}" data-pharmacy_technicians="{{$p->pharmacy_technicians}}"
-                data-nurses="{{$p->nurses}}" data-lab_scientists="{{$p->lab_scientists}}" data-midwifes="{{$p->midwifes}}" data-lab_technicians="{{$p->lab_technicians}}"
-                data-nurse_midwife="{{$p->nurse_midwife}}" data-him_officers="{{$p->him_officers}}" data-community_health_officer="{{$p->community_health_officer}}"
-                data-community_extension_workers="{{$p->community_extension_workers}}" data-jun_community_extension_worker="{{$p->jun_community_extension_worker}}"
-                data-dental_technicians="{{$p->dental_technicians}}" data-env_health_officers="{{$p->env_health_officers}}" data-inpatient="{{$p->inpatient}}"
-                data-outpatient="{{$p->outpatient}}" data-beds="{{$p->beds}}" data-onsite_laboratory="{{$p->onsite_laboratory}}"
-                data-onsite_imaging="{{$p->onsite_imaging}}" data-onsite_pharmarcy="{{$p->onsite_pharmarcy}}" data-mortuary_services="{{$p->mortuary_services}}"
-                data-attendants = "{{ $p->attendants }}" data-ambulance_services="{{ $p->ambulance_services }}" data-state_unique_id="{{ $p->state_unique_id }}" 
-                data-outpatient = "{{ $p->outpatient }}" data-inpatient="{{ $p->inpatient }}" data-action="{{$p->action}}">
-                Review
-            </button>
-            </a>  
-        @endif
+            @if (in_array($p->status_id,[4,11,18])) 
+
+                @if ($p->action === "CREATE FACILITY")
+                    <a href="#">
+                        <button class="btn btn-success btn-sm"  type="button" data-toggle="modal" data-target="#view_details"
+                            data-id="{{$p->id}}" data-unique_id="{{$p->unique_id}}" data-registration_no="{{$p->registration_no}}" data-start_date="{{$p->start_date}}"
+                            data-facility_name="{{$p->facility_name}}" data-alt_facility_name="{{$p->alt_facility_name}}" data-state="{{$p->state}}"
+                            data-lga="{{$p->lga}}" data-ward="{{$p->ward}}" data-ownership="{{$p->ownership}}" data-ownership_type="{{$p->ownership_type}}"
+                            data-facility_level="{{$p->facility_level}}" data-facility_level_option="{{$p->facility_level_option}}"
+                            data-physical_location="{{$p->physical_location}}" data-alternate_number="{{$p->alternate_number}}" data-longitude="{{$p->longitude}}" data-latitude="{{$p->latitude}}"
+                            data-postal_address="{{$p->postal_address}}" data-phone_number="{{$p->phone_number}}" data-email_address="{{$p->email_address}}"
+                            data-website="{{$p->website}}" data-operational_days="{{$p->operational_days}}" data-operational_hours="{{$p->operational_hours}}"
+                            data-operation_status="{{$p->operation_status}}" data-registration_status="{{$p->registration_status}}" data-license_status="{{$p->license_status}}"
+                            data-doctors="{{$p->doctors}}" data-pharmacists="{{$p->pharmacists}}" data-dentist="{{$p->dentist}}" data-pharmacy_technicians="{{$p->pharmacy_technicians}}"
+                            data-nurses="{{$p->nurses}}" data-lab_scientists="{{$p->lab_scientists}}" data-midwifes="{{$p->midwifes}}" data-lab_technicians="{{$p->lab_technicians}}"
+                            data-nurse_midwife="{{$p->nurse_midwife}}" data-him_officers="{{$p->him_officers}}" data-community_health_officer="{{$p->community_health_officer}}"
+                            data-community_extension_workers="{{$p->community_extension_workers}}" data-jun_community_extension_worker="{{$p->jun_community_extension_worker}}"
+                            data-dental_technicians="{{$p->dental_technicians}}" data-env_health_officers="{{$p->env_health_officers}}" data-inpatient="{{$p->inpatient}}"
+                            data-outpatient="{{$p->outpatient}}" data-beds="{{$p->beds}}" data-onsite_laboratory="{{$p->onsite_laboratory}}"
+                            data-onsite_imaging="{{$p->onsite_imaging}}" data-onsite_pharmarcy="{{$p->onsite_pharmarcy}}" data-mortuary_services="{{$p->mortuary_services}}"
+                            data-attendants = "{{ $p->attendants }}" data-ambulance_services="{{ $p->ambulance_services }}" data-state_unique_id="{{ $p->state_unique_id }}" 
+                            data-outpatient = "{{ $p->outpatient }}" data-inpatient="{{ $p->inpatient }}" data-action="{{$p->action}}">
+                            Review
+                        </button>
+                    </a>  
+                @elseif ($p->action === "UPDATE FACILITY") 
+                    <a href="{{route('view.updated_records',['id'=>$p->id,'stage'=>'3'])}}">
+                        <button class="btn btn-success btn-sm"  type="button" > Review</button>
+                    </a>
+                @else
+                <a href="#">
+                    <button class="btn btn-success btn-sm"  type="button" data-toggle="modal" data-target="#view_details"
+                        data-id="{{$p->id}}" data-unique_id="{{$p->unique_id}}" data-registration_no="{{$p->registration_no}}" data-start_date="{{$p->start_date}}"
+                        data-facility_name="{{$p->facility_name}}" data-alt_facility_name="{{$p->alt_facility_name}}" data-state="{{$p->state}}"
+                        data-lga="{{$p->lga}}" data-ward="{{$p->ward}}" data-ownership="{{$p->ownership}}" data-ownership_type="{{$p->ownership_type}}"
+                        data-facility_level="{{$p->facility_level}}" data-facility_level_option="{{$p->facility_level_option}}"
+                        data-physical_location="{{$p->physical_location}}" data-alternate_number="{{$p->alternate_number}}" data-longitude="{{$p->longitude}}" data-latitude="{{$p->latitude}}"
+                        data-postal_address="{{$p->postal_address}}" data-phone_number="{{$p->phone_number}}" data-email_address="{{$p->email_address}}"
+                        data-website="{{$p->website}}" data-operational_days="{{$p->operational_days}}" data-operational_hours="{{$p->operational_hours}}"
+                        data-operation_status="{{$p->operation_status}}" data-registration_status="{{$p->registration_status}}" data-license_status="{{$p->license_status}}"
+                        data-doctors="{{$p->doctors}}" data-pharmacists="{{$p->pharmacists}}" data-dentist="{{$p->dentist}}" data-pharmacy_technicians="{{$p->pharmacy_technicians}}"
+                        data-nurses="{{$p->nurses}}" data-lab_scientists="{{$p->lab_scientists}}" data-midwifes="{{$p->midwifes}}" data-lab_technicians="{{$p->lab_technicians}}"
+                        data-nurse_midwife="{{$p->nurse_midwife}}" data-him_officers="{{$p->him_officers}}" data-community_health_officer="{{$p->community_health_officer}}"
+                        data-community_extension_workers="{{$p->community_extension_workers}}" data-jun_community_extension_worker="{{$p->jun_community_extension_worker}}"
+                        data-dental_technicians="{{$p->dental_technicians}}" data-env_health_officers="{{$p->env_health_officers}}" data-inpatient="{{$p->inpatient}}"
+                        data-outpatient="{{$p->outpatient}}" data-beds="{{$p->beds}}" data-onsite_laboratory="{{$p->onsite_laboratory}}"
+                        data-onsite_imaging="{{$p->onsite_imaging}}" data-onsite_pharmarcy="{{$p->onsite_pharmarcy}}" data-mortuary_services="{{$p->mortuary_services}}"
+                        data-attendants = "{{ $p->attendants }}" data-ambulance_services="{{ $p->ambulance_services }}" data-state_unique_id="{{ $p->state_unique_id }}" 
+                        data-outpatient = "{{ $p->outpatient }}" data-inpatient="{{ $p->inpatient }}" data-action="{{$p->action}}">
+                        Review
+                    </button>
+                    </a>  
+                @endif
+            @endif
+
     
           </td>
         </tr>

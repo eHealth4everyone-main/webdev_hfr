@@ -24,20 +24,21 @@ Facility Validation
     <thead>
       <tr>
         <th>Facility Name</th>
+        <th>Request Type</th>
         <th>Requested By</th>
         <th>Verification</th>
         <th>Validation</th>
         <th>Publication</th>
-        <th>Status</th>        
+        {{-- <th>Status</th>         --}}
         <th>Actions</th>
       </tr>
     </thead>
     <tbody>
       @foreach($pending as $p)
       <tr>
-            <td> {{$p->facility_name}} <br><br> <strong>Request:</strong>  
-                <span class="label label-default">{{$p->action}} </span>
+            <td> {{$p->facility_name}}  
             </td>
+            <td> <span class="label label-default">{{$p->action}} </span></td>
             <td>
                 <Strong></Strong>{{$p->requested_by}} <br>
                 <Strong>E-mail: </Strong>{{$p->requested_email}} <br>
@@ -100,17 +101,7 @@ Facility Validation
           
             </td>
 
-        <td>
-           @if (in_array($p->status_id,[1,8,15]))
-                <span class="label label-info"> {{$p->status}}</span>
-            @endif
-            @if (in_array($p->status_id,[2,4,6,9,11,13,16,18,20]))
-                <span class="label label-success"> {{$p->status}}</span>
-            @endif
-            @if (in_array($p->status_id,[3,5,7,10,12,14,17,19,21]))
-               <span class="label label-danger"> {{$p->status}}</span>
-            @endif
-        </td>
+    
 
         <td>
             @if (in_array($p->status_id,[2,7,9,14,16,21]))

@@ -11,11 +11,6 @@ class SendDownloadVerificationCode extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    /**
-     * Create a new notification instance.
-     *
-     * @return void
-     */
  
     private $code;
     
@@ -23,38 +18,24 @@ class SendDownloadVerificationCode extends Notification implements ShouldQueue
     {
         $this->code = $code;
     }
-    /**
-     * Get the notification's delivery channels.
-     *
-     * @param  mixed  $notifiable
-     * @return array
-     */
+
     public function via($notifiable)
     {
         return ['mail'];
     }
 
-    /**
-     * Get the mail representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
-     */
+ 
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                ->subject('Verification Code')
-                ->greeting('Hello')
-                ->line('Your verification code is: '. $this->code);
-     
+                ->subject('HFR Verification Code')
+                ->greeting('Hello,')
+                ->line('Please use the following code to complete verification:')
+                ->line($this->code)
+                ->line('This code will expire in 15 minutes.');
     }
 
-    /**
-     * Get the array representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return array
-     */
+ 
     public function toArray($notifiable)
     {
         return [

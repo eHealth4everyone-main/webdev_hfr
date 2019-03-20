@@ -23,11 +23,11 @@ My Pending Requests
     <thead>
       <tr>
         <th>Facility Name</th>
-        {{-- <th>Request Type</th> --}}
+        <th>Request Type</th>
         <th>Verification</th>
         <th>Validation</th>
         <th>Publication</th>
-        <th>Status</th>
+        {{-- <th>Status</th> --}}
        
         @foreach ($myrequests as $r)
             @if (in_array($r->status_id,[1,3,8,10,15,17]))
@@ -41,10 +41,8 @@ My Pending Requests
     <tbody>
       @foreach($myrequests as $r)
       <tr>
-        <td> {{$r->facility_name}} <br><br> <strong>Request:</strong>  
-            <span class="label label-default">{{$r->action}} </span>
-        </td>
-        {{-- <td>{{$r->action}}</td> --}}
+        <td> {{$r->facility_name}}   </td>
+        <td><span class="label label-default">{{$r->action}} </span></td>
         <td>
             @if ($r->verified_email != "" )
               @if (in_array($r->status_id,[2,9,16,4,11,18,5,12,19,7,14,21])) 
@@ -97,7 +95,7 @@ My Pending Requests
             Pending Publication
         @endif
       </td>
-        <td>
+        {{-- <td>
             @if (in_array($r->status_id,[1,8,15]))
                 <span class="label label-info"> {{$r->status}}</span>
             @endif
@@ -107,7 +105,7 @@ My Pending Requests
             @if (in_array($r->status_id,[3,5,7,10,12,14,17,19,21]))
                <span class="label label-danger"> {{$r->status}}</span>
             @endif
-        </td>
+        </td> --}}
 
           <td>
             @if (in_array($r->status_id,[1,3,8,10]))
