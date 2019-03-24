@@ -57,30 +57,26 @@ Users
     <table id="table1" class="table table-bordered table-striped" style="width:100%">
       <thead>
         <tr>
-          <th>Firstname</th>
-          <th>Lastname</th>
+          <th>Fullname</th>
           <th>Username</th>
           <th>E-mail</th>
           <th>Mobile</th>
-          <th>Organisation</th>    
-          <th>Position</th>
           <th>Role</th>
           <th>State Permission</th>
           <th>LGA Permission</th>
           <th>Status</th>
+          <th>Organisation</th>    
+          <th>Position</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
         @foreach($users as $user)
         <tr>
-          <td>{{$user->firstname}}</td>
-          <td>{{$user->lastname}}</td>
+          <td>{{$user->firstname}} {{$user->lastname}}</td>
           <td>{{$user->lastname}}</td>
           <td>{{$user->email}}</td>
           <td>{{$user->mobile}}</td>
-          <td>{{$user->organisation}}</td>
-          <td>{{$user->job_title}}</td>
           <td>{{ implode(", ", $user->getRoleNames()->toArray()) }}</td>
           <td>
               @if ($user->state_id == 1)
@@ -107,6 +103,8 @@ Users
                 <span class="label label-default"> Inactive</span>
               @endif
           </td>
+          <td>{{$user->organisation}}</td>
+          <td>{{$user->job_title}}</td>
           <td>
     
             @if(auth()->user()->hasPermissionTo(19))
