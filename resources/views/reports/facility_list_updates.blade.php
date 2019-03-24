@@ -2,7 +2,7 @@
 
 
 @section('content-title')
-Facility List Update Reports
+Facility Reports
 
 @endsection
 

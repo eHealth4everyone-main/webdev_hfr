@@ -21,15 +21,8 @@ class UserController extends Controller
         public function index()
         {
             $users = User::get();
-            $roles=Role::get();
-            
-            $lst_states = Cache::remember('lst_states', 60, function () {
-                return DB::table('ou_states')
-                        ->select('id','name')
-                        ->orderByRaw('name ASC')
-                        ->get();
-            });
-            return view('users.index', compact("users","roles","lst_states"));  
+     
+            return view('users.index', compact("users"));  
         }
         
     public function store(Request $request)
@@ -109,6 +102,23 @@ class UserController extends Controller
         return back();
     }
 
+    public function search(Request $request)
+    {
+      if($request->role_id == 0){
+            $users = User::where('state_id',$request->state)
+                    ->where('status','like','%'.$request->status.'%')
+                    ->get();
+      }
+      else{
+            $users = User::role($request->role_id)
+                    ->where('state_id',$request->state)
+                    ->where('status','like','%'.$request->status.'%')
+                    ->get();
+      }
+
+ 
+       return view('users.index', compact("users"));  
+    }
 
     public function deactivate(Request $request)
     {

@@ -60,7 +60,7 @@ Facility Services Rendered
                                     <button type="submit" class="btn btn-success btn-block pull-right  btn-sm">Generate</button>
                             </div> 
                         </div>
-            
+                    <hr>
                 </form>
 
                 @if ($facilities->count() == 0)

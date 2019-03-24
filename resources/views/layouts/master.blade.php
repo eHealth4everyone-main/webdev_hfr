@@ -13,7 +13,8 @@
     <link rel="stylesheet" href="{{ asset("dist/css/bootstrap-datepicker.min.css")}}"/>
     <!-- Select2 -->
     <link rel="stylesheet" href="{{asset("/dist/css/select2.min.css")}}"/>
-    <link rel="stylesheet"   href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css"/>
     <link rel="stylesheet" href="{{ asset("dist/multiselect-master/css/bootstrap-multiselect.css")}}" type="text/css"/>
     <link rel="stylesheet" href="{{ asset("dist/css/skins/skin-green.min.css")}}"/>
     {{-- <link rel="stylesheet" href="{{ asset("dist/MultiSelect/jquery.multiselect.css")}}"/> --}}
@@ -219,6 +220,8 @@
         <script src="{{asset("dist/js/select2.full.min.js")}}"></script>
         <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
         <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script>
+        <script src=" https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
+
        
         <script type="text/javascript" src="{{asset("dist/multiselect-master/js/bootstrap-multiselect.js")}}"></script>
       

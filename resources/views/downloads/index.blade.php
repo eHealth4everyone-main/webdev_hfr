@@ -14,6 +14,7 @@ Guest Data Downloads
     <table id="table1" class="table table-bordered table-striped" style="width:100%">
       <thead>
         <tr>
+          <th>ID</th>
           <th>Name</th>
           <th>Email</th>
           <th>Organisation</th>
@@ -27,6 +28,7 @@ Guest Data Downloads
         
         @foreach($downloads as $d)
         <tr>
+          <td>{{ $d->id }}</td>
           <td>{{$d->firstname}} {{$d->lastname}}</td>
           <td>{{$d->email}}</td>
           <td>{{$d->organisation}}</td>
@@ -54,11 +56,19 @@ Guest Data Downloads
 @push("bk_script")
 <script>
   $(document).ready( function () {
-    $('#table1').DataTable( {
-      "paging":   true,
-      "ordering": true,
-      "info":     true
-    } );
+      $('#table1').DataTable( {
+        "paging":   true,
+        "ordering": true,
+        "info":     true,
+        "order": [[ 0, "desc" ]],
+        "columnDefs": [
+              {
+                  "targets": [ 0 ],
+                  "visible": false
+              }
+          ]
+
+      } );
   } );
 </script>
 @endpush

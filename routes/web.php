@@ -92,6 +92,8 @@ Route::middleware(["auth"])->group(function(){
             Route::post('admin/changepassword','UserController@changePassword')->name('changePassword');
             Route::get('admin/profile','UserController@profile')->name('profile');
             Route::post('admin/profile/update', 'UserController@updateProfile')->name("updateProfile");
+            Route::get('admin/users/search', 'UserController@search')->name("users.search");
+
      
 
             //hospitals
@@ -151,7 +153,7 @@ Route::middleware(["auth"])->group(function(){
             Route::get('admin/messages', 'ContactController@index')->name('getMessages');
 
             //download
-            Route::get('admin/download/list', 'DownloadController@guestDownloadRequests')->name('downloadList');
+            Route::get('admin/download/list', 'DownloadController@DownloadRequests')->name('download.requests');
 
             //** ***** masters routes ******** */
             Route::resource('admin/masters/imaging-services','ImagingServiceController');

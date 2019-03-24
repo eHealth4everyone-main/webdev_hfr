@@ -24,13 +24,15 @@ Facilities Status Summary
                                             <option value="{{$st->id}}"  {{ ($st->id == $data['state_id'] ? "selected":"") }}>{{$st->name}}</option>
                                             @endforeach
                                         </select>
-                                    </div>
+                                </div>
                                     
                             
-                                    <div class="col-sm-2">
-                                            <button type="submit" class="btn btn-success btn-block pull-right  btn-sm">Filter</button>
-                                    </div> 
-                                </div>     
+                                <div class="col-sm-2">
+                                        <button type="submit" class="btn btn-success btn-block pull-right  btn-sm">Filter</button>
+                                </div> 
+                        </div>    
+                        <hr>
+
                 </form>
 
                 @if ($facility_status->count() == 0)
@@ -123,7 +125,8 @@ Facilities Status Summary
             $('#table2').DataTable( {
                 "paging":   true,
                 "ordering": true,
-                "info":     true
+                "info":     true,
+                responsive: true
             });
 
         });

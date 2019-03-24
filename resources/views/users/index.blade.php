@@ -10,18 +10,63 @@ Users
 
 @section("content")
 <div class="box">
-  {{-- <div class="box-header">
-    <h3 class="box-title">Users</h3>
-  </div> --}}
-  <!-- /.box-header -->
- 
+
   <div class="box-body">
+      <form class="form-horizontal"  action="{{route('users.search')}}" method="GET">
+          @csrf
+  
+          <div class="form-group">
+              <label class="col-sm-2 control-label">State Permission:</label>
+              <div class="col-md-2">
+                      <select class="form-control select2"  class="form-control" id="state" name="state"  required data-width="100%">
+                          <option value="1">All States</option>    
+
+                              @foreach(getStates() as $s)
+                                  <option value="{{$s->id}}">{{$s->name}}</option>
+                              @endforeach
+                      </select>
+              </div>
+              <label class="col-sm-1 control-label">Role :</label>
+              <div class="col-md-3">
+                      <select class="form-control select2"  class="form-control" id="role_id" name="role_id"   data-width="100%">
+                          <option value="0">--Select Role--</option>  
+                              @foreach(getRoles() as $s)
+                                  <option value="{{$s->id}}">{{$s->name}}</option>
+                              @endforeach
+                      </select>
+              </div>
+              <label class="col-sm-1 control-label">Status :</label>
+              <div class="col-md-2">
+                      <select class="form-control select2"  class="form-control" id="status" name="status"   data-width="100%">
+                          <option value="">--Select Status--</option>  
+                          <option value="-1">In Active</option>    
+                          <option value="1">Active</option>     
+                          <option value="0">Blocked</option>                              
+                      </select>
+              </div>
+  
+              <div class="col-sm-1">
+                      <button type="submit" class="btn btn-success pull-right  btn-block btn-sm">Search</button>
+              </div> 
+          </div>
+  
+        </form>
+        <hr>
+
+
     <table id="table1" class="table table-bordered table-striped" style="width:100%">
       <thead>
         <tr>
           <th>Firstname</th>
+          <th>Lastname</th>
           <th>Username</th>
           <th>E-mail</th>
+          <th>Mobile</th>
+          <th>Organisation</th>    
+          <th>Position</th>
+          <th>Role</th>
+          <th>State Permission</th>
+          <th>LGA Permission</th>
           <th>Status</th>
           <th>Actions</th>
         </tr>
@@ -31,23 +76,39 @@ Users
         <tr>
           <td>{{$user->firstname}}</td>
           <td>{{$user->lastname}}</td>
+          <td>{{$user->lastname}}</td>
           <td>{{$user->email}}</td>
-          @if ($user->status == 1)
-            <td>Active</td>              
-          @endif
-          @if ($user->status == 0)
-            <td>Blocked</td>              
-          @endif
-          @if ($user->status == -1)
-            <td>Inactive</td>              
-          @endif
+          <td>{{$user->mobile}}</td>
+          <td>{{$user->organisation}}</td>
+          <td>{{$user->job_title}}</td>
+          <td>{{ implode(", ", $user->getRoleNames()->toArray()) }}</td>
           <td>
-            <a href="#">
-              <button class="btn btn-success btn-sm" data-fname="{{$user->firstname}}" data-lname="{{$user->lastname}}"
-                  data-username="{{$user->username}}" data-email="{{$user->email}}" data-role="{{$user->getRoleNames()}}"
-                   data-job="{{$user->job_title}}" data-org="{{$user->organisation}}" data-mobile="{{$user->mobile}}"  data-state_id="{{$user->state_id}}"
-                   type="button" data-toggle="modal" data-target="#view">More</button>
-            </a>
+              @if ($user->state_id == 1)
+                  All States
+              @else
+                  {{ $user->state->name}}
+              @endif
+          </td>
+          <td>
+              @if ($user->lga_id == 1)
+                  All LGAs
+              @else
+                  {{ $user->lga->name}}
+              @endif
+          </td>
+          <td>
+              @if ($user->status == 1)
+                <span class="label label-success"> Active</span>
+              @endif
+              @if ($user->status == 0)
+                <span class="label label-danger"> Blocked</span>
+              @endif
+              @if ($user->status == -1)
+                <span class="label label-default"> Inactive</span>
+              @endif
+          </td>
+          <td>
+    
             @if(auth()->user()->hasPermissionTo(19))
               <a href="#">
                 <button class="btn btn-warning btn-sm" data-fname="{{$user->firstname}}" data-lname="{{$user->lastname}}"
@@ -83,7 +144,7 @@ Users
 @include('users.adduser')
 @include('users.edituser')
 @include('users.block')
-@include('users.show') 
+
   
 @endsection 
   
@@ -98,13 +159,14 @@ Users
     $('#table1').DataTable( {
         "paging":   true,
         "ordering": true,
-        "info":     true
+        "info":     true,
+        responsive: true
     } );
   
     $('[data-mask]').inputmask();
 
 
-      //if fill lga after state change
+      //populate lga after state change
       $('#state_id').change(function(){
             if($(this).val() != '')
             {
@@ -122,6 +184,7 @@ Users
                 })
             }
         });
+        
          //if fill lga after state change for edit modal
         $('#state_id1').change(function(){
               if($(this).val() != '')
@@ -157,6 +220,17 @@ Users
         var id=button.data('id')    
         var modal = $(this)
 
+        modal.find('.modal-body #firstname1').val(fname);
+        modal.find('.modal-body #lastname1').val(lname);
+        modal.find('.modal-body #username1').val(username);
+        modal.find('.modal-body #email1').val(email);
+        modal.find('.modal-body #job1').val(job);
+        modal.find('.modal-body #organisation1').val(org);
+        modal.find('.modal-body #role1').val(role).change();
+        modal.find('.modal-body #state_id1').val(state_id).change();
+        modal.find('.modal-body #mobile1').val(mobile).change();
+        modal.find('.modal-body #UserID').val(id);
+
         if(state_id != 1)
         {
             var _token = $('input[name="_token"]').val();
@@ -173,79 +247,34 @@ Users
             })
         }
         else{
-              $('#lga_id1').prepend('<option value="1">All LGAs</option>');
-              $('#lga_id1').val(lga_id);
+              $('#lga_id1').prepend('<option value="1" >All LGAs</option>');
+              $('#lga_id1').val(lga_id).change();
         }
 
-        modal.find('.modal-body #firstname1').val(fname);
-        modal.find('.modal-body #lastname1').val(lname);
-        modal.find('.modal-body #username1').val(username);
-        modal.find('.modal-body #email1').val(email);
-        modal.find('.modal-body #job1').val(job);
-        modal.find('.modal-body #organisation1').val(org);
-        modal.find('.modal-body #role1').val(role).change();
-        modal.find('.modal-body #state_id1').val(state_id).change();
-        modal.find('.modal-body #mobile1').val(mobile).change();
-        modal.find('.modal-body #UserID').val(id);
+ 
       });//end edit
 
 
 
-      //block
+      //block user
       $('#disableUser').on('show.bs.modal', function (event) {
-      var button = $(event.relatedTarget) 
-      var id = button.data('id')
-      var status=button.data('status')
-      var modal = $(this)
-      modal.find('.modal-body #userid').val(id)
-      modal.find('.modal-body #status').val(status)
-      if(status == 1){
-        var message =  "Are you sure you want to block '".concat(button.data('fname')," ",button.data('lname'), "'?") ;
-        modal.find('.modal-body #message').text(message)
-      }
-      if(status == 0){
-        var message =  "Are you sure you want to activate user '".concat(button.data('fname')," ",button.data('lname'), "'?") ;
-        modal.find('.modal-body #message').text(message)
-      }
+          var button = $(event.relatedTarget) 
+          var id = button.data('id')
+          var status=button.data('status')
+          var modal = $(this)
+          modal.find('.modal-body #userid').val(id)
+          modal.find('.modal-body #status').val(status)
+
+          if(status == 1){
+            var message =  "Are you sure you want to block '".concat(button.data('fname')," ",button.data('lname'), "'?") ;
+            modal.find('.modal-body #message').text(message)
+          }
+          if(status == 0){
+            var message =  "Are you sure you want to activate user '".concat(button.data('fname')," ",button.data('lname'), "'?") ;
+            modal.find('.modal-body #message').text(message)
+          }
 
       })//end
-
-      //view user
-    $('#view').on('show.bs.modal', function (event) {
-      var button = $(event.relatedTarget)
-      var fname = button.data('fname')
-      var lname=button.data('lname')
-      var username=button.data('username')
-      var email=button.data('email')
-      var role=button.data('role')
-      var job=button.data('job') 
-      var org=button.data('org')      
-      var mobile=button.data('mobile')
-      var state_id=button.data('state_id')
-      var modal = $(this)
-      var state
-
-      $.each(@json($lst_states), function( index, value ){
-        if(state_id == value.id){
-          state = value.name;
-          return false;
-        }
-        else{
-          state = "All States"
-        }
-      });
-      
-
-      modal.find('.modal-body #firstname').text(fname);
-      modal.find('.modal-body #lastname').text(lname);
-      modal.find('.modal-body #username').text(username);
-      modal.find('.modal-body #email').text(email);
-      modal.find('.modal-body #job').text(job);
-      modal.find('.modal-body #organisation').text(org);
-      modal.find('.modal-body #userrole').text(role);
-      modal.find('.modal-body #state').text(state);
-      modal.find('.modal-body #mobile').text(mobile);
-    });//end
 
 
   });

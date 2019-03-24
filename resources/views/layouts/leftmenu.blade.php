@@ -156,7 +156,7 @@
                 </li>
                 <li> 
                     @if(auth()->user()->hasPermissionTo(30))
-                        <a href="{{route('downloadList')}}">
+                        <a href="{{route('download.requests')}}">
                             <i class="fa  fa-download"></i>
                             <span>Download Requests</span>
                         </a>

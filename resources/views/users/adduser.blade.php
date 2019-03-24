@@ -85,9 +85,9 @@
                         <div class="form-group row">
                                 <label for="role" class="col-md-4 col-form-label text-md-right">{{ __('User Role') }} <font color="red">*</font></label>
                                 <div class="col-md-8">
-                                        <select class="form-control select2"  class="form-control" id="role" name="role[]" multiple="multiple" data-placeholder="Select Role" required data-width="100%">
-                                                @foreach($roles as $role)
-                                                    <option value="{{$role->name}}">{{$role->name}}</option>
+                                        <select class="form-control select2"  class="form-control" id="role" name="role[]"  data-placeholder="Select Role" required data-width="100%">
+                                                @foreach(getRoles() as $role)
+                                                    <option value="{{$role->id}}">{{$role->name}}</option>
                                                 @endforeach
                                         </select>
                                 <span class="text-danger">
@@ -99,20 +99,19 @@
                                 <label for="state_id" class="col-md-4 col-form-label text-md-right">{{ __('State Permission') }} <font color="red">*</font></label>
                                 <div class="col-md-8">
                                         <select class="form-control select2"  class="form-control" id="state_id" name="state_id" data-placeholder="Select State" required data-width="100%">
+                                            <option value="">--Select State--</option>  
                                             <option value="1">All States</option>    
-                                                @foreach($lst_states as $s)
+                                                @foreach(getStates() as $s)
                                                     <option value="{{$s->id}}">{{$s->name}}</option>
                                                 @endforeach
                                         </select>
-                                <span class="text-danger">
-                                    <strong id="state-id"></strong>
-                                </span>
+                               
                                 </div>
                         </div> 
                         <div class="form-group row">
                                 <label for="state_id" class="col-md-4 col-form-label text-md-right">{{ __('LGA Permission') }} <font color="red">*</font></label>
                                 <div class="col-md-8">
-                                        <select class="form-control select2"  class="form-control" id="lga_id" name="lga_id" data-placeholder="Select LGA" required data-width="100%">   
+                                        <select class="form-control select2"  class="form-control" id="lga_id" name="lga_id"  data-placeholder="Select LGA" required data-width="100%">   
                                             
                                         </select>
                                 

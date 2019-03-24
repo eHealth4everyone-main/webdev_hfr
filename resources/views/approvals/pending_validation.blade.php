@@ -251,7 +251,8 @@ Facility Validation
         $('#table1').DataTable( {
             "paging":   true,
             "ordering": true,
-            "info":     true
+            "info":     true,
+            responsive: true
         } );
       });
 

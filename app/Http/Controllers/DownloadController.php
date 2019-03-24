@@ -226,8 +226,9 @@ class DownloadController extends Controller
   
 
     //for admin module
-    public function guestDownloadRequests (){
-        $downloads = Download::all();
+    public function DownloadRequests (){
+        $downloads = Download::orderBy('id','DESC')->get();
+        
         return view('downloads.index', compact("downloads"));
     }
     
