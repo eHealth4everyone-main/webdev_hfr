@@ -1,7 +1,7 @@
 @extends("layouts.master")
 
 @section('content-title')
-My Requests
+My Pending Requests
 
 @endsection
 
@@ -44,14 +44,7 @@ My Requests
         <th>Verification</th>
         <th>Validation</th>
         <th>Publication</th>
-        {{-- <th>Status</th> --}}
-       
-        @foreach ($myrequests as $r)
-            @if (in_array($r->status_id,[1,3,8,10,15,17]))
-              <th>Actions</th>
-              @break
-            @endif
-        @endforeach
+        <th>Action</th>
 
       </tr>
     </thead>
@@ -118,17 +111,7 @@ My Requests
             Pending Publication
         @endif
       </td>
-        {{-- <td>
-            @if (in_array($r->status_id,[1,8,15]))
-                <span class="label label-info"> {{$r->status}}</span>
-            @endif
-            @if (in_array($r->status_id,[2,4,6,9,11,13,16,18,20]))
-                <span class="label label-success"> {{$r->status}}</span>
-            @endif
-            @if (in_array($r->status_id,[3,5,7,10,12,14,17,19,21]))
-               <span class="label label-danger"> {{$r->status}}</span>
-            @endif
-        </td> --}}
+   
 
           <td>
             @if (in_array($r->status_id,[1,3,8,10]))
@@ -141,26 +124,27 @@ My Requests
                       Delete Request
                   </button>
                 </a>
-            @endif
 
-            @if (in_array($r->status_id,[15,17]))
+            @elseif (in_array($r->status_id,[15,17]))
                 <a href="#">
                     <button class="btn btn-danger btn-sm"  type="button"  data-toggle="modal" data-target="#delete"
                       data-id="{{$r->id}}" data-status="{{$r->status_id}}"> 
                       Delete Request
                   </button>
                 </a>
-            @endif
-            @if ($r->status_id == 17)
+            @elseif ($r->status_id == 17)
                  <a href="#">
                       <button class="btn btn-warning btn-sm"  type="button"  data-toggle="modal" data-target="#delete_resubmit"
                           data-id_del="{{$r->id}}" data-unique_id_del="{{$r->unique_id}}" data-facility_name_del="{{$r->facility_name}}" data-state_id_del="{{$r->state_id}}"> 
                           Resubmit
                       </button>
                   </a>
+            @else
+                  NIL
             @endif
     
           </td>
+
         </tr>
         @endforeach
         
