@@ -14,7 +14,7 @@ class WardController extends Controller
     {
         $wards = DB::table('wards')
             ->orderByRaw('state,lga,name ASC')
-            ->paginate(300);
+            ->paginate(10);
 
         return view('masters.wards.index', compact("wards"));
     }
@@ -61,4 +61,21 @@ class WardController extends Controller
         session()->flash("alert-success", "Ward deleted successfully!");
         return back();
     }
+
+    public function search(Request $request)
+    {
+        $wards = DB::table('wards')
+            ->where('state_id','like','%'. $request->state .'%')
+            ->where('lga_id','like','%'. $request->lga .'%')
+            ->where('name','like','%'. $request->ward_name .'%')
+            ->orderBy('state')
+            ->orderBy('lga')
+            ->orderBy('name')
+            ->paginate(10)
+            ->appends($request->all());
+
+        return view('masters.wards.index', compact("wards"));
+    }
+
+
 }

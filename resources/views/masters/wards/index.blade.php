@@ -14,6 +14,41 @@ Wards
 @section("content")
 <div class="box">
         <div class="box-body">  
+            <form class="form-horizontal"  action="{{route('wards.search')}}" method="get">
+                @csrf
+    
+                    <div class="form-group">
+                            <div class="col-sm-3">  
+                                <select class="form-control select2" id="state" name ="state"  style="width: 100%;">
+                                    <option value="1">--Select State--</option>
+                                    @foreach(getStates() as $st)
+                                        <option value="{{$st->id}}">{{$st->name}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        
+                            <div class="col-sm-3">
+                                <select class="form-control select2" id="lga" name="lga"  style="width: 100%;">
+                                    <option value="1">--Select LGA--</option>
+                                </select>
+                            </div>
+                      
+                            <div class="col-sm-4" >
+                                <input class="form-control input-sm"type="text" name="ward_name" id="ward_name" class="form-control" placeholder="Ward name">
+                            </div>
+                  
+                            <div class="col-sm-2">
+                                <button type="submit" class="btn btn-success btn-block btn-sm">Search</button>
+                            </div>
+              
+                      </div>
+                   
+       
+    
+                </form>
+                <hr>
+
+
           <table id="table1" class="table table-striped table-bordered" style="width:100%">
             <thead>
               <tr>
@@ -52,7 +87,7 @@ Wards
         </div>
         <!-- /.box-body -->
         <div class="box-footer">
-            {{-- <div class="row">
+            <div class="row">
               
                   @php
                     $perpage = $wards->perpage();
@@ -76,7 +111,7 @@ Wards
                       </div>
                   </div>
 
-            </div> --}}
+            </div>
           </div>
 </div>
       <!-- /.box -->
@@ -95,11 +130,7 @@ Wards
 
 <script>
   $(document).ready( function () {
-      $('#table1').DataTable( {
-        "paging":   true,
-        "ordering": true,
-        "info":     true
-    });
+
 
   });
   
@@ -157,6 +188,26 @@ Wards
               })
           }
       });
+
+
+    //populate lga after state change for search fields
+    $('#state').change(function(){
+          if($(this).val() != '')
+          {
+              var stateID= $('#state').val();
+              var _token = $('input[name="_token"]').val();
+              $.ajax({
+                  url:"{{route('getLgaList')}}",
+                  method:"POST",
+                  data:{id:stateID, _token:_token},
+                  success:function(result)
+                  {
+                      $('#lga').html(result);
+                  }         
+              })
+          }
+      });
+
 
 </script>
 

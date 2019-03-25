@@ -45,9 +45,9 @@
                         <th>Deletion Requests </th>
                         <th>Verified Requests</th>
                         <th>Validated Requests</th>
-                        <th>Created Facilities</th>
-                        <th>Updated Facilities</th>
-                        <th>Deleted Facilities</th>
+                        <th>New Facility Published</th>
+                        <th>Updates Request Published</th>
+                        <th>Deletion Request Published</th>
                         <th>Rejected Verifications </th>
                         <th>Rejected Validations</th>
                         <th>Rejected Publications</th>

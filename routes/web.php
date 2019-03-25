@@ -162,7 +162,9 @@ Route::middleware(["auth"])->group(function(){
             Route::resource('admin/masters/certifications','CertificationController');
             Route::resource('admin/masters/states','StateController');
             Route::resource('admin/masters/lgas','LgaController');
+            Route::get('admin/masters/wards/search','WardController@search')->name('wards.search');
             Route::resource('admin/masters/wards','WardController');
+
 
             //reports
             Route::get('admin/reports/facility-list/updates-select','FacilityReportController@updateSelection')->name('updates.selection');
