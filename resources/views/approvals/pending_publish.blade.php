@@ -8,17 +8,35 @@ Facility Publication
 
 @section("content")
 
-@if($pending->isEmpty())
-    <div class="callout callout-success">
-        <p>You do not have pending requests</p>
-    </div>
-@endif
-
-@if(!$pending->isEmpty())
 
 <div class="box">
 
 <div class="box-body">
+         {{-- search option --}}
+         <form class="form-horizontal"  action="{{route('publish.search')}}" method="GET">
+                @csrf
+                
+                <div class="form-group">
+                    
+                    <div class="col-md-10">
+                        <select class="form-control select2"  class="form-control" name="status"   data-width="100%">
+                            <option value="1">My Pending Publications</option>    
+                            <option value="3">My Rejected Publications</option>  
+                            <option value="4">My Publication History</option>                           
+                        </select>
+                    </div>
+                    
+                    <div class="col-sm-2">
+                        <button type="submit" class="btn btn-success pull-right  btn-block btn-sm">Show</button>
+                    </div> 
+                </div>
+                
+            </form>
+            <hr>
+            {{-- --endsearch-- --}}
+
+@if(!$pending->isEmpty())
+
   <table id="table1" class="table table-bordered table-striped" style="width:100%">
     <thead>
       <tr>
@@ -152,12 +170,16 @@ Facility Publication
         
       </tbody>
     </table>
-    
+@else
+    <div class="callout callout-success">
+        <p>No record found!</p>
+    </div>
+@endif
   </div>
   <!-- /.box-body -->
 </div>
 <!-- /.box -->
-@endif
+
 
 
 

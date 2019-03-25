@@ -21,13 +21,43 @@ class PublishController extends Controller
     {
         $pending = DB::table('hospital_details_history')
             ->where('state_id', '=',Auth::user()->state_id)
-            ->whereIn('status_id',[4,11,18,7,14,21])
+            ->whereIn('status_id',[4,11,18])
             ->get();
 
         
         return view('approvals.pending_publish',compact('pending'));
     }
-    
+
+    public function search(Request $request)
+    {
+        if ($request->status ==1){
+            $pending = DB::table('hospital_details_history')
+            ->where('state_id', '=',Auth::user()->state_id)
+            ->whereIn('status_id',[4,11,18])
+            ->get();
+        }
+        elseif($request->status ==2){
+            $pending = DB::table('hospital_details_history')
+            ->where('published_id', '=',Auth::user()->id)
+            ->whereIn('status_id',[6,13,20])
+            ->get();
+        }
+        elseif($request->status ==3){
+            $pending = DB::table('hospital_details_history')
+            ->where('published_id', '=',Auth::user()->id)
+            ->whereIn('status_id',[7,14,21])
+            ->get();
+        }
+        else{
+            $pending = DB::table('hospital_details_history')
+            ->where('published_id', '=',Auth::user()->id)
+            ->orderby('updated_at','desc')
+            ->get();
+        }
+
+        return view('approvals.pending_publish',compact('pending'));
+    }
+
     public function store(Request $request)
     {                
         HospitalHistory::disableAuditing();      

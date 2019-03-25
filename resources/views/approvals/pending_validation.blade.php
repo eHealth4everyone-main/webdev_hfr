@@ -8,18 +8,37 @@ Facility Validation
 
 @section("content")
 
-@if($pending->isEmpty())
-    <div class="callout callout-success">
-        <p>You do not have pending requests</p>
-  </div>
-@endif
 
-
-@if(!$pending->isEmpty())
 
 <div class="box">
 
 <div class="box-body">
+         {{-- search option --}}
+         <form class="form-horizontal"  action="{{route('validate.search')}}" method="GET">
+                @csrf
+                
+                <div class="form-group">
+                    
+                    <div class="col-md-10">
+                        <select class="form-control select2"  class="form-control" name="status"   data-width="100%">
+                            <option value="1">My Pending Validations</option>    
+                            <option value="2">My Accepted Validations</option>     
+                            <option value="3">My Rejected Validations</option>  
+                            <option value="4">My Validation History</option>                           
+                        </select>
+                    </div>
+                    
+                    <div class="col-sm-2">
+                        <button type="submit" class="btn btn-success pull-right  btn-block btn-sm">Show</button>
+                    </div> 
+                </div>
+                
+            </form>
+            <hr>
+            {{-- --endsearch-- --}}
+
+@if(!$pending->isEmpty())
+
   <table id="table1" class="table table-bordered table-striped" style="width:100%">
     <thead>
       <tr>
@@ -66,20 +85,21 @@ Facility Validation
                 @endif  
             </td>
             <td>
-                @if ($p->validated_email != "" )
-                    @if (in_array($p->status_id,[4,11,18,7,14,21])) 
-                        <span class="label label-success"> Accepted </span> <br>
-                    @endif
-                    @if (in_array($p->status_id,[5,12,19])) 
-                        <span class="label label-danger"> Rejected </span> <br>
-                    @endif
-                    <Strong>Remarks: </Strong>{{ $p->validate_note }} <br>
-                    <Strong>Date: </Strong>{{ ($p->validated_at? date('d M Y', strtotime($p->validated_at)) : '') }} <br>
-                    <Strong>By: </Strong>{{$p->validated_by}} <br>
-                    <Strong>E-mail: </Strong>{{ $p->validated_email }} <br>
-                    <Strong>Mobile: </Strong>{{ $p->validated_mobile }} <br>
+                @if (($p->validated_email == "") Or  (in_array($p->status_id,[7,14,21])) )
+                    Pending Validation
                 @else
-                        Pending Validation
+                        @if (in_array($p->status_id,[4,11,18,7,14,21])) 
+                        <span class="label label-success"> Accepted </span> <br>
+                        @endif
+                        @if (in_array($p->status_id,[5,12,19])) 
+                            <span class="label label-danger"> Rejected </span> <br>
+                        @endif
+                        
+                        <Strong>Remarks: </Strong>{{ $p->validate_note }} <br>
+                        <Strong>Date: </Strong>{{ ($p->validated_at? date('d M Y', strtotime($p->validated_at)) : '') }} <br>
+                        <Strong>By: </Strong>{{$p->validated_by}} <br>
+                        <Strong>E-mail: </Strong>{{ $p->validated_email }} <br>
+                        <Strong>Mobile: </Strong>{{ $p->validated_mobile }} <br>
                 @endif              
             </td>
             <td>
@@ -174,13 +194,16 @@ Facility Validation
         
       </tbody>
     </table>
+@else
+    <div class="callout callout-success">
+        <p>No record found!</p>
+    </div>
+@endif
     
   </div>
   <!-- /.box-body -->
 </div>
 <!-- /.box -->
-@endif
-
 
 
 

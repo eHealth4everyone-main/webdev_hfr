@@ -1,25 +1,42 @@
 @extends("layouts.master")
 
 @section('content-title')
-My Pending Requests
+My Requests
 
 @endsection
 
 @section("content")
-@if(empty($myrequests))
-    <div class="callout callout-success">
-        <p>You do not have pending requests</p>
-  </div>
-@endif
 
-
-
-@if(!empty($myrequests))
 
 <div class="box">
 
 <div class="box-body">
-  <table id="table1" class="table table-bordered table-striped" style="width:100%">
+           {{-- search option --}}
+           <form class="form-horizontal"  action="{{route('myrequest.search')}}" method="GET">
+              @csrf
+              
+              <div class="form-group">
+                  
+                  <div class="col-md-10">
+                      <select class="form-control select2"  class="form-control" name="status"   data-width="100%">
+                          <option value="1">My Pending Requests</option>    
+                          <option value="2">My Rejected Requests</option>  
+                          <option value="3">My Approved Requests</option>                           
+                      </select>
+                  </div>
+                  
+                  <div class="col-sm-2">
+                      <button type="submit" class="btn btn-success pull-right  btn-block btn-sm">Show</button>
+                  </div> 
+              </div>
+              
+          </form>
+          <hr>
+          {{-- --endsearch-- --}}
+
+@if(!empty($myrequests))
+
+<table id="table1" class="table table-bordered table-striped" style="width:100%">
     <thead>
       <tr>
         <th>Facility Name</th>
@@ -69,6 +86,9 @@ My Pending Requests
                 @if (in_array($r->status_id,[5,12,19])) 
                   <span class="label label-danger"> Rejected </span> <br>
                 @endif
+                @if (in_array($r->status_id,[3,10,17]) and $r->validated_email != "") 
+                  <span class="label label-danger"> Rejected </span> <br>
+                @endif
                 <Strong>Remarks: </Strong>{{ $r->validate_note }} <br>
                 <Strong>Date: </Strong>{{ ($r->validated_at? date('d M Y', strtotime($r->validated_at)) : '') }} <br>
                 <Strong>By: </Strong>{{$r->validated_by}} <br>
@@ -84,6 +104,9 @@ My Pending Requests
               <span class="label label-success"> Accepted </span> <br>
             @endif
             @if (in_array($r->status_id,[7,14,21])) 
+              <span class="label label-danger"> Rejected </span> <br>
+            @endif
+            @if (in_array($r->status_id,[3,10,17]) and $r->published_email != "") 
               <span class="label label-danger"> Rejected </span> <br>
             @endif
             <Strong>Remarks: </Strong>{{ $r->publish_note }} <br>
@@ -143,12 +166,16 @@ My Pending Requests
         
       </tbody>
     </table>
-    
+@else
+    <div class="callout callout-success">
+        <p>No record found!</p>
+    </div>
+@endif
   </div>
   <!-- /.box-body -->
 </div>
 <!-- /.box -->
-@endif
+
 
  
 <!-- Modal delete record -->

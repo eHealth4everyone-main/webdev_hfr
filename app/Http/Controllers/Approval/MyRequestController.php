@@ -26,23 +26,49 @@ class MyRequestController extends Controller
         return view('approvals.my_pending_requests',compact('myrequests')); 
     }
     
-    public function myApprovedRequest()
+    public function search(Request $request)
     {
-        $myrequests = DB::select("SELECT * FROM hospital_details_history WHERE 
-        (created_by = ". Auth::user()->id ." OR requested_id = ". Auth::user()->id .") 
-        AND status_id IN (6,13,20)");
+        if ($request->status ==1){
+            $myrequests = DB::select("SELECT * FROM hospital_details_history WHERE 
+            (created_by = ". Auth::user()->id ." OR requested_id = ". Auth::user()->id .") 
+            AND status_id NOT IN (0,6,13,20,5,7,12,14,19,21)");
+    
+            return view('approvals.my_pending_requests',compact('myrequests')); 
+        }
+        elseif($request->status ==2){
+            $myrequests = DB::select("SELECT * FROM hospital_details_history WHERE 
+            (created_by = ". Auth::user()->id ." OR requested_id = ". Auth::user()->id .") 
+            AND status_id IN (3,5,7,10,12,14,17,19,21)");
+    
+            return view('approvals.my_rejected_requests',compact('myrequests')); 
+        }
+        else{
+            $myrequests = DB::select("SELECT * FROM hospital_details_history WHERE 
+            (created_by = ". Auth::user()->id ." OR requested_id = ". Auth::user()->id .") 
+            AND status_id IN (6,13,20)");
+    
+            return view('approvals.my_approved_requests',compact('myrequests')); 
+        }
 
-        return view('approvals.my_approved_requests',compact('myrequests')); 
     }
 
-    public function myRejectedRequest()
-    {
-        $myrequests = DB::select("SELECT * FROM hospital_details_history WHERE 
-        (created_by = ". Auth::user()->id ." OR requested_id = ". Auth::user()->id .") 
-        AND status_id IN (3,5,7,10,12,14,17,19,21)");
+    // public function myApprovedRequest()
+    // {
+    //     $myrequests = DB::select("SELECT * FROM hospital_details_history WHERE 
+    //     (created_by = ". Auth::user()->id ." OR requested_id = ". Auth::user()->id .") 
+    //     AND status_id IN (6,13,20)");
 
-        return view('approvals.my_rejected_requests',compact('myrequests')); 
-    }
+    //     return view('approvals.my_approved_requests',compact('myrequests')); 
+    // }
+
+    // public function myRejectedRequest()
+    // {
+    //     $myrequests = DB::select("SELECT * FROM hospital_details_history WHERE 
+    //     (created_by = ". Auth::user()->id ." OR requested_id = ". Auth::user()->id .") 
+    //     AND status_id IN (3,5,7,10,12,14,17,19,21)");
+
+    //     return view('approvals.my_rejected_requests',compact('myrequests')); 
+    // }
 
     public function editRequest($id)
     {

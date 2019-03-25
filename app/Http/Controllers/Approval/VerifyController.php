@@ -19,9 +19,43 @@ class VerifyController extends Controller
     {
         $pending = DB::table('hospital_details_history')
             ->where('state_id', '=',Auth::user()->state_id)
-            ->whereNotIn('status_id',[3,6,10,13,17,20])
+            ->whereNotIn('status_id',[0,3,6,10,13,17,20])
             ->orderby('updated_at','desc')
             ->get();
+     
+        return view('approvals.pending_verify',compact('pending')); 
+    }
+
+    public function search(Request $request)
+    {
+        if ($request->status ==1){
+            $pending = DB::table('hospital_details_history')
+            ->where('state_id', '=',Auth::user()->state_id)
+            ->whereNotIn('status_id',[0,3,6,10,13,17,20])
+            ->orderby('updated_at','desc')
+            ->get();
+        }
+        elseif($request->status ==2){
+            $pending = DB::table('hospital_details_history')
+            ->where('verified_id', '=',Auth::user()->id)
+            ->whereIn('status_id',[2,9,16])
+            ->orderby('updated_at','desc')
+            ->get();
+        }
+        elseif($request->status ==3){
+            $pending = DB::table('hospital_details_history')
+            ->where('verified_id', '=',Auth::user()->id)
+            ->whereIn('status_id',[3,10,17])
+            ->orderby('updated_at','desc')
+            ->get();
+        }
+        else{
+            $pending = DB::table('hospital_details_history')
+            ->where('verified_id', '=',Auth::user()->id)
+            ->orderby('updated_at','desc')
+            ->get();
+        }
+      
      
         return view('approvals.pending_verify',compact('pending')); 
     }

@@ -64,9 +64,9 @@
                    
                 </li>
             
-                <li  class="treeview"> 
+                <li  > 
                     @if(auth()->user()->hasPermissionTo(2) or auth()->user()->hasPermissionTo(3) or auth()->user()->hasPermissionTo(4))
-                        <a href="#">
+                        <a href="{{ route('myrequest.pending') }}">
                             <i class="fa fa-pencil"></i>
                             <span>My Requests</span>
                             <span class="pull-right-container">
@@ -74,11 +74,11 @@
                             </span>
                         </a>
                     @endif
-                    <ul class="treeview-menu">        
+                    {{-- <ul class="treeview-menu">        
                         <li><a href="{{ route('myrequest.pending') }}"><i class="fa fa-pencil-square"></i>My Pending Requests <font color="orange">[{{ $request_count[0] }}]</font> </a></li>
                         <li><a href="{{ route('myrequest.rejected') }}"><i class="fa fa-pencil-square"></i>My Rejected Requests <font color="orange">[{{ $request_count[1] }}]</font></a></li>  
                         <li><a href="{{ route('myrequest.approved') }}"><i class="fa fa-pencil-square"></i>My Approved Requests <font color="orange">[{{ $request_count[2] }}]</font></a></li>
-                    </ul>
+                    </ul> --}}
                 </li>
                 <li  class="treeview"> 
                     @if(auth()->user()->hasPermissionTo(59) or auth()->user()->hasPermissionTo(60) or auth()->user()->hasPermissionTo(61))

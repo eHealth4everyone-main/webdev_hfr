@@ -26,6 +26,36 @@ class ValidateController extends Controller
         return view('approvals.pending_validation',compact('pending'));
     }
 
+    public function search(Request $request)
+    {
+        if ($request->status ==1){
+            $pending  = DB::table('hospital_details_history')
+            ->where('state_id', '=',Auth::user()->state_id)
+            ->whereIn('status_id',[2,7,9,14,16,21,4,11,18])
+            ->get();
+        }
+        elseif($request->status ==2){
+            $pending = DB::table('hospital_details_history')
+            ->where('validated_id', '=',Auth::user()->id)
+            ->whereIn('status_id',[4,11,18])
+            ->get();
+        }
+        elseif($request->status ==3){
+            $pending = DB::table('hospital_details_history')
+            ->where('validated_id', '=',Auth::user()->id)
+            ->whereIn('status_id',[5,12,19])
+            ->get();
+        }
+        else{
+            $pending = DB::table('hospital_details_history')
+            ->where('validated_id', '=',Auth::user()->id)
+            ->orderby('updated_at','desc')
+            ->get();
+        }
+
+        return view('approvals.pending_validation',compact('pending'));
+    }
+
     public function store(Request $request)
     {
         $date = Carbon::now()->format('Y-m-d H:i:s');
