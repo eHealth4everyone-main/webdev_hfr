@@ -24,7 +24,7 @@ class MyRequestsCountComposer
 
         $pending = DB::select("SELECT * FROM hospital_details_history WHERE 
                 (created_by = ". Auth::user()->id ." OR requested_id = ". Auth::user()->id .") 
-                AND status_id NOT IN (6,13,17,20,5,7,12,14,19,21)");
+                AND status_id NOT IN (0,6,13,17,20,5,7,12,14,19,21)");
 
         $rejected = DB::select("SELECT * FROM hospital_details_history WHERE 
                 (created_by = ". $user ." OR requested_id = ". $user .") 

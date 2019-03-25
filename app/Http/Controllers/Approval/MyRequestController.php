@@ -21,7 +21,7 @@ class MyRequestController extends Controller
     {
         $myrequests = DB::select("SELECT * FROM hospital_details_history WHERE 
         (created_by = ". Auth::user()->id ." OR requested_id = ". Auth::user()->id .") 
-        AND status_id NOT IN (6,13,20,5,7,12,14,19,21)");
+        AND status_id NOT IN (0,6,13,20,5,7,12,14,19,21)");
 
         return view('approvals.my_pending_requests',compact('myrequests')); 
     }
