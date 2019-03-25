@@ -55,7 +55,7 @@ Facilities Status Summary
                                     <th>Verified Requests</th>
                                     <th>Validated Requests</th>
                                     <th>New Facility Published</th>
-                                    <th>Updates Request Published</th>
+                                    <th>Update Request Published</th>
                                     <th>Deletion Request Published</th>
                                     <th>Rejected Verifications </th>
                                     <th>Rejected Validations</th>

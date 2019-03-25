@@ -46,12 +46,15 @@
                         <th>Verified Requests</th>
                         <th>Validated Requests</th>
                         <th>New Facility Published</th>
-                        <th>Updates Request Published</th>
+                        <th>Update Request Published</th>
                         <th>Deletion Request Published</th>
                         <th>Rejected Verifications </th>
                         <th>Rejected Validations</th>
                         <th>Rejected Publications</th>
                     </tr>
+
+                });
+                
                     </thead>
                     <tbody>
                             
@@ -101,7 +104,7 @@ $('#fac_status_table').hide();
             data: {
                 table: 'fac_status_table'
             },
-         
+            colors: ['#2f7ed8','#1aadce', '#DDDF00', '#0d233a', '#77a1e5', '#a6c961','#64E572','#50B432', '#f28f43', '#ED561B','#910000' ],
             yAxis: {
                 min: 0,
                 title: {
@@ -129,12 +132,14 @@ $('#fac_status_table').hide();
             },
             plotOptions: {
                 column: {
-                stacking: 'normal',
-                dataLabels: {
-                    enabled: false,
-                    color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white'
-                }
-                }
+                    stacking: 'normal',
+                    dataLabels: {
+                        enabled: false,
+                        color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white'
+                    },
+
+                },
+          
             },
             credits: {
                 enabled: false
