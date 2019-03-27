@@ -83,16 +83,19 @@ Route::middleware(["auth"])->group(function(){
             Route::post('admin/roles/update', 'RoleController@update')->name('roles.update');
             Route::delete('admin/roles/delete', 'RoleController@destroy')->name("roles.destroy");
 
+
             //users
             Route::get('admin/users', 'UserController@index')->name('users.index');
             Route::get('admin/users/register', 'UserController@create');
             Route::post('admin/users/register', 'UserController@store')->name("registeruser");
             Route::post('admin/users/update', 'UserController@update')->name("updateuser");
-            Route::put('admin/users/del', 'UserController@deactivate')->name("delUser");
+            Route::put('admin/users/delete', 'UserController@delete')->name("deleteUser");
+            Route::put('admin/users/block', 'UserController@block')->name("blockUser");
             Route::post('admin/changepassword','UserController@changePassword')->name('changePassword');
             Route::get('admin/profile','UserController@profile')->name('profile');
             Route::post('admin/profile/update', 'UserController@updateProfile')->name("updateProfile");
             Route::get('admin/users/search', 'UserController@search')->name("users.search");
+            Route::post('admin/users/role', 'UserController@getRoleID')->name('getRoleID');
 
      
 

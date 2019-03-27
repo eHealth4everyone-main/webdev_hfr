@@ -9,7 +9,6 @@ Facility Validation
 @section("content")
 
 
-
 <div class="box">
 
 <div class="box-body">

@@ -44,9 +44,9 @@ class HospitalsController extends Controller
             Cache::put('displayed_facilities', $download, 60);
             
             
-            list($state_id, $lga_id,$facility_name, $geo_codes, $ward_id, 
+            list($state_id, $lga_id, $ward_id,$facility_name, $geo_codes, $ward_id, 
             $facility_level_id , $ownership_id,$operational_status_id,$registration_status_id,
-            $license_status_id,$searched) = [1,1,"",0,0,0,0,0,0,0,0,0];
+            $license_status_id,$searched) = [1,1,0,"",0,0,0,0,0,0,0,0,0];
             
             return view('hospitals.index',compact('facilities',
             'state_id', 'lga_id','facility_name', 'geo_codes', 'ward_id','facility_level_id', 

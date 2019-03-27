@@ -33,8 +33,9 @@ class UserController extends Controller
                 'lastname' => 'required|string|max:50',
                 'job' => 'nullable|string|max:50',
                 'organisation' => 'nullable|string|max:50',
-                'mobile' => 'string|max:40',
                 'role' => 'required',
+                'state_id'=>'required',
+                'lga_id'=>'required',
                 'email' => 'required|string|email|max:255|unique:users',
             ]);
         
@@ -74,13 +75,14 @@ class UserController extends Controller
 
     public function update(Request $request)
     {
-        //dd($request->all());
+        
         $request->validate([
             'firstname1' => 'required|string|max:255',
             'lastname1' => 'required|string|max:255',
             'role1' => 'required',
+            'state_id1'=>'required',
+            'lga_id1'=>'required',
             'job1' => 'nullable|string|max:50',
-            'mobile1' => 'string|max:40',
             'organisation1' => 'nullable|string|max:50',
         ]);
 
@@ -120,7 +122,7 @@ class UserController extends Controller
        return view('users.index', compact("users"));  
     }
 
-    public function deactivate(Request $request)
+    public function block(Request $request)
     {
        
         if($request->status ==1){
@@ -141,6 +143,14 @@ class UserController extends Controller
             session()->flash("alert-success", "User activated successfully!");
             return redirect()->back();
         }
+      
+    }
+
+    public function delete(Request $request)
+    {
+        User::destroy($request->user);
+        session()->flash("alert-success", "User deleted successfully!");
+        return back();
       
     }
 
@@ -240,5 +250,15 @@ class UserController extends Controller
         session()->flash("alert-success","Password changed successfully !");
         return redirect()->route('admin_home');
         
+    }
+
+
+    public function getRoleID(Request $request){
+        $data = DB::table('roles')
+        ->select('id')
+        ->where('name', $request->role)
+        ->get();
+    
+        return $data[0]->id;
     }
 }

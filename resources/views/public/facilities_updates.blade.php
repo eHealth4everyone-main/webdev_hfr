@@ -30,7 +30,7 @@
                     </select>
                 </div>
                 <div class="col-sm-2">
-                        <button type="submit" class="btn btn-success pull-right  btn-block btn-sm">Generate</button>
+                        <button type="submit" class="btn btn-success pull-right  btn-block btn-sm">Show</button>
                 </div> 
             </div>
 

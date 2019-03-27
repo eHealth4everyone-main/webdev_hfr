@@ -21,7 +21,7 @@ class FacilityListingController extends Controller
         //set values facility list when no filter
         $data['state_id'] = 1;
         $data['lga_id'] = 1;
-        $data['ward_id'] = 1;
+        $data['ward_id'] = 0;
         $data['facility_name'] = "";
         $data['geo_codes'] = 0;
         $data['facility_level_id'] = 0;
@@ -38,10 +38,8 @@ class FacilityListingController extends Controller
 
     public function searchHospitals(Request $request)
     {
-        $state_id = $request->state_id;
-        $lga_id = $request->lga_id;
+        // dd($request->all());
         $ward_id = $request->ward_id;
-        $facility_name =$request->facility_name;
         $facility_level_id = $request->facility_level_id;
         $ownership_id = $request->ownership_id;
         $operational_status_id = $request->operational_status_id;
@@ -72,6 +70,9 @@ class FacilityListingController extends Controller
             $inpatient = '';
         }
 
+        if ($ward_id == 0){
+            $ward_id ='';
+        }
         if($facility_level_id == 0){
             $facility_level_id = '';
         }
@@ -107,8 +108,8 @@ class FacilityListingController extends Controller
         }
 
         $facilities = DB::table('hospital_details')
-            ->where('state_id','like','%'.$state_id.'%')
-            ->where('lga_id','like','%'.$lga_id.'%')
+            ->where('state_id','like','%'.$request->state_id.'%')
+            ->where('lga_id','like','%'.$request->lga_id.'%')
             ->where(DB::Raw("IFNULL(ward_id, '')"),'like','%'.$ward_id.'%')
             ->where('facility_level_id','like','%'.$facility_level_id.'%')
             ->where('ownership_id','like','%'.$ownership_id.'%')
@@ -117,31 +118,15 @@ class FacilityListingController extends Controller
             ->where('license_status_id','like','%'.$license_status_id.'%')
             ->where(DB::Raw("IFNULL(outpatient, '')"),'like','%'.$outpatient.'%')
             ->where(DB::Raw("IFNULL(inpatient, '')"),'like','%'.$inpatient.'%')
-            ->Where('facility_name', 'like', '%' .  $facility_name . '%')
+            ->Where('facility_name', 'like', '%' .  $request->facility_name . '%')
             ->where(DB::Raw("IFNULL(latitude, '')"),$cond,$value)
-            ->wherein('id',$hospital_with_services)
+            ->whereIn('id',$hospital_with_services)
             ->orderBy('state')
             ->orderBy('lga')
             ->orderBy('facility_name')
-            ->paginate(20);
+            ->paginate(20)
+            ->appends($request->all());
 
-
-        $facilities->appends([
-            'state_id' => $request->state_id,
-            'lga_id' => $request->lga_id,
-            'ward_id' => $request->ward_id,
-            'facility_name' =>$request->facility_name,
-            'geo_codes' => $request->geo_codes,
-            'facility_type_id' => $request->facility_type_id,
-            'facility_level_id' => $request->facility_level_id,
-            'ownership_id' => $request->ownership_id,
-            'operational_status_id' => $request->operational_status_id,
-            'registration_status_id' => $request->registration_status_id,
-            'license_status_id' => $request->license_status_id,
-            'service_type' => $request->service_type,
-            'outpatient' => $outpatient,
-            'inpatient' => $inpatient,
-        ]);
         
         //return original values from request
         $data['state_id'] = $request->state_id;
@@ -157,7 +142,6 @@ class FacilityListingController extends Controller
         $data['service_type'] = $request->service_type;
         $data['service_category_id'] = $request->service_category_id;
         $data['searched'] = 1;
-
        
 
         return view('public.list_hospitals',compact('facilities','data'));     

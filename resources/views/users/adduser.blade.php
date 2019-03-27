@@ -87,7 +87,7 @@
                                 <div class="col-md-8">
                                         <select class="form-control select2"  class="form-control" id="role" name="role[]"  data-placeholder="Select Role" required data-width="100%">
                                                 @foreach(getRoles() as $role)
-                                                    <option value="{{$role->id}}">{{$role->name}}</option>
+                                                    <option value="{{$role->id}}" {{ ($role->id == old('role') ? "selected":"") }}>{{$role->name}}</option>
                                                 @endforeach
                                         </select>
                                 <span class="text-danger">
@@ -102,7 +102,7 @@
                                             <option value="">--Select State--</option>  
                                             <option value="1">All States</option>    
                                                 @foreach(getStates() as $s)
-                                                    <option value="{{$s->id}}">{{$s->name}}</option>
+                                                    <option value="{{$s->id}}" {{ ($s->id == old('state_id') ? "selected":"") }}>{{$s->name}}</option>
                                                 @endforeach
                                         </select>
                                

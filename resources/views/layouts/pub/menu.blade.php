@@ -19,12 +19,12 @@
                                 <li><a href="{{route('list.pharmacy')}}">Pharmaceuticals</a></li>
                                 <li><a href="{{route('list.laboratory')}}">Laboratories </a></li>
                                 <li><a href="{{route('list.imaging')}}">Radiologies/Imagings</li>
-                                <li><a href="{{route('latest.updates')}}">Facilities Updates</a></li>
                             </ul>
                         </li>
                      
                         <li><a href="{{route('openRegistrationForm')}}">Data Downloads</a> </li>
                         <li><a href="{{route('public_resources')}}">Resources</a></li>
+                        <li><a href="{{route('latest.updates')}}">Reports</a></li>
           
                     </ul>
                 </nav>

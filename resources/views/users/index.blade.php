@@ -57,8 +57,7 @@ Users
     <table id="table1" class="table table-bordered table-striped" style="width:100%">
       <thead>
         <tr>
-          <th>Fullname</th>
-          <th>Username</th>
+          <th>Name</th>
           <th>E-mail</th>
           <th>Mobile</th>
           <th>Role</th>
@@ -74,7 +73,6 @@ Users
         @foreach($users as $user)
         <tr>
           <td>{{$user->firstname}} {{$user->lastname}}</td>
-          <td>{{$user->lastname}}</td>
           <td>{{$user->email}}</td>
           <td>{{$user->mobile}}</td>
           <td>{{ implode(", ", $user->getRoleNames()->toArray()) }}</td>
@@ -110,7 +108,7 @@ Users
             @if(auth()->user()->hasPermissionTo(19))
               <a href="#">
                 <button class="btn btn-warning btn-sm" data-fname="{{$user->firstname}}" data-lname="{{$user->lastname}}"
-                    data-username="{{$user->username}}" data-email="{{$user->email}}" data-id="{{$user->id}}" data-role="{{$user->getRoleNames()}}"
+                    data-username="{{$user->username}}" data-email="{{$user->email}}" data-id="{{$user->id}}" data-role="{{ implode(", ", $user->getRoleNames()->toArray()) }}"
                     data-job="{{$user->job_title}}" data-org="{{$user->organisation}}" data-mobile="{{$user->mobile}}" data-state_id="{{$user->state_id}}" data-lga_id="{{$user->lga_id}}"
                     type="button" data-toggle="modal" data-target="#editUser">Edit</button>
               </a>
@@ -124,6 +122,11 @@ Users
                 @if ($user->status == 0)
                 <a href="#">
                   <button class="btn btn-primary btn-sm"  type="button" data-toggle="modal" data-target="#disableUser" data-id="{{$user->id}}" data-status="{{$user->status}}"  data-fname="{{$user->firstname}}"  data-lname="{{$user->lastname}}">Activate</button>
+                </a>
+                @endif
+                @if ($user->status == -1)
+                <a href="#">
+                  <button class="btn btn-danger btn-sm"  type="button" data-toggle="modal" data-target="#deleteUser" data-id="{{$user->id}}"   data-fname="{{$user->firstname}}"  data-lname="{{$user->lastname}}">Delete</button>
                 </a>
                 @endif
             @endif
@@ -142,6 +145,7 @@ Users
 @include('users.adduser')
 @include('users.edituser')
 @include('users.block')
+@include('users.delete')
 
   
 @endsection 
@@ -203,6 +207,7 @@ Users
           });
  
       //edit user
+
       $('#editUser').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget)
         var fname = button.data('fname')
@@ -224,30 +229,40 @@ Users
         modal.find('.modal-body #email1').val(email);
         modal.find('.modal-body #job1').val(job);
         modal.find('.modal-body #organisation1').val(org);
-        modal.find('.modal-body #role1').val(role).change();
-        modal.find('.modal-body #state_id1').val(state_id).change();
         modal.find('.modal-body #mobile1').val(mobile).change();
         modal.find('.modal-body #UserID').val(id);
+        modal.find('.modal-body #state_id1').val(state_id).change();
 
-        if(state_id != 1)
-        {
-            var _token = $('input[name="_token"]').val();
-            $.ajax({
-                url:"{{route('getLgaList')}}",
-                method:"POST",
-                data:{id:state_id, _token:_token},
-                success:function(result)
-                {
-                    $('#lga_id1').html(result);
-                    $('#lga_id1').prepend('<option value="1">All LGAs</option>');
-                    $('#lga_id1').val(lga_id);
-                }         
-            })
-        }
-        else{
-              $('#lga_id1').prepend('<option value="1" >All LGAs</option>');
-              $('#lga_id1').val(lga_id).change();
-        }
+        var _token = $('input[name="_token"]').val();
+              $.ajax({
+                  url:"{{route('getRoleID')}}",
+                  method:"POST",
+                  data:{role:role, _token:_token},
+                  success:function(result)
+                  {
+                      $('#role1').val(result).change();
+                  }         
+              })
+
+        // if(state_id == 1)
+        // {
+        //     $('#lga_id1').prepend('<option value="1">All LGAs</option>');
+        //     $('#lga_id1').val(lga_id).change();
+        // }
+        // else{
+              var _token = $('input[name="_token"]').val();
+              $.ajax({
+                  url:"{{route('getLgaList')}}",
+                  method:"POST",
+                  data:{id:state_id, _token:_token},
+                  success:function(result)
+                  {
+                      $('#lga_id1').html(result);
+                      $('#lga_id1').prepend('<option value="1">All LGAs</option>');
+                      $('#lga_id1').val(lga_id).change();
+                  }         
+              })
+        // }
 
  
       });//end edit
@@ -272,6 +287,18 @@ Users
             modal.find('.modal-body #message').text(message)
           }
 
+      })//end
+
+    //delete user
+    $('#deleteUser').on('show.bs.modal', function (event) {
+          var button = $(event.relatedTarget) 
+          var id = button.data('id')
+          var modal = $(this)
+          modal.find('.modal-body #user').val(id)
+
+          var message =  "Are you sure you want to delete '".concat(button.data('fname')," ",button.data('lname'), "' account?") ;
+          modal.find('.modal-body #message_del').text(message)
+            
       })//end
 
 

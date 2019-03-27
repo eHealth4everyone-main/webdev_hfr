@@ -34,10 +34,11 @@
             <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
                 <div class="panel-body">
                     <div class="box-body">
-                            @if(!in_array($hosp->status_id,[6,13]))
+                            @if(!in_array($hosp->status_id,[0,6,13]))
                                 <div class="callout callout-warning">
                                     <h4>Alert</h4>
-                                    <p>This facility updates are pending. Wait for changes to be published to proceed!</p>
+                                    <p>There is another request for this facility on approval process. 
+                                        Please wait for to the request to be published before you submit another request!</p>
                                 </div>
                             @endif
 
@@ -881,7 +882,7 @@
     <a href="{{route('hospitals.index')}}">
         <button type="button" class="btn btn-warning">Return Back</button>
     </a>
-    @if(in_array($hosp->status_id,[6,13]))
+    @if(in_array($hosp->status_id,[0,6,13]))
         <button type="submit" class="btn btn-primary pull-right">Submit Update Request</button>
     @endif
     

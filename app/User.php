@@ -36,4 +36,6 @@ class User extends Authenticatable
     {
         return $this->belongsTo('App\Lga','lga_id');
     }
+
+
 }

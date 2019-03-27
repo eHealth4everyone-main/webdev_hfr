@@ -39,7 +39,7 @@
                     </div>
                     <div class="col-sm-2">
                         <select class="form-control select2" id="ward_id" name="ward_id">
-                            <option value="1" selected>--Select Ward--</option>
+                            <option value="0" selected>--Select Ward--</option>
                         </select>
                     </div>
                     
@@ -52,6 +52,7 @@
                             @endforeach
                         </select>        
                     </div>
+
                     <div class="col-sm-2">
                         <select class="form-control select2" id="ownership_id"  name="ownership_id" style="width: 100%;">
                             <option value="0">--Select Ownership--</option>
@@ -273,20 +274,20 @@
             }
             
             //get wards
-            if({{ $data['lga_id']  }} > 1 ){
-                var lgaID = {{ $data['lga_id']}};
-                var _token = $('input[name="_token"]').val();
-                $.ajax({
-                    url:"{{route('getWardList')}}",
-                    method:"POST",
-                    data:{lgaId:lgaID,_token:_token},
-                    success:function(result)
-                    {
-                        $('#ward_id').html(result);
-                        $('#ward_id').val({{$data['ward_id']}}).change();
-                    }         
-                });
-            }
+            // if({{ $data['lga_id']  }} > 1 ){
+            //     var lgaID = {{ $data['lga_id']}};
+            //     var _token = $('input[name="_token"]').val();
+            //     $.ajax({
+            //         url:"{{route('getWardList')}}",
+            //         method:"POST",
+            //         data:{lgaId:lgaID,_token:_token},
+            //         success:function(result)
+            //         {
+            //             $('#ward_id').html(result);
+            //             $('#ward_id').val({{$data['ward_id']}}).change();
+            //         }         
+            //     });
+            // }
         }   
         
      
@@ -310,7 +311,7 @@
             $("#geo_codes").val(0).change();
             $("#state_id").val(1).change();
             $("#lga_id").val(1).change();
-            $("#ward_id").val(1).change();
+            $("#ward_id").val(0).change();
             $("#facility_name").val("");
             $("#facility_level_id").val(0).change();
             $("#ownership_id").val(0).change();

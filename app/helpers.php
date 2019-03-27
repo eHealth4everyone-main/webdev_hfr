@@ -88,5 +88,6 @@ function getOutletCategory(){
 function getRoles(){
     return DB::table('roles')
     ->select('id','name')
+    ->orderBy('name')
     ->get();
 }

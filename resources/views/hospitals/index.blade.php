@@ -199,12 +199,16 @@ Hospitals and Clinics
                             @endif
                     
                             @if(auth()->user()->hasPermissionTo(4))
-                            <a href="#">
-                                <button class="btn btn-danger btn-sm"  type="button"  data-toggle="modal" data-target="#delete"
-                                    data-id_del="{{$fac->id}}" data-unique_id_del="{{$fac->unique_id}}" data-facility_name_del="{{$fac->facility_name}}" data-state_id_del="{{$fac->state_id}}"> 
-                                    Delete
-                                </button>
-                            </a>
+                                {{-- hide delete button if the facility is on approval process --}}
+                                @if(in_array($fac->status_id,[0,6,13]))
+                                    <a href="#">
+                                        <button class="btn btn-danger btn-sm"  type="button"  data-toggle="modal" data-target="#delete"
+                                            data-id_del="{{$fac->id}}" data-unique_id_del="{{$fac->unique_id}}" data-facility_name_del="{{$fac->facility_name}}" data-state_id_del="{{$fac->state_id}}"> 
+                                            Delete
+                                        </button>
+                                    </a>
+                                @endif
+
                             @endif
                         @endif
                     </td>
@@ -362,24 +366,27 @@ Hospitals and Clinics
            
 
             //get wards
-            if({{ $lga_id}} != ''){
-                var lgaID = {{$lga_id}};
-                var _token = $('input[name="_token"]').val();
-                $.ajax({
-                    url:"{{route('getWardList')}}",
-                    method:"POST",
-                    data:{lgaId:lgaID,_token:_token},
-                    success:function(result)
-                    {
-                        $('#ward_id').html(result);
-                        $('#ward_id').val({{$ward_id}});
-                    }         
-                });
-            }
+            // var lgaID = {{$lga_id}};
+            // if( lgaID != ''){
+            //     var _token = $('input[name="_token"]').val();
+            //     $.ajax({
+            //         url:"{{route('getWardList')}}",
+            //         method:"POST",
+            //         data:{lgaId:lgaID,_token:_token},
+            //         success:function(result)
+            //         {
+            //             $('#ward_id').html(result);
+            //             $('#ward_id').val({{$ward_id}});
+            //         }         
+            //     });
+            // }
          
         });
         
         $("#reset").click(function(){
+            $("#state_id").val(1).change();
+            $("#lga_id").val(1).change();
+            $("#ward_id").val(0).change();
             $("#geo_codes").val(0).change();
             $("#facility_name").val("");
             $("#facility_level_id").val(0).change();
