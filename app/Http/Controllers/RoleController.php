@@ -6,6 +6,8 @@ use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\DB;
+use App\HospitalHistory;
+
 
 class RoleController extends Controller
 {
@@ -33,15 +35,18 @@ class RoleController extends Controller
         ]);
 
         // dd($request->permissions);
+        $funct = new HospitalHistory;
+        $roles_below = $funct->arrayValuesTostring($request->roles_below);
 
         $role = Role::create([
             'name' => $request->name,
-            'description' => $request->description
+            'description' => $request->description,
+            'roles_below' => $roles_below
             ]);
         $role->givePermissionTo($request->permissions);
 
         session()->flash("alert-success", "Role created successfully!");
-        return back();
+        return redirect()->route('roles.index');
     }
 
 
@@ -71,10 +76,14 @@ class RoleController extends Controller
             'description' => 'required|string|max:100',
             'permissions' => 'required',
         ]);
+        
+        $funct = new HospitalHistory;
+        $roles_below = $funct->arrayValuesTostring($request->roles_below);
 
         $role = Role::findOrfail($request->id);
         $role->name = $request->name;
         $role->description = $request->description;
+        $role->roles_below = $roles_below;
         $role->save();
 
         $role->syncPermissions($request->permissions);

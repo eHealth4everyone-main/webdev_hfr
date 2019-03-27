@@ -28,7 +28,7 @@
                             <div class="form-group row">
                                     <label style="text-align: right;" class="col-md-2 col-form-label text-md-right">Role name:<font color="red">*</font> </label>
                                     <div class="col-md-8">
-                                            <input id="role" type="text" class="form-control" name="name" required autofocus>
+                                            <input id="role" type="text" class="form-control" name="name" value="{{old('name')}}" required autofocus>
                                     <span class="text-danger">
                                         <strong id="role-error"></strong>
                                     </span>
@@ -37,12 +37,25 @@
                             <div class="form-group row">
                                 <label style="text-align: right;" class="col-md-2 col-form-label text-md-right">Description:<font color="red">*</font> </label>
                                 <div class="col-md-8">
-                                        <input id="description" type="text" class="form-control" name="description" required>
+                                        <input id="description" type="text" class="form-control" name="description" value="{{old('description')}}" required>
                                 <span class="text-danger">
                                     <strong id="descr-error"></strong>
                                 </span>
                                 </div>
                              </div> 
+                             <div class="form-group row">
+                                <label style="text-align: right;" class="col-md-2 col-form-label text-md-right">Subordinate Roles: </label>
+                                <div class="col-md-8">
+                                     <select class="form-control select2"  class="form-control" id="roles_below" name="roles_below[]" multiple="multiple"  data-placeholder="Select Roles" data-width="100%">
+                                                @foreach(getRoles() as $role)
+                                                        <option value="{{ $role->id }}" >{{$role->name}}</option>
+                                                @endforeach
+                                        </select>
+                                <span class="text-danger">
+                                        <strong id="role_below"></strong>
+                                </span>
+                                </div>
+                            </div> 
                      
                             <div class="form-group row">
                                 <label class="col-sm-2" style="text-align: right;">Permissions:<font color="red">*</font></label>

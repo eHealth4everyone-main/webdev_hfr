@@ -43,7 +43,19 @@
                                                 </span>
                                         </div>
                                 </div> 
-                                
+                                <div class="form-group row">
+                                                <label style="text-align: right;" class="col-md-2 col-form-label text-md-right">Subordinate Roles: </label>
+                                                <div class="col-md-8">
+                                                     <select class="form-control select2"  class="form-control" id="roles_below" name="roles_below[]" multiple="multiple"  data-placeholder="Select Roles" data-width="100%">
+                                                                @foreach(getRoles() as $rol)
+                                                                        <option value="{{ $rol->id }}" {{ in_array($rol->id, explode(',', $role->roles_below)) ? "selected":"" }}>{{$rol->name}}</option>
+                                                                @endforeach
+                                                        </select>
+                                                <span class="text-danger">
+                                                        <strong id="role_below"></strong>
+                                                </span>
+                                                </div>
+                                </div> 
                                 <div class="form-group row">
                                         <label class="col-sm-2" style="text-align: right;">Permissions:<font color="red">*</font></label>
                                         <div class="col-sm-2">                               

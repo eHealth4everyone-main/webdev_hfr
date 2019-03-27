@@ -86,6 +86,21 @@ function getOutletCategory(){
 }
 
 function getRoles(){
+    $role = DB::table('roles')
+    ->select('roles_below')
+    ->where('name',implode(", ", Auth::user()->getRoleNames()->toArray()))
+    ->get();
+    
+    $roles_below = explode(',', $role[0]->roles_below);
+    
+    return DB::table('roles')
+    ->select('id','name')
+    ->whereIn('id',$roles_below)
+    ->orderBy('name')
+    ->get();
+}
+
+function getRolesAll(){
     return DB::table('roles')
     ->select('id','name')
     ->orderBy('name')
