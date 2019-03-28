@@ -193,9 +193,13 @@ Highcharts.chart('visitors', {
 
 //downloads
     Highcharts.chart('no_downloads', {
+        chart: {
+            type: 'column'
+        },
         title: {
             text: 'Monthly Downloads Requests'
         },
+        colors: ['#556B2F' ],
         xAxis: {
             type: 'category'
         },
