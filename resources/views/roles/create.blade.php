@@ -47,7 +47,7 @@
                                 <label style="text-align: right;" class="col-md-2 col-form-label text-md-right">Subordinate Roles: </label>
                                 <div class="col-md-8">
                                      <select class="form-control select2"  class="form-control" id="roles_below" name="roles_below[]" multiple="multiple"  data-placeholder="Select Roles" data-width="100%">
-                                                @foreach(getRoles() as $role)
+                                                @foreach(getRolesAll() as $role)
                                                         <option value="{{ $role->id }}" >{{$role->name}}</option>
                                                 @endforeach
                                         </select>
