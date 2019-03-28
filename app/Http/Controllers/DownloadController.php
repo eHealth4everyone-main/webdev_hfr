@@ -15,10 +15,9 @@ use App\Notifications\SendDownloadVerificationCode;
 class DownloadController extends Controller
 {
     public function index (Request $request){
-        if (!$request->session()->has('download_verify')){
+        if (!$request->session()->has('token_verified')){
             return redirect()->route('openRegistrationForm');
         }
-
 
         //set values facility list when no filter
         $data['lga_id'] = 1;
@@ -130,7 +129,7 @@ class DownloadController extends Controller
   
     public function openRegistrationForm(Request $request)
     {
-        if ($request->session()->has('download_verify')){
+        if ($request->session()->has('token_verified')){
             return redirect()->route('downloadFacilitiesList');
         }
 
@@ -193,7 +192,7 @@ class DownloadController extends Controller
         return true;
     }
 
-    //validate the token if valid  give download page
+    //validate the token if valid  show download page
     public function validateToken(Request $request){
         $token_expire = 0;
         $token_match = 0;
@@ -213,6 +212,9 @@ class DownloadController extends Controller
         }
 
         if (($token_expire == 0) AND ($token_match == 1)){
+            $request->session()->put('token_verified',[
+                'verified'=>'Yes',
+            ]);
             return redirect()->route('downloadFacilitiesList');
         }
         else{
