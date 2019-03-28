@@ -14,6 +14,8 @@ class RoleController extends Controller
 
     public function index()
     {
+        // dd(subRoles());
+
         $roles=Role::get();
         $permissions=Permission::get();
 
@@ -76,7 +78,7 @@ class RoleController extends Controller
             'description' => 'required|string|max:100',
             'permissions' => 'required',
         ]);
-        
+
         $funct = new HospitalHistory;
         $roles_below = $funct->arrayValuesTostring($request->roles_below);
 

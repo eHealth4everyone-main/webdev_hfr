@@ -449,7 +449,7 @@
             type: 'column'
         },
         title: {
-            text: 'Percentage of Hospitals and Clinics with Geo Goordinates'
+            text: 'Percentage of Hospitals and Clinics with Geo Coordinates'
         },
         subtitle: {
             text: statename.concat(" State")
@@ -580,7 +580,7 @@ function facilitywithGeoCodes(){
             type: 'column'
         },
         title: {
-            text: 'Percentage of Hospitals and Clinics with Geo Goordinates'
+            text: 'Percentage of Hospitals and Clinics with Geo Coordinates'
         },
         subtitle: {
             text: ''

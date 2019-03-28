@@ -100,6 +100,15 @@ function getRoles(){
     ->get();
 }
 
+function subRoles(){
+    $role = DB::table('roles')
+    ->select('roles_below')
+    ->where('name',implode(", ", Auth::user()->getRoleNames()->toArray()))
+    ->get();
+    
+    return explode(',', $role[0]->roles_below);
+}
+
 function getRolesAll(){
     return DB::table('roles')
     ->select('id','name')

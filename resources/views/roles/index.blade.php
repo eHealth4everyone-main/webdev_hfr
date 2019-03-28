@@ -33,18 +33,19 @@ User Roles
           <td>{{$role->description}}</td>
          
           <td>
-         
-            @if(auth()->user()->hasPermissionTo(23))
-              <a href="{{route('roles.edit',$role->id)}}">
-                  <button class="btn btn-warning btn-sm"  type="button">Edit</button>
-              </a>
-            @endif
-            @if(auth()->user()->hasPermissionTo(24))
-            
-                <a href="#">
-                    <button class="btn btn-danger btn-sm" data-id="{{$role->id}}" data-name="{{$role->name}}" type="button" data-toggle="modal" data-target="#deleteModal" > Delete</button>
+            @if (in_array($role->id,subRoles()))
+                
+                @if(auth()->user()->hasPermissionTo(23))
+                  <a href="{{route('roles.edit',$role->id)}}">
+                      <button class="btn btn-warning btn-sm"  type="button">Edit</button>
                   </a>
-          
+                @endif
+                @if(auth()->user()->hasPermissionTo(24))
+                    <a href="#">
+                        <button class="btn btn-danger btn-sm" data-id="{{$role->id}}" data-name="{{$role->name}}" type="button" data-toggle="modal" data-target="#deleteModal" > Delete</button>
+                      </a>
+              
+                @endif
             @endif
               
             </td>
