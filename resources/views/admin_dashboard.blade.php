@@ -104,7 +104,7 @@ $('#fac_status_table').hide();
             data: {
                 table: 'fac_status_table'
             },
-            colors: ['#2f7ed8','#E6E6FA', '#DDDF00', '#0d233a', '#BA55D3', '#a6c961','#64E572','#50B432', '#f28f43', '#ED561B','#910000' ],
+            colors: ['#2f7ed8','#C0C0C0', '#DDDF00', '#0d233a', '#BA55D3', '#a6c961','#64E572','#50B432', '#f28f43', '#ED561B','#910000' ],
             yAxis: {
                 min: 0,
                 title: {
