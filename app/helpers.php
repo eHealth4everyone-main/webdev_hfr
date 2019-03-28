@@ -112,7 +112,7 @@ function subRoles(){
 function getRolesAll(){
     return DB::table('roles')
     ->select('id','name')
-    ->where('id','>','1')
+    // ->where('id','>','1')
     ->orderBy('name')
     ->get();
 }
