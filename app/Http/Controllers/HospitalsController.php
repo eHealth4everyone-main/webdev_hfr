@@ -318,23 +318,7 @@ class HospitalsController extends Controller
             return response()->json(['error' => $ex->getMessage()], 500);
         }
        
-        
-
         //****** send notifications *********
-
-        //get users with approval access
-        // $users = DB::select("SELECT u.id FROM users u
-        //         JOIN model_has_roles r on r.model_id = u.id
-        //         JOIN role_has_permissions p on p.role_id = r.role_id
-        //         WHERE p.permission_id = 59 and u.state_id = ". $request->state_id ."");
-        
-        // foreach ($users as $user){
-        //     $user = user::find($user->id);
-        //     $user->notify(new UpdateRequest($request->facility_name, $id));
-        // }  
-        // ****** notifiction end*****
-        
-         //****** send notifications *********
          $notify = new ApprovalNotifications;
          $notify->sendFacilityUpdateRequestNotification($state_id);
 

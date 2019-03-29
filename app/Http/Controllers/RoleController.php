@@ -25,7 +25,6 @@ class RoleController extends Controller
         return view("roles.create");
     }
 
-
     public function store(Request $request)
     {
         $request->validate([

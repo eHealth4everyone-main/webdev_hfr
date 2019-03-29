@@ -29,7 +29,7 @@ class GeneralController extends Controller
         ->orderByRaw('name')
         ->get();
     
-        $output = '<option value="0">--Select Ward--</option>';
+        $output = '<option value="">--Select Ward--</option>';
         foreach($data as $row)
         {
             $output .= '<option value="'.$row->id.'">'.$row->name.'</option>';
