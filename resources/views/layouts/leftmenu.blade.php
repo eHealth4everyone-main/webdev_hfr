@@ -54,6 +54,25 @@
                         </ul>
                     </li>
                 @endif
+                <li  class="treeview"> 
+                    @if(auth()->user()->hasPermissionTo(21) or auth()->user()->hasPermissionTo(17))
+                        <a href="#">
+                            <i class="fa fa-users"></i>
+                            <span>User Management</span>
+                            <span class="pull-right-container">
+                                    <span class="label label-success pull-right">+</span>
+                            </span>
+                        </a>
+                    @endif
+                    <ul class="treeview-menu">
+                        @if(auth()->user()->hasPermissionTo(21))
+                            <li><a href="{{route('roles.index')}}"><i class="fa fa-user-secret"></i>Roles</a></li>
+                        @endif
+                        @if(auth()->user()->hasPermissionTo(17))
+                            <li><a href="{{route('users.index')}}"><i class="fa fa-user"></i>Users</a></li>
+                        @endif
+                    </ul>
+                </li>
                 <li> 
                     @if(auth()->user()->hasPermissionTo(1))
                         <a href="{{route('hospitals.index')}}">
@@ -127,25 +146,7 @@
                         </a>
                     @endif
                 </li>
-                <li  class="treeview"> 
-                        @if(auth()->user()->hasPermissionTo(21) or auth()->user()->hasPermissionTo(17))
-                            <a href="#">
-                                <i class="fa fa-users"></i>
-                                <span>User Management</span>
-                                <span class="pull-right-container">
-                                        <span class="label label-success pull-right">+</span>
-                                </span>
-                            </a>
-                        @endif
-                        <ul class="treeview-menu">
-                            @if(auth()->user()->hasPermissionTo(21))
-                                <li><a href="{{route('roles.index')}}"><i class="fa fa-user-secret"></i>Roles</a></li>
-                            @endif
-                            @if(auth()->user()->hasPermissionTo(17))
-                                <li><a href="{{route('users.index')}}"><i class="fa fa-user"></i>Users</a></li>
-                            @endif
-                        </ul>
-                    </li>
+          
                 <li> 
                     @if(auth()->user()->hasPermissionTo(29))
                         <a href="{{route('getMessages')}}">

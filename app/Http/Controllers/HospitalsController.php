@@ -128,8 +128,14 @@ class HospitalsController extends Controller
         $hosp->requested_by = Auth::user()->id;
         $hosp->operational_days = $hosp->arrayValuesTostring($request->operational_days);
        
-        $services = $request->services;
-        
+        //dhis integration
+        return redirect('admin/hfr-dhis/store')->withInput(
+            $request->only('facility_name','alt_facility_name','start_date','postal_address','email_address','website',
+            'phone_number','longitude','latitude','ward_id')
+        );
+
+        //dhis integration
+
         DB::beginTransaction();
         try {
             $hosp->save();
@@ -145,6 +151,8 @@ class HospitalsController extends Controller
             $status->save();
 
             //insert services
+            $services = $request->services;
+
             if (!empty($services)){
                     foreach ($services as $id){
                         $hosp_services = new HospitalServiceHistory;
