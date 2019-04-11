@@ -115,7 +115,7 @@
       <input type="hidden" name="requested_action" value="UPDATE FACILITY">
       
       <div class="row">
-        <label class="col-md-2">Verification Note <font color="red">*</font></label>
+        <label class="col-md-2">Validation/ Rejection Note <font color="red">*</font></label>
         <div class="col-md-10">
           <textarea class="form-control" rows="3" name="notes" placeholder="Please enter verification note ..." required></textarea>
         </div>

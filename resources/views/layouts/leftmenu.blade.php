@@ -183,7 +183,7 @@
                             </a>
                       
                         <ul class="treeview-menu">
-                            <li><a href="{{route('updates.selection')}}"><i class="fa fa-file-text-o"></i>Facility List Updates</a></li>
+                            <li><a href="{{route('updates.selection')}}"><i class="fa fa-file-text-o"></i>Facility Reports</a></li>
                             <li><a href="{{route('status.index')}}"><i class="fa fa-file-text-o"></i>Facilities Status Summary</a></li>
                             <li><a href="{{route('services.index')}}"><i class="fa fa-file-text-o"></i>Services Rendered</a></li>
 
