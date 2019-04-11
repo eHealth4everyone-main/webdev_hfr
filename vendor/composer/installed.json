@@ -805,7 +805,7 @@
         },
         "time": "2019-01-07T00:22:56+00:00",
         "type": "library",
-        "installation-source": "source",
+        "installation-source": "dist",
         "autoload": {
             "psr-0": {
                 "Google_Service_": "src"
