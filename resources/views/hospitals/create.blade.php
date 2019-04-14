@@ -73,13 +73,13 @@
                         
                         
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Commencement Date:</label>
+                            <label class="col-sm-2 control-label">Commencement Date:<font color="red">*</font></label>
                             <div class="col-sm-4">
                                 <div class="input-group date" >
                                     <div class="input-group-addon">
                                         <i class="fa fa-calendar"></i>
                                     </div>
-                                    <input type="text" class="form-control pull-right" id="datepicker" name="start_date" value="{{old('start_date')}}" autocomplete="off">
+                                    <input type="text" class="form-control pull-right" id="datepicker" name="start_date" value="{{old('start_date')}}" autocomplete="off" required>
                                 </div>
                             </div>
                             <label class="col-sm-2 control-label">State:<font color="red">*</font> </label>

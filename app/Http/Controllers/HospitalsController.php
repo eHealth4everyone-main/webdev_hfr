@@ -66,7 +66,7 @@ class HospitalsController extends Controller
     {
         $request->validate([
             'registration_no'=>'nullable|max:20',
-            'start_date'=>'nullable|date',
+            'start_date'=>'required|date',
             'facility_name'=>'required|max:200',
             'alt_facility_name'=>'nullable|max:200',
             'state_id'=>'required',
@@ -129,7 +129,7 @@ class HospitalsController extends Controller
         $hosp->operational_days = $hosp->arrayValuesTostring($request->operational_days);
        
         //dhis integration
-        return redirect('admin/hfr-dhis/store')->withInput(
+        return redirect('admin/hfr-dhis/test')->withInput(
             $request->only('facility_name','alt_facility_name','start_date','postal_address','email_address','website',
             'phone_number','longitude','latitude','ward_id')
         );
@@ -202,7 +202,7 @@ class HospitalsController extends Controller
     {
         $request->validate([
             'registration_no'=>'nullable|max:20',
-            'start_date'=>'nullable|date',
+            'start_date'=>'required|date',
             'facility_name'=>'required|max:200',
             'alt_facility_name'=>'nullable|max:200',
             'state_id'=>'required',
