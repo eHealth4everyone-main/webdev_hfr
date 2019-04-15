@@ -129,12 +129,12 @@ class HospitalsController extends Controller
         $hosp->operational_days = $hosp->arrayValuesTostring($request->operational_days);
        
         //dhis integration
-        return redirect('admin/hfr-dhis/test')->withInput(
+        return redirect('admin/hfr-dhis/store')->withInput(
             $request->only('facility_name','alt_facility_name','start_date','postal_address','email_address','website',
-            'phone_number','longitude','latitude','ward_id')
+            'phone_number','longitude','latitude','ward_id','ownership_id','facility_level_id','facility_level_option_id')
         );
 
-        //dhis integration
+        //*********dhis integration
 
         DB::beginTransaction();
         try {

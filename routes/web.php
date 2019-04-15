@@ -124,8 +124,6 @@ Route::middleware(["auth"])->group(function(){
             Route::get('admin/reports/facility-status/report','FacilityReportController@getStatusReport')->name('status.report');
             Route::post('admin/reports/facility-status/download','FacilityReportController@statusDownload')->name('status.download');
 
-
-
     });
 
     Route::get('admin/new-user/change-password','UserController@newUserChangePasswordForm')->name('newuser.PasswordForm');

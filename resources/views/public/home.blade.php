@@ -12,9 +12,7 @@
         <div class="row">
                
             <div class="col-sm-8">
-                    <div id="loading" style="text-align: center;" >
-                            {{-- <img src="{{asset('img/loading.gif')}}" width="80" height="80" >                     --}}
-                    </div>
+              
                 <div id="map1" style="height: 500px; min-width: 500px; max-width: 800px; margin: 0 auto" >
                     
                 </div>
@@ -56,14 +54,13 @@
     <script src="{{ asset("hcharts/map/exporting.js")}}"></script>
     <script src="{{ asset("hcharts/map/offline-exporting.js")}}"></script>
 
-    <script src="{{ asset("hcharts/map/map.js")}}"></script>    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC5oMDI7RfiReQVCk3brQPcWrJJR7UYgjw" async defer></script>
-
+    <script src="{{ asset("hcharts/map/map.js")}}"></script>    
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC5oMDI7RfiReQVCk3brQPcWrJJR7UYgjw" async defer></script>
 <script>
   
     window.onload = function() {
         $('#backbutton').hide(0);
-        $('#loading').hide();
-
+      
         showAllStatesMap();
         facilitybyLevel();
         facilitybyOwnership();
@@ -134,10 +131,6 @@
                     point:{
                         events:{
                             click: function(){
-                                // $('#map1').hide(10);
-                                // $('#loading').show();
-                                 // Show the spinner
-                
                                 showSelectedState(this.statecode);
                             },
                    
@@ -237,8 +230,7 @@
                 });
                 
                 $('#backbutton').show();
-                // $('#map1').show();
-                // $('#loading').hide();
+               );
 
                 showFacilityByLevelSelectedState(result.by_level,statename);
                 showFacilityByOwnershipSelectedState(result.by_ownership,statename);

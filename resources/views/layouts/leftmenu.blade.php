@@ -189,7 +189,15 @@
                             <li><a href="{{route('services.index')}}"><i class="fa fa-file-text-o"></i>Services Rendered</a></li>
 
                         </ul>
-                    </li>
+                </li>
+                <li> 
+                    {{-- @if(auth()->user()->hasPermissionTo(25)) --}}
+                        <a href="{{route('dhis.logs')}}">
+                            <i class="fa fa-exchange"></i>
+                            <span>DHIS2 Exchange Log</span>
+                        </a>
+                    {{-- @endif --}}
+                </li>
           
             </ul>
         </section>

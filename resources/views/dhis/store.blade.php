@@ -19,13 +19,13 @@ HFR - DHIS2 Exchange
         <span id="current-progress"></span>
       </div>
     </div>
-    <div id='fac_error' class="alert alert-warning alert-dismissible">
+    <div id='fac_error' class="alert alert-warning alert-dismissible" hidden>
         <h4><i class="icon fa fa-warning"></i> Warning!</h4>
-        Something went wrong while creating facility!
+        Something went wrong while creating facility. Please, check on logs for details!
     </div>
-    <div id='fac_success' class="alert alert-success alert-dismissible">
+    <div id='fac_success' class="alert alert-success alert-dismissible" hidden>
         <h4><i class="icon fa fa-check"></i> Success!</h4>
-        Facility successfully created!
+        Facility was successfully created in DHIS2!
     </div>
 
   </div>
@@ -52,9 +52,9 @@ $(document).ready(function() {
               .css("width", current_progress + "%")
               .attr("aria-valuenow", current_progress)
               .text(current_progress + "%");
-              if (current_progress >= 100)
+              if (current_progress >= 90)
                   clearInterval(interval);
-          }, 1000);
+          }, 2000);
       });
   
 
@@ -68,6 +68,9 @@ $(document).ready(function() {
       var longitude = '{{ old('longitude') }}';
       var latitude = '{{ old('latitude') }}';
       var phone_number = '{{ old('phone_number') }}';
+      var ownership_id = '{{ old('ownership_id') }}';
+      var facility_level_id = '{{ old('facility_level_id') }}';
+      var facility_level_option_id = '{{ old('facility_level_option_id') }}';
       var _token = $('input[name="_token"]').val();
       
       $.ajax({
@@ -75,7 +78,8 @@ $(document).ready(function() {
           method:"POST",
           data:{ward_id:ward_id,facility_name:facility_name,start_date:start_date,postal_address:postal_address,
                 email_address:email_address,website:website,longitude:longitude,latitude:latitude,
-                alt_facility_name:alt_facility_name,phone_number:phone_number, _token:_token},
+                alt_facility_name:alt_facility_name,phone_number:phone_number,ownership_id:ownership_id,
+                facility_level_option_id:facility_level_option_id,facility_level_id:facility_level_id,_token:_token},
           success:function(result)
           {
               console.log(result);
@@ -100,9 +104,6 @@ $(document).ready(function() {
 				
 });
 
-// $(function() {
-
-// });
 
 
 </script>
