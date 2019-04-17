@@ -19,6 +19,9 @@
   <form method="POST" action="{{route('publish.store')}}">
     @csrf
     
+    <input type="hidden" id="id" name="id" value="{{ $hosp_id }}">
+    <input type="hidden" name="requested_action" value="UPDATE FACILITY">
+
     <div class="box-body">
       <div class="form-group">
         <table class="table table-hover">
@@ -28,7 +31,7 @@
             <tr>  
                 {{-- check if values are not empty --}}
                 @if(!($audit['old']=="" and $audit['new']=="")) 
-                
+
                    <td><label>{{array_search($attr,$lookup)}}</label></td>
                     <td>Updated from </td>
                     
@@ -77,7 +80,6 @@
                     <td>to</td>
                     <td>{{$audit['new']}}</td>
                     @endif
-  
                  
                 @endif
               </tr>
@@ -111,9 +113,7 @@
           
       </div>
     @endif
-
-      <input type="hidden" id="id" name="id" value="{{ $hosp_id }}">
-      <input type="hidden" name="requested_action" value="UPDATE FACILITY">
+    
       
       <div class="row">
         <label class="col-md-2">Verification Note <font color="red">*</font></label>

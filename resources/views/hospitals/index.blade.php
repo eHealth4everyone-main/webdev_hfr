@@ -160,7 +160,7 @@ Hospitals and Clinics
                     
                     @foreach($facilities as $fac)
                     <tr>
-                        <td>{{$fac->state}}</td>
+                        <td>{{ $fac->state }}</td>
                         <td>{{$fac->lga}}</td>
                         <td>{{$fac->ward}}</td>
                         <td>{{$fac->unique_id}}</td>

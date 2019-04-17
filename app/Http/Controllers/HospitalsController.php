@@ -128,13 +128,6 @@ class HospitalsController extends Controller
         $hosp->requested_by = Auth::user()->id;
         $hosp->operational_days = $hosp->arrayValuesTostring($request->operational_days);
        
-        //dhis integration
-        return redirect('admin/hfr-dhis/store')->withInput(
-            $request->only('facility_name','alt_facility_name','start_date','postal_address','email_address','website',
-            'phone_number','longitude','latitude','ward_id','ownership_id','facility_level_id','facility_level_option_id')
-        );
-
-        //*********dhis integration
 
         DB::beginTransaction();
         try {
@@ -167,9 +160,9 @@ class HospitalsController extends Controller
             return response()->json(['error' => $ex->getMessage()], 500);
         }
 
-         //****** send notifications *********
-         $notify = new ApprovalNotifications;
-         $notify->sendFacilityCreateRequestNotification($request->state_id);
+        //****** Send Notifications *********
+        $notify = new ApprovalNotifications;
+        $notify->sendFacilityCreateRequestNotification($request->state_id);
         
         session()->flash("alert-success", "Request Sent Successfully!");
         return redirect()->route('hospitals.index');
@@ -327,8 +320,8 @@ class HospitalsController extends Controller
         }
        
         //****** send notifications *********
-         $notify = new ApprovalNotifications;
-         $notify->sendFacilityUpdateRequestNotification($state_id);
+        $notify = new ApprovalNotifications;
+        $notify->sendFacilityUpdateRequestNotification($state_id);
 
         session()->flash("alert-success", "Request Sent Successfully!");
         return redirect()->route('hospitals.index');
