@@ -79,7 +79,7 @@
                                     <div class="input-group-addon">
                                         <i class="fa fa-calendar"></i>
                                     </div>
-                                    <input type="text" class="form-control pull-right" id="datepicker" name="start_date" value="{{old('start_date')}}" autocomplete="off" required>
+                                    <input type="text" class="form-control pull-right" id="start_date" name="start_date" value="{{old('start_date')}}" autocomplete="off" required>
                                 </div>
                             </div>
                             <label class="col-sm-2 control-label">State:<font color="red">*</font> </label>
@@ -403,6 +403,17 @@
                                 </div>
                             </div> 
                             
+                        </div>
+                        <div class="form-group" id ='close_date_div' hidden>                        
+                            <label class="col-sm-2 control-label">Close Date:<font color="red">*</font></label>
+                            <div class="col-sm-4">
+                                <div class="input-group date" >
+                                    <div class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                    </div>
+                                    <input type="text" class="form-control pull-right" id="close_date" name="close_date" autocomplete="off" required>
+                                </div>
+                            </div>
                         </div>
                         
                         <div class="form-group" id ='reg_license_status'>
@@ -925,6 +936,19 @@
 
         $('[data-mask]').inputmask();
 
+        $('#start_date').datepicker({
+            endDate: new Date(),
+            autoclose: true,
+        }).on("changeDate", function (e) {
+            $('#close_date').datepicker('setStartDate', e.date);
+        });
+
+        $('#close_date').datepicker({
+            autoclose: true,
+        });
+
+
+
     });
 </script>
 <script>
@@ -1065,7 +1089,18 @@
         })            
     }
     
-    
+      //if operation status is closed or temp close show close date
+      $("#operational_status_id").change(function(){
+        if($(this).val() == 5 || $(this).val() == 6){
+            $('#close_date_div').show();
+            $('#close_date').prop('required',true);
+        }else{
+            $('#close_date').prop('required',false);
+            $('#close_date_div').hide();
+
+        }
+    });
+
 </script>
 
 @endpush

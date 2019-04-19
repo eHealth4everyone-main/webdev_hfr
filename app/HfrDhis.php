@@ -291,83 +291,187 @@ class HfrDhis extends Model
             $response = $client->get('organisationUnits?filter=code:eq:'. $hfr_facility_id , [
                 'auth' => [env('DHIS_USERNAME'), env('DHIS_PASSWORD')]
             ]);
-            
-    
+
     
             $array = json_decode($response->getBody()->getContents(), true); 
          
             if ($array['pager']['total'] > 0){
                 $orgUnits = $array['organisationUnits'][0]['id'];
             }else{
-                $orgUnits = 'None';
+                $orgUnits = 'Facility with id '. $hfr_facility_id. ' is not found in DHIS2' ;
             }
         
             return $orgUnits;
+
         } catch (RequestException $e) {
-            return "Error";
+            if ($e->hasResponse()) {
+                $response =  Psr7\str($e->getResponse());
+                return $response;
+            }else {
+                return "Operation failed due to network error!";
+            }
         }
+    }    
+
+    public function getDhisUpdatedValues($hosp,$id){
+        $audit_id = DB::table('audits')
+            ->select('id')
+            ->where('event', '=', 'updated')
+            ->where('auditable_type','=','App\HospitalHistory')
+            ->where('auditable_id','=',$id)
+            ->orderBy('id', 'DESC')
+            ->first();
+
+        $hosp = HospitalHistory::find($id);
+        $audit = $hosp->audits()->find($audit_id->id);
+        $allUpdatedValues= $audit->getModified();
+
+        $dhisFields = ["facility_name","alt_facility_name","start_date","close_date","postal_address","email_address","website",
+          "phone_number","longitude","latitude","ownership_id","facility_level_id","facility_level_option_id"];
+        
+        $dhisUpdatedFields = array_intersect($dhisFields, array_keys($allUpdatedValues));
+        
+  
+        if (count($dhisUpdatedFields) > 0) {  //there is at least one dhis field updated
+            $dhis = new HfrDhis;
+
+            $data = [];
+            $orgUnitGroups =[];
+            $dataArray = [];
+            
+        
+            $data = [
+                'name' =>$dhis->formatName($hosp['facility_name'], $hosp['state_id']),
+                'shortName' => $dhis->getShortname($hosp['facility_name'],$hosp['alt_facility_name']),
+                'code' => $id,
+                'openingDate' => $dhis->formatDate($hosp['start_date']),
+                'closedDate' =>$dhis->formatDate($hosp['close_date']),
+                'address' => $hosp['postal_address'],
+                'coordinates' => $dhis->formatGeoCords($hosp['longitude'],$hosp['latitude']),
+                'email' => $hosp['email_address'],
+                'url' => $hosp['website'],
+                'phoneNumber' => $hosp['phone_number'],
+                'parent' => $dhis->getParent($hosp['ward_id'])
+            ];
+
+            foreach($allUpdatedValues as $key => $value) {
+                if(in_array($key,$dhisUpdatedFields )){
+                    switch ($key) {
+                        case "ownership_id":
+                            $orgUnitGroups['ownership_id'] = $value['new'];                          
+                            break;
+                        case "facility_level_id":
+                            $orgUnitGroups['facility_level_id'] = $value['new'];                            
+                            break;
+                        case "facility_level_option_id":
+                            $orgUnitGroups['facility_level_option_id'] = $value['new'];                          
+                            break;
+                    }
+                    
+                }
+            }
+
+            $dataArray['updates'] = $data;
+            $dataArray['groups'] = $orgUnitGroups;
+
+            return $dataArray;
+            // $x = $this->sendUPdates($dataArray, $id);
+            // return x;
+        }else{
+            return 'false';
+        }
+
     }
 
-    public function sendUpdatesToDHIS($data,$id){      
-        try{
-            $client = new Client([
-                'base_uri' =>  env('DHIS_BASE_URI')
-            ]);
-            
-            $uid = $this->getDhisFacilityUID($id);
-            
-            if($uid != 'None'){
-                // $response = $client->put('organisationUnits/'. $uid, [
-                //     'auth' => [env('DHIS_USERNAME'), env('DHIS_PASSWORD')],
-                //     'json' => $data['updates']
-                // ]);
+
+    public function sendUPdates($data, $id){
+    
+        $uid = $this->getDhisFacilityUID($id);
+        
+        // dd($data['updates'], $uid);
+
+        if(strlen($uid) == 11){
+            try {
+                $client = new Client([
+                    'base_uri' =>  env('DHIS_BASE_URI')
+                ]);
+        
+                $response = $client->put('organisationUnits/'. $uid, [
+                    'auth' => [env('DHIS_USERNAME'), env('DHIS_PASSWORD')],
+                    'json' => $data['updates']
+                ]);
+                
+                $status = $response->getReasonPhrase();
+                if ($status == 'OK'){
+                    $update_status = "Updated";
+                }else{
+                    $update_status = $status;
+                }
+
+    
+                //if any of the organiation groups is updated
+                $ownership_status = 'No Updates';
+                $level_status = 'No Updates';
+                $level_option_status = 'No Updates';
 
                 if (count($data['groups']) > 0){
-                    
+
                     foreach($data['groups'] as $key => $value) {
                         switch ($key) {
                             case "ownership_id":
-                                echo "owneship '<br>";
-                                echo $this->unAssignOwnership($value,$uid);
-                                echo '<br>';  
-                                echo $this->AssignOwnership($value,$uid);
-                                echo '<br>';                         
+                                $this->unAssignOwnership($value,$uid);
+                                $ownership_status = $this->AssignOwnership($value,$uid);
                                 break;
                             case "facility_level_id":
-                                echo "LOC '<br>";
-                                echo $this->unAssignLevelOfCare($value,$uid);
-                                echo '<br>';  
-                                echo $this->AssignLevelOfCare($value,$uid);
-                                echo '<br>';                      
+                                $this->unAssignLevelOfCare($value,$uid);
+                                $level_status = $this->AssignLevelOfCare($value,$uid);
                                 break;
                             case "facility_level_option_id":
                                 if (in_array($value,[1,3,5])){
-                                    echo "LOCO '<br>";
-                                    echo $this->unAssignLevelOfCareOption($value,$uid);
-                                    echo '<br>';  
-                                    echo $this->AssignLevelOfCareOption($value,$uid);
-                                    echo '<br>';  
-                                }           
+                                    $this->unAssignLevelOfCareOption($value,$uid);
+                                    $level_option_status = $this->AssignLevelOfCareOption($value,$uid);
+                                }       
                                 break;
                         }
-                        
                     }
                 }
-
-               dd('ok');
-
-                // return $response->getReasonPhrase();
-            }else{
-                return 'Can not find facility with HFR id ' .$id. ' in DHIS2!';
-            }
-         
-        } catch (RequestException $e) {
-            if ($e->hasResponse()) {
-                return Psr7\str($e->getResponse());               
-            }else {
-                return "Exception Error";
-            }
-        }
-    }
     
+                //Save status of actions
+                $log = new DhisLog;
+                $log->hfr_id = $id;
+                $log->dhis_uid = $uid;
+                $log->facility_status = $update_status;
+                $log->ownership_status = $ownership_status;
+                $log->level_status = $level_status;
+                $log->level_option_status = $level_option_status;
+                $log->save();
+
+                return 'Updated';               
+    
+            } catch (RequestException $e) {
+                $log = new DhisLog;
+                if ($e->hasResponse()) {
+                    $response =  Psr7\str($e->getResponse());
+                    $log->hfr_id = $id;
+                    $log->facility_status = $response;
+                    $log->save();
+                    return "Exception Error";
+                }else {
+                    $log->hfr_id = $id;
+                    $log->facility_status = "Not updated due to network error";
+                    $log->save();
+                    return "Exception Error";
+                }
+            }
+
+        }else { // if failed to get facility uid from dhis
+            $log = new DhisLog;
+            $log->hfr_id = $id;
+            $log->facility_status = $uid;
+            $log->save();
+            return "Exception Error";
+        }
+       
+    }
+
 }

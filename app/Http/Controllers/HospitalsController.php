@@ -64,6 +64,8 @@ class HospitalsController extends Controller
     
     public function store(Request $request)
     {
+        dd($request->all());
+
         $request->validate([
             'registration_no'=>'nullable|max:20',
             'start_date'=>'required|date',
@@ -117,11 +119,18 @@ class HospitalsController extends Controller
         ]);
         
         $start_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->start_date)));
-     
+
+        if($request->operational_status_id > 4){
+            $close_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->close_date)));
+        }else{
+            $close_date = '';
+        }
+
         $hosp = new HospitalHistory;
         $hosp->fill($request->all());
         $hosp->unique_id = $hosp->generateUniqueID($request->lga_id,'1',$request->facility_level_id,$request->ownership_id);
         $hosp->start_date = $start_date;
+        $hosp->close_date = $close_date;
         $hosp->requested_at = Carbon::now()->format('Y-m-d H:i:s');
         $hosp->status_id = 1;
         $hosp->created_by = Auth::user()->id;
@@ -243,11 +252,19 @@ class HospitalsController extends Controller
             'outpatient'=>'nullable',
             'inpatient'=>'nullable',
         ]);
+
+        
+        if($request->operational_status_id > 4){
+            $close_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->close_date)));
+        }else{
+            $close_date = '';
+        }
         
         //update records in history with new changes
         $hosp = new HospitalHistory;
         $hosp = HospitalHistory::findOrFail($id);
         $state_id = $hosp['state_id'];
+        
         $hosp->fill($request->all());
         $hosp->status_id = 8;
         $hosp->requested_by = Auth::user()->id;
@@ -263,6 +280,7 @@ class HospitalsController extends Controller
         $hosp->published_at = $request->published_at;
         $hosp->publish_note = ''; 
         $hosp->start_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->start_date))); 
+        $hosp->close_date = $close_date;
         $hosp->operational_days = $hosp->arrayValuesTostring($request->operational_days);
         
         //insert in status tracking

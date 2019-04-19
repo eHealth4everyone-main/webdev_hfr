@@ -10,12 +10,12 @@ HFR-DHIS2 Exchange
 @section("content")
 <div class="box">
   <div class="box-body">
-    <div class="alert alert-success alert-dismissible">
+    {{-- <div class="alert alert-success alert-dismissible">
         <h4><i class="icon fa fa-check"></i>   {{ $message }}</h4>
-    </div>
+    </div> --}}
    
     <div id='updating'>
-        <h4>Updating DHIS2. Please wait...</h4>
+        <h4>Sending Updates to DHIS2. Please wait...</h4>
     </div>
 
     <div id='progress' class="progress">
@@ -25,11 +25,11 @@ HFR-DHIS2 Exchange
     </div>
     <div id='fac_error' class="alert alert-danger alert-dismissible" hidden>
         <h4><i class="icon fa fa-warning"></i> Error!</h4>
-        Something went wrong while creating facility in DHIS2. Please, check on logs for details!
+        Something went wrong while updating DHIS2. Please, check on logs for details!
     </div>
     <div id='fac_success' class="alert alert-success alert-dismissible" hidden>
         <h4><i class="icon fa fa-check"></i> Success!</h4>
-        Facility was successfully created in DHIS2!
+        Facility was successfully updated in DHIS2!
     </div>
 
   </div>
@@ -69,34 +69,19 @@ $(document).ready(function() {
                   clearInterval(interval);
           }, 2000);
       });
-
-      var id = '{{ $hosp->id }}';
-      var state_id = '{{ $hosp->state_id }}';
-      var ward_id = '{{ $hosp->ward_id }}';
-      var facility_name ='{{ $hosp->facility_name}}';
-      var alt_facility_name = '{{ (string)$hosp->alt_facility_name }}';
-      var start_date = '{{ $hosp->start_date }}';
-      var postal_address = '{{ $hosp->postal_address }}';
-      var email_address = '{{ $hosp->email_address }}';
-      var website = '{{ $hosp->website }}';
-      var longitude = '{{ $hosp->longitude }}';
-      var latitude = '{{ $hosp->latitude }}';
-      var phone_number = '{{ $hosp->phone_number }}';
-      var ownership_id = '{{ $hosp->ownership_id }}';
-      var facility_level_id = '{{ $hosp->facility_level_id }}';
-      var facility_level_option_id = '{{ $hosp->facility_level_option_id }}';
+      var data =  @json($data);
+      var id = '{{ $id }}';
       var _token = $('input[name="_token"]').val();
       
+      console.log (data);
+
       $.ajax({
-          url:"{{route('dhis.store')}}",
+          url:"{{route('dhis.update')}}",
           method:"POST",
-          data:{state_id:state_id, ward_id:ward_id, facility_name:facility_name, start_date:start_date, postal_address:postal_address,
-                email_address:email_address, website:website,longitude:longitude,  latitude:latitude, id:id,
-                alt_facility_name:alt_facility_name,  phone_number:phone_number,ownership_id:ownership_id,
-                facility_level_option_id:facility_level_option_id, facility_level_id:facility_level_id, _token:_token},
+          data:{data:data, id:id, _token:_token},
           success:function(result)
           {
-              if (result =='Created'){
+              if (result =='Updated'){
                   $("#fac_success").show();
                   $("#progress").hide();
                   $('#updating').hide();

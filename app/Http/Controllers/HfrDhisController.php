@@ -95,68 +95,94 @@ class HfrDhisController extends Controller
        
     }
 
-    public function update($data, $id){
+    public function update(Request $request){
         $dhis = new HfrDhis;
+        $id = $request->id;
+        $data = $request->data;
 
-        $uid = $this->getDhisFacilityUID($id);
-       
-        try {
-            $client = new Client([
-                'base_uri' =>  env('DHIS_BASE_URI')
-            ]);
-    
-            $response = $client->put('organisationUnits/'. $uid, [
-                'auth' => [env('DHIS_USERNAME'), env('DHIS_PASSWORD')],
-                'json' => $data['updates']
-            ]);
+        $uid = $dhis->getDhisFacilityUID($id);
+        
+        // dd($data['updates'], $uid);
 
-
-            if ($response->getReasonPhrase() ==  'Created'){
-                $array = json_decode($response->getBody()->getContents(), true); 
-                $facility_uid = $array['response']['uid'];
-    
-                //Assign Organisation unit - ownership
-                $ownership_status = $dhis->assignOwnership($request->ownership_id,$facility_uid);
-
-                //Assign Organisation unit - Level of Care
-                $level_status = $dhis->assignLevelOfCare($request->facility_level_id, $facility_uid);
-       
-                //Assign Organisation unit - Level of Care Options
-                if (in_array($request->facility_level_id,[1,3,5])){
-                    $level_option_status = $dhis->assignLevelOfCareOption($request->facility_level_option_id,$facility_uid);
+        if(strlen($uid) == 11){
+            try {
+                $client = new Client([
+                    'base_uri' =>  env('DHIS_BASE_URI')
+                ]);
+        
+                $response = $client->put('organisationUnits/'. $uid, [
+                    'auth' => [env('DHIS_USERNAME'), env('DHIS_PASSWORD')],
+                    'json' => $data['updates']
+                ]);
+                
+                $status = $response->getReasonPhrase();
+                if ($status == 'OK'){
+                    $update_status = "Updated";
+                }else{
+                    $update_status = $status;
                 }
-                else{
-                    $level_option_status = 'Not Provided - Not Assigned';
+
+    
+                //if any of the organiation groups is updated
+                if (count($data['groups']) > 0){
+                    $ownership_status = 'No Updates';
+                    $level_status = 'No Updates';
+                    $level_option_status = 'No Updates';
+
+                    foreach($data['groups'] as $key => $value) {
+                        switch ($key) {
+                            case "ownership_id":
+                                $dhis->unAssignOwnership($value,$uid);
+                                $ownership_status = $dhis->AssignOwnership($value,$uid);
+                                break;
+                            case "facility_level_id":
+                                $dhis->unAssignLevelOfCare($value,$uid);
+                                $level_status = $dhis->AssignLevelOfCare($value,$uid);
+                                break;
+                            case "facility_level_option_id":
+                                if (in_array($value,[1,3,5])){
+                                    $dhis->unAssignLevelOfCareOption($value,$uid);
+                                    $level_option_status = $dhis->AssignLevelOfCareOption($value,$uid);
+                                }       
+                                break;
+                        }
+                    }
                 }
     
                 //Save status of actions
                 $log = new DhisLog;
-                $log->hfr_id = $request->id;
-                $log->dhis_uid = $facility_uid;
-                $log->facility_status = 'Created';
+                $log->hfr_id = $id;
+                $log->dhis_uid = $uid;
+                $log->facility_status = $update_status;
                 $log->ownership_status = $ownership_status;
                 $log->level_status = $level_status;
                 $log->level_option_status = $level_option_status;
                 $log->save();
-    
-                return 'Created';
-            }
-            
 
-        } catch (RequestException $e) {
-            $log = new DhisLog;
-            if ($e->hasResponse()) {
-                $response =  Psr7\str($e->getResponse());
-                $log->hfr_id = $request->id;
-                $log->facility_status = $response;
-                $log->save();
-                return "Exception Error";
-            }else {
-                $log->hfr_id = $request->id;
-                $log->facility_status = "Not created due to network error";
-                $log->save();
-                return "Exception Error";
+                return 'Updated';               
+    
+            } catch (RequestException $e) {
+                $log = new DhisLog;
+                if ($e->hasResponse()) {
+                    $response =  Psr7\str($e->getResponse());
+                    $log->hfr_id = $id;
+                    $log->facility_status = $response;
+                    $log->save();
+                    return "Exception Error";
+                }else {
+                    $log->hfr_id = $id;
+                    $log->facility_status = "Not updated due to network error";
+                    $log->save();
+                    return "Exception Error";
+                }
             }
+
+        }else { // if failed to get facility uid from dhis
+            $log = new DhisLog;
+            $log->hfr_id = $id;
+            $log->facility_status = $uid;
+            $log->save();
+            return "Exception Error";
         }
        
     }
