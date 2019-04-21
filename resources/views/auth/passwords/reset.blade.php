@@ -44,7 +44,7 @@
                     <div class="form-group {{ $errors->has('email') ? 'has-error' : '' }}">
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
-                            <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" placeholder="Enter your Email" required autofocus>
+                            <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" placeholder="Enter your E-mail" required autofocus>
                         </div>
                         @if ($errors->has('email'))
                             <span class="help-block">

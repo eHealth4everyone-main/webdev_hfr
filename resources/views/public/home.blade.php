@@ -230,7 +230,7 @@
                 });
                 
                 $('#backbutton').show();
-               );
+               
 
                 showFacilityByLevelSelectedState(result.by_level,statename);
                 showFacilityByOwnershipSelectedState(result.by_ownership,statename);

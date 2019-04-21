@@ -156,7 +156,7 @@
                                                 <a class="btn btn-danger btn-flat" href="{{ route('logout') }}"
                                                 onclick="event.preventDefault();
                                                 document.getElementById('logout-form').submit();">
-                                                Sign out
+                                                Sign Out
                                             </a>
                                         </div>
                                         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
