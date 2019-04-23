@@ -116,7 +116,7 @@ class DownloadController extends Controller
             session()->flash("alert-success", "No record found with selected criteria!");
             return redirect()->back();
        }else{
-            $column_header = array("unique_id","reg_number","start_date","facility_name","state","lga","ward","ownership",
+            $column_header = array("facility_code","reg_number","start_date","facility_name","state","lga","ward","ownership",
             "facility_level","longitude","latitude","operation_status","regulatory_status","license_status");
 
             return Excel::download(new HFExport( $facilities, $column_header), 'data.xlsx' );

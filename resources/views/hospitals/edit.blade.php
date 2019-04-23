@@ -315,7 +315,7 @@
                         <div class="form-group" >
                             <div class="col-sm-6">
                                 <div class="form-group {{ $errors->has('email_address') ? 'has-error' : '' }}" >
-                                    <label for="email_address" class="col-sm-4 control-label">Email Address:</label>
+                                    <label for="email_address" class="col-sm-4 control-label">E-mail Address:</label>
                                 <div class="col-sm-8">
                                 <input type="text" class="form-control"  id="email_address" name="email_address" value="{{$hosp->email_address}}">
                                         @if ($errors->has('email_address'))
@@ -422,7 +422,7 @@
                                         <div class="input-group-addon">
                                             <i class="fa fa-calendar"></i>
                                         </div>
-                                        <input type="text" class="form-control pull-right" id="close_date" name="close_date" autocomplete="off" required>
+                                        <input type="text" class="form-control pull-right" id="close_date" name="close_date" autocomplete="off" >
                                     </div>
                                 </div>
                         </div>             

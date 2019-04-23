@@ -17,7 +17,7 @@
                                 <div id="collapse1" class="panel-collapse collapse in">
                                     <div class="panel-body">
                                         <div class="row">
-                                            <label class="col-md-4">Unique ID:</label>
+                                            <label class="col-md-4">Facility Code:</label>
                                             <div class="col-md-8" id="unique_id"></div>
                                         </div>
                                         <div class="row">

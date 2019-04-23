@@ -143,7 +143,7 @@
                             <th>State</th>
                             <th>LGA</th>
                             {{-- <th>Ward</th> --}}
-                            <th>Facility ID</th>
+                            <th>Facility Code</th>
                             <th>Facility Name</th>
                             <th>Facility Level</th>
                             <th>Ownership</th>

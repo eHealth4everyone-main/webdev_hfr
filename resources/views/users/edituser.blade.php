@@ -98,10 +98,12 @@
                                 <label for="state_id1" class="col-md-4 col-form-label text-md-right">{{ __('State Permission') }} <font color="red">*</font></label>
                                 <div class="col-md-8">
                                         <select class="form-control select2"  class="form-control" id="state_id1" name="state_id1" data-placeholder="Select State" required data-width="100%">
-                                            <option value="1">All States</option>    
-                                            @foreach(getStates() as $s)
-                                                    <option value="{{$s->id}}" {{ ($s->id == old('state_id1') ? "selected":"") }}>{{$s->name}}</option>
-                                                @endforeach
+                                            @if (Auth::user()->state_id == 1 )
+                                                <option value="1">All States</option>    
+                                            @endif  
+                                            @foreach(getAssignedState() as $s)
+                                                <option value="{{$s->id}}" {{ ($s->id == old('state_id1') ? "selected":"") }}>{{$s->name}}</option>
+                                            @endforeach
                                         </select>
                                 <span class="text-danger">
                                     <strong id="state-id"></strong>

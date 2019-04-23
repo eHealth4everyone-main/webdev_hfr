@@ -123,7 +123,7 @@ class HospitalsController extends Controller
         if($request->operational_status_id > 4){
             $close_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->close_date)));
         }else{
-            $close_date = '';
+            $close_date = null;
         }
 
         $hosp = new HospitalHistory;
@@ -257,7 +257,7 @@ class HospitalsController extends Controller
         if($request->operational_status_id > 4){
             $close_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->close_date)));
         }else{
-            $close_date = '';
+            $close_date = null;
         }
         
         //update records in history with new changes
@@ -523,7 +523,7 @@ class HospitalsController extends Controller
             $facilities = Cache::get('displayed_facilities');
 
 
-            $column_header = array("unique_id","reg_number","start_date","facility_name","state","lga","ward","ownership",
+            $column_header = array("facility_code","reg_number","start_date","facility_name","state","lga","ward","ownership",
             "facility_level","longitude","latitude","operation_status","registration_status","license_status");
         
             if ($request->format == 'xls'){

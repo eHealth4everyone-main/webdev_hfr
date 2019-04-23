@@ -102,7 +102,6 @@ class HfrDhisController extends Controller
 
         $uid = $dhis->getDhisFacilityUID($id);
         
-        // dd($data['updates'], $uid);
 
         if(strlen($uid) == 11){
             try {
@@ -123,12 +122,12 @@ class HfrDhisController extends Controller
                 }
 
     
+                $ownership_status = 'No Updates';
+                $level_status = 'No Updates';
+                $level_option_status = 'No Updates';
                 //if any of the organiation groups is updated
-                if (count($data['groups']) > 0){
-                    $ownership_status = 'No Updates';
-                    $level_status = 'No Updates';
-                    $level_option_status = 'No Updates';
-
+                if ($data['groups'] != 'empty'){
+                 
                     foreach($data['groups'] as $key => $value) {
                         switch ($key) {
                             case "ownership_id":

@@ -118,20 +118,20 @@ class PublishController extends Controller
 
             $date = Carbon::now()->format('Y-m-d H:i:s');
           
-            // $hosp->status_id = $status_id;
-            // $hosp->published_by = Auth::user()->id;
-            // $hosp->published_at = $date;
-            // $hosp->publish_note = $request->notes;
-            // $hosp->save();
-            // HospitalHistory::enableAuditing();
+            $hosp->status_id = $status_id;
+            $hosp->published_by = Auth::user()->id;
+            $hosp->published_at = $date;
+            $hosp->publish_note = $request->notes;
+            $hosp->save();
+            HospitalHistory::enableAuditing();
         
-            // $status = new StatusTracking;
-            // $status->hospital_id = $request->id;
-            // $status->user_id = Auth::user()->id;
-            // $status->status_id = $status_id;
-            // $status->note = $request->notes;
-            // $status->created_at = $date;
-            // $status->save();
+            $status = new StatusTracking;
+            $status->hospital_id = $request->id;
+            $status->user_id = Auth::user()->id;
+            $status->status_id = $status_id;
+            $status->note = $request->notes;
+            $status->created_at = $date;
+            $status->save();
         
            //insert new facility data to main table after published
             if($status_id == 6){
@@ -165,37 +165,37 @@ class PublishController extends Controller
             }
 
             //update hospital, and hospital services to main table
-            // if($status_id == 13){
-            //     $hosp_history = new HospitalHistory;
-            //     $hosp_history = HospitalHistory::find($request->id);
+            if($status_id == 13){
+                $hosp_history = new HospitalHistory;
+                $hosp_history = HospitalHistory::find($request->id);
 
-            //     //copy data from  history to main
-            //     $hosp_main = new Hospital;  
-            //     $hosp_main = Hospital::find($request->id);
-            //     $hosp_main -> fill($hosp_history->toArray());
-            //     $hosp_main -> start_date = $hosp_history->start_date;
-            //     $hosp_main -> status_id = $hosp_history->status_id;
-            //     $hosp_main -> created_by = $hosp_history->created_by;
-            //     $hosp_main -> operational_days =  $hosp_history->operational_days;        
-            //     $hosp_main -> save();
-            //     //copy ends
+                //copy data from  history to main
+                $hosp_main = new Hospital;  
+                $hosp_main = Hospital::find($request->id);
+                $hosp_main -> fill($hosp_history->toArray());
+                $hosp_main -> start_date = $hosp_history->start_date;
+                $hosp_main -> status_id = $hosp_history->status_id;
+                $hosp_main -> created_by = $hosp_history->created_by;
+                $hosp_main -> operational_days =  $hosp_history->operational_days;        
+                $hosp_main -> save();
+                //copy ends
 
-            //     //get new hospital services
-            //     $services = DB::select("SELECT service_id FROM hs_hospital_services_history WHERE hospital_id = ". $request->id . ""); 
+                //get new hospital services
+                $services = DB::select("SELECT service_id FROM hs_hospital_services_history WHERE hospital_id = ". $request->id . ""); 
     
-            //     if(!empty($services)){
-            //         // remove current services in main table
-            //         $deleted = DB::delete("delete from hs_hospital_services where hospital_id ='". $request->id ."' and id > 0");
+                if(!empty($services)){
+                    // remove current services in main table
+                    $deleted = DB::delete("delete from hs_hospital_services where hospital_id ='". $request->id ."' and id > 0");
                     
-            //         //add new services 
-            //         foreach ($services as $service){
-            //             $hosp_services = new HospitalService;
-            //             $hosp_services->service_id = $service->service_id;
-            //             $hosp_services->hospital_id = $request->id; 
-            //             $hosp_services->save();
-            //         }
-            //     }
-            // }
+                    //add new services 
+                    foreach ($services as $service){
+                        $hosp_services = new HospitalService;
+                        $hosp_services->service_id = $service->service_id;
+                        $hosp_services->hospital_id = $request->id; 
+                        $hosp_services->save();
+                    }
+                }
+            }
             
             //Delete facility after final delete request published
             if($status_id == 20){

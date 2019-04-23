@@ -372,7 +372,11 @@ class HfrDhis extends Model
             }
 
             $dataArray['updates'] = $data;
-            $dataArray['groups'] = $orgUnitGroups;
+            if (count($orgUnitGroups) > 0){
+                $dataArray['groups'] = $orgUnitGroups;
+            }else{
+                $dataArray['groups'] = 'empty';
+            }
 
             return $dataArray;
             // $x = $this->sendUPdates($dataArray, $id);
@@ -384,6 +388,7 @@ class HfrDhis extends Model
     }
 
 
+    //temporary method, to be deleted
     public function sendUPdates($data, $id){
     
         $uid = $this->getDhisFacilityUID($id);
@@ -473,5 +478,7 @@ class HfrDhis extends Model
         }
        
     }
+
+    
 
 }

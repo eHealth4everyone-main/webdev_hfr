@@ -20,7 +20,7 @@ class UserController extends Controller
 
         public function index()
         {
-            $users = User::get();
+            $users = User::where('state_id', 'like','%'. Auth::user()->state_id. '%')->get();
      
             return view('users.index', compact("users"));  
         }

@@ -174,6 +174,7 @@
                     @endif
                 </li>
                 <li  class="treeview"> 
+                    @if(auth()->user()->hasPermissionTo(65))
                         
                             <a href="#">
                                 <i class="fa  fa-file-text"></i>
@@ -189,14 +190,15 @@
                             <li><a href="{{route('services.index')}}"><i class="fa fa-file-text-o"></i>Services Rendered</a></li>
 
                         </ul>
+                    @endif
                 </li>
                 <li> 
-                    {{-- @if(auth()->user()->hasPermissionTo(25)) --}}
+                    @if(auth()->user()->hasPermissionTo(66))
                         <a href="{{route('dhis.logs')}}">
                             <i class="fa fa-exchange"></i>
                             <span>DHIS2 Exchange Log</span>
                         </a>
-                    {{-- @endif --}}
+                    @endif
                 </li>
           
             </ul>

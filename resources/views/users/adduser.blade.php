@@ -100,8 +100,10 @@
                                 <div class="col-md-8">
                                         <select class="form-control select2"  class="form-control" id="state_id" name="state_id" data-placeholder="Select State" required data-width="100%">
                                             <option value="">--Select State--</option>  
-                                            <option value="1">All States</option>    
-                                                @foreach(getStates() as $s)
+                                                @if (Auth::user()->state_id == 1 )
+                                                    <option value="1">All States</option>    
+                                                @endif
+                                                @foreach(getAssignedState() as $s)
                                                     <option value="{{$s->id}}" {{ ($s->id == old('state_id') ? "selected":"") }}>{{$s->name}}</option>
                                                 @endforeach
                                         </select>

@@ -9,6 +9,15 @@ function getStates(){
     ->get();
 }
 
+function getAssignedState(){
+    return DB::table('ou_states')
+    ->select('id','name')
+    ->where('id', 'like','%'. Auth::user()->state_id. '%')
+    ->orderByRaw('name ASC')
+    ->get();
+}
+
+
 function getOwnership(){
     return DB::table('lst_ownerships')
             ->select('id','name')

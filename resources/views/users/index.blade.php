@@ -16,12 +16,13 @@ Users
           @csrf
   
           <div class="form-group">
-              <label class="col-sm-2 control-label">State Permission:</label>
-              <div class="col-md-2">
+              <label class="col-sm-1 control-label">State:</label>
+              <div class="col-md-3">
                       <select class="form-control select2"  class="form-control" id="state" name="state"  required data-width="100%">
-                          <option value="1">All States</option>    
-
-                              @foreach(getStates() as $s)
+                          @if (Auth::user()->state_id == 1 )
+                              <option value="1">All States</option>    
+                          @endif
+                              @foreach(getAssignedState() as $s)
                                   <option value="{{$s->id}}">{{$s->name}}</option>
                               @endforeach
                       </select>

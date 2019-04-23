@@ -72,8 +72,6 @@ $(document).ready(function() {
       var data =  @json($data);
       var id = '{{ $id }}';
       var _token = $('input[name="_token"]').val();
-      
-      console.log (data);
 
       $.ajax({
           url:"{{route('dhis.update')}}",

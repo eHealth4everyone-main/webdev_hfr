@@ -125,7 +125,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="email_address" class="col-sm-2 control-label">Email Address:</label>
+                            <label for="email_address" class="col-sm-2 control-label">E-mail Address:</label>
                             <div class="col-sm-4">
                                 <input type="text" class="form-control"  id="email_address" name="email_address" value="{{$pharmacy->email_address}}">
                             </div>
