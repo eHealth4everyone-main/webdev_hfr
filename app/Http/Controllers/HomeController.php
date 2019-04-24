@@ -13,6 +13,7 @@ class HomeController extends Controller
         return view('public.about');
     }
 
+ 
     public function index()
     {
          //get number of facilities by state
@@ -37,17 +38,9 @@ class HomeController extends Controller
                     FROM hospital_details group by state");
          });
          
-        //  $geo_states=array();
-        //  $geo_percent=array();
- 
-        //  foreach ($population_index as $indx){
-        //      $geo_states[]=$indx->state;
-        //      $geo_percent[]=(int)$indx->ppf;
-        //  };
        
         return view('public.home',compact('total_facilities_state','facilities_ownership_state','facilities_level_state','geo_percent'));
     }
-
 
     public function getFacilitesByLGA(Request $request){
         $total_facilities_lga = DB::select("SELECT l.map_code LGA_UID,count(h.id) value 

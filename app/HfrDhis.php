@@ -7,6 +7,10 @@ use Illuminate\Support\Facades\DB;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7;
 use GuzzleHttp\Exception\RequestException;
+use App\User;
+use App\Notifications\sendNewFacilityEmailtoDhisTeam;
+use Notification;
+
 
 class HfrDhis extends Model
 {
@@ -387,6 +391,14 @@ class HfrDhis extends Model
 
     }
 
+    public function sendEmailtoDhisTeamForNewFacility($name,$state,$lga,$ward){
+       
+        // $users = User::permission('Receive DHIS2 Notifications')->where('state_id',104)->get();
+        $users = User::permission('Receive DHIS2 Notifications')->get();
+        Notification::send($users, new sendNewFacilityEmailtoDhisTeam($name,$state,$lga,$ward));
+
+    }
+
 
     //temporary method, to be deleted
     public function sendUPdates($data, $id){
@@ -479,6 +491,6 @@ class HfrDhis extends Model
        
     }
 
-    
+
 
 }

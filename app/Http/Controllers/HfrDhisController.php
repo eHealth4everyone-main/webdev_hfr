@@ -189,10 +189,9 @@ class HfrDhisController extends Controller
   
     public function test(){
      
-        // $dhis = new HfrDhis;
-
-        // $data= $dhis->getDhisFacilityUID(139556);
-        // dd($data);
+        $dhis = new HfrDhis;
+        $data= $dhis->sendEmailtoDhisTeamForNewFacility('Beatus K','Abia','Aba North','Juju');
+        dd($data);
 
         $client = new Client([
             'base_uri' =>  env('DHIS_BASE_URI')

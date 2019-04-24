@@ -169,8 +169,9 @@
             <!--End of Bg White--> 
         </div>    
         <!--End of Main Wrapper Area--> 
-        
-      <!-- Goolge Map Modal -->
+
+
+ <!-- Goolge Map Modal -->
         <div class="modal fade" id="googleMapModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"  >
                 <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">

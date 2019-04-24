@@ -18,7 +18,7 @@ Laboratory Certifications
       <thead>
         <tr>
           <th>Certification Type</th>
-          <th>Certification name</th>
+          <th>Certification Name</th>
           <th>Actions</th>
         </tr>
       </thead>

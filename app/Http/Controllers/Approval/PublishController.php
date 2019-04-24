@@ -215,23 +215,25 @@ class PublishController extends Controller
 
         session()->flash("alert-success", $message);
 
-        if ($status_id == 6){
-            return view('dhis.store',compact('hosp','message'));
-        }
-        elseif($status_id == 13){
-            $dhis = new HfrDhis;
-            $data = $dhis->getDhisUpdatedValues($hosp, $request->id);
-            $id = $request->id;
+        return redirect()->route('publish.pending');
 
-            if ($data != 'false'){
-                return view('dhis.update',compact('data','id','message'));
-            }else{
-                return redirect()->route('publish.pending');
-            }
+        // if ($status_id == 6){
+        //     return view('dhis.store',compact('hosp','message'));
+        // }
+        // elseif($status_id == 13){
+        //     $dhis = new HfrDhis;
+        //     $data = $dhis->getDhisUpdatedValues($hosp, $request->id);
+        //     $id = $request->id;
 
-        }else{
-            return redirect()->route('publish.pending');
-        }
+        //     if ($data != 'false'){
+        //         return view('dhis.update',compact('data','id','message'));
+        //     }else{
+        //         return redirect()->route('publish.pending');
+        //     }
+
+        // }else{
+        //     return redirect()->route('publish.pending');
+        // }
     }
 
    

@@ -46,6 +46,29 @@
     
 </div>
 
+{{-- Modal to show notification on training server  --}}
+<div class="modal fade" id='trainingServerNote' tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                    <div class="modal-header">
+                            
+                            <h1 class="modal-title" id="myModalLabel">Note!</h1>
+                        </div>
+                    <div class="modal-body">
+                            <h2><font color="red">
+                                This is HFR training server. Data contained in this site is for training purpose only, 
+                                and may not reflect the truth.</font></h2>
+                    </div>
+                    <div class="modal-footer">   
+                        <button type="button" class="btn btn-default" data-dismiss="modal">I understand, Proceed!</button>
+                    </div>
+            </div>
+        </div>
+</div>
+    
+{{-- end --}}
+
+
 
 @endsection 
 
@@ -59,8 +82,13 @@
 <script>
   
     window.onload = function() {
+
+        if ("{{env('APP_ENV')}}" =='Training'){ //show a warning note on training server 
+            $('#trainingServerNote').modal('show');
+        }
+
         $('#backbutton').hide(0);
-      
+        
         showAllStatesMap();
         facilitybyLevel();
         facilitybyOwnership();

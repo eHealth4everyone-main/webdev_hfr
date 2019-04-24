@@ -2,6 +2,7 @@
 
 //home
 Route::get('/', 'HomeController@index')->name('home');
+
 Route::post('home/facilitiesbyLga', 'HomeController@getFacilitesByLGA')->name('getFacilitesByLGA');
 Route::post('home/googlemap', 'HomeController@getFacilitesGMap')->name('getFacilitesGMap');
 Route::post('home/googlemap/facilitydetails', 'HomeController@getFacilityDetails')->name('getFacilityDetails');
