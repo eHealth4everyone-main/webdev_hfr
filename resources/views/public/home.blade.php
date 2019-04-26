@@ -82,8 +82,8 @@
 <script>
   
     window.onload = function() {
-
-        if ("{{env('APP_ENV')}}" =='Training'){ //show a warning note on training server 
+    
+        if ("{{App::environment('Training')}}"){ //show a warning note on training server 
             $('#trainingServerNote').modal('show');
         }
 

@@ -27,7 +27,6 @@ class sendNewFacilityEmailtoDhisTeam extends Notification implements ShouldQueue
         return ['mail'];
     }
 
-
     public function toMail($notifiable)
     {
         $url = url('admin/hfr-dhis-exchange/logs');

@@ -72,11 +72,15 @@ class HfrDhisController extends Controller
                 $log->level_status = $level_status;
                 $log->level_option_status = $level_option_status;
                 $log->save();
-    
+
+
+                //send notification email to dhis team
+                $dhis = new HfrDhis;
+                $dhis->sendEmailtoDhisTeamForNewFacility($request->facility_name, $request->ward_id);
+
                 return 'Created';
             }
-            
-
+        
         } catch (RequestException $e) {
             $log = new DhisLog;
             if ($e->hasResponse()) {
@@ -158,6 +162,11 @@ class HfrDhisController extends Controller
                 $log->level_option_status = $level_option_status;
                 $log->save();
 
+                
+                //send notification email to dhis team
+                $dhis = new HfrDhis;
+                $dhis->sendEmailtoDhisTeamForUpdatedFacility($data['facility_name'], $data['ward_id']);
+
                 return 'Updated';               
     
             } catch (RequestException $e) {
@@ -190,7 +199,7 @@ class HfrDhisController extends Controller
     public function test(){
      
         $dhis = new HfrDhis;
-        $data= $dhis->sendEmailtoDhisTeamForNewFacility('Beatus K','Abia','Aba North','Juju');
+        $data= $dhis->sendEmailtoDhisTeamForDeletedFacility('Fomalo Health Center','10014');
         dd($data);
 
         $client = new Client([

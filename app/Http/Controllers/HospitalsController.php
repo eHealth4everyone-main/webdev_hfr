@@ -64,8 +64,6 @@ class HospitalsController extends Controller
     
     public function store(Request $request)
     {
-        dd($request->all());
-
         $request->validate([
             'registration_no'=>'nullable|max:20',
             'start_date'=>'required|date',

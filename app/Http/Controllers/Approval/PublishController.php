@@ -66,7 +66,9 @@ class PublishController extends Controller
         $hosp = HospitalHistory::find($request->id);
         $facility_name = $hosp['facility_name'];
         $state_id = $hosp['state_id'];
+        $ward_id = $hosp['ward_id'];
         $mail_subject="";
+
 
         if($request->action == "approve"){
             if($request->requested_action == "CREATE FACILITY"){
@@ -74,21 +76,21 @@ class PublishController extends Controller
                 $message = "Facility Published";
                 $action="Create Published";
                 $mail_subject = "New Facility Created";
-                $mail_message = "New facility: '". $facility_name. "' is created";
+                $mail_message = "New facility: '". $facility_name. "' have been created";
             }
             elseif($request->requested_action == "UPDATE FACILITY"){
                 $status_id = 13;
                 $message = "Facility Update Published";
                 $action="Update Published";
                 $mail_subject = "Facility Updated";
-                $mail_message = "Facility: '". $facility_name. "' is updated";
+                $mail_message = "Facility: '". $facility_name. "' have been updated.";
             }
             else{
                 $status_id = 20;
                 $message = "Facility Deleted";
                 $action="Delete Published";
                 $mail_subject = "Facility Deleted";
-                $mail_message = "Facility: '". $facility_name. "' is deleted";                
+                $mail_message = "Facility: '". $facility_name. "' have been deleted.";                
             }
         }
 
@@ -215,25 +217,32 @@ class PublishController extends Controller
 
         session()->flash("alert-success", $message);
 
-        return redirect()->route('publish.pending');
+        //******************************************************************************************************
+        // HFR DHIS 2 EXCHANGE
+        //******************************************************************************************************
+        //after publishing new facility, create a facility in dhis2 and send notifcation
+        if ($status_id == 6){
+            return view('dhis.store',compact('hosp','message'));
+        }
+        elseif($status_id == 13){  //after publishing facility updates, send updates to dhis2 and send notifcation
+            $dhis = new HfrDhis;
+            $data = $dhis->getDhisUpdatedValues($hosp, $request->id);
+            $id = $request->id;
 
-        // if ($status_id == 6){
-        //     return view('dhis.store',compact('hosp','message'));
-        // }
-        // elseif($status_id == 13){
-        //     $dhis = new HfrDhis;
-        //     $data = $dhis->getDhisUpdatedValues($hosp, $request->id);
-        //     $id = $request->id;
-
-        //     if ($data != 'false'){
-        //         return view('dhis.update',compact('data','id','message'));
-        //     }else{
-        //         return redirect()->route('publish.pending');
-        //     }
-
-        // }else{
-        //     return redirect()->route('publish.pending');
-        // }
+            if ($data != 'false'){
+                return view('dhis.update',compact('data','id','message'));
+            }else{
+                return redirect()->route('publish.pending');
+            }
+        }else{  
+            //after publishing delete request,  send notification to dhis teaam
+            $dhis = new HfrDhis;
+            $dhis->sendEmailtoDhisTeamForDeletedFacility($facility_name, $ward_id);
+            return redirect()->route('publish.pending');
+        }
+        //******************************************************************************************************
+        // HFR DHIS 2 EXCHANGE END..
+        //******************************************************************************************************
     }
 
    

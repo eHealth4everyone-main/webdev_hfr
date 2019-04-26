@@ -8,8 +8,11 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7;
 use GuzzleHttp\Exception\RequestException;
 use App\User;
-use App\Notifications\sendNewFacilityEmailtoDhisTeam;
 use Notification;
+use App\Notifications\sendNewFacilityEmailtoDhisTeam;
+use App\Notifications\sendUpdateFacilityEmailtoDhisTeam;
+use App\Notifications\sendDeleteFacilityEmailtoDhisTeam;
+
 
 
 class HfrDhis extends Model
@@ -376,6 +379,8 @@ class HfrDhis extends Model
             }
 
             $dataArray['updates'] = $data;
+            $dataArray['facility_name'] = $hosp['facility_name'];
+            $dataArray['ward_id'] = $hosp['ward_id'];
             if (count($orgUnitGroups) > 0){
                 $dataArray['groups'] = $orgUnitGroups;
             }else{
@@ -391,14 +396,44 @@ class HfrDhis extends Model
 
     }
 
-    public function sendEmailtoDhisTeamForNewFacility($name,$state,$lga,$ward){
-       
-        // $users = User::permission('Receive DHIS2 Notifications')->where('state_id',104)->get();
-        $users = User::permission('Receive DHIS2 Notifications')->get();
-        Notification::send($users, new sendNewFacilityEmailtoDhisTeam($name,$state,$lga,$ward));
+    public function sendEmailtoDhisTeamForNewFacility($name,$ward_id){
+        $ward = DB::table('wards')
+                ->where('id',$ward_id)
+                ->get();
 
+        $state = $ward[0]->state;
+        $lga = $ward[0]->lga;
+        $ward_name = $ward[0]->name;
+
+        $users = User::permission('Receive DHIS2 Notifications')->get();
+        Notification::send($users, new sendNewFacilityEmailtoDhisTeam($name,$state,$lga,$ward_name));
     }
 
+    public function sendEmailtoDhisTeamForUpdatedFacility($name,$ward_id){
+        $ward = DB::table('wards')
+                ->where('id',$ward_id)
+                ->get();
+
+        $state = $ward[0]->state;
+        $lga = $ward[0]->lga;
+        $ward_name = $ward[0]->name;
+
+        $users = User::permission('Receive DHIS2 Notifications')->get();
+        Notification::send($users, new sendUpdateFacilityEmailtoDhisTeam($name,$state,$lga,$ward_name));
+    }
+
+    public function sendEmailtoDhisTeamForDeletedFacility($name,$ward_id){
+        $ward = DB::table('wards')
+                ->where('id',$ward_id)
+                ->get();
+
+        $state = $ward[0]->state;
+        $lga = $ward[0]->lga;
+        $ward_name = $ward[0]->name;
+
+        $users = User::permission('Receive DHIS2 Notifications')->get();
+        Notification::send($users, new sendDeleteFacilityEmailtoDhisTeam($name,$state,$lga,$ward_name));
+    }
 
     //temporary method, to be deleted
     public function sendUPdates($data, $id){

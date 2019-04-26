@@ -17,7 +17,7 @@ DHIS2 Data Exchange Log
           <th>Facility Name</th>
           <th>HFR ID</th>
           <th>DHIS2 UID</th>
-          <th>Facility</th>
+          <th>Facility Information</th>
           <th>Ownership</th>
           <th>Level of Care </th>
           <th>Level of Care Option</th>

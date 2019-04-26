@@ -10,9 +10,9 @@ HFR-DHIS2 Exchange
 @section("content")
 <div class="box">
   <div class="box-body">
-    <div class="alert alert-success alert-dismissible">
+    {{-- <div class="alert alert-success alert-dismissible">
         <h4><i class="icon fa fa-check"></i>   {{ $message }}</h4>
-    </div>
+    </div> --}}
    
     <div id='updating'>
         <h4>Updating DHIS2. Please wait...</h4>

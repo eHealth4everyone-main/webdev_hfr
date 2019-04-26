@@ -180,7 +180,7 @@
  
 <script src="{{asset("design/js/jquery.scrollUp.min.js")}}"></script>
         
-<script src="{{asset("design/js/main.js")}}"></script>
+{{-- <script src="{{asset("design/js/main.js")}}"></script> --}}
 <script src="{{asset("dist/js/select2.full.min.js")}}"></script>
 
         <script>
