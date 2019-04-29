@@ -17,15 +17,15 @@ class AdminHomeController extends Controller
 
     public function index(){
 
-        $analyticsData = Analytics::fetchVisitorsAndPageViews(Period::days(30));
-        
+        $analyticsData = Analytics::fetchTotalVisitorsAndPageViews(Period::days(30));
+      
         $dates = array();
         $visitors = array();
         foreach ($analyticsData as $a){
-            $dates[]=$a['date']->toDateString();
-            $visitors[] = $a['visitors'];
+                $dates[]=$a['date']->toDateString();
+                $visitors[] = $a['visitors'];
         };
-       
+ 
 
         $num_downloads = DB::select("SELECT date_format(created_at,'%b %y') as name,month(created_at) mon,year(created_at) year, COUNT(id) y 
                 FROM downloads group by name,mon,year order by year,mon asc  limit 12");
