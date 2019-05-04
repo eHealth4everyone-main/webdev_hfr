@@ -23,7 +23,7 @@ class Hospital extends Model implements Auditable
         return $str;
     }
 
-    public function generateUniqueID($lga_id,$type,$level,$owner){
+    public function generateFacilityCode($lga_id,$type,$level,$owner){
         //get state and lga code
         $state_lga = DB::select("Select concat(state_code,'/',lga_code) code from ou_lgas where 
                     id = ". $lga_id ."");

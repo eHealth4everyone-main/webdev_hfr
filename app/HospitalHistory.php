@@ -28,7 +28,7 @@ class HospitalHistory extends Model implements Auditable
         return $str;
     }
 
-    public function generateUniqueID($lga_id,$type,$level,$owner){
+    public function generateFacilityCode($lga_id,$type,$level,$owner){
         //get state and lga code
         $state_lga = DB::select("Select concat(state_code,'/',lga_code) code from ou_lgas where 
                     id = ". $lga_id ."");
@@ -58,11 +58,18 @@ class HospitalHistory extends Model implements Auditable
         return $id;
     }
 
-    public function getUpdateNumber($state_id){
-        $update = DB::select("Select update_no+1 num from hs_hospitals_history where id = ". $state_id ."");
+    public function generateUID(){
+        $id = DB::select('SELECT FLOOR((RAND() * (87654321-12345678))+12345678) AS id
+                    FROM hs_hospitals_history
+                    WHERE "id" NOT IN (SELECT id FROM hs_hospitals_history)
+                    LIMIT 1');
+                   
 
-        return $update[0]->num;
+        $uid = $id[0]->id;
+
+        return (int)$uid;
     }
+
     
     function array_equal($a, $b) {
         return (is_array($a) && is_array($b) && array_diff($a, $b) === array_diff($b, $a));

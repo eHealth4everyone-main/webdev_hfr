@@ -82,7 +82,7 @@ class LabController extends Controller
         $hosp = new HospitalHistory;
         $lab = new Laboratory;
         $lab->fill($request->all());
-        $lab->unique_id = $hosp->generateUniqueID($request->lga_id,'3',$request->facility_level_id, $request->ownership_id);
+        $lab->unique_id = $hosp->generateFacilityCode($request->lga_id,'3',$request->facility_level_id, $request->ownership_id);
         $lab->start_date = $start_date;
         $lab->operational_days = $hosp->arrayValuesTostring($request->operational_days);
 

@@ -22,11 +22,22 @@ class MyApprovalsCountComposer
 
         public function compose(View $view)
         {
-                $state = Auth::user()->state_id;
+                $state_id = Auth::user()->state_id;
+                $lga_id = Auth::user()->state_id;
+
                 
-                $verify = $this->hosp::whereIn('status_id',[1,5,8,12,15,19])->where('state_id', $state)->count();
-                $validate = $this->hosp::whereIn('status_id',[2,7,9,14,16,21])->where('state_id',$state)->count();
-                $publish = $this->hosp::whereIn('status_id',[4,11,18])->where('state_id',$state)->count();
+                $verify = $this->hosp::whereIn('status_id',[1,5,8,12,15,19])
+                                ->where('state_id', $state_id)
+                                ->where('lga_id', 'like', '%' .  Auth::user()->lga_id . '%')
+                                ->count();
+
+                $validate = $this->hosp::whereIn('status_id',[2,7,9,14,16,21])
+                                 ->where('state_id',$state_id)
+                                 ->count();
+
+                $publish = $this->hosp::whereIn('status_id',[4,11,18])
+                                ->where('state_id', 'like', '%' .  Auth::user()->state_id . '%')
+                                ->count();
 
                 //get the total count to display in approvals menu depending on user access to approvals
                 $count = 0;

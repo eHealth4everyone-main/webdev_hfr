@@ -16,24 +16,37 @@ class AdminHomeController extends Controller
     }
 
     public function index(){
-
-        $analyticsData = Analytics::fetchTotalVisitorsAndPageViews(Period::days(30));
+        //national level dashabaord
+        if ( Auth::user()->state_id == 1){
+            $analyticsData = Analytics::fetchTotalVisitorsAndPageViews(Period::days(30));
       
-        $dates = array();
-        $visitors = array();
-        foreach ($analyticsData as $a){
-                $dates[]=$a['date']->toDateString();
-                $visitors[] = $a['visitors'];
-        };
- 
+            $dates = array();
+            $visitors = array();
+            foreach ($analyticsData as $a){
+                    $dates[]=$a['date']->toDateString();
+                    $visitors[] = $a['visitors'];
+            };
+     
+    
+            $num_downloads = DB::select("SELECT date_format(created_at,'%b %y') as name,month(created_at) mon,year(created_at) year, COUNT(id) y 
+                    FROM downloads group by name,mon,year order by year,mon asc  limit 12");
+    
+           
+            $facility_status = DB::table('facility_status_state_pivot')->get();
+    
+            return view("dashboard.federal",compact('num_downloads','facility_status','dates','visitors'));
 
-        $num_downloads = DB::select("SELECT date_format(created_at,'%b %y') as name,month(created_at) mon,year(created_at) year, COUNT(id) y 
-                FROM downloads group by name,mon,year order by year,mon asc  limit 12");
+        }
+        else{ //state level dashboard
+                       
+            $facility_status = DB::table('facility_status_lga_pivot')
+                    ->where('state_id', 'like', '%' .  Auth::user()->state_id . '%')
+                    ->get();
+            
+            return view("dashboard.state",compact('facility_status'));
 
-       
-        $facility_status = DB::table('facility_status_state_pivot')->get();
-
-        return view("admin_dashboard",compact('num_downloads','facility_status','dates','visitors'));
+        }
+        
     }
 
 

@@ -25,32 +25,36 @@ class HospitalsController extends Controller
   
     public function index()
     {
+
         $facilities = DB::table('hospital_details')
-            ->Where('state_id', 'like', '%' .  Auth::user()->state_id . '%')
+            ->where('state_id', 'like', '%' .  Auth::user()->state_id . '%')
+            ->where('lga_id', 'like', '%' .  Auth::user()->lga_id . '%')
             ->orderBy('state')
             ->orderBy('lga')
             ->orderBy('facility_name')
             ->paginate(20);
 
-            //get data set for download option and cache it
-            $download = DB::table('hospital_details')
+        //get data set for download option and cache it
+        $download = DB::table('hospital_details')
                 ->select('unique_id','registration_no','start_date','facility_name','state','lga','ward','ownership',
                 'facility_level','longitude','latitude','operation_status','registration_status','license_status')
                 ->Where('state_id', 'like', '%' .  Auth::user()->state_id . '%')
+                ->where('lga_id', 'like', '%' .  Auth::user()->lga_id . '%')
                 ->orderBy('state')
                 ->orderBy('lga')
                 ->orderBy('facility_name')
                 ->get();
-            Cache::put('displayed_facilities', $download, 60);
-            
-            
-            list($state_id, $lga_id, $ward_id,$facility_name, $geo_codes, $ward_id, 
-            $facility_level_id , $ownership_id,$operational_status_id,$registration_status_id,
-            $license_status_id,$searched) = [1,1,0,"",0,0,0,0,0,0,0,0,0];
-            
-            return view('hospitals.index',compact('facilities',
-            'state_id', 'lga_id','facility_name', 'geo_codes', 'ward_id','facility_level_id', 
-            'ownership_id','operational_status_id','registration_status_id', 'license_status_id','searched'));  
+
+        Cache::put('displayed_facilities', $download, 60);
+        
+        
+        list($state_id, $lga_id, $ward_id,$facility_name, $geo_codes, $ward_id, 
+        $facility_level_id , $ownership_id,$operational_status_id,$registration_status_id,
+        $license_status_id,$searched) = [1,1,0,"",0,0,0,0,0,0,0,0,0];
+        
+        return view('hospitals.index',compact('facilities',
+        'state_id', 'lga_id','facility_name', 'geo_codes', 'ward_id','facility_level_id', 
+        'ownership_id','operational_status_id','registration_status_id', 'license_status_id','searched'));  
     }
        
   
@@ -64,6 +68,7 @@ class HospitalsController extends Controller
     
     public function store(Request $request)
     {
+   
         $request->validate([
             'registration_no'=>'nullable|max:20',
             'start_date'=>'required|date',
@@ -126,7 +131,8 @@ class HospitalsController extends Controller
 
         $hosp = new HospitalHistory;
         $hosp->fill($request->all());
-        $hosp->unique_id = $hosp->generateUniqueID($request->lga_id,'1',$request->facility_level_id,$request->ownership_id);
+        $hosp->id = $hosp->generateUID();
+        $hosp->unique_id = $hosp->generateFacilityCode($request->lga_id,'1',$request->facility_level_id,$request->ownership_id);
         $hosp->start_date = $start_date;
         $hosp->close_date = $close_date;
         $hosp->requested_at = Carbon::now()->format('Y-m-d H:i:s');

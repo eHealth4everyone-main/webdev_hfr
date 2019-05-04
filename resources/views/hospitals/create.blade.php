@@ -112,9 +112,9 @@
                                             
                                         </select>
                                         @if ($errors->has('lga_id'))
-                                        <span class="help-block">
-                                            {{ $errors->first('lga_id') }}
-                                        </span>                                 
+                                            <span class="help-block">
+                                                {{ $errors->first('lga_id') }}
+                                            </span>                                 
                                         @endif
                                     </div>
                                     
@@ -956,6 +956,7 @@
     
     //get lgas
     var stateID= {{Auth::user()->state_id}};
+    var lgaID= {{Auth::user()->lga_id}};
     var _token = $('input[name="_token"]').val();
     $.ajax({
         url:"{{route('getLgaList')}}",
@@ -964,7 +965,27 @@
         success:function(result)
         {
             $('#lga_id').html(result);
-            
+
+            //if a user is assigned specific lga, allow to select only that lga
+            if(lgaID !== 1){
+                $('#lga_id option[value !=' + lgaID + ']').remove();
+                $('#lga_id').val(lgaID);
+
+                //populate wards for that lga
+                var _token = $('input[name="_token"]').val();
+                $.ajax({
+                    url:"{{route('getWardList')}}",
+                    method:"POST",
+                    data:{lgaId:lgaID,_token:_token},
+                    success:function(result)
+                    {
+                        $('#ward_id').html(result);
+                        $('#ward_id').val({{ old('ward_id')  }});
+                    }         
+                })
+            }
+
+            //if the validation fails and return back to the form
             var lga = '{{ old('lga_id') }}';
             if(lga !== '') { //if old value is not empty
                 $('#lga_id').val(lga);
@@ -982,6 +1003,7 @@
                     }         
                 })
             }
+
         }         
     })
     

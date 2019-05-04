@@ -951,6 +951,7 @@
     $("#registration_status_id").val("{{$hosp->registration_status_id}}").change();
     $("#license_status_id").val("{{$hosp->license_status_id}}").change();
 
+    var assignedLgaID= {{Auth::user()->lga_id}};
     
     //get lgas
     var stateID= {{$hosp->state_id}};
@@ -963,8 +964,14 @@
         {
             $('#lga_id').html(result);
             $("#lga_id").val({{$hosp->lga_id}});
+
+            //remove lgas not assigned
+            if(assignedLgaID !== 1){
+                $('#lga_id option[value !=' + assignedLgaID + ']').remove();
+            }
         }         
     })
+
     //get wards
     var lgaID = {{$hosp->lga_id}};
     var _token = $('input[name="_token"]').val();
@@ -978,6 +985,7 @@
             $('#ward_id').val({{$hosp->ward_id}});
         }         
     })
+
     //ownership type
     var own_id = "{{$hosp->ownership_id}}";
     if(own_id != "") 

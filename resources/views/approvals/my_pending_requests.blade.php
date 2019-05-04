@@ -140,7 +140,7 @@ My Pending Requests
                       </button>
                   </a>
             @else
-                  NIL
+                  {{-- NIL --}}
             @endif
     
           </td>

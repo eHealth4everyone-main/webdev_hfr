@@ -71,7 +71,7 @@ class PharmacyController extends Controller
         $hosp = new HospitalHistory;
         $ph = new Pharmacy;
         $ph->fill($request->all());
-        $ph->unique_id = $hosp->generateUniqueID($request->lga_id,'2','0',$request->ownership_id);
+        $ph->unique_id = $hosp->generateFacilityCode($request->lga_id,'2','0',$request->ownership_id);
         $ph->start_date = $start_date;
         $ph->operational_days = $hosp->arrayValuesTostring($request->operational_days);
         
