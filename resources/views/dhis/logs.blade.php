@@ -2,7 +2,7 @@
 
 
 @section('content-title')
-DHIS2 Data Exchange Log
+DHIS2 Data Exchange Logs
 
 @endsection
 
@@ -15,13 +15,14 @@ DHIS2 Data Exchange Log
         <tr>
           <th>ID</th>
           <th>Facility Name</th>
-          <th>HFR ID</th>
-          <th>DHIS2 UID</th>
-          <th>Facility Information</th>
+          <th>HFR UId</th>
+          <th>DHIS2 UId</th>
+          <th>Facility </th>
           <th>Ownership</th>
           <th>Level of Care </th>
           <th>Level of Care Option</th>
           <th>Date</th>
+          <th>Published By</th>
           <th>Action</th>
         </tr>
       </thead>
@@ -38,6 +39,7 @@ DHIS2 Data Exchange Log
           <td>{{$log->level_status}}</td>
           <td>{{$log->level_option_status}}</td>
           <td> {{ Carbon\Carbon::parse($log->created_at)->toFormattedDateString() }}</td>
+          <td>{{ $log->firstname.' '.$log->lastname }}</td>
           <td>
             <a href="#">
               <button class="btn btn-success btn-sm"  type="button" data-toggle="modal" data-target="#view_details"

@@ -216,6 +216,7 @@ class PublishController extends Controller
         $notify->sendPublicationNotification($mail_message,$request->action,$mail_subject,$state_id);
 
         session()->flash("alert-success", $message);
+        
 
         //******************************************************************************************************
         // HFR DHIS 2 EXCHANGE

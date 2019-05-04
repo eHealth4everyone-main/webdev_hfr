@@ -71,6 +71,7 @@ class HfrDhisController extends Controller
                 $log->ownership_status = $ownership_status;
                 $log->level_status = $level_status;
                 $log->level_option_status = $level_option_status;
+                $log->user_id = Auth::user()->id;
                 $log->save();
 
 
@@ -87,11 +88,13 @@ class HfrDhisController extends Controller
                 $response =  Psr7\str($e->getResponse());
                 $log->hfr_id = $request->id;
                 $log->facility_status = $response;
+                $log->user_id = Auth::user()->id;
                 $log->save();
                 return "Exception Error";
             }else {
                 $log->hfr_id = $request->id;
                 $log->facility_status = "Not created due to network error";
+                $log->user_id = Auth::user()->id;
                 $log->save();
                 return "Exception Error";
             }
@@ -160,6 +163,7 @@ class HfrDhisController extends Controller
                 $log->ownership_status = $ownership_status;
                 $log->level_status = $level_status;
                 $log->level_option_status = $level_option_status;
+                $log->user_id = Auth::user()->id;
                 $log->save();
 
                 
@@ -175,11 +179,13 @@ class HfrDhisController extends Controller
                     $response =  Psr7\str($e->getResponse());
                     $log->hfr_id = $id;
                     $log->facility_status = $response;
+                    $log->user_id = Auth::user()->id;
                     $log->save();
                     return "Exception Error";
                 }else {
                     $log->hfr_id = $id;
                     $log->facility_status = "Not updated due to network error";
+                    $log->user_id = Auth::user()->id;
                     $log->save();
                     return "Exception Error";
                 }
@@ -189,6 +195,7 @@ class HfrDhisController extends Controller
             $log = new DhisLog;
             $log->hfr_id = $id;
             $log->facility_status = $uid;
+            $log->user_id = Auth::user()->id;
             $log->save();
             return "Exception Error";
         }
@@ -225,9 +232,7 @@ class HfrDhisController extends Controller
 
 
     public function logs(){
-        $logs = DB::table('dhis_log_details')
-                    ->orderby('updated_at','desc')
-                    ->paginate(20);
+        $logs = DB::table('dhis_log_details')->paginate(100);
 
         return view('dhis.logs', compact("logs")); 
     }

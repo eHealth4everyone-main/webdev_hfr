@@ -20,13 +20,11 @@ class sendDeleteFacilityEmailtoDhisTeam extends Notification implements ShouldQu
         $this->lga = $lga;
         $this->ward = $ward;
     }
-
    
     public function via($notifiable)
     {
         return ['mail'];
     }
-
 
     public function toMail($notifiable)
     {

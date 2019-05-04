@@ -196,7 +196,7 @@
                     @if(auth()->user()->hasPermissionTo(66))
                         <a href="{{route('dhis.logs')}}">
                             <i class="fa fa-exchange"></i>
-                            <span>DHIS2 Exchange Log</span>
+                            <span>DHIS2 Exchange</span>
                         </a>
                     @endif
                 </li>
