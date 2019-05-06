@@ -27,14 +27,19 @@ class AdminHomeController extends Controller
                     $visitors[] = $a['visitors'];
             };
      
-    
             $num_downloads = DB::select("SELECT date_format(created_at,'%b %y') as name,month(created_at) mon,year(created_at) year, COUNT(id) y 
                     FROM downloads group by name,mon,year order by year,mon asc  limit 12");
     
            
             $facility_status = DB::table('facility_status_state_pivot')->get();
     
-            return view("dashboard.federal",compact('num_downloads','facility_status','dates','visitors'));
+            $completenes = DB::table('signature_domain_completenes')
+                    ->select(DB::raw('state as name, CAST(avg(score) as unsigned) as y'))
+                    ->groupBy('state')
+                    ->orderBy('state')
+                    ->get();
+
+            return view("dashboard.federal",compact('num_downloads','facility_status','dates','visitors','completenes'));
 
         }
         else{ //state level dashboard
@@ -53,6 +58,16 @@ class AdminHomeController extends Controller
 
         }
         
+    }
+
+    public function completeness(Request $request){
+        $completenes = DB::table('signature_domain_completenes')
+                    ->select(DB::raw('lga as name, CAST(score as unsigned) as y'))
+                    ->where('state',$request->state)
+                    ->orderBy('lga')
+                    ->get();
+
+        return $completenes;
     }
 
 

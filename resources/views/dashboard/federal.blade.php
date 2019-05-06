@@ -18,6 +18,15 @@
                 </div>
          
         </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box box-default">
+                        <div id="completeness"></div>
+                </div>
+            </div>
+        </div>
+
         <div class="row">
                 <div class="col-md-12">
                     <div class="box box-default">
@@ -81,6 +90,31 @@
      
   </div>
 
+
+  
+{{-- Modal chart drill down  --}}
+<div class="modal fade" id="showstate" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"  >
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel"></h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div id="state_summary"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">   
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- end --}}
  
 @endsection 
 
@@ -191,7 +225,7 @@ Highcharts.chart('visitors', {
     },
 });
 
-//downloads
+    //downloads
     Highcharts.chart('no_downloads', {
         chart: {
             type: 'column'
@@ -199,7 +233,6 @@ Highcharts.chart('visitors', {
         title: {
             text: 'Monthly Download Requests'
         },
-        colors: ['#a6c961' ],
         xAxis: {
             type: 'category'
         },
@@ -210,12 +243,129 @@ Highcharts.chart('visitors', {
         },
         series: [{
             name: 'Downloads',
+            colorByPoint: true,
             data: @json($num_downloads)
             }],
 
         credits: {
                 enabled: false
         },
+    });
+
+    //completenes
+    Highcharts.chart('completeness', {
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Completeness of Signature Domain'
+        },
+        subtitle: {
+            text: ''
+        },
+        colors: ['#3366AA' ],
+        xAxis: {
+            type: 'category'
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: ''
+            }
+        },
+        tooltip: {
+            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+            pointFormat: '<tr><td style="color:{series.color};padding:0">Percent: </td>' +
+                '<td style="padding:0"><b>{point.y:.1f} </b></td></tr>',
+            footerFormat: '</table>',
+            shared: true,
+            useHTML: true
+        },
+        plotOptions: {
+            column: {
+                pointPadding: 0.2,
+                borderWidth: 0,
+                dataLabels: {
+                    enabled: false
+                }
+            },
+            series: {
+                cursor: 'pointer',
+                point: {
+                    events: {
+                        click: function () {
+                            $("#state_summary").empty();
+                            $('#myModalLabel').text('Completeness of Signature Domain in '+this.name);
+                          
+                            $.ajax({
+                                url:"{{route('state.completeness')}}",
+                                method:"POST",
+                                data:{state:this.name, _token: "{{ csrf_token() }}"},
+                                success:function(result)
+                                {
+                                    Highcharts.chart('state_summary', {
+                                        chart: {
+                                            type: 'column'
+                                        },
+                                        title: {
+                                            text: ''
+                                        },
+                                        subtitle: {
+                                            text: ''
+                                        },
+                                        xAxis: {
+                                            type: 'category'
+                                        },
+                                        yAxis: {
+                                            min: 0,
+                                            title: {
+                                                text: ''
+                                            }
+                                        },
+                                        tooltip: {
+                                            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                                            pointFormat: '<tr><td style="color:{series.color};padding:0">Percent: </td>' +
+                                                '<td style="padding:0"><b>{point.y:.1f} </b></td></tr>',
+                                            footerFormat: '</table>',
+                                            shared: true,
+                                            useHTML: true
+                                        },
+                                        plotOptions: {
+                                            column: {
+                                                pointPadding: 0.2,
+                                                borderWidth: 0,
+                                                dataLabels: {
+                                                    enabled: false
+                                                }
+                                            }
+                                        },
+                                        credits: {
+                                            enabled: false
+                                        },
+                                        series: [{
+                                            name: 'LGAs',
+                                            data: result
+                                        }]
+                                    });
+
+                                
+                                    $('#showstate').modal('show');
+                                
+                                }//success ends         
+                            });
+                        }
+                    }
+                }
+            }
+        },
+        credits: {
+            enabled: false
+        },
+        series: [{
+            name: 'States',
+            colorByPoint: true,
+            data: @json($completenes)
+        }]
     });
 
 
