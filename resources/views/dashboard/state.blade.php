@@ -21,19 +21,12 @@
         <div class="row">
                 <div class="col-md-12">
                     <div class="box box-default">
-                            <div id="visitors"></div>
+                            <div id="completeness"></div>
                     </div>
                 </div>
          
         </div>
-      
-        <div class="row">
-                <div class="col-md-12">
-                    <div class="box box-default">
-                            <div id="no_downloads"></div>
-                    </div>
-                </div>
-        </div>
+
 
        <div class="row" hidden>
             <table  id="fac_status_table">
@@ -91,8 +84,8 @@
    
 
 <script>
-//facility status chart
-$('#fac_status_table').hide();
+    //facility status chart
+    $('#fac_status_table').hide();
     var data = @json($facility_status);
     var state = data[0]['state'];
 
@@ -149,7 +142,51 @@ $('#fac_status_table').hide();
   
     });
 
-
+    //completenes
+    Highcharts.chart('completeness', {
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Completeness of Signature Domain in ' + state
+        },
+        subtitle: {
+            text: ''
+        },
+        xAxis: {
+            type: 'category'
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: ''
+            }
+        },
+        tooltip: {
+            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+            pointFormat: '<tr><td style="color:{series.color};padding:0">Percent: </td>' +
+                '<td style="padding:0"><b>{point.y:.1f} </b></td></tr>',
+            footerFormat: '</table>',
+            shared: true,
+            useHTML: true
+        },
+        plotOptions: {
+            column: {
+                pointPadding: 0.2,
+                borderWidth: 0,
+                dataLabels: {
+                    enabled: false
+                }
+            }
+        },
+        credits: {
+            enabled: false
+        },
+        series: [{
+            name: 'LGAs',
+            data: @json($completenes)
+        }]
+    });
 
 
 

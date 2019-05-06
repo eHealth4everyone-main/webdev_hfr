@@ -199,7 +199,7 @@ Highcharts.chart('visitors', {
         title: {
             text: 'Monthly Download Requests'
         },
-        colors: ['#556B2F' ],
+        colors: ['#a6c961' ],
         xAxis: {
             type: 'category'
         },

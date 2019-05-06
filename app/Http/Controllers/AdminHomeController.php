@@ -42,8 +42,14 @@ class AdminHomeController extends Controller
             $facility_status = DB::table('facility_status_lga_pivot')
                     ->where('state_id', 'like', '%' .  Auth::user()->state_id . '%')
                     ->get();
-            
-            return view("dashboard.state",compact('facility_status'));
+
+            $completenes = DB::table('signature_domain_completenes')
+                    ->select(DB::raw('lga as name, CAST(score as unsigned) as y'))
+                    ->where('state_id',Auth::user()->state_id)
+                    ->orderBy('lga')
+                    ->get();
+
+            return view("dashboard.state",compact('facility_status','completenes'));
 
         }
         
