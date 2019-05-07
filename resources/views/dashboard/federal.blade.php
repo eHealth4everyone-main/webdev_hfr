@@ -263,7 +263,7 @@ Highcharts.chart('visitors', {
         subtitle: {
             text: ''
         },
-        colors: ['#3366AA' ],
+        colors: ['#003399' ],
         xAxis: {
             type: 'category'
         },
