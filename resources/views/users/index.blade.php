@@ -1,60 +1,72 @@
 @extends("layouts.master")
 
 @section('content-title')
-Users
-@if(auth()->user()->hasPermissionTo(18))
-  <button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#register">Register User</button>
-@endif
 
 @endsection
 
 @section("content")
+<div class="box box-default ">
+  <div class="box-header with-border">
+    <h3 class="box-title">Search</h3>
+
+    <div class="box-tools pull-right">
+      <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+      </button>
+    </div>
+  </div>
+  <!-- /.box-header -->
+  <div class="box-body">
+      <div class="box-header with-border">
+          <form class="form-horizontal"  action="{{route('users.search')}}" method="GET">
+              @csrf
+              
+          <div class="form-group">
+                <label class="col-sm-2 control-label">State Permission:</label>
+                <div class="col-md-2">
+                        <select class="form-control select2"  class="form-control" id="state" name="state"  required data-width="100%">
+                            @if (Auth::user()->state_id == 1 )
+                                <option value="1">All States</option>    
+                            @endif
+                                @foreach(getAssignedState() as $s)
+                                    <option value="{{$s->id}}">{{$s->name}}</option>
+                                @endforeach
+                        </select>
+                </div>
+                <label class="col-sm-1 control-label">Role :</label>
+                <div class="col-md-3">
+                        <select class="form-control select2"  class="form-control" id="role_id" name="role_id"   data-width="100%">
+                            <option value="0">--Select Role--</option>  
+                                @foreach(getRoles() as $s)
+                                    <option value="{{$s->id}}">{{$s->name}}</option>
+                                @endforeach
+                        </select>
+                </div>
+                <label class="col-sm-1 control-label">Status :</label>
+                <div class="col-md-2">
+                        <select class="form-control select2"  class="form-control" id="status" name="status"   data-width="100%">
+                            <option value="">--Select Status--</option>  
+                            <option value="-1">In Active</option>    
+                            <option value="1">Active</option>     
+                            <option value="0">Blocked</option>                              
+                        </select>
+                </div>
+
+                <div class="col-sm-1">
+                        <button type="submit" class="btn btn-success pull-right  btn-block btn-sm">Search</button>
+                </div> 
+            </div>
+  
+          </form>
+      </div>
+          
+  </div>
+  
+</div>
+
 <div class="box">
 
   <div class="box-body">
-      <form class="form-horizontal"  action="{{route('users.search')}}" method="GET">
-          @csrf
-  
-          <div class="form-group">
-              <label class="col-sm-1 control-label">State:</label>
-              <div class="col-md-3">
-                      <select class="form-control select2"  class="form-control" id="state" name="state"  required data-width="100%">
-                          @if (Auth::user()->state_id == 1 )
-                              <option value="1">All States</option>    
-                          @endif
-                              @foreach(getAssignedState() as $s)
-                                  <option value="{{$s->id}}">{{$s->name}}</option>
-                              @endforeach
-                      </select>
-              </div>
-              <label class="col-sm-1 control-label">Role :</label>
-              <div class="col-md-3">
-                      <select class="form-control select2"  class="form-control" id="role_id" name="role_id"   data-width="100%">
-                          <option value="0">--Select Role--</option>  
-                              @foreach(getRoles() as $s)
-                                  <option value="{{$s->id}}">{{$s->name}}</option>
-                              @endforeach
-                      </select>
-              </div>
-              <label class="col-sm-1 control-label">Status :</label>
-              <div class="col-md-2">
-                      <select class="form-control select2"  class="form-control" id="status" name="status"   data-width="100%">
-                          <option value="">--Select Status--</option>  
-                          <option value="-1">In Active</option>    
-                          <option value="1">Active</option>     
-                          <option value="0">Blocked</option>                              
-                      </select>
-              </div>
-  
-              <div class="col-sm-1">
-                      <button type="submit" class="btn btn-success pull-right  btn-block btn-sm">Search</button>
-              </div> 
-          </div>
-  
-        </form>
-        <hr>
-
-
+   
     <table id="table1" class="table table-bordered table-striped" style="width:100%">
       <thead>
         <tr>
@@ -101,11 +113,12 @@ Users
               @if ($user->status == -1)
                 <span class="label label-default"> Inactive</span>
               @endif
+
           </td>
           <td>{{$user->organisation}}</td>
           <td>{{$user->job_title}}</td>
           <td>
-    
+           
             @if(auth()->user()->hasPermissionTo(19))
               <a href="#">
                 <button class="btn btn-warning btn-sm" data-fname="{{$user->firstname}}" data-lname="{{$user->lastname}}"
@@ -131,7 +144,7 @@ Users
                 </a>
                 @endif
             @endif
-            </td>
+          </td>
           </tr>
           @endforeach
           
