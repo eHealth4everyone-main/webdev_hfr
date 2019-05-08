@@ -123,7 +123,7 @@ Users
           </td>
           <td>{{$user->organisation}}</td>
           <td>{{$user->job_title}}</td>
-          <td>
+          <td style='white-space: nowrap'>
     
             @if(auth()->user()->hasPermissionTo(19))
               <a href="#">
