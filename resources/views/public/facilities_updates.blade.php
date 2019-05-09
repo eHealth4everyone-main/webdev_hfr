@@ -16,7 +16,7 @@
             @csrf
 
             <div class="form-group">
-                 {{-- <label class="col-sm-3  control-label" >Facility Updates Report</label> --}}
+                 <label class="col-sm-3  control-label" >Facility Updates Report</label>
                 <div class="col-sm-10">
                     <select class="form-control select2" id="report" name="report" required>
                         <option value="">--Select Report--</option>
@@ -117,6 +117,8 @@
 </div> <!-- / -->
 
 
+<!-- Show facility details on click view in public facility list -->
+@include('hospitals.details_modal')
 
 @endsection 
 

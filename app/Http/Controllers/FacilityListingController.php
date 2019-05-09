@@ -550,10 +550,6 @@ class FacilityListingController extends Controller
             $report=$facilities->count()." Facilities were updated in the last 3 Month";
         }
 
-
-     
-
-
         
         return view('public.facilities_updates',compact('facilities','report'));     
     }

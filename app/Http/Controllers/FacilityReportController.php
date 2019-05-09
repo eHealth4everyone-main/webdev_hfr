@@ -32,7 +32,6 @@ class FacilityReportController extends Controller
         $to_date = new DateTime($to);
         $to_date->modify('+1 day');
       
-// dd($to,$to_date);
        //New Facilities
         if ($request->report == 1){
             $facilities = DB::table('hospital_details')
