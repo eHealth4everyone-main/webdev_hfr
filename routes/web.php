@@ -10,6 +10,8 @@ Route::middleware(["auth"])->group(function(){
 
             Route::get('administrator', 'AdminHomeController@index')->name('admin_home');
             Route::post('administrator/completeness', 'AdminHomeController@completeness')->name('state.completeness');
+            Route::post('administrator/facilitystatus', 'AdminHomeController@facilityStatus')->name('state.facilitystatus');
+
 
 
             require base_path('routes/hfrdhis.php');

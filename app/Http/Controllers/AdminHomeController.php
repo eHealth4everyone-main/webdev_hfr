@@ -70,5 +70,13 @@ class AdminHomeController extends Controller
         return $completenes;
     }
 
+    public function facilityStatus(Request $request){
+        $facility_status = DB::table('facility_status_lga_pivot')
+            ->where('state', $request->state)
+            ->get();
+
+        return $facility_status;
+    }
+
 
 }
