@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Cache;
 use App\Exports\HFExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Auth;
-
+use DateTime;
 
 class FacilityReportController extends Controller
 {
@@ -29,13 +29,16 @@ class FacilityReportController extends Controller
     {
         $from = date('Y-m-d', strtotime(str_replace('-', '/', $request->from_date)));
         $to = date('Y-m-d', strtotime(str_replace('-', '/', $request->to_date)));
-
+        $to_date = new DateTime($to);
+        $to_date->modify('+1 day');
+      
+// dd($to,$to_date);
        //New Facilities
         if ($request->report == 1){
             $facilities = DB::table('hospital_details')
             ->select('unique_id','registration_no','start_date','facility_name','alt_facility_name','state','lga','ward','ownership',
             'facility_level','longitude','latitude','operation_status','registration_status','license_status','created_at')
-            ->whereBetween('created_at', [$from, $to])
+            ->whereBetween('created_at', [$from, $to_date])
             ->Where('state_id', 'like', '%' .  Auth::user()->state_id . '%')
             ->orderBy('created_at')
             ->get();   
@@ -48,7 +51,7 @@ class FacilityReportController extends Controller
             $facilities = DB::table('hospital_details')
             ->select('unique_id','registration_no','start_date','facility_name','alt_facility_name','state','lga','ward','ownership',
             'facility_level','longitude','latitude','operation_status','registration_status','license_status','updated_at')
-            ->whereBetween('updated_at', [$from, $to])
+            ->whereBetween('updated_at', [$from, $to_date])
             ->Where('state_id', 'like', '%' .  Auth::user()->state_id . '%')
             ->orderBy('updated_at')
             ->get();   
@@ -61,7 +64,7 @@ class FacilityReportController extends Controller
             $facilities = DB::table('hospital_details_history')
             ->select('unique_id','registration_no','start_date','facility_name','alt_facility_name','state','lga','ward','ownership',
             'facility_level','longitude','latitude','operation_status','registration_status','license_status','updated_at')
-            ->whereBetween('updated_at', [$from, $to])
+            ->whereBetween('updated_at', [$from, $to_date])
             ->Where('state_id', 'like', '%' .  Auth::user()->state_id . '%')
             ->where('status_id',20)
             ->orderBy('updated_at')
