@@ -18,10 +18,19 @@ class ValidateController extends Controller
 {
     public function index()
     {
-        $pending  = DB::table('hospital_details_history')
+        
+        if(auth()->user()->hasPermissionTo('All LGAs')){
+            $pending  = DB::table('hospital_details_history')
             ->where('state_id', '=',Auth::user()->state_id)
             ->whereIn('status_id',[2,7,9,14,16,21])
             ->get();
+        }else{
+            $pending  = DB::table('hospital_details_history')
+            ->where('state_id', '=',Auth::user()->state_id)
+            ->whereIn('lga_id', auth()->user()->getDirectPermissions()->pluck('id')->toArray())
+            ->whereIn('status_id',[2,7,9,14,16,21])
+            ->get();
+        }  
 
         return view('approvals.pending_validation',compact('pending'));
     }

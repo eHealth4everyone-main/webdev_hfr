@@ -17,12 +17,22 @@ class VerifyController extends Controller
 {
     public function index()
     {
-        $pending = DB::table('hospital_details_history')
+      
+        if(auth()->user()->hasPermissionTo('All LGAs')){
+            $pending = DB::table('hospital_details_history')
             ->where('state_id', '=',Auth::user()->state_id)
-            ->where('lga_id', 'like', '%' .  Auth::user()->lga_id . '%')
             ->whereIn('status_id',[1,8,15,5,12,19])           
             ->orderby('updated_at','desc')
             ->get();
+        }else{
+            $pending = DB::table('hospital_details_history')
+            ->where('state_id', '=',Auth::user()->state_id)
+            ->whereIn('lga_id', auth()->user()->getDirectPermissions()->pluck('id')->toArray())
+            ->whereIn('status_id',[1,8,15,5,12,19])           
+            ->orderby('updated_at','desc')
+            ->get();
+        }
+          
      
         return view('approvals.pending_verify',compact('pending')); 
     }

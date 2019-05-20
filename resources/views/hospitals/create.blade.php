@@ -956,8 +956,9 @@
     
     //get lgas
     var stateID= {{Auth::user()->state_id}};
-    var lgaID= {{Auth::user()->lga_id}};
+    // var lgaID= {{Auth::user()->lga_id}};
     var _token = $('input[name="_token"]').val();
+
     $.ajax({
         url:"{{route('getLgaList')}}",
         method:"POST",
@@ -965,24 +966,39 @@
         success:function(result)
         {
             $('#lga_id').html(result);
+    
 
+        
             //if a user is assigned specific lga, allow to select only that lga
-            if(lgaID !== 1){
-                $('#lga_id option[value !=' + lgaID + ']').remove();
-                $('#lga_id').val(lgaID);
+            if({{ !auth()->user()->hasAnyPermission([1000]) }}){
+                var lgaPermission = "{{ implode(', ',auth()->user()->getDirectPermissions()->pluck('id')->toArray()) }}";
+                
+                if(lgaPermission.indexOf(',') >-1 ){ //if more than one lga
+                    $("#lga_id > option").each(function() {
+                        if(lgaPermission.indexOf(this.value) < 0 ){ 
+                            this.remove();
+                        }
+                    });
 
-                //populate wards for that lga
-                var _token = $('input[name="_token"]').val();
-                $.ajax({
-                    url:"{{route('getWardList')}}",
-                    method:"POST",
-                    data:{lgaId:lgaID,_token:_token},
-                    success:function(result)
-                    {
-                        $('#ward_id').html(result);
-                        $('#ward_id').val({{ old('ward_id')  }});
-                    }         
-                })
+                }else{ //only one lga
+                    $('#lga_id option[value !=' + lgaPermission + ']').remove();
+                    $('#lga_id').val(lgaPermission);
+
+                    //populate wards for that lga
+                    var _token = $('input[name="_token"]').val();
+                    $.ajax({
+                        url:"{{route('getWardList')}}",
+                        method:"POST",
+                        data:{lgaId:lgaPermission,_token:_token},
+                        success:function(result)
+                        {
+                            $('#ward_id').html(result);
+                            $('#ward_id').val({{ old('ward_id')  }});
+                        }         
+                    })
+                }
+
+               
             }
 
             //if the validation fails and return back to the form

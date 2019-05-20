@@ -104,11 +104,11 @@ Users
               @endif
           </td>
           <td>
-              @if ($user->lga_id == 1)
+              {{-- @if ($user->lga_id == 1)
                   All LGAs
-              @else
-                  {{ $user->lga->name}}
-              @endif
+              @else --}}
+                  {{ implode(', ',$user->getDirectPermissions()->pluck('name')->toArray()) }}
+              {{-- @endif --}}
           </td>
           <td>
               @if ($user->status == 1)
@@ -129,7 +129,8 @@ Users
               <a href="#">
                 <button class="btn btn-warning btn-sm" data-fname="{{$user->firstname}}" data-lname="{{$user->lastname}}"
                     data-username="{{$user->username}}" data-email="{{$user->email}}" data-id="{{$user->id}}" data-role="{{ implode(", ", $user->getRoleNames()->toArray()) }}"
-                    data-job="{{$user->job_title}}" data-org="{{$user->organisation}}" data-mobile="{{$user->mobile}}" data-state_id="{{$user->state_id}}" data-lga_id="{{$user->lga_id}}"
+                    data-job="{{$user->job_title}}" data-org="{{$user->organisation}}" data-mobile="{{$user->mobile}}" data-state_id="{{$user->state_id}}" 
+                    data-lga_id="{{ implode(',',$user->getDirectPermissions()->pluck('id')->toArray()) }}"  
                     type="button" data-toggle="modal" data-target="#editUser">Edit</button>
               </a>
             @endif
@@ -201,7 +202,7 @@ Users
                     success:function(result)
                     {
                         $('#lga_id').html(result);
-                        $('#lga_id').prepend('<option value="1">All LGAs</option>');
+                        $('#lga_id').prepend('<option value="1000">All LGAs</option>');
                     }         
                 })
             }
@@ -220,7 +221,7 @@ Users
                       success:function(result)
                       {
                           $('#lga_id1').html(result);
-                          $('#lga_id1').prepend('<option value="1">All LGAs</option>');
+                          $('#lga_id1').prepend('<option value="1000">All LGAs</option>');
                       }         
                   })
               }
@@ -236,12 +237,14 @@ Users
         var email=button.data('email')
         var mobile=button.data('mobile')
         var state_id=button.data('state_id')
-        var lga_id=button.data('lga_id')
+        var lga_permision=String(button.data('lga_id'))
         var job=button.data('job') 
         var org=button.data('org')   
         var role=button.data('role')  
+        var lgaPermissions = button.data('lgaPermission')
         var id=button.data('id')    
         var modal = $(this)
+      
 
         modal.find('.modal-body #firstname1').val(fname);
         modal.find('.modal-body #lastname1').val(lname);
@@ -254,35 +257,40 @@ Users
         modal.find('.modal-body #state_id1').val(state_id).change();
 
         var _token = $('input[name="_token"]').val();
-              $.ajax({
-                  url:"{{route('getRoleID')}}",
-                  method:"POST",
-                  data:{role:role, _token:_token},
-                  success:function(result)
-                  {
-                      $('#role1').val(result).change();
-                  }         
-              })
+        $.ajax({
+            url:"{{route('getRoleID')}}",
+            method:"POST",
+            data:{role:role, _token:_token},
+            success:function(result)
+            {
+                $('#role1').val(result).change();
+            }         
+        })
 
-        // if(state_id == 1)
-        // {
-        //     $('#lga_id1').prepend('<option value="1">All LGAs</option>');
-        //     $('#lga_id1').val(lga_id).change();
-        // }
-        // else{
-              var _token = $('input[name="_token"]').val();
-              $.ajax({
-                  url:"{{route('getLgaList')}}",
-                  method:"POST",
-                  data:{id:state_id, _token:_token},
-                  success:function(result)
-                  {
-                      $('#lga_id1').html(result);
-                      $('#lga_id1').prepend('<option value="1">All LGAs</option>');
-                      $('#lga_id1').val(lga_id).change();
-                  }         
-              })
-        // }
+
+        var _token = $('input[name="_token"]').val();
+        $.ajax({
+            url:"{{route('getLgaList')}}",
+            method:"POST",
+            data:{id:state_id, _token:_token},
+            success:function(result)
+            {
+                $("#lga_id1").empty();
+                $('#lga_id1').html(result);
+                $('#lga_id1').prepend('<option value="1000">All LGAs</option>');
+                      
+                $("#lga_id1 > option").each(function() {
+                    if(lga_permision.indexOf(this.value) >-1 ){ 
+                        this.selected = true;
+                    }
+                    if(this.text == '--Select LGA--' ){ 
+                        this.remove();
+                    }
+                });
+
+            }         
+        })
+  
 
  
       });//end edit

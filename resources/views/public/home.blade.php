@@ -354,10 +354,13 @@
                     //add facility details
                     google.maps.event.addListener(marker, 'click', (function(marker, i) {
                         return function() {
+                            var days = item.operational_days;
+                            var operational_days = days.replace(/\,/g, ", ");
+
                             $('#phone_number1').text(item.phone_number== null ? "" :item.phone_number);
                             $('#email_address1').text(item.email_address== null ? "" :item.email_address);
                             $('#website1').text(item.website== null ? "" :item.website);
-                            $('#operational_days1').text(item.operational_days== null ? "" :item.operational_days);
+                            $('#operational_days1').text(item.operational_days== null ? "" :operational_days);
                             $('#operational_hours1').text(item.operational_hours== null ? "" :item.operational_hours);
                             $('#operation_status1').text(item.operation_status== null ? "" :item.operation_status);
                             $('#regulatory_status1').text(item.regulatory_status== null ? "" :item.regulatory_status);

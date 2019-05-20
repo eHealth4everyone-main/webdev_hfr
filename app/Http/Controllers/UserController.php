@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\DB;
 use Auth;
 use Notification;
 use App\Notifications\SendEmailNewUser;
+use App\HospitalHistory;
+
 
 class UserController extends Controller
     {
@@ -38,8 +40,6 @@ class UserController extends Controller
                 'lga_id'=>'required',
                 'email' => 'required|string|email|max:255|unique:users',
             ]);
-        
-            $password = str_random(15);
 
             $user=User::create([
                 'firstname' => $data['firstname'],
@@ -47,16 +47,16 @@ class UserController extends Controller
                 'email' => $data['email'],
                 'mobile' => $data['mobile'],
                 'state_id' => $data['state_id'],
-                'lga_id' => $data['lga_id'],
                 'job_title' => $data['job'],
                 'status'=>'-1',
                 'organisation' => $data['organisation'],
-                'password' => Hash::make($password),
+                'password' => Hash::make('Nigeria@HFR20'),
             ]);
             
             $user->assignRole($data['role']);
+            $user->syncPermissions($request->lga_id);
 
-            $this->sendEmailtoUser($data['firstname'],$password, $data['email']);
+            $this->sendEmailtoUser($data['firstname'],'Nigeria@HFR20', $data['email']);
 
             session()->flash("alert-success", "User registered successfully!");
             return back();
@@ -75,7 +75,6 @@ class UserController extends Controller
 
     public function update(Request $request)
     {
-        
         $request->validate([
             'firstname1' => 'required|string|max:255',
             'lastname1' => 'required|string|max:255',
@@ -86,19 +85,20 @@ class UserController extends Controller
             'organisation1' => 'nullable|string|max:50',
         ]);
 
-        $data = $request->all();
-       
+        $hosp = new HospitalHistory;
+        $lgas = $hosp->arrayValuesTostring($request->lga_id1);
+
         $user = User::findOrFail($request->UserID);
-        $user->firstname = $data['firstname1'];
-        $user->lastname = $data['lastname1'];
-        $user->job_title = $data['job1'];
-        $user->organisation = $data['organisation1'];
-        $user->mobile = $data['mobile1'];
-        $user->state_id = $data['state_id1'];
-        $user->lga_id = $data['lga_id1'];
+        $user->firstname = $request->firstname1;
+        $user->lastname = $request->lastname1;
+        $user->job_title = $request->job1;
+        $user->organisation = $request->organisation1;
+        $user->mobile = $request->mobile1;
+        $user->state_id = $request->state_id1;
         $user->save();
 
-        $user->syncRoles($data['role1']);
+        $user->syncRoles($request->role1);
+        $user->syncPermissions($request->lga_id1);
 
         session()->flash("alert-success", "User updated successfully!");
         return back();
@@ -157,23 +157,8 @@ class UserController extends Controller
     public function profile()
     {       
         $users = Auth::user();
-        $roles=  $users->getRoleNames()->toArray();
-       
-        $role = implode(",",$roles);
 
-        $lst_states = Cache::remember('lst_states', 60, function () {
-            return DB::table('ou_states')
-                    ->select('id','name')
-                    ->orderByRaw('name ASC')
-                    ->get();
-        });
-
-        $lst_lgas = DB::table('ou_lgas')
-                    ->select('id','name')
-                    ->where('state_id',Auth::user()->state_id)
-                    ->get();
-
-        return view('users.userprofile', compact("users","role","lst_states","lst_lgas"));  
+        return view('users.userprofile', compact("users"));  
     }
 
     

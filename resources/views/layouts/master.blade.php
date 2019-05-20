@@ -58,11 +58,17 @@
                                     <li class="dropdown notifications-menu">
                                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                         <i class="fa fa-bell-o"></i>
-                                        <span class="label label-warning">{{ auth()->user()->unreadNotifications->count() }}</span>
+                                        <span class="label label-warning">
+                                                @if(auth()->user()->hasPermissionTo(59) or auth()->user()->hasPermissionTo(60) or auth()->user()->hasPermissionTo(61))
+                                                        {{ $approval_count[3] }}
+                                                 @endif
+                                        </span>
                                         </a>
                                         <ul class="dropdown-menu">
-                                        <li class="header">You have {{ auth()->user()->unreadNotifications->count() }} notifications</li>
-
+                                        {{-- <li class="header">You have {{ auth()->user()->unreadNotifications->count() }} notifications</li> --}}
+                                        @if($approval_count[3] == 0)
+                                            <li class="header">You have 0 notifications</li>
+                                        @endif
                                         <li>
                                             <!-- inner menu: contains the actual data -->
                                             <ul class="menu">                                               
@@ -74,7 +80,24 @@
                                                     @endif
                                                    
                                                 </li>
-                                               
+                                                @if(auth()->user()->hasPermissionTo(59) AND $approval_count[0]>0)
+                                                <li><a href="{{ route('verify.pending') }}">
+                                                    <i class="fa fa-check-circle text-aqua"></i> You have {{ $approval_count[0] }} pending verification(s)
+                                                    </a>
+                                                </li>
+                                                @endif
+                                                @if(auth()->user()->hasPermissionTo(60) AND $approval_count[1]>0)
+                                                    <li><a href="{{ route('validate.pending') }}">
+                                                        <i class="fa fa-check-circle text-blue"></i> You have {{ $approval_count[1] }} pending validation(s)
+                                                        </a>
+                                                    </li>
+                                                @endif
+                                                @if(auth()->user()->hasPermissionTo(61) AND $approval_count[2]>0)
+                                                    <li><a href="{{ route('publish.pending') }}">
+                                                        <i class="fa fa-check-circle text-green"></i> You have {{ $approval_count[2] }} pending publication(s)
+                                                        </a>
+                                                    </li>
+                                                @endif
                                               @foreach (auth()->user()->unreadNotifications as $notification)
                                                     <li>
                                                         @if ($notification->type == 'App\Notifications\CreateRequest')

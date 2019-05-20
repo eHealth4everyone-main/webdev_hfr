@@ -32,18 +32,18 @@
             <table  id="fac_status_table">
                     <thead>
                     <tr>
-                        <th></th>
-                        <th>New Facility Requests</th>
-                        <th>Update Requests</th>
-                        <th>Deletion Requests </th>
-                        <th>Verified Requests</th>
-                        <th>Validated Requests</th>
-                        <th>New Facility Published</th>
-                        <th>Update Request Published</th>
-                        <th>Deletion Request Published</th>
-                        <th>Rejected Verifications </th>
-                        <th>Rejected Validations</th>
-                        <th>Rejected Publications</th>
+                            <th></th>
+                            <th>New Facility Requests (Pending Verification)</th>
+                            <th>Update Requests (Pending Verification)</th>
+                            <th>Deletion Requests (Pending Verification)</th>
+                            <th>Verified Requests (Pending Validation)</th>
+                            <th>Validated Requests  (Pending Publication)</th>
+                            <th>New Facility Published</th>
+                            <th>Update Request Published</th>
+                            <th>Deletion Request Published</th>
+                            <th>Rejected Verifications </th>
+                            <th>Rejected Validations (Pending Verification)</th>
+                            <th>Rejected Publications (Pending Validation)</th>
                     </tr>
 
                 });

@@ -191,7 +191,7 @@ Hospitals and Clinics
                                 View
                                 </button>
                             </a> 
-                        @if (($fac->lga_id == Auth::user()->lga_id) OR (Auth::user()->lga_id == 1))                    
+                        @if (auth()->user()->hasAnyPermission([$fac->lga_id, 1000]))  {{-- check if user has permission on the LGA --}}                  
                             @if(auth()->user()->hasPermissionTo(3))
                             <a href="{{route('hospitals.edit',$fac->id)}}">
                                 <button class="btn btn-warning btn-sm"  type="button" >Edit</button>
@@ -211,6 +211,16 @@ Hospitals and Clinics
 
                             @endif
                         @endif
+                        @if(auth()->user()->hasPermissionTo(67))
+                            <a href="#">
+                                <button class="btn btn-primary btn-sm"  type="button"  data-toggle="modal" data-target="#admin_update"
+                                    data-id="{{$fac->id}}" data-alt_name="{{$fac->alt_facility_name}}" data-facility_name="{{$fac->facility_name}}" data-long="{{$fac->longitude}}"
+                                    data-lati="{{$fac->latitude}}" data-physical_location="{{$fac->physical_location}}" data-postal_address="{{$fac->postal_address}}"> 
+                                    Update
+                                </button>
+                            </a>
+                        @endif
+
                     </td>
                 </tr>
                 @endforeach
@@ -326,7 +336,75 @@ Hospitals and Clinics
         </div><!--/.modal-content -->
     </div>
 </div> <!--/.modal -->
-    
+
+{{-- modal admin update  --}}
+<div class="modal fade" id="admin_update" tabindex="-1" role="dialog">
+    <div class="modal-dialog " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Facility Information Correction</h4>
+                <div class='notifications top-right'></div>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{{route('hospitals.adminupdate')}}" >
+                    @csrf
+                    <input type="hidden" id="facility_id_x" name="facility_id_x">
+  
+                    <div class="panel-body">
+                            <div class="form-group row">
+                                <label for="reg_fac_name" class="col-sm-4 control-label">Registered Name: <font color="red">*</font> </label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control"  id="facility_name_x"  name="facility_name_x" required>    
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="reg_fac_name" class="col-sm-4 control-label">Alternate Name:</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control"  id="alt_facility_name_x"  name="alt_facility_name_x">    
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                    <label for="house_no" class="col-sm-4 control-label"> Physical Location:</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control"  id="physical_location_x" name="physical_location_x">
+                                    </div>
+                                    
+                            </div>
+                            
+                            <div class="form-group row">
+                                    <label for="street_name" class="col-sm-4 control-label"> Postal Address:</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control"  id="postal_address_x"  name="postal_address_x">
+                                    </div>
+                            </div>
+                            <div class="form-group row">
+                                    <label for="latitude" class="col-sm-4 control-label">Latitude:</label>
+                                    <div class="col-sm-8">
+                                            <input type="text" class="form-control"  id="latitude_x" name="latitude_x"  >
+                                    
+                                    </div>
+                            </div>
+                            <div class="form-group row">
+                                    <label for="longitude" class="col-sm-4 control-label">Longitude:</label>
+                                    <div class="col-sm-8">
+                                    <input type="text" class="form-control"  id="longitude_x" name="longitude_x">
+                                        
+                                    </div>
+                            </div>
+                        </div>
+                    
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Update</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+                
+            </div><!--modal body ends -->
+        </div><!--/.modal-content -->
+    </div>
+</div> <!--/.modal -->
+
 @endsection 
     
     
@@ -384,7 +462,7 @@ Hospitals and Clinics
         });
         
         $("#reset").click(function(){
-            $("#state_id").val(1).change();
+           
             $("#lga_id").val(1).change();
             $("#ward_id").val(0).change();
             $("#geo_codes").val(0).change();
@@ -408,8 +486,8 @@ Hospitals and Clinics
             $("#pediatrics").empty();
             $("#dental").empty();
 
-            $days = button.data('operational_days');
-            $operational_days = $days.replace(/\,/g, ", ");
+            var days = button.data('operational_days');
+            var operational_days = days.replace(/\,/g, ", ");
 
             modal.find('.modal-body #unique_id').text(button.data('unique_id'));
             modal.find('.modal-body #state_unique_id').text(button.data('state_unique_id'));
@@ -432,7 +510,7 @@ Hospitals and Clinics
             modal.find('.modal-body #alternate_number').text(button.data('alternate_number'));
             modal.find('.modal-body #email_address').text(button.data('email_address'));
             modal.find('.modal-body #website').text(button.data('website'));
-            modal.find('.modal-body #operational_days').text($operational_days);
+            modal.find('.modal-body #operational_days').text(operational_days);
             modal.find('.modal-body #operational_hours').text(button.data('operational_hours'));
             modal.find('.modal-body #operation_status').text(button.data('operation_status'));
             modal.find('.modal-body #registration_status').text(button.data('registration_status'));
@@ -507,6 +585,23 @@ Hospitals and Clinics
             modal.find('.modal-body #state_id_del').val(button.data('state_id_del'));
           
         });//end
+
+        //admin update
+        $('#admin_update').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget)
+            var modal = $(this)
+        
+            modal.find('.modal-body #facility_name_x').val(button.data('facility_name'));
+            modal.find('.modal-body #alt_facility_name_x').val(button.data('alt_name'));
+            modal.find('.modal-body #facility_id_x').val(button.data('id'));   
+            modal.find('.modal-body #latitude_x').val(button.data('lati'));
+            modal.find('.modal-body #longitude_x').val(button.data('long'));
+            modal.find('.modal-body #physical_location_x').val(button.data('physical_location'));
+            modal.find('.modal-body #postal_address_x').val(button.data('postal_address'));
+
+          
+        });//end
+        
         
     </script>
     

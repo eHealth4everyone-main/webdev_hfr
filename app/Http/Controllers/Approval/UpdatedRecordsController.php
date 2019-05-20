@@ -56,7 +56,7 @@ class UpdatedRecordsController extends Controller
        $lookup=array("Registration No"=>"registration_no","Commencement Date"=>"start_date","Facility Name"=>"facility_name","Alternate Facility Name"=>"alt_facility_name",
         "State"=>"state_id","LGA"=>"lga_id","Ward"=>"ward_id","Ownership"=>"ownership_id","Ownership Type"=>"ownership_type_id",
         "Hospital/ Clinic Level"=>"facility_level_id","Facility Level Options"=>"facility_level_option_id","Specialized Options"=>"facility_level_options_category_id",
-        "Latitude"=>"longitude","Longitude"=>"latitude","Postal Address"=>"postal_address","Phone Number"=>"phone_number","Facility Close Date"=>"close_date",
+        "Longitude"=>"longitude","Latitude"=>"latitude","Postal Address"=>"postal_address","Phone Number"=>"phone_number","Facility Close Date"=>"close_date",
         "Email Address"=>"email_address","Website"=>"website","Days of Operation"=>"operational_days","Hours of Operation"=>"operational_hours","Operation Status"=>"operational_status_id",
         "Registration Status"=>"registration_status_id","License Status"=>"license_status_id","Medical Doctors"=>"doctors","Pharmacists"=>"pharmacists","Out Patient"=>"outpatient",
         "Dentists"=>"dentist","Pharmacy Technicians"=>"pharmacy_technicians","Number of Nurses (Single Qualified)"=>"nurses","Laboratory Scientists"=>"lab_scientists","In Patient"=>"inpatient",

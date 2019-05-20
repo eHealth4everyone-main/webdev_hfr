@@ -56,7 +56,7 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'admin@hfr.health.gov.ng'),
+        'address' => env('MAIL_FROM_ADDRESS', 'hfr@health.gov.ng'),
         'name' => env('MAIL_FROM_NAME', 'Nigeria HFR'),
     ],
 

@@ -951,8 +951,9 @@
     $("#registration_status_id").val("{{$hosp->registration_status_id}}").change();
     $("#license_status_id").val("{{$hosp->license_status_id}}").change();
 
-    var assignedLgaID= {{Auth::user()->lga_id}};
-    
+    // var assignedLgaID= {{Auth::user()->lga_id}};
+    var lgaPermission = "{{ implode(', ',auth()->user()->getDirectPermissions()->pluck('id')->toArray()) }}";
+
     //get lgas
     var stateID= {{$hosp->state_id}};
     var _token = $('input[name="_token"]').val();
@@ -966,9 +967,18 @@
             $("#lga_id").val({{$hosp->lga_id}});
 
             //remove lgas not assigned
-            if(assignedLgaID !== 1){
-                $('#lga_id option[value !=' + assignedLgaID + ']').remove();
+            if(lgaPermission !== '1000'){
+                // $('#lga_id option[value !=' + assignedLgaID + ']').remove();
+                $("#lga_id > option").each(function() {
+                    if(lgaPermission.indexOf(this.value) < 0 ){ 
+                        this.remove();
+                    }               
+                });
             }
+            
+         
+
+            
         }         
     })
 

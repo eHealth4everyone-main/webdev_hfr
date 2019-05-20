@@ -113,9 +113,8 @@
                         <div class="form-group row">
                                 <label for="state_id" class="col-md-4 col-form-label text-md-right">{{ __('LGA Permission') }} <font color="red">*</font></label>
                                 <div class="col-md-8">
-                                        <select class="form-control select2"  class="form-control" id="lga_id1" name="lga_id1" data-placeholder="Select LGA" required data-width="100%">   
-                                                <option value="1">All LGAs</option>    
-                                            
+                                        <select multiple class="form-control select2"  class="form-control" id="lga_id1" name="lga_id1[]" data-placeholder="Select LGA" required data-width="100%">   
+                                                <option value = "1000">All LGAs</option> 
                                         </select>
                                 
                                 </div>

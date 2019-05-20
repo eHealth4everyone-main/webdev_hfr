@@ -328,10 +328,13 @@
                                         <div class="col-sm-2">                               
                                                 <input type='checkbox'name='permissions[]' value='66'> View DHIS2 Logs
                                         </div>
-                                        <div class="col-sm-4">                               
+                                        <div class="col-sm-2">                               
                                             <input type='checkbox'name='permissions[]' value='64'> Receive DHIS2 Notifications                                                   
                                         </div>
-                                     
+                                        <div class="col-sm-4">                               
+                                                <input type='checkbox'name='permissions[]' value='67'> Adminstrator Facility Update                                                   
+                                        </div>
+                        
                                 
                                         <div class="col-sm-2"></div>                              
                                </div>

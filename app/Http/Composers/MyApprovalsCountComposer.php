@@ -23,15 +23,14 @@ class MyApprovalsCountComposer
         public function compose(View $view)
         {
                 $state_id = Auth::user()->state_id;
-                $lga_id = Auth::user()->state_id;
-
                 
                 $verify = $this->hosp::whereIn('status_id',[1,5,8,12,15,19])
+                                ->whereIn('lga_id', auth()->user()->getDirectPermissions()->pluck('id')->toArray())
                                 ->where('state_id', $state_id)
-                                ->where('lga_id', 'like', '%' .  Auth::user()->lga_id . '%')
                                 ->count();
 
                 $validate = $this->hosp::whereIn('status_id',[2,7,9,14,16,21])
+                                 ->whereIn('lga_id', auth()->user()->getDirectPermissions()->pluck('id')->toArray())
                                  ->where('state_id',$state_id)
                                  ->count();
 

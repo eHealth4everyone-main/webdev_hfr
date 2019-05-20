@@ -5,6 +5,8 @@ namespace App;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Support\Facades\DB;
+use Auth;
 
 class User extends Authenticatable
 {
@@ -32,10 +34,5 @@ class User extends Authenticatable
         return $this->belongsTo('App\State','state_id');
     }
     
-    public function lga()
-    {
-        return $this->belongsTo('App\Lga','lga_id');
-    }
-
 
 }

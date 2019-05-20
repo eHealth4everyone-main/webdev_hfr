@@ -92,26 +92,25 @@
                             </span>
                         </div>
                     </div>
-                    {{-- <div class="form-group row">
+
+                    <div class="form-group row">
                         <div class="col-md-1"></div>
-                        <label for="role" class="col-md-3 col-form-label text-md-right">{{ __('Roles') }}</label>
+                        <label for="role" class="col-md-3 col-form-label text-md-right">{{ __('Role') }}</label>
                         <div class="col-md-7">
-                            <input  type="text" class="form-control" name="role" value="{{$role}}" disabled>
-                            
+                            <input  type="text" class="form-control" name="role" value="{{ implode(",",auth()->user()->getRoleNames()->toArray()) }}" disabled>
                         </div>
-                    </div>   --}}
+                    </div>  
+
                     <div class="form-group row">
                         <div class="col-md-1"></div>
                         <label for="state" class="col-md-3 col-form-label text-md-right">{{ __('State Permission') }}</label>
                         <div class="col-md-7">
                             @if (Auth::user()->state_id == 1 )
-                            <input  type="text" class="form-control"  value="All States" disabled>
+                                <input  type="text" class="form-control"  value="All States" disabled>
                             @else                            
-                            @foreach($lst_states as $st)
-                            @if ($st->id == Auth::user()->state_id)
-                            <input  type="text" class="form-control"  value="{{ $st->name }}" disabled>                                                
-                            @endif
-                            @endforeach
+                           
+                                <input  type="text" class="form-control"  value="{{ auth()->user()->state->name }}" disabled>                                                
+                            
                             
                             @endif
                         </div>
@@ -120,15 +119,15 @@
                         <div class="col-md-1"></div>
                         <label for="state" class="col-md-3 col-form-label text-md-right">{{ __('LGA Permission') }}</label>
                         <div class="col-md-7">
-                            @if (Auth::user()->lga_id == 1 )
+                            {{-- @if (Auth::user()->lga_id == 1 )
                             <input  type="text" class="form-control"  value="All LGAs" disabled>
                             @else                            
                             @foreach($lst_lgas as $lga)
-                            @if ($lga->id == Auth::user()->lga_id)
-                            <input  type="text" class="form-control"  value="{{ $lga->name }}" disabled>                                                
-                            @endif
+                            @if ($lga->id == Auth::user()->lga_id) --}}
+                            <input  type="text" class="form-control"  value="{{ implode(', ',auth()->user()->getDirectPermissions()->pluck('name')->toArray()) }}" disabled>                                                
+                            {{-- @endif
                             @endforeach
-                            @endif
+                            @endif --}}
                         </div>
                     </div> 
                     <div class="form-group row">

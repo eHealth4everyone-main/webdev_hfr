@@ -45,6 +45,8 @@ Route::middleware(["auth"])->group(function(){
             Route::post('admin/hospitals/delete','HospitalsController@InitiateDelete')->name('hospitals.InitiateDelete');
             Route::post('admin/hospitals/export', 'HospitalsController@export')->name('hospitals.export');
             Route::resource('admin/hospitals','HospitalsController')->except(['show','destroy']);
+            Route::post('admin/hospitals/admin-update', 'HospitalsController@adminUpdate')->name('hospitals.adminupdate');
+
             
             //my requests
             Route::get('admin/hospitals/myrequest/pending','Approval\MyRequestController@myPendingRequest')->name('myrequest.pending');

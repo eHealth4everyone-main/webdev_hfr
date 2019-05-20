@@ -25,21 +25,30 @@ class HospitalsController extends Controller
   
     public function index()
     {
-
-        $facilities = DB::table('hospital_details')
+        if(auth()->user()->hasPermissionTo('All LGAs')){
+            $facilities = DB::table('hospital_details')
             ->where('state_id', 'like', '%' .  Auth::user()->state_id . '%')
-            ->where('lga_id', 'like', '%' .  Auth::user()->lga_id . '%')
             ->orderBy('state')
             ->orderBy('lga')
             ->orderBy('facility_name')
-            ->paginate(20);
+            ->paginate(15);
+        }else{
+            $facilities = DB::table('hospital_details')
+            ->where('state_id', 'like', '%' .  Auth::user()->state_id . '%')
+            ->whereIn('lga_id', auth()->user()->getDirectPermissions()->pluck('id')->toArray())
+            ->orderBy('state')
+            ->orderBy('lga')
+            ->orderBy('facility_name')
+            ->paginate(15);
+        }
+      
 
         //get data set for download option and cache it
         $download = DB::table('hospital_details')
                 ->select('unique_id','registration_no','start_date','facility_name','state','lga','ward','ownership',
                 'facility_level','longitude','latitude','operation_status','registration_status','license_status')
                 ->Where('state_id', 'like', '%' .  Auth::user()->state_id . '%')
-                ->where('lga_id', 'like', '%' .  Auth::user()->lga_id . '%')
+                ->whereIn('lga_id', auth()->user()->getDirectPermissions()->pluck('id')->toArray())
                 ->orderBy('state')
                 ->orderBy('lga')
                 ->orderBy('facility_name')
@@ -47,7 +56,7 @@ class HospitalsController extends Controller
 
         Cache::put('displayed_facilities', $download, 60);
         
-        
+
         list($state_id, $lga_id, $ward_id,$facility_name, $geo_codes, $ward_id, 
         $facility_level_id , $ownership_id,$operational_status_id,$registration_status_id,
         $license_status_id,$searched) = [1,1,0,"",0,0,0,0,0,0,0,0,0];
@@ -62,6 +71,10 @@ class HospitalsController extends Controller
     {
         $lst_services = DB::table('lst_hosp_services')
                     ->get();
+
+        // $lga_permission = implode(', ',auth()->user()->getDirectPermissions()->pluck('id')->toArray());
+        // $lga_permission =auth()->user()->getDirectPermissions()->pluck('id')->toArray();
+
         
         return view('hospitals.create',compact('lst_services')); 
     }
@@ -200,6 +213,7 @@ class HospitalsController extends Controller
              //get hospital services
             $lst_services = DB::table('lst_hosp_services')->get();
            
+            
             return view('hospitals.edit',compact('hosp','current_services','lst_services')); 
     }
     
@@ -349,6 +363,53 @@ class HospitalsController extends Controller
         return redirect()->route('hospitals.index');
     }
     
+    public function adminUpdate(Request $request)
+    {
+        $request->validate([
+            'facility_name_x'=>'required|max:200',
+            'alt_facility_name_x'=>'nullable|max:200',
+            'longitude_x'=>'nullable|numeric|between:2.483,20',
+            'latitude_x'=>'nullable|numeric|between:3.883,13.867',
+            'physical_location_x'=>'nullable|max:100',
+            'postal_address_x'=>'nullable|max:100',    
+        ]);
+
+
+        $hospH = new HospitalHistory;
+        $hosp = new Hospital;
+        $hospH = HospitalHistory::findOrFail($request->facility_id_x);
+        $hosp = Hospital::findOrFail($request->facility_id_x);
+ 
+
+        DB::beginTransaction();
+        try {
+            $hosp->facility_name = $request->facility_name_x;
+            $hosp->alt_facility_name = $request->alt_facility_name_x;
+            $hosp->longitude = $request->longitude_x;
+            $hosp->latitude = $request->latitude_x;
+            $hosp->physical_location = $request->physical_location_x;
+            $hosp->postal_address = $request->postal_address_x;
+            $hosp->save();
+     
+            $hospH->facility_name = $request->facility_name_x;
+            $hospH->alt_facility_name = $request->alt_facility_name_x;
+            $hospH->longitude = $request->longitude_x;
+            $hospH->latitude = $request->latitude_x;
+            $hospH->physical_location = $request->physical_location_x;
+            $hospH->postal_address = $request->postal_address_x;
+            $hospH->save();
+
+            DB::commit();
+        } catch (\Exception $ex) {
+            DB::rollback();
+            return response()->json(['error' => $ex->getMessage()], 500);
+        }
+
+        session()->flash("alert-success", "Facility Updated Successfully!");
+        return redirect()->route('hospitals.index');
+    }
+    
+
     public function InitiateDelete(Request $request){ 
         $hs_tracking = new StatusTracking;
         $hs_tracking->hospital_id = $request->facility_id;
