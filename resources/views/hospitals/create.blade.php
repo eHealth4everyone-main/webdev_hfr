@@ -970,7 +970,7 @@
 
         
             //if a user is assigned specific lga, allow to select only that lga
-            if({{ !auth()->user()->hasAnyPermission([1000]) }}){
+            if('{{ !auth()->user()->hasAnyPermission([1000]) }}'){
                 var lgaPermission = "{{ implode(', ',auth()->user()->getDirectPermissions()->pluck('id')->toArray()) }}";
                 
                 if(lgaPermission.indexOf(',') >-1 ){ //if more than one lga

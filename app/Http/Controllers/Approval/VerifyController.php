@@ -18,7 +18,7 @@ class VerifyController extends Controller
     public function index()
     {
       
-        if(auth()->user()->hasPermissionTo('All LGAs')){
+        if(auth()->user()->hasAnyPermission([1000])){
             $pending = DB::table('hospital_details_history')
             ->where('state_id', '=',Auth::user()->state_id)
             ->whereIn('status_id',[1,8,15,5,12,19])           

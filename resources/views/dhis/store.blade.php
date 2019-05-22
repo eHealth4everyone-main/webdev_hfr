@@ -65,7 +65,7 @@ $(document).ready(function() {
               .css("width", current_progress + "%")
               .attr("aria-valuenow", current_progress)
               .text(current_progress + "%");
-              if (current_progress >= 90)
+              if (current_progress >= 100)
                   clearInterval(interval);
           }, 2000);
       });
@@ -111,14 +111,14 @@ $(document).ready(function() {
 
   
       $(document).ajaxStop(function(){
-          // current_progress = 95;
-          // $("#dynamic")
-          //       .css("width", current_progress + "%")
-          //       .attr("aria-valuenow", current_progress)
-          //       .text(current_progress + "%");
-          // $("#fac_success").show();
-          // $("#progress").hide();
-          // $('#updating').hide();
+          current_progress = 95;
+          $("#dynamic")
+                .css("width", current_progress + "%")
+                .attr("aria-valuenow", current_progress)
+                .text(current_progress + "%");
+          $("#fac_success").show();
+          $("#progress").hide();
+          $('#updating').hide();
             
       });
       
