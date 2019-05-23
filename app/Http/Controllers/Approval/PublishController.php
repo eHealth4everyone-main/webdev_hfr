@@ -33,7 +33,7 @@ class PublishController extends Controller
     {
         if ($request->status ==1){
             $pending = DB::table('hospital_details_history')
-            ->where('state_id', '=',Auth::user()->state_id)
+            ->where('state_id', 'like', '%' .  Auth::user()->state_id . '%')
             ->whereIn('status_id',[4,11,18])
             ->get();
         }

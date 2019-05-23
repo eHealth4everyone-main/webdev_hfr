@@ -38,10 +38,18 @@ class ValidateController extends Controller
     public function search(Request $request)
     {
         if ($request->status ==1){
-            $pending  = DB::table('hospital_details_history')
-            ->where('state_id', '=',Auth::user()->state_id)
-            ->whereIn('status_id',[2,7,9,14,16,21])
-            ->get();
+            if(auth()->user()->hasAnyPermission([1000])){
+                $pending  = DB::table('hospital_details_history')
+                ->where('state_id', '=',Auth::user()->state_id)
+                ->whereIn('status_id',[2,7,9,14,16,21])
+                ->get();
+            }else{
+                $pending  = DB::table('hospital_details_history')
+                ->where('state_id', '=',Auth::user()->state_id)
+                ->whereIn('lga_id', auth()->user()->getDirectPermissions()->pluck('id')->toArray())
+                ->whereIn('status_id',[2,7,9,14,16,21])
+                ->get();
+            }  
         }
         elseif($request->status ==2){
             $pending = DB::table('hospital_details_history')
