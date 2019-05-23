@@ -411,7 +411,7 @@
                                     <div class="input-group-addon">
                                         <i class="fa fa-calendar"></i>
                                     </div>
-                                    <input type="text" class="form-control pull-right" id="close_date" name="close_date" autocomplete="off" required>
+                                    <input type="text" class="form-control pull-right" id="close_date" name="close_date" autocomplete="off" >
                                 </div>
                             </div>
                         </div>
