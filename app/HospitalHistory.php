@@ -28,19 +28,19 @@ class HospitalHistory extends Model implements Auditable
         return $str;
     }
 
-    public function generateFacilityCode($lga_id,$type,$level,$owner){
+    public function generateFacilityCode($lga_id,$type,$level,$ownership){
         //get state and lga code
         $state_lga = DB::select("Select concat(state_code,'/',lga_code) code from ou_lgas where 
                     id = ". $lga_id ."");
 
-        //get serial number
-        $max_sn = DB::select("SELECT MAX(CAST(substring(unique_id,length(unique_id)-3,4) as unsigned)) val FROM hs_hospitals where
+        //get the largest serial number in lga
+        $max_sn = DB::select("SELECT MAX(CAST(substring(unique_id,length(unique_id)-3,4) as unsigned)) val FROM hs_hospitals_history where
                     lga_id = ". $lga_id ."");
       
         $sn = $max_sn[0]->val + 1; //get serial number of the next HF in LGA
 
 
-        $id = $state_lga[0]->code."/".$type."/".$level."/".$owner."/";
+        $id = $state_lga[0]->code."/".$type."/".$level."/".$ownership."/";
 
         if (strlen($sn)==1){
             $id = $id.'000'.$sn;

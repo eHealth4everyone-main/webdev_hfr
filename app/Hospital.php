@@ -29,7 +29,7 @@ class Hospital extends Model implements Auditable
                     id = ". $lga_id ."");
 
         //get serial number
-        $max_sn = DB::select("SELECT MAX(CAST(substring(unique_id,length(unique_id)-3,4) as unsigned)) val FROM hs_hospitals where
+        $max_sn = DB::select("SELECT MAX(CAST(substring(unique_id,length(unique_id)-3,4) as unsigned)) val FROM hs_hospitals_history where
                     lga_id = ". $lga_id ."");
       
         $sn = $max_sn[0]->val + 1; //get serial number of the next HF in LGA
