@@ -28,9 +28,9 @@ Facility Validation
                     <div class="col-md-5">
                         <select class="form-control select2"  class="form-control" name="status"   data-width="100%">
                             <option value="1">My Pending Validations</option>    
-                            <option value="2">My Accepted Validations</option>     
+                            <option value="2">My Accepted Validations (Pending Publication)</option>     
                             <option value="3">My Rejected Validations</option>  
-                            <option value="4">My Validation History</option>                           
+                            <option value="4">My Validations</option>                           
                         </select>
                     </div>
                     

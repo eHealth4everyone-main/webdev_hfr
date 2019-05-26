@@ -30,9 +30,9 @@ Facility Verification
                 <div class="col-md-5">
                     <select class="form-control select2"  class="form-control" name="status"   data-width="100%">
                         <option value="1">My Pending Verifications</option>    
-                        <option value="2">My Accepted Verifications</option>     
+                        <option value="2">My Accepted Verifications (Pending Validation)</option>     
                         <option value="3">My Rejected Verifications</option>  
-                        <option value="4">My Verification History</option>                           
+                        <option value="4">My Verifications</option>                           
                     </select>
                 </div>
                 

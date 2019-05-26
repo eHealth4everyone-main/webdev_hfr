@@ -1,7 +1,7 @@
 @extends("layouts.master")
 
 @section('content-title')
-My Approved Requests
+My Published Requests
 
 @endsection
 
@@ -23,7 +23,7 @@ My Approved Requests
                 <select class="form-control select2"  class="form-control" name="status"   data-width="100%">
                     <option value="1">My Pending Requests</option>    
                     <option value="2">My Rejected Requests</option>  
-                    <option value="3">My Approved Requests</option>                           
+                    <option value="3">My Published Requests</option>                           
                 </select>
             </div>
             

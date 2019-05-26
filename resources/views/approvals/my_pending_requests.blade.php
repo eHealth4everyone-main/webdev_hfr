@@ -21,7 +21,7 @@ My Pending Requests
                       <select class="form-control select2"  class="form-control" name="status"   data-width="100%">
                           <option value="1">My Pending Requests</option>    
                           <option value="2">My Rejected Requests</option>  
-                          <option value="3">My Approved Requests</option>                           
+                          <option value="3">My Published Requests</option>                           
                       </select>
                   </div>
                   
