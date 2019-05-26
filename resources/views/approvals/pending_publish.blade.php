@@ -81,8 +81,9 @@ Facility Publication
                 <Strong>E-mail: </Strong>{{$p->requested_email}} <br>
                 <Strong>Mobile: </Strong>{{ $p->requested_mobile }} <br>
                 <Strong>Date: </Strong>{{ ($p->requested_at? date('d M Y', strtotime($p->requested_at)) : '') }} <br>  
-                <font color="MediumSeaGreen"><Strong>Remarks: </Strong> </font> {{ $p->request_note }} <br>
-
+                @if ($p->request_note != '')
+                    <font color="MediumSeaGreen"><Strong>Remarks: </Strong></font>{{ $p->request_note }} <br>
+                @endif
             </td>
             <td>
                 @if (in_array($p->status_id,[2,9,16,4,11,18,5,12,19,7,14,21])) 
