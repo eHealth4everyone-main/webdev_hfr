@@ -72,8 +72,7 @@ Facility Verification
                         <Strong>Mobile: </Strong>{{ $p->requested_mobile }} <br>
                         <Strong>Date: </Strong>{{ ($p->requested_at? date('d M Y', strtotime($p->requested_at)) : '') }} <br>   
                         @if ($p->request_note != '')
-                        <font color="MediumSeaGreen"><Strong>Remarks: </Strong></font>{{ $p->request_note }} <br>
-
+                            <font color="MediumSeaGreen"><Strong>Remarks: </Strong></font>{{ $p->request_note }} <br>
                         @endif
                     </td>
                     <td>

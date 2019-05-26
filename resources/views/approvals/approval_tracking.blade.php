@@ -84,8 +84,9 @@ Facility Approval Tracking
                 <Strong>E-mail: </Strong>{{$p->requested_email}} <br>
                 <Strong>Mobile: </Strong>{{ $p->requested_mobile }} <br>
                 <Strong>Date: </Strong>{{ ($p->requested_at? date('d M Y', strtotime($p->requested_at)) : '') }} <br>  
-                <Strong>Remarks: </Strong><font color="Tomato">{{ $p->request_note }} </font><br>
-
+                @if ($p->request_note != '')
+                    <font color="MediumSeaGreen"><Strong>Remarks: </Strong></font>{{ $p->request_note }} <br>
+                @endif
             </td>
             <td>
                     @if ($p->verified_by != "")
@@ -99,7 +100,7 @@ Facility Approval Tracking
                         <Strong>By: </Strong>{{$p->verified_by}} <br>
                         <Strong>E-mail: </Strong>{{$p->verified_email}} <br>
                         <Strong>Mobile: </Strong>{{ $p->verified_mobile }} <br>
-                        <Strong>Remarks: </Strong><font color="Tomato">{{ $p->verify_note }} </font><br>
+                        <font color="MediumSeaGreen"><Strong>Remarks: </Strong></font>{{ $p->verify_note }} <br>
                     @else
                         Pending Verification
                     @endif
@@ -117,7 +118,7 @@ Facility Approval Tracking
                         <Strong>By: </Strong>{{$p->validated_by}} <br>
                         <Strong>E-mail: </Strong>{{ $p->validated_email }} <br>
                         <Strong>Mobile: </Strong>{{ $p->validated_mobile }} <br>
-                        <Strong>Remarks: </Strong><font color="Tomato">{{ $p->validate_note }} </font><br>
+                        <font color="MediumSeaGreen"><Strong>Remarks: </Strong></font>{{ $p->validate_note }} <br>
                    @else
                        Pending Validation
                    @endif
@@ -135,7 +136,7 @@ Facility Approval Tracking
                     <Strong>By: </Strong>{{$p->published_by}} <br>
                     <Strong>E-mail: </Strong>{{$p->published_email}} <br>
                     <Strong>Mobile: </Strong>{{ $p->published_mobile }} <br>
-                    <Strong>Remarks: </Strong><font color="Tomato">{{ $p->publish_note }} </font><br>
+                    <font color="MediumSeaGreen"><Strong>Remarks: </Strong></font>{{ $p->publish_note }} <br>
 
                 @else
                     Pending Publication
