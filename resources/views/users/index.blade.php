@@ -21,10 +21,10 @@ Users
         <div class="form-group">
               {{-- <label class="col-sm-1 control-label">State:</label> --}}
               <div class="col-md-3">
-                      <select class="form-control select2"  class="form-control" id="state" name="state"  required data-width="100%">
+                      <select class="form-control select2"  class="form-control" id="state" name="state"  data-width="100%">
                           <option value="">--Select State permission--</option>  
                           
-                        @if (Auth::user()->state_id == 1 )
+                          @if (Auth::user()->state_id == 1 )
                               <option value="1">All States</option>    
                           @endif
                           @foreach(getAssignedState() as $s)
@@ -51,7 +51,7 @@ Users
                       </select>
               </div>
               <div class="col-sm-3">
-                  <input class="form-control input-sm" type="text" name="name" id="name" class="form-control" placeholder="name">
+                  <input class="form-control input-sm" type="text" name="name" id="name" class="form-control" placeholder="Firstname">
               </div> 
               <div class="col-sm-1">
                       <button type="submit" class="btn btn-success pull-right  btn-block btn-sm">Search</button>

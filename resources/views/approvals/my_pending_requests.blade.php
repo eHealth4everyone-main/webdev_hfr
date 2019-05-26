@@ -65,7 +65,7 @@ My Pending Requests
               <Strong>By: </Strong>{{$r->verified_by}} <br>
               <Strong>E-mail: </Strong>{{$r->verified_email}} <br>
               <Strong>Mobile: </Strong>{{ $r->verified_mobile }} <br>
-              <Strong>Remarks: </Strong><font color="Tomato">{{ $r->verify_note }} </font><br>
+              <font color="MediumSeaGreen"><Strong>Remarks: </Strong></font>{{ $r->verify_note }} <br>
 
             @else
                 Pending Verification
@@ -87,7 +87,7 @@ My Pending Requests
                 <Strong>By: </Strong>{{$r->validated_by}} <br>
                 <Strong>E-mail: </Strong>{{ $r->validated_email }} <br>
                 <Strong>Mobile: </Strong>{{ $r->validated_mobile }} <br>
-              <Strong>Remarks: </Strong><font color="Tomato">{{ $r->validate_note }} </font><br>
+                <font color="MediumSeaGreen"><Strong>Remarks: </Strong></font>{{ $r->validate_note }} <br>
 
             @else
                 Pending Validation
@@ -108,7 +108,7 @@ My Pending Requests
             <Strong>By: </Strong>{{ $r->published_by }} <br>
             <Strong>E-mail: </Strong>{{ $r->published_email }} <br>
             <Strong>Mobile: </Strong>{{ $r->published_mobile }} <br>
-            <Strong>Remarks: </Strong><font color="Tomato">{{ $r->publish_note }} </font><br>
+            <font color="MediumSeaGreen"><Strong>Remarks: </Strong></font>{{ $r->publish_note }} <br>
 
         @else
             Pending Publication

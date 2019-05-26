@@ -62,11 +62,11 @@ My Rejected Requests
                 @if (in_array($r->status_id,[3,10,17])) 
                   <span class="label label-danger"> Rejected </span> <br>
                 @endif
-                <Strong>Remarks: </Strong>{{ $r->verify_note }} <br>
                 <Strong>Date: </Strong>{{ ($r->verified_at? date('d M Y', strtotime($r->verified_at)) : '') }} <br>   
                 <Strong>By: </Strong>{{$r->verified_by}} <br>
                 <Strong>E-mail: </Strong>{{$r->verified_email}} <br>
                 <Strong>Mobile: </Strong>{{ $r->verified_mobile }} <br>
+                <font color="MediumSeaGreen"><Strong>Remarks: </Strong></font> {{ $r->verify_note }}
               @else
                   Pending Verification
               @endif          
@@ -82,11 +82,11 @@ My Rejected Requests
                 @if (in_array($r->status_id,[3,10,17]) and $r->validated_email != "") 
                   <span class="label label-danger"> Rejected </span> <br>
                 @endif
-                <Strong>Remarks: </Strong>{{ $r->validate_note }} <br>
                 <Strong>Date: </Strong>{{ ($r->validated_at? date('d M Y', strtotime($r->validated_at)) : '') }} <br>
                 <Strong>By: </Strong>{{$r->validated_by}} <br>
                 <Strong>E-mail: </Strong>{{ $r->validated_email }} <br>
                 <Strong>Mobile: </Strong>{{ $r->validated_mobile }} <br>
+                <font color="MediumSeaGreen"><Strong>Remarks: </Strong></font>{{ $r->validate_note }}
             @else
                 Pending Validation
             @endif               
@@ -105,11 +105,11 @@ My Rejected Requests
                 @if (in_array($r->status_id,[5,12,19]) and $r->published_email != "") 
                   <span class="label label-danger"> Rejected </span> <br>
                 @endif
-                <Strong>Remarks: </Strong>{{ $r->publish_note }} <br>
                 <Strong>Date: </Strong>{{ ($r->published_at? date('d M Y', strtotime($r->validated_at)) : '') }} <br>
                 <Strong>By: </Strong>{{ $r->published_by }} <br>
                 <Strong>E-mail: </Strong>{{ $r->published_email }} <br>
                 <Strong>Mobile: </Strong>{{ $r->published_mobile }} <br>
+                <font color="MediumSeaGreen"><Strong>Remarks: </Strong></font> {{ $r->publish_note }}
             @else
                 Pending Publication
             @endif              
