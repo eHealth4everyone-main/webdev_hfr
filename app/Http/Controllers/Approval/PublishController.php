@@ -33,28 +33,36 @@ class PublishController extends Controller
     {
         if ($request->status ==1){
             $pending = DB::table('hospital_details_history')
-            ->where('state_id', 'like', '%' .  Auth::user()->state_id . '%')
+            ->where('state_id', 'like', '%' .  $request->state_id . '%')
+            ->where('action', 'like', '%' .  $request->action . '%')
             ->whereIn('status_id',[4,11,18])
             ->get();
         }
         elseif($request->status ==2){
             $pending = DB::table('hospital_details_history')
             ->where('published_id', '=',Auth::user()->id)
+            ->where('state_id', 'like', '%' .  $request->state_id . '%')
+            ->where('action', 'like', '%' .  $request->action . '%')
             ->whereIn('status_id',[6,13,20])
             ->get();
         }
         elseif($request->status ==3){
             $pending = DB::table('hospital_details_history')
             ->where('published_id', '=',Auth::user()->id)
+            ->where('state_id', 'like', '%' .  $request->state_id . '%')
+            ->where('action', 'like', '%' .  $request->action . '%')
             ->whereIn('status_id',[7,14,21])
             ->get();
         }
         else{
-            $pending = DB::table('hospital_details_history')
-            ->where('published_id', '=',Auth::user()->id)
-            ->orderby('updated_at','desc')
-            ->get();
+            // $pending = DB::table('hospital_details_history')
+            // ->where('published_id', '=',Auth::user()->id)
+            // ->where('state_id', 'like', '%' .  $request->state_id . '%')
+            // ->where('action', 'like', '%' .  $request->action . '%')
+            // ->orderby('updated_at','desc')
+            // ->get();
         }
+        
 
         return view('approvals.pending_publish',compact('pending'));
     }
@@ -212,9 +220,11 @@ class PublishController extends Controller
         }
 
         //****** Send Notifications *********
-        $notify = new ApprovalNotifications;
-        $notify->sendPublicationNotification($mail_message,$request->action,$mail_subject,$state_id);
-
+        if (config('hfr.notify_publication')){
+            $notify = new ApprovalNotifications;
+            $notify->sendPublicationNotification($mail_message,$request->action,$mail_subject,$state_id);    
+        }
+        
         session()->flash("alert-success", $message);
         
         return redirect()->route('publish.pending');
@@ -247,6 +257,54 @@ class PublishController extends Controller
         //******************************************************************************************************
         // HFR DHIS 2 EXCHANGE END..
         //******************************************************************************************************
+    }
+
+
+    public function tracking(Request $request)
+    {
+        $pending = DB::table('hospital_details_history')
+            ->whereIn('status_id',[1,8,15,5,12,19])           
+            ->orderby('updated_at','desc')
+            ->get();
+        
+        $message=$pending->count()." pending verifications";    
+        
+        return view('approvals.approval_tracking',compact('pending','message'));
+    }
+
+    public function tracking_search(Request $request)
+    {
+        if ($request->approval ==1){
+            $pending = DB::table('hospital_details_history')
+                ->where('state_id', 'like', '%' .  $request->state_id . '%')
+                ->where('action', 'like', '%' .  $request->action . '%')
+                ->whereIn('status_id',[1,8,15,5,12,19])           
+                ->orderby('updated_at','desc')
+                ->get();
+
+            $message=$pending->count()." pending verifications";    
+        }
+        elseif($request->approval ==2){
+            $pending  = DB::table('hospital_details_history')
+                ->where('state_id', 'like', '%' .  $request->state_id . '%')
+                ->where('action', 'like', '%' .  $request->action . '%')
+                ->whereIn('status_id',[2,7,9,14,16,21])
+                ->get();
+            
+            $message=$pending->count()." pending validations";  
+        }
+        else{
+            $pending = DB::table('hospital_details_history')
+                ->where('state_id', 'like', '%' .  $request->state_id . '%')
+                ->where('action', 'like', '%' .  $request->action . '%')
+                ->whereIn('status_id',[4,11,18])
+                ->get();
+
+            $message=$pending->count()." pending publications";  
+        }
+
+        
+        return view('approvals.approval_tracking',compact('pending','message'));
     }
 
    

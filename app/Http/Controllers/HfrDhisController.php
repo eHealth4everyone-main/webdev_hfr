@@ -9,6 +9,7 @@ use GuzzleHttp\Psr7;
 use GuzzleHttp\Exception\RequestException;
 use App\DhisLog;
 use App\HfrDhis;
+use Auth;
 
 class HfrDhisController extends Controller
 {
@@ -37,18 +38,20 @@ class HfrDhisController extends Controller
        
         try {
             $client = new Client([
-                'base_uri' =>  env('DHIS_BASE_URI')
+                'base_uri' =>  config('hfr.dhis_url')
             ]);
     
             $response = $client->post('organisationUnits', [
-                'auth' => [env('DHIS_USERNAME'), env('DHIS_PASSWORD')],
+                'auth' => [config('hfr.dhis_username'),config('hfr.dhis_password')],
                 'json' => $data
             ]);
 
+
             if ($response->getReasonPhrase() ==  'Created'){
                 $array = json_decode($response->getBody()->getContents(), true); 
+              
                 $facility_uid = $array['response']['uid'];
-    
+           
                 //Assign Organisation unit - ownership
                 $ownership_status = $dhis->assignOwnership($request->ownership_id,$facility_uid);
 
@@ -60,9 +63,9 @@ class HfrDhisController extends Controller
                     $level_option_status = $dhis->assignLevelOfCareOption($request->facility_level_option_id,$facility_uid);
                 }
                 else{
-                    $level_option_status = 'Not Provided - Not Assigned';
+                    $level_option_status = 'Not set';
                 }
-    
+
                 //Save status of actions
                 $log = new DhisLog;
                 $log->hfr_id = $request->id;
@@ -74,9 +77,7 @@ class HfrDhisController extends Controller
                 $log->user_id = Auth::user()->id;
                 $log->save();
 
-
                 //send notification email to dhis team
-                $dhis = new HfrDhis;
                 $dhis->sendEmailtoDhisTeamForNewFacility($request->facility_name, $request->ward_id);
 
                 return 'Created';
@@ -113,11 +114,11 @@ class HfrDhisController extends Controller
         if(strlen($uid) == 11){
             try {
                 $client = new Client([
-                    'base_uri' =>  env('DHIS_BASE_URI')
+                    'base_uri' =>  config('hfr.dhis_url')
                 ]);
         
                 $response = $client->put('organisationUnits/'. $uid, [
-                    'auth' => [env('DHIS_USERNAME'), env('DHIS_PASSWORD')],
+                    'auth' => [config('hfr.dhis_username'),config('hfr.dhis_password')],
                     'json' => $data['updates']
                 ]);
                 
@@ -132,6 +133,7 @@ class HfrDhisController extends Controller
                 $ownership_status = 'No Updates';
                 $level_status = 'No Updates';
                 $level_option_status = 'No Updates';
+
                 //if any of the organiation groups is updated
                 if ($data['groups'] != 'empty'){
                  
@@ -168,7 +170,6 @@ class HfrDhisController extends Controller
 
                 
                 //send notification email to dhis team
-                $dhis = new HfrDhis;
                 $dhis->sendEmailtoDhisTeamForUpdatedFacility($data['facility_name'], $data['ward_id']);
 
                 return 'Updated';               
@@ -210,11 +211,11 @@ class HfrDhisController extends Controller
         dd($data);
 
         $client = new Client([
-            'base_uri' =>  env('DHIS_BASE_URI')
+            'base_uri' =>  config('hfr.dhis_url')
         ]);
 
         $response = $client->get('organisationUnits?filter=code:eq:139556', [
-            'auth' => [env('DHIS_USERNAME'), env('DHIS_PASSWORD')]
+            'auth' => [config('hfr.dhis_username'),config('hfr.dhis_password')]
         ]);
         $response;
 

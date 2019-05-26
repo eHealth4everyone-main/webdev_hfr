@@ -41,11 +41,13 @@ class ValidateController extends Controller
             if(auth()->user()->hasAnyPermission([1000])){
                 $pending  = DB::table('hospital_details_history')
                 ->where('state_id', '=',Auth::user()->state_id)
+                ->where('action', 'like', '%' .  $request->action . '%')
                 ->whereIn('status_id',[2,7,9,14,16,21])
                 ->get();
             }else{
                 $pending  = DB::table('hospital_details_history')
                 ->where('state_id', '=',Auth::user()->state_id)
+                ->where('action', 'like', '%' .  $request->action . '%')
                 ->whereIn('lga_id', auth()->user()->getDirectPermissions()->pluck('id')->toArray())
                 ->whereIn('status_id',[2,7,9,14,16,21])
                 ->get();
@@ -54,18 +56,21 @@ class ValidateController extends Controller
         elseif($request->status ==2){
             $pending = DB::table('hospital_details_history')
             ->where('validated_id', '=',Auth::user()->id)
+            ->where('action', 'like', '%' .  $request->action . '%')
             ->whereIn('status_id',[4,11,18])
             ->get();
         }
         elseif($request->status ==3){
             $pending = DB::table('hospital_details_history')
             ->where('validated_id', '=',Auth::user()->id)
+            ->where('action', 'like', '%' .  $request->action . '%')
             ->whereIn('status_id',[5,12,19])
             ->get();
         }
         else{
             $pending = DB::table('hospital_details_history')
             ->where('validated_id', '=',Auth::user()->id)
+            ->where('action', 'like', '%' .  $request->action . '%')
             ->orderby('updated_at','desc')
             ->get();
         }
@@ -149,8 +154,11 @@ class ValidateController extends Controller
         HospitalHistory::enableAuditing();
 
         //****** send notifications *********
-        $notify = new ApprovalNotifications;
-        $notify->sendValidationNotification($mail_message,$request->action);
+        if(config('hfr.notify_publisher')){
+            $notify = new ApprovalNotifications;
+            $notify->sendValidationNotification($mail_message,$request->action);
+        }
+ 
 
         session()->flash("alert-success", $message);
         return redirect()->route('validate.pending');

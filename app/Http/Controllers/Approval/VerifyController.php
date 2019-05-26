@@ -43,12 +43,14 @@ class VerifyController extends Controller
             if(auth()->user()->hasAnyPermission([1000])){
                 $pending = DB::table('hospital_details_history')
                 ->where('state_id', '=',Auth::user()->state_id)
+                ->where('action', 'like', '%' .  $request->action . '%')
                 ->whereIn('status_id',[1,8,15,5,12,19])           
                 ->orderby('updated_at','desc')
                 ->get();
             }else{
                 $pending = DB::table('hospital_details_history')
                 ->where('state_id', '=',Auth::user()->state_id)
+                ->where('action', 'like', '%' .  $request->action . '%')
                 ->whereIn('lga_id', auth()->user()->getDirectPermissions()->pluck('id')->toArray())
                 ->whereIn('status_id',[1,8,15,5,12,19])           
                 ->orderby('updated_at','desc')
@@ -58,6 +60,7 @@ class VerifyController extends Controller
         elseif($request->status ==2){
             $pending = DB::table('hospital_details_history')
             ->where('verified_id', '=',Auth::user()->id)
+            ->where('action', 'like', '%' .  $request->action . '%')
             ->whereIn('status_id',[2,9,16])
             ->orderby('updated_at','desc')
             ->get();
@@ -65,6 +68,7 @@ class VerifyController extends Controller
         elseif($request->status ==3){
             $pending = DB::table('hospital_details_history')
             ->where('verified_id', '=',Auth::user()->id)
+            ->where('action', 'like', '%' .  $request->action . '%')
             ->whereIn('status_id',[3,10,17])
             ->orderby('updated_at','desc')
             ->get();
@@ -72,6 +76,7 @@ class VerifyController extends Controller
         else{
             $pending = DB::table('hospital_details_history')
             ->where('verified_id', '=',Auth::user()->id)
+            ->where('action', 'like', '%' .  $request->action . '%')
             ->orderby('updated_at','desc')
             ->get();
         }
@@ -164,8 +169,11 @@ class VerifyController extends Controller
         HospitalHistory::enableAuditing();
 
         //send notifications
-        $notify = new ApprovalNotifications;
-        $notify->sendVerificationNotification($mail_message,$request->action,$hosp->requested_by);
+        if(config('hfr.notify_validator')){
+            $notify = new ApprovalNotifications;
+            $notify->sendVerificationNotification($mail_message,$request->action,$hosp->requested_by);
+        }
+ 
      
         session()->flash("alert-success", $message);
         return redirect()->route('verify.pending');

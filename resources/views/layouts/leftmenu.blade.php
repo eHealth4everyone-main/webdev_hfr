@@ -119,6 +119,9 @@
                         @if(auth()->user()->hasPermissionTo(61))
                             <li><a href="{{route('publish.pending')}}"><i class="fa  fa-check"></i>Publication  <font color="orange">[{{ $approval_count[2] }}]</font></a></li>
                         @endif
+                        @if(auth()->user()->hasPermissionTo(68))
+                            <li><a href="{{route('approval.tracking')}}"><i class="fa  fa-check"></i>Approvals Tracking  <font color="orange"></font></a></li>
+                        @endif
                     
                     </ul>
                 </li>
@@ -196,7 +199,7 @@
                     @if(auth()->user()->hasPermissionTo(66))
                         <a href="{{route('dhis.logs')}}">
                             <i class="fa fa-exchange"></i>
-                            <span>DHIS2 Exchange</span>
+                            <span>HFR-DHIS2 Exchange</span>
                         </a>
                     @endif
                 </li>

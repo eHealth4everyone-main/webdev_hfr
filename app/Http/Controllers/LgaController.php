@@ -12,7 +12,7 @@ class LgaController extends Controller
 
     public function index()
     {
-        $lgas =Lga::orderBy('name','ASC')->get();
+        $lgas =Lga::orderBy('state_id','ASC')->paginate(10);
         return view('masters.lgas.index', compact("lgas"));
     }
 
@@ -67,5 +67,17 @@ class LgaController extends Controller
         session()->flash("alert-success", "LGA deleted successfully!");
         return back();
     }
+
+    public function search(Request $request)
+    {
+        $lgas = Lga::where('state_id','like','%'. $request->state .'%')
+            ->where('name','like','%'. $request->name .'%')
+            ->orderBy('name')
+            ->paginate(10)
+            ->appends($request->all());
+
+        return view('masters.lgas.index', compact("lgas"));
+    }
+
 
 }

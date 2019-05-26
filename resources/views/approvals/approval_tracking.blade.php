@@ -2,7 +2,7 @@
 
 
 @section('content-title')
-Facility Publication
+Facility Approval Tracking
 
 @endsection
 
@@ -12,8 +12,9 @@ Facility Publication
 <div class="box">
 
 <div class="box-body">
-         {{-- search option --}}
-         <form class="form-horizontal"  action="{{route('publish.search')}}" method="GET">
+
+{{-- search option --}}
+         <form class="form-horizontal"  action="{{route('approval.trackingsearch')}}" method="GET">
                 @csrf
                 
                 <div class="form-group">
@@ -35,11 +36,10 @@ Facility Publication
                     </div>
                     
                     <div class="col-md-3">
-                        <select class="form-control select2"  class="form-control" name="status"   data-width="100%">
-                            <option value="1">My Pending Publications</option>   
-                            <option value="2">My Accepted Publications</option>     
-                            <option value="3">My Rejected Publications</option>  
-                            {{-- <option value="4">My Publications (All)</option>                            --}}
+                        <select class="form-control select2"  class="form-control" name="approval"   data-width="100%">
+                            <option value="1">Pending Verifications</option>   
+                            <option value="2">Pending Validations</option>     
+                            <option value="3">Pending Publications</option>  
                         </select>
                     </div>
                     <div class="col-sm-1">
@@ -51,7 +51,11 @@ Facility Publication
                 
             </form>
             <hr>
-            {{-- --endsearch-- --}}
+{{-- --endsearch-- --}}
+
+<div class="callout callout-success">
+    <p>{{$message}}</p>
+</div>
 
 @if(!$pending->isEmpty())
 
@@ -64,7 +68,6 @@ Facility Publication
             <th>Verification</th>
             <th>Validation</th>
             <th>Publication</th>
-            <th>Actions</th>
       </tr>
     </thead>
     <tbody>
@@ -85,31 +88,39 @@ Facility Publication
 
             </td>
             <td>
-                @if (in_array($p->status_id,[2,9,16,4,11,18,5,12,19,7,14,21])) 
-                    <span class="label label-success"> Accepted </span> <br>
-                @endif
-                @if (in_array($p->status_id,[3,10,17])) 
-                    <span class="label label-danger"> Rejected </span> <br>
-                @endif
-                <Strong>Date: </Strong>{{ ($p->verified_at? date('d M Y', strtotime($p->verified_at)) : '') }} <br>     
-                <Strong>By: </Strong>{{$p->verified_by}} <br>
-                <Strong>E-mail: </Strong>{{$p->verified_email}} <br>
-                <Strong>Mobile: </Strong>{{ $p->verified_mobile }} <br>
-                <Strong>Remarks: </Strong><font color="Tomato">{{ $p->verify_note }} </font><br>
+                    @if ($p->verified_by != "")
+                        @if (in_array($p->status_id,[2,9,16,4,11,18,5,12,19,7,14,21])) 
+                            <span class="label label-success"> Accepted </span> <br>
+                        @endif
+                        @if (in_array($p->status_id,[3,10,17])) 
+                            <span class="label label-danger"> Rejected </span> <br>
+                        @endif
+                        <Strong>Date: </Strong>{{ ($p->verified_at? date('d M Y', strtotime($p->verified_at)) : '') }} <br>     
+                        <Strong>By: </Strong>{{$p->verified_by}} <br>
+                        <Strong>E-mail: </Strong>{{$p->verified_email}} <br>
+                        <Strong>Mobile: </Strong>{{ $p->verified_mobile }} <br>
+                        <Strong>Remarks: </Strong><font color="Tomato">{{ $p->verify_note }} </font><br>
+                    @else
+                        Pending Verification
+                    @endif
 
             </td>
             <td>
-                    @if (in_array($p->status_id,[4,11,18,7,14,21])) 
-                        <span class="label label-success"> Accepted </span> <br>
-                    @endif
-                    @if (in_array($p->status_id,[5,12,19])) 
-                        <span class="label label-danger"> Rejected </span> <br>
-                    @endif
-                    <Strong>Date: </Strong>{{ ($p->validated_at? date('d M Y', strtotime($p->validated_at)) : '') }} <br>
-                    <Strong>By: </Strong>{{$p->validated_by}} <br>
-                    <Strong>E-mail: </Strong>{{ $p->validated_email }} <br>
-                    <Strong>Mobile: </Strong>{{ $p->validated_mobile }} <br>
-                    <Strong>Remarks: </Strong><font color="Tomato">{{ $p->validate_note }} </font><br>
+                   @if ($p->validated_by != "")
+                        @if (in_array($p->status_id,[4,11,18,7,14,21])) 
+                            <span class="label label-success"> Accepted </span> <br>
+                        @endif
+                        @if (in_array($p->status_id,[5,12,19])) 
+                            <span class="label label-danger"> Rejected </span> <br>
+                        @endif
+                        <Strong>Date: </Strong>{{ ($p->validated_at? date('d M Y', strtotime($p->validated_at)) : '') }} <br>
+                        <Strong>By: </Strong>{{$p->validated_by}} <br>
+                        <Strong>E-mail: </Strong>{{ $p->validated_email }} <br>
+                        <Strong>Mobile: </Strong>{{ $p->validated_mobile }} <br>
+                        <Strong>Remarks: </Strong><font color="Tomato">{{ $p->validate_note }} </font><br>
+                   @else
+                       Pending Validation
+                   @endif
 
             </td>
             <td>
@@ -133,73 +144,14 @@ Facility Publication
 
  
 
-        <td>
-            @if (in_array($p->status_id,[4,11,18])) 
-
-                @if ($p->action === "CREATE FACILITY")
-                    <a href="#">
-                        <button class="btn btn-success btn-sm"  type="button" data-toggle="modal" data-target="#view_details"
-                            data-id="{{$p->id}}" data-unique_id="{{$p->unique_id}}" data-registration_no="{{$p->registration_no}}" data-start_date="{{$p->start_date}}"
-                            data-facility_name="{{$p->facility_name}}" data-alt_facility_name="{{$p->alt_facility_name}}" data-state="{{$p->state}}"
-                            data-lga="{{$p->lga}}" data-ward="{{$p->ward}}" data-ownership="{{$p->ownership}}" data-ownership_type="{{$p->ownership_type}}"
-                            data-facility_level="{{$p->facility_level}}" data-facility_level_option="{{$p->facility_level_option}}"
-                            data-physical_location="{{$p->physical_location}}" data-alternate_number="{{$p->alternate_number}}" data-longitude="{{$p->longitude}}" data-latitude="{{$p->latitude}}"
-                            data-postal_address="{{$p->postal_address}}" data-phone_number="{{$p->phone_number}}" data-email_address="{{$p->email_address}}"
-                            data-website="{{$p->website}}" data-operational_days="{{$p->operational_days}}" data-operational_hours="{{$p->operational_hours}}"
-                            data-operation_status="{{$p->operation_status}}" data-registration_status="{{$p->registration_status}}" data-license_status="{{$p->license_status}}"
-                            data-doctors="{{$p->doctors}}" data-pharmacists="{{$p->pharmacists}}" data-dentist="{{$p->dentist}}" data-pharmacy_technicians="{{$p->pharmacy_technicians}}"
-                            data-nurses="{{$p->nurses}}" data-lab_scientists="{{$p->lab_scientists}}" data-midwifes="{{$p->midwifes}}" data-lab_technicians="{{$p->lab_technicians}}"
-                            data-nurse_midwife="{{$p->nurse_midwife}}" data-him_officers="{{$p->him_officers}}" data-community_health_officer="{{$p->community_health_officer}}"
-                            data-community_extension_workers="{{$p->community_extension_workers}}" data-jun_community_extension_worker="{{$p->jun_community_extension_worker}}"
-                            data-dental_technicians="{{$p->dental_technicians}}" data-env_health_officers="{{$p->env_health_officers}}" data-inpatient="{{$p->inpatient}}"
-                            data-outpatient="{{$p->outpatient}}" data-beds="{{$p->beds}}" data-onsite_laboratory="{{$p->onsite_laboratory}}"
-                            data-onsite_imaging="{{$p->onsite_imaging}}" data-onsite_pharmarcy="{{$p->onsite_pharmarcy}}" data-mortuary_services="{{$p->mortuary_services}}"
-                            data-attendants = "{{ $p->attendants }}" data-ambulance_services="{{ $p->ambulance_services }}" data-state_unique_id="{{ $p->state_unique_id }}" 
-                            data-outpatient = "{{ $p->outpatient }}" data-inpatient="{{ $p->inpatient }}" data-action="{{$p->action}}">
-                            Review
-                        </button>
-                    </a>  
-                @elseif ($p->action === "UPDATE FACILITY") 
-                    <a href="{{route('view.updated_records',['id'=>$p->id,'stage'=>'3'])}}">
-                        <button class="btn btn-success btn-sm"  type="button" > Review</button>
-                    </a>
-                @else
-                <a href="#">
-                    <button class="btn btn-success btn-sm"  type="button" data-toggle="modal" data-target="#view_details"
-                        data-id="{{$p->id}}" data-unique_id="{{$p->unique_id}}" data-registration_no="{{$p->registration_no}}" data-start_date="{{$p->start_date}}"
-                        data-facility_name="{{$p->facility_name}}" data-alt_facility_name="{{$p->alt_facility_name}}" data-state="{{$p->state}}"
-                        data-lga="{{$p->lga}}" data-ward="{{$p->ward}}" data-ownership="{{$p->ownership}}" data-ownership_type="{{$p->ownership_type}}"
-                        data-facility_level="{{$p->facility_level}}" data-facility_level_option="{{$p->facility_level_option}}"
-                        data-physical_location="{{$p->physical_location}}" data-alternate_number="{{$p->alternate_number}}" data-longitude="{{$p->longitude}}" data-latitude="{{$p->latitude}}"
-                        data-postal_address="{{$p->postal_address}}" data-phone_number="{{$p->phone_number}}" data-email_address="{{$p->email_address}}"
-                        data-website="{{$p->website}}" data-operational_days="{{$p->operational_days}}" data-operational_hours="{{$p->operational_hours}}"
-                        data-operation_status="{{$p->operation_status}}" data-registration_status="{{$p->registration_status}}" data-license_status="{{$p->license_status}}"
-                        data-doctors="{{$p->doctors}}" data-pharmacists="{{$p->pharmacists}}" data-dentist="{{$p->dentist}}" data-pharmacy_technicians="{{$p->pharmacy_technicians}}"
-                        data-nurses="{{$p->nurses}}" data-lab_scientists="{{$p->lab_scientists}}" data-midwifes="{{$p->midwifes}}" data-lab_technicians="{{$p->lab_technicians}}"
-                        data-nurse_midwife="{{$p->nurse_midwife}}" data-him_officers="{{$p->him_officers}}" data-community_health_officer="{{$p->community_health_officer}}"
-                        data-community_extension_workers="{{$p->community_extension_workers}}" data-jun_community_extension_worker="{{$p->jun_community_extension_worker}}"
-                        data-dental_technicians="{{$p->dental_technicians}}" data-env_health_officers="{{$p->env_health_officers}}" data-inpatient="{{$p->inpatient}}"
-                        data-outpatient="{{$p->outpatient}}" data-beds="{{$p->beds}}" data-onsite_laboratory="{{$p->onsite_laboratory}}"
-                        data-onsite_imaging="{{$p->onsite_imaging}}" data-onsite_pharmarcy="{{$p->onsite_pharmarcy}}" data-mortuary_services="{{$p->mortuary_services}}"
-                        data-attendants = "{{ $p->attendants }}" data-ambulance_services="{{ $p->ambulance_services }}" data-state_unique_id="{{ $p->state_unique_id }}" 
-                        data-outpatient = "{{ $p->outpatient }}" data-inpatient="{{ $p->inpatient }}" data-action="{{$p->action}}">
-                        Review
-                    </button>
-                    </a>  
-                @endif
-            @endif
-
-    
-          </td>
+  
         </tr>
         @endforeach
         
       </tbody>
     </table>
-@else
-    <div class="callout callout-success">
-        <p>No record found!</p>
-    </div>
+
+   
 @endif
   </div>
   <!-- /.box-body -->

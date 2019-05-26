@@ -35,7 +35,7 @@ class sendUpdateFacilityEmailtoDhisTeam extends Notification implements ShouldQu
             ->subject('Facility Updated')
             ->greeting('Hello,')
             ->line('Facility ('. $this->name .') have been updated in DHIS2. The facility is located in '.$this->state. ' state, '.$this->lga. ' LGA, and '.$this->ward. ' ward.')
-            ->line('Please visit DHIS2 exchange logs in HFR for more details.')
+            ->line('Please check exchange logs in HFR for more details.')
             ->action('View Logs', $url)
             ->line('Kindly take appropriate actions at your end!');
     }

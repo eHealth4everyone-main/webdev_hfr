@@ -52,24 +52,6 @@ class MyRequestController extends Controller
 
     }
 
-    // public function myApprovedRequest()
-    // {
-    //     $myrequests = DB::select("SELECT * FROM hospital_details_history WHERE 
-    //     (created_by = ". Auth::user()->id ." OR requested_id = ". Auth::user()->id .") 
-    //     AND status_id IN (6,13,20)");
-
-    //     return view('approvals.my_approved_requests',compact('myrequests')); 
-    // }
-
-    // public function myRejectedRequest()
-    // {
-    //     $myrequests = DB::select("SELECT * FROM hospital_details_history WHERE 
-    //     (created_by = ". Auth::user()->id ." OR requested_id = ". Auth::user()->id .") 
-    //     AND status_id IN (3,5,7,10,12,14,17,19,21)");
-
-    //     return view('approvals.my_rejected_requests',compact('myrequests')); 
-    // }
-
     public function editRequest($id)
     {
         if($this->isNotVerified($id)){

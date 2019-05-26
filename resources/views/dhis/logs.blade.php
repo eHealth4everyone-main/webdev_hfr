@@ -2,7 +2,7 @@
 
 
 @section('content-title')
-DHIS2 Data Exchange Logs
+Data Exchange Logs
 
 @endsection
 

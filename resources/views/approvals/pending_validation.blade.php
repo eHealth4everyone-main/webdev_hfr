@@ -17,8 +17,15 @@ Facility Validation
                 @csrf
                 
                 <div class="form-group">
-                    
-                    <div class="col-md-10">
+                    <div class="col-md-5">
+                        <select class="form-control select2"  class="form-control" name="action"   data-width="100%">
+                                <option value="FACILITY">--Select Request Type--</option>    
+                                <option value="CREATE FACILITY">Create Facility</option>    
+                                <option value="UPDATE FACILITY">Update Facility</option>  
+                                <option value="DELETE FACILITY">Delete Facility</option>                           
+                        </select>
+                    </div>
+                    <div class="col-md-5">
                         <select class="form-control select2"  class="form-control" name="status"   data-width="100%">
                             <option value="1">My Pending Validations</option>    
                             <option value="2">My Accepted Validations</option>     
@@ -54,7 +61,9 @@ Facility Validation
     <tbody>
       @foreach($pending as $p)
       <tr>
-            <td> {{$p->facility_name}}  
+            <td> 
+                {{$p->facility_name}}  <br><br>
+                <Strong>LGA: </Strong>{{ $p->lga }} <br>
             </td>
             <td> <span class="label label-default">{{$p->action}} </span></td>
             <td>
@@ -63,7 +72,7 @@ Facility Validation
                 <Strong>Mobile: </Strong>{{ $p->requested_mobile }} <br>
                 <Strong>Date: </Strong>{{ ($p->requested_at? date('d M Y', strtotime($p->requested_at)) : '') }} <br>   
                 @if ($p->request_note != '')
-                    <Strong>Remarks: </Strong>{{ $p->request_note }} <br>                
+                    <Strong>Remarks: </Strong> <font color="Tomato"> {{ $p->request_note }}</font><br>                
                 @endif
             </td>
             <td>
@@ -74,11 +83,11 @@ Facility Validation
                     @if (in_array($p->status_id,[3,10,17])) 
                         <span class="label label-danger"> Rejected </span> <br>
                     @endif
-                    <Strong>Remarks: </Strong>{{ $p->verify_note }} <br>
                     <Strong>Date: </Strong>{{ ($p->verified_at? date('d M Y', strtotime($p->verified_at)) : '') }} <br>     
                     <Strong>By: </Strong>{{$p->verified_by}} <br>
                     <Strong>E-mail: </Strong>{{$p->verified_email}} <br>
                     <Strong>Mobile: </Strong>{{ $p->verified_mobile }} <br>
+                    <Strong>Remarks: </Strong><font color="Tomato">{{ $p->verify_note }} </font><br>
                 @else
                     Pending Verification
                 @endif  
@@ -94,11 +103,12 @@ Facility Validation
                             <span class="label label-danger"> Rejected </span> <br>
                         @endif
                         
-                        <Strong>Remarks: </Strong>{{ $p->validate_note }} <br>
                         <Strong>Date: </Strong>{{ ($p->validated_at? date('d M Y', strtotime($p->validated_at)) : '') }} <br>
                         <Strong>By: </Strong>{{$p->validated_by}} <br>
                         <Strong>E-mail: </Strong>{{ $p->validated_email }} <br>
                         <Strong>Mobile: </Strong>{{ $p->validated_mobile }} <br>
+                        <Strong>Remarks: </Strong><font color="Tomato">{{ $p->validate_note }} </font><br>
+
                 @endif              
             </td>
             <td>
@@ -109,11 +119,12 @@ Facility Validation
                     @if (in_array($p->status_id,[7,14,21])) 
                         <span class="label label-danger"> Rejected </span> <br>
                     @endif
-                    <Strong>Remarks: </Strong>{{ $p->publish_note }} <br>
                     <Strong>Date: </Strong>{{  ($p->published_at? date('d M Y', strtotime($p->published_at)) : '')}} <br>  
                     <Strong>By: </Strong>{{$p->published_by}} <br>
                     <Strong>E-mail: </Strong>{{$p->published_email}} <br>
                     <Strong>Mobile: </Strong>{{ $p->published_mobile }} <br>
+                    <Strong>Remarks: </Strong><font color="Tomato">{{ $p->publish_note }} </font><br>
+
                 @else
                     Pending Publication
                 @endif

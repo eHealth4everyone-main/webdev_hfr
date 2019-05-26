@@ -14,132 +14,118 @@ Hospitals and Clinics
 
 @section("content")
  
-<div class="box box-default collapsed-box">
-    <div class="box-header with-border">
-      <h3 class="box-title">Search</h3>
-
-      <div class="box-tools pull-right">
-        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
-        </button>
-      </div>
-    </div>
-    <!-- /.box-header -->
-    <div class="box-body">
+ 
+<div class="box">
         <div class="box-header with-border">
-            <form class="form-horizontal"  action="{{route('searchHospitalsAdmin')}}" method="get">
-                @csrf
-    
-                    <div class="form-group">
-                            <div class="col-sm-3">  
-                                    @if (Auth::user()->state_id == 1 )
-                                        <select class="form-control select2" id="state_id" name ="state_id"  style="width: 100%;">
-                                            <option value="1">--Select State--</option>
-                                            @foreach(getStates() as $st)
-                                                <option value="{{$st->id}}">{{$st->name}}</option>
+                <form class="form-horizontal"  action="{{route('searchHospitalsAdmin')}}" method="get">
+                    @csrf
+        
+                        <div class="form-group">
+                                <div class="col-sm-3">  
+                                        @if (Auth::user()->state_id == 1 )
+                                            <select class="form-control select2" id="state_id" name ="state_id"  style="width: 100%;">
+                                                <option value="1">--Select State--</option>
+                                                @foreach(getStates() as $st)
+                                                    <option value="{{$st->id}}">{{$st->name}}</option>
+                                                @endforeach
+                                            </select>
+                                        @else
+                                            <select class="form-control select2 dynamic" id="state_id" name ="state_id" disabled required  style="width: 100%;">                                
+                                                @foreach(getStates() as $st)
+                                                    <option value="{{ $st->id }}">{{ $st->name }}</option>
+                                                @endforeach
+                                                
+                                            </select>
+                                            <input type="hidden" name="state_id" value="{{ Auth::user()->state_id }}" />
+                                        @endif
+                                    </div>
+                            
+                                <div class="col-sm-3">
+                                    <select class="form-control select2" id="lga_id" name="lga_id"  style="width: 100%;">
+                                        <option value="1">--Select LGA--</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-3">
+                                    <select class="form-control select2" id="ward_id" name="ward_id"  style="width: 100%;">
+                                        <option value="0">--Select Ward--</option>
+                                    </select>
+                                </div>
+                  
+                                <div class="col-sm-3">
+                                    <select class="form-control select2" id="facility_level_id"  name="facility_level_id" style="width: 100%;">
+                                            <option value="0">--Select Facility Level--</option>
+                                            @foreach(getLevelOfCare() as $st)
+                                                    <option value="{{ $st->id }}">{{ $st->name }}</option>
                                             @endforeach
-                                        </select>
-                                    @else
-                                        <select class="form-control select2 dynamic" id="state_id" name ="state_id" disabled required  style="width: 100%;">                                
-                                            @foreach(getStates() as $st)
-                                                <option value="{{ $st->id }}">{{ $st->name }}</option>
+                                    </select>        
+                                </div>
+                             
+                  
+                            </div>
+                        <div class="form-group">
+                                <div class="col-sm-3">
+                                        <select class="form-control select2" id="ownership_id"  name="ownership_id" style="width: 100%;">
+                                            <option value="0">--Select Ownership--</option>
+                                            @foreach(getOwnership() as $st)
+                                                <option value="{{$st->id}}">{{$st->name}}</option>
                                             @endforeach
                                             
                                         </select>
-                                        <input type="hidden" name="state_id" value="{{ Auth::user()->state_id }}" />
-                                    @endif
-                                </div>
-                        
-                            <div class="col-sm-3">
-                                <select class="form-control select2" id="lga_id" name="lga_id"  style="width: 100%;">
-                                    <option value="1">--Select LGA--</option>
+                                    </div> 
+                          <div class="col-sm-3">
+                                <select class="form-control select2" id="operational_status_id" name ="operational_status_id" style="width: 100%;">
+                                    <option value="0">--Select Operational Status--</option>
+                                    @foreach(getOperationalStatus() as $st)
+                                            <option value="{{ $st->id }}">{{ $st->status }}</option>
+                                    @endforeach
                                 </select>
-                            </div>
-                            <div class="col-sm-3">
-                                <select class="form-control select2" id="ward_id" name="ward_id"  style="width: 100%;">
-                                    <option value="0">--Select Ward--</option>
-                                </select>
-                            </div>
-              
-                            <div class="col-sm-3">
-                                <select class="form-control select2" id="facility_level_id"  name="facility_level_id" style="width: 100%;">
-                                        <option value="0">--Select Facility Level--</option>
-                                        @foreach(getLevelOfCare() as $st)
-                                                <option value="{{ $st->id }}">{{ $st->name }}</option>
-                                        @endforeach
-                                </select>        
-                            </div>
-                         
-              
-                        </div>
-                    <div class="form-group">
-                            <div class="col-sm-3">
-                                    <select class="form-control select2" id="ownership_id"  name="ownership_id" style="width: 100%;">
-                                        <option value="0">--Select Ownership--</option>
-                                        @foreach(getOwnership() as $st)
-                                            <option value="{{$st->id}}">{{$st->name}}</option>
-                                        @endforeach
-                                        
-                                    </select>
-                                </div> 
-                      <div class="col-sm-3">
-                            <select class="form-control select2" id="operational_status_id" name ="operational_status_id" style="width: 100%;">
-                                <option value="0">--Select Operational Status--</option>
-                                @foreach(getOperationalStatus() as $st)
-                                        <option value="{{ $st->id }}">{{ $st->status }}</option>
-                                @endforeach
-                            </select>
-                      </div>
-                      <div class="col-sm-3">
-                            <select class="form-control select2" id="registration_status_id" name="registration_status_id" style="width: 100%;">
-                                <option value="0">--Select Registration Status--</option>
-                                @foreach(getRegistrationStatus() as $st)
-                                    <option value="{{ $st->id }}" >{{ $st->status }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-sm-3">
-                                <select class="form-control select2" id="license_status_id" name="license_status_id" style="width: 100%;">
-                                    <option value="0">--Select License Status--</option>
-                                    @foreach(getLicenseStatus() as $st)
+                          </div>
+                          <div class="col-sm-3">
+                                <select class="form-control select2" id="registration_status_id" name="registration_status_id" style="width: 100%;">
+                                    <option value="0">--Select Registration Status--</option>
+                                    @foreach(getRegistrationStatus() as $st)
                                         <option value="{{ $st->id }}" >{{ $st->status }}</option>
                                     @endforeach
                                 </select>
                             </div>
-        
-                  </div>
-                  <div class="form-group">
-                        <div class="col-sm-3">
-                                <select class="form-control select2" id="geo_codes" name="geo_codes"  style="width: 100%;">
-                                    <option value="0">--Select Coordinates--</option>
-                                    <option value="1">With Coordinates</option>
-                                    <option value="2">With No Coordinates</option>                            
-                                </select>
-                        </div>
-                        
-                      
-                        <div class="col-sm-6" >
-                            <input class="form-control input-sm"type="text" name="facility_name" id="facility_name" class="form-control" placeholder="Facility name">
-                        </div>
-                        <div class="col-sm-3">
-                                <div class="form-group">
-                                    <div class="col-sm-6">
-                                        <button type="button" class="btn btn-sm pull-right btn-block" id='reset'>Reset</button>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <button type="submit" class="btn btn-success btn-block btn-sm">Search</button>
-                                    </div>
+                            <div class="col-sm-3">
+                                    <select class="form-control select2" id="license_status_id" name="license_status_id" style="width: 100%;">
+                                        <option value="0">--Select License Status--</option>
+                                        @foreach(getLicenseStatus() as $st)
+                                            <option value="{{ $st->id }}" >{{ $st->status }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
+            
+                      </div>
+                      <div class="form-group">
+                            <div class="col-sm-3">
+                                    <select class="form-control select2" id="geo_codes" name="geo_codes"  style="width: 100%;">
+                                        <option value="0">--Select Coordinates--</option>
+                                        <option value="1">With Coordinates</option>
+                                        <option value="2">With No Coordinates</option>                            
+                                    </select>
                             </div>
-                  </div>
-    
+                            
+                          
+                            <div class="col-sm-6" >
+                                <input class="form-control input-sm"type="text" name="facility_name" id="facility_name" class="form-control" placeholder="Facility name">
+                            </div>
+                            <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <div class="col-sm-6">
+                                            <button type="button" class="btn btn-sm pull-right btn-block" id='reset'>Reset</button>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <button type="submit" class="btn btn-success btn-block btn-sm">Search</button>
+                                        </div>
+                                    </div>
+                            </div>
+                      </div>
+        
                 </form>
         </div>
-            
-    </div>
-    
-</div>
- 
-<div class="box">
+                
     
         <div class="box-body">
          

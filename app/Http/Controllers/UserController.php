@@ -109,12 +109,17 @@ class UserController extends Controller
       if($request->role_id == 0){
             $users = User::where('state_id',$request->state)
                     ->where('status','like','%'.$request->status.'%')
+                    ->where('firstname','like','%'.$request->name.'%')
+                    ->orWhere('lastname','like','%'.$request->name.'%')
                     ->get();
       }
-      else{
+      else
+      {
             $users = User::role($request->role_id)
                     ->where('state_id',$request->state)
                     ->where('status','like','%'.$request->status.'%')
+                    ->where('firstname','like','%'.$request->name.'%')
+                    ->orWhere('lastname','like','%'.$request->name.'%')
                     ->get();
       }
 

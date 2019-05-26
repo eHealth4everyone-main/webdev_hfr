@@ -38,7 +38,6 @@ Route::middleware(["auth"])->group(function(){
             Route::get('admin/users/search', 'UserController@search')->name("users.search");
             Route::post('admin/users/role', 'UserController@getRoleID')->name('getRoleID');
 
-     
 
             //hospitals
             Route::get('admin/hospitals/search','HospitalsController@search')->name('searchHospitalsAdmin');
@@ -46,12 +45,12 @@ Route::middleware(["auth"])->group(function(){
             Route::post('admin/hospitals/export', 'HospitalsController@export')->name('hospitals.export');
             Route::resource('admin/hospitals','HospitalsController')->except(['show','destroy']);
             Route::post('admin/hospitals/admin-update', 'HospitalsController@adminUpdate')->name('hospitals.adminupdate');
+//temporary
+            Route::post('admin/hospitals/dhis-create', 'HfrDhisController@store')->name('hospitals.temp');
 
             
             //my requests
             Route::get('admin/hospitals/myrequest/pending','Approval\MyRequestController@myPendingRequest')->name('myrequest.pending');
-            // Route::get('admin/hospitals/myrequest/approved','Approval\MyRequestController@myApprovedRequest')->name('myrequest.approved');
-            // Route::get('admin/hospitals/myrequest/rejected','Approval\MyRequestController@myRejectedRequest')->name('myrequest.rejected');
             Route::get('admin/hospitals/myrequest/update/{id}','Approval\MyRequestController@editRequest')->name('myrequest.edit');
             Route::put('admin/hospitals/myrequest/updates','Approval\MyRequestController@updateRequest')->name('myrequest.update');
             Route::post('admin/hospitals/myrequest/delete','Approval\MyRequestController@deleteRequest')->name('myrequest.delete');
@@ -73,10 +72,11 @@ Route::middleware(["auth"])->group(function(){
             Route::post('admin/hospitals/approvals/publish','Approval\PublishController@store')->name('publish.store');
             Route::get('admin/hospitals/approvals/publish/show','Approval\PublishController@search')->name('publish.search');
 
+            Route::get('admin/hospitals/approvals/approval-tracking','Approval\PublishController@tracking')->name('approval.tracking');
+            Route::get('admin/hospitals/approvals/approval-tracking/show','Approval\PublishController@tracking_search')->name('approval.trackingsearch');
+
+
             Route::get('admin/hospitals/approvals/updated/{id}/{stage}','Approval\UpdatedRecordsController@updatedRecords')->name('view.updated_records');
-
-            Route::get('admin/notifications','NotificationController@markAllAsRead')->name('notification.markAsRead');
-
 
             //general
             Route::post('admin/facilities/ownership','GeneralController@getOwnershipType')->name('getOwnershipType');
@@ -116,6 +116,7 @@ Route::middleware(["auth"])->group(function(){
             Route::resource('admin/masters/states','StateController');
             Route::resource('admin/masters/lgas','LgaController');
             Route::get('admin/masters/wards/search','WardController@search')->name('wards.search');
+            Route::get('admin/masters/lga/search','LgaController@search')->name('lga.search');
             Route::resource('admin/masters/wards','WardController');
 
 

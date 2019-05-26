@@ -31,7 +31,7 @@ class HospitalsController extends Controller
             ->orderBy('state')
             ->orderBy('lga')
             ->orderBy('facility_name')
-            ->paginate(15);
+            ->paginate(10);
         }else{
             $facilities = DB::table('hospital_details')
             ->where('state_id', 'like', '%' .  Auth::user()->state_id . '%')
@@ -39,7 +39,7 @@ class HospitalsController extends Controller
             ->orderBy('state')
             ->orderBy('lga')
             ->orderBy('facility_name')
-            ->paginate(15);
+            ->paginate(10);
         }
       
 
@@ -136,7 +136,10 @@ class HospitalsController extends Controller
         
         $start_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->start_date)));
 
-        if($request->operational_status_id > 4){
+        if($request->operational_status_id > 1 && $request->operational_status_id < 5){
+            $close_date= Carbon::now()->format('Y-m-d H:i:s');  
+        }
+        elseif($request->operational_status_id > 4){
             $close_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->close_date)));
         }else{
             $close_date = null;
@@ -187,8 +190,11 @@ class HospitalsController extends Controller
         }
 
         //****** Send Notifications *********
-        $notify = new ApprovalNotifications;
-        $notify->sendFacilityCreateRequestNotification($request->state_id);
+        if (config('hfr.notify_verifier')){
+            $notify = new ApprovalNotifications;
+            $notify->sendFacilityCreateRequestNotification($request->state_id);   
+        }
+    
         
         session()->flash("alert-success", "Request Sent Successfully!");
         return redirect()->route('hospitals.index');
@@ -271,13 +277,15 @@ class HospitalsController extends Controller
             'inpatient'=>'nullable',
         ]);
 
-        
-        if($request->operational_status_id > 4){
+        if($request->operational_status_id > 1 && $request->operational_status_id < 5){
+            $close_date= Carbon::now()->format('Y-m-d H:i:s');  
+        }
+        elseif($request->operational_status_id > 4){
             $close_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->close_date)));
         }else{
             $close_date = null;
         }
-        
+
         //update records in history with new changes
         $hosp = new HospitalHistory;
         $hosp = HospitalHistory::findOrFail($id);
@@ -356,8 +364,11 @@ class HospitalsController extends Controller
         }
        
         //****** send notifications *********
-        $notify = new ApprovalNotifications;
-        $notify->sendFacilityUpdateRequestNotification($state_id);
+        if (config('hfr.notify_verifier')){
+            $notify = new ApprovalNotifications;
+            $notify->sendFacilityUpdateRequestNotification($state_id);   
+        }
+       
 
         session()->flash("alert-success", "Request Sent Successfully!");
         return redirect()->route('hospitals.index');
@@ -447,11 +458,12 @@ class HospitalsController extends Controller
             DB::rollback();
             return response()->json(['error' => $ex->getMessage()], 500);
         }
-       
         
         //****** send notifications *********     
-        $notify = new ApprovalNotifications;
-        $notify->sendFacilityDeleteRequestNotification($state_id);
+        if (config('hfr.notify_verifier')){
+            $notify = new ApprovalNotifications;
+            $notify->sendFacilityDeleteRequestNotification($state_id);
+        }
  
 
         session()->flash("alert-success", "Delete request initiated successfully!");
@@ -520,7 +532,7 @@ class HospitalsController extends Controller
             ->orderBy('state')
             ->orderBy('lga')
             ->orderBy('facility_name')
-            ->paginate(20)
+            ->paginate(10)
             ->appends($request->all());
         
         $download = DB::table('hospital_details')

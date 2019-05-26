@@ -19,8 +19,15 @@ Facility Verification
             @csrf
             
             <div class="form-group">
-                
-                <div class="col-md-10">
+                <div class="col-md-5">
+                        <select class="form-control select2"  class="form-control" name="action"   data-width="100%">
+                                <option value="FACILITY">--Select Request Type--</option>    
+                                <option value="CREATE FACILITY">Create Facility</option>    
+                                <option value="UPDATE FACILITY">Update Facility</option>  
+                                <option value="DELETE FACILITY">Delete Facility</option>                           
+                        </select>
+                    </div>
+                <div class="col-md-5">
                     <select class="form-control select2"  class="form-control" name="status"   data-width="100%">
                         <option value="1">My Pending Verifications</option>    
                         <option value="2">My Accepted Verifications</option>     
@@ -48,14 +55,15 @@ Facility Verification
                     <th>Verification</th>
                     <th>Validation</th>
                     <th>Publication</th>       
-                    {{-- <th>Status</th>         --}}
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($pending as $p)
                 <tr>
-                    <td> {{$p->facility_name}} 
+                    <td>
+                            {{$p->facility_name}} <br> <br>
+                            <Strong>LGA: </Strong>{{ $p->lga }} <br>
                     </td>
                     <td><span class="label label-default">{{$p->action}} </span></td>
                     <td>
@@ -64,42 +72,45 @@ Facility Verification
                         <Strong>Mobile: </Strong>{{ $p->requested_mobile }} <br>
                         <Strong>Date: </Strong>{{ ($p->requested_at? date('d M Y', strtotime($p->requested_at)) : '') }} <br>   
                         @if ($p->request_note != '')
-                        <Strong>Remarks: </Strong>{{ $p->request_note }} <br>                
+                        <Strong>Remarks: </Strong><font color="Tomato">{{ $p->request_note }} </font><br>
+
                         @endif
                     </td>
                     <td>
                         
                         
                         @if ($p->verified_email == "" or in_array($p->status_id,[5,12,19]) )
-                        Pending Verification                 
+                            Pending Verification                 
                         @else
-                        @if (in_array($p->status_id,[2,9,16,4,11,18,5,12,19,7,14,21])) 
-                        <span class="label label-success"> Accepted </span> <br>
-                        @endif
-                        @if (in_array($p->status_id,[3,10,17])) 
-                        <span class="label label-danger"> Rejected </span> <br>
-                        @endif
-                        <Strong>Remarks: </Strong>{{ $p->verify_note }} <br>
-                        <Strong>Date: </Strong>{{ ($p->verified_at? date('d M Y', strtotime($p->verified_at)) : '') }} <br>     
-                        <Strong>By: </Strong>{{$p->verified_by}} <br>
-                        <Strong>E-mail: </Strong>{{$p->verified_email}} <br>
-                        <Strong>Mobile: </Strong>{{ $p->verified_mobile }} <br>
+                            @if (in_array($p->status_id,[2,9,16,4,11,18,5,12,19,7,14,21])) 
+                            <span class="label label-success"> Accepted </span> <br>
+                            @endif
+                            @if (in_array($p->status_id,[3,10,17])) 
+                            <span class="label label-danger"> Rejected </span> <br>
+                            @endif
+                            <Strong>Date: </Strong>{{ ($p->verified_at? date('d M Y', strtotime($p->verified_at)) : '') }} <br>     
+                            <Strong>By: </Strong>{{$p->verified_by}} <br>
+                            <Strong>E-mail: </Strong>{{$p->verified_email}} <br>
+                            <Strong>Mobile: </Strong>{{ $p->verified_mobile }} <br>
+                            <Strong>Remarks: </Strong><font color="Tomato">{{ $p->verify_note }} </font><br>
+
                         @endif   
                         
                     </td>
                     <td>
                         @if ($p->validated_email != "" )
                         @if (in_array($p->status_id,[4,11,18,7,14,21])) 
-                        <span class="label label-success"> Accepted </span> <br>
+                            <span class="label label-success"> Accepted </span> <br>
                         @endif
                         @if (in_array($p->status_id,[5,12,19])) 
-                        <span class="label label-danger"> Rejected </span> <br>
+                            <span class="label label-danger"> Rejected </span> <br>
                         @endif
-                        <Strong>Remarks: </Strong>{{ $p->validate_note }} <br>
                         <Strong>Date: </Strong>{{ ($p->validated_at? date('d M Y', strtotime($p->validated_at)) : '') }} <br>
                         <Strong>By: </Strong>{{$p->validated_by}} <br>
                         <Strong>E-mail: </Strong>{{ $p->validated_email }} <br>
                         <Strong>Mobile: </Strong>{{ $p->validated_mobile }} <br>
+                        <Strong>Remarks: </Strong><font color="Tomato">{{ $p->validate_note }} </font><br>
+
                         
                         @else
                         Pending Validation
@@ -108,32 +119,24 @@ Facility Verification
                     </td>
                     <td>
                         @if ($p->published_by != "" )
-                        
-                        @if ($p->published_email !="") 
-                        <span class="label label-danger"> Rejected </span> <br>
-                        @endif
-                        <Strong>Remarks: </Strong>{{ $p->publish_note }} <br>
-                        <Strong>Date: </Strong>{{  ($p->published_at? date('d M Y', strtotime($p->published_at)) : '')}} <br>  
-                        <Strong>By: </Strong>{{$p->published_by}} <br>
-                        <Strong>E-mail: </Strong>{{$p->published_email}} <br>
-                        <Strong>Mobile: </Strong>{{ $p->published_mobile }} <br>
+                            @if (in_array($p->status_id,[6,13,20])) 
+                                <span class="label label-success"> Accepted </span> <br>
+                            @endif
+                            @if (in_array($p->status_id,[7,14,21])) 
+                                <span class="label label-danger"> Rejected </span> <br>
+                            @endif
+                            
+                            <Strong>Date: </Strong>{{  ($p->published_at? date('d M Y', strtotime($p->published_at)) : '')}} <br>  
+                            <Strong>By: </Strong>{{$p->published_by}} <br>
+                            <Strong>E-mail: </Strong>{{$p->published_email}} <br>
+                            <Strong>Mobile: </Strong>{{ $p->published_mobile }} <br>
+                            <Strong>Remarks: </Strong><font color="Tomato">{{ $p->publish_note }} </font><br>
                         
                         @else
-                        Pending Pulication
+                            Pending Pulication
                         @endif
                         
                     </td>
-                    {{-- <td>
-                        @if (in_array($p->status_id,[1,8,15]))
-                        <span class="label label-info"> {{$p->status}}</span>
-                        @endif
-                        @if (in_array($p->status_id,[2,4,6,9,11,13,16,18,20]))
-                        <span class="label label-success"> {{$p->status}}</span>
-                        @endif
-                        @if (in_array($p->status_id,[3,5,7,10,12,14,17,19,21]))
-                        <span class="label label-danger"> {{$p->status}}</span>
-                        @endif
-                    </td> --}}
                     <td>
                         @if (in_array($p->status_id,[1,5,8,12,15,19]))
                         @if ($p->action === "CREATE FACILITY")

@@ -93,11 +93,11 @@ class HfrDhis extends Model
             $orgUnitGroup = $ownership[0]->dhis_uid;
 
             $client = new Client([
-                'base_uri' =>  env('DHIS_BASE_URI')
+                'base_uri' =>  config('hfr.dhis_url')
             ]);
-    
+
             $response=$client->post('organisationUnitGroups/'. $orgUnitGroup .'/organisationUnits/'. $orgUnit, [
-                'auth' => [env('DHIS_USERNAME'), env('DHIS_PASSWORD')],
+                'auth' => [config('hfr.dhis_username'),config('hfr.dhis_password')],
             ]);
             
             if ($response->getStatusCode() == '204'){
@@ -127,11 +127,11 @@ class HfrDhis extends Model
             $orgUnitGroup = $ownership[0]->dhis_uid;
 
             $client = new Client([
-                'base_uri' =>  env('DHIS_BASE_URI')
+                'base_uri' =>  config('hfr.dhis_url')
             ]);
     
             $response=$client->delete('organisationUnitGroups/'. $orgUnitGroup .'/organisationUnits/'. $orgUnit, [
-                'auth' => [env('DHIS_USERNAME'), env('DHIS_PASSWORD')],
+                'auth' => [config('hfr.dhis_username'),config('hfr.dhis_password')],
             ]);
             
             if ($response->getStatusCode() == '204'){
@@ -162,11 +162,11 @@ class HfrDhis extends Model
             $orgUnitGroup = $level[0]->dhis_uid;
         
             $client = new Client([
-                'base_uri' =>  env('DHIS_BASE_URI')
+                'base_uri' =>  config('hfr.dhis_url')
             ]);
 
             $response=$client->post('organisationUnitGroups/'. $orgUnitGroup .'/organisationUnits/'. $orgUnit, [
-                'auth' => [env('DHIS_USERNAME'), env('DHIS_PASSWORD')],
+                'auth' => [config('hfr.dhis_username'),config('hfr.dhis_password')],
             ]);
 
             if ($response->getStatusCode() == '204'){
@@ -196,11 +196,11 @@ class HfrDhis extends Model
             $orgUnitGroup = $level[0]->dhis_uid;
         
             $client = new Client([
-                'base_uri' =>  env('DHIS_BASE_URI')
+                'base_uri' =>  config('hfr.dhis_url')
             ]);
 
             $response=$client->delete('organisationUnitGroups/'. $orgUnitGroup .'/organisationUnits/'. $orgUnit, [
-                'auth' => [env('DHIS_USERNAME'), env('DHIS_PASSWORD')],
+                'auth' => [config('hfr.dhis_username'),config('hfr.dhis_password')],
             ]);
 
             if ($response->getStatusCode() == '204'){
@@ -231,11 +231,11 @@ class HfrDhis extends Model
             $orgUnitGroup = $levelOption[0]->dhis_uid;
         
             $client = new Client([
-                'base_uri' =>  env('DHIS_BASE_URI')
+                'base_uri' =>  config('hfr.dhis_url')
             ]);
 
             $response=$client->post('organisationUnitGroups/'. $orgUnitGroup .'/organisationUnits/'. $orgUnit, [
-                'auth' => [env('DHIS_USERNAME'), env('DHIS_PASSWORD')],
+                'auth' => [config('hfr.dhis_username'),config('hfr.dhis_password')],
             ]);
 
             if ($response->getStatusCode() == '204'){
@@ -266,11 +266,11 @@ class HfrDhis extends Model
             $orgUnitGroup = $levelOption[0]->dhis_uid;
         
             $client = new Client([
-                'base_uri' =>  env('DHIS_BASE_URI')
+                'base_uri' =>  config('hfr.dhis_url')
             ]);
-
+            
             $response=$client->delete('organisationUnitGroups/'. $orgUnitGroup .'/organisationUnits/'. $orgUnit, [
-                'auth' => [env('DHIS_USERNAME'), env('DHIS_PASSWORD')],
+                'auth' => [config('hfr.dhis_username'),config('hfr.dhis_password')],
             ]);
 
             if ($response->getStatusCode() == '204'){
@@ -292,11 +292,11 @@ class HfrDhis extends Model
     public function getDhisFacilityUID($hfr_facility_id){      
         try{
             $client = new Client([
-                'base_uri' =>  env('DHIS_BASE_URI')
+                'base_uri' =>  config('hfr.dhis_url')
             ]);
     
             $response = $client->get('organisationUnits?filter=code:eq:'. $hfr_facility_id , [
-                'auth' => [env('DHIS_USERNAME'), env('DHIS_PASSWORD')]
+                'auth' => [config('hfr.dhis_username'),config('hfr.dhis_password')]
             ]);
 
     
@@ -305,7 +305,7 @@ class HfrDhis extends Model
             if ($array['pager']['total'] > 0){
                 $orgUnits = $array['organisationUnits'][0]['id'];
             }else{
-                $orgUnits = 'Facility with id '. $hfr_facility_id. ' is not found in DHIS2' ;
+                $orgUnits = 'Facility with id '. $hfr_facility_id. ' was not found in DHIS2' ;
             }
         
             return $orgUnits;
@@ -381,6 +381,7 @@ class HfrDhis extends Model
             $dataArray['updates'] = $data;
             $dataArray['facility_name'] = $hosp['facility_name'];
             $dataArray['ward_id'] = $hosp['ward_id'];
+            
             if (count($orgUnitGroups) > 0){
                 $dataArray['groups'] = $orgUnitGroups;
             }else{
@@ -449,7 +450,7 @@ class HfrDhis extends Model
                 ]);
         
                 $response = $client->put('organisationUnits/'. $uid, [
-                    'auth' => [env('DHIS_USERNAME'), env('DHIS_PASSWORD')],
+                    'auth' => [config('hfr.dhis_username'),config('hfr.dhis_password')],
                     'json' => $data['updates']
                 ]);
                 

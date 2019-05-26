@@ -61,21 +61,24 @@ My Approved Requests
                 <Strong>E-mail: </Strong>{{$r->verified_email}} <br>
                 <Strong>Mobile: </Strong>{{ $r->verified_mobile }} <br>
                 <Strong>Date: </Strong>{{ ($r->verified_at? date('d M Y', strtotime($r->verified_at)) : '') }} <br>     
-                <Strong>Remarks: </Strong>{{ $r->verify_note }} <br>
+                <Strong>Remarks: </Strong><font color="Tomato">{{ $r->verify_note }} </font><br>
+
           </td>
           <td>
                 <Strong>Name: </Strong>{{$r->validated_by}} <br>
                 <Strong>E-mail: </Strong>{{$r->validated_email}} <br>
                 <Strong>Mobile: </Strong>{{ $r->validated_mobile }} <br>
                 <Strong>Date: </Strong>{{ ($r->validated_at? date('d M Y', strtotime($r->validated_at)) : '')}} <br> 
-                <Strong>Remarks: </Strong>{{ $r->validate_note }} <br>
+                <Strong>Remarks: </Strong><font color="Tomato">{{ $r->validate_note }} </font><br>
+
           </td>
           <td>
                 <Strong>Name: </Strong>{{$r->published_by}} <br>
                 <Strong>E-mail: </Strong>{{$r->published_email}} <br>
                 <Strong>Mobile: </Strong>{{ $r->published_mobile }} <br>
                 <Strong>Date: </Strong>{{  ($r->published_at? date('d M Y', strtotime($r->published_at)) : '')}} <br>  
-                <Strong>Remarks: </Strong>{{ $r->publish_note }} <br>
+                <Strong>Remarks: </Strong><font color="Tomato">{{ $r->publish_note }} </font><br>
+
           </td>
       
     
