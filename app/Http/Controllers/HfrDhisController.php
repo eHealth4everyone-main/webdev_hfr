@@ -59,7 +59,7 @@ class HfrDhisController extends Controller
                 $level_status = $dhis->assignLevelOfCare($request->facility_level_id, $facility_uid);
        
                 //Assign Organisation unit - Level of Care Options
-                if (in_array($request->facility_level_id,[1,3,5])){
+                if (in_array($request->facility_level_id,[1,2,5])){
                     $level_option_status = $dhis->assignLevelOfCareOption($request->facility_level_option_id,$facility_uid);
                 }
                 else{
@@ -148,7 +148,7 @@ class HfrDhisController extends Controller
                                 $level_status = $dhis->AssignLevelOfCare($value,$uid);
                                 break;
                             case "facility_level_option_id":
-                                if (in_array($value,[1,3,5])){ //1-Health post, 3-Primary Health Center, 5-Specialized Hospital
+                                if (in_array($value,[1,2,5])){ //1-Health post, 2-Primary Health Clinic, 5-Specialized Hospital
                                     $dhis->unAssignLevelOfCareOption($value,$uid);
                                     $level_option_status = $dhis->AssignLevelOfCareOption($value,$uid);
                                 }       
