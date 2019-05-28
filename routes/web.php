@@ -45,8 +45,6 @@ Route::middleware(["auth"])->group(function(){
             Route::post('admin/hospitals/export', 'HospitalsController@export')->name('hospitals.export');
             Route::resource('admin/hospitals','HospitalsController')->except(['show','destroy']);
             Route::post('admin/hospitals/admin-update', 'HospitalsController@adminUpdate')->name('hospitals.adminupdate');
-//temporary
-            Route::post('admin/hospitals/dhis-create', 'HfrDhisController@store')->name('hospitals.temp');
 
             
             //my requests
@@ -130,6 +128,10 @@ Route::middleware(["auth"])->group(function(){
             Route::get('admin/reports/facility-status/list','FacilityReportController@statusIndex')->name('status.index');
             Route::get('admin/reports/facility-status/report','FacilityReportController@getStatusReport')->name('status.report');
             Route::post('admin/reports/facility-status/download','FacilityReportController@statusDownload')->name('status.download');
+            Route::get('admin/reports/approvers-summary','FacilityReportController@approversIndex')->name('approvers.index');
+            Route::get('admin/reports/approvers-summary/report','FacilityReportController@approversSummary')->name('approvers.report');
+
+
 
     });
 

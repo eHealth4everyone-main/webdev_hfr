@@ -337,7 +337,13 @@
                 
                                         <div class="col-sm-2"></div>                              
                                 </div>
-                              
+                                <div class="form-group row">
+                                        <label class="col-sm-2"></label>
+                                        <div class="col-sm-2">                               
+                                                <input type='checkbox'name='permissions[]' value='69'> Approvers Summary Report
+                                        </div>
+                                      
+                                </div>
                                 
                                 
                         </div>

@@ -207,5 +207,51 @@ class FacilityReportController extends Controller
               
     }
 
+    public function approversIndex(Request $request){
+        $summary = DB::table('hospital_details_history')
+                ->select(DB::raw('published_by,count(*) as total'))
+                ->where('published_by','<>','')
+                ->groupBy('published_by')
+                ->get(); 
+
+        $data['state_id'] = 1;
+        $data['level'] = 3;
+
+        return view('reports.approvers_summary',compact('summary','data'));     
+    }
+
+    public function approversSummary(Request $request){
+
+     if($request->level == 2){
+            $summary = DB::table('hospital_details_history')
+                ->select(DB::raw('validated_by,count(*) as total'))
+                ->where('validated_by','<>','')
+                ->where('state_id','like','%'.$request->state_id.'%')
+                ->groupBy('validated_by')
+                ->get(); 
+
+            $data['state_id'] = $request->state_id;
+            $data['level'] = $request->level;
+        }
+        else{
+     
+            $summary = DB::table('hospital_details_history')
+                ->select(DB::raw('published_by,count(*) as total'))
+                ->where('published_by','<>','')
+                ->where('state_id','like','%'.$request->state_id.'%')
+                ->groupBy('published_by')
+                ->get(); 
+
+            $data['state_id'] = $request->state_id;
+            $data['level'] = $request->level;
+            
+        }
+
+        return view('reports.approvers_summary',compact('summary','data'));     
+
+    }
+
+
+
    
 }
