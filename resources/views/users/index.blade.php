@@ -71,13 +71,12 @@ Users
         <tr>
           <th>Name</th>
           <th>E-mail</th>
-          <th>Mobile</th>
-          <th>Role</th>
+          {{-- <th>Mobile</th> --}}
+          {{-- <th>Role</th> --}}
           <th>State Permission</th>
           <th>LGA Permission</th>
+          <th>Last Login</th>
           <th>Status</th>
-          <th>Organisation</th>    
-          <th>Position</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -86,8 +85,8 @@ Users
         <tr>
           <td>{{$user->firstname}} {{$user->lastname}}</td>
           <td>{{$user->email}}</td>
-          <td>{{$user->mobile}}</td>
-          <td>{{ implode(", ", $user->getRoleNames()->toArray()) }}</td>
+          {{-- <td>{{$user->mobile}}</td> --}}
+          {{-- <td>{{ implode(", ", $user->getRoleNames()->toArray()) }}</td> --}}
           <td>
               @if ($user->state_id == 1)
                   All States
@@ -96,12 +95,9 @@ Users
               @endif
           </td>
           <td>
-              {{-- @if ($user->lga_id == 1)
-                  All LGAs
-              @else --}}
-                  {{ implode(', ',$user->getDirectPermissions()->pluck('name')->toArray()) }}
-              {{-- @endif --}}
+                {{ implode(', ',$user->getDirectPermissions()->pluck('name')->toArray()) }}
           </td>
+          <td>{{date('d M Y  h:i A', strtotime($user->last_login_at))}}</td>
           <td>
               @if ($user->status == 1)
                 <span class="label label-success"> Active</span>
@@ -113,10 +109,18 @@ Users
                 <span class="label label-default"> Inactive</span>
               @endif
           </td>
-          <td>{{$user->organisation}}</td>
-          <td>{{$user->job_title}}</td>
+
           <td style='white-space: nowrap'>
     
+            <a href="#">
+              <button class="btn btn-success btn-sm" data-fname="{{$user->firstname}}" data-lname="{{$user->lastname}}"
+                  data-username="{{$user->username}}" data-email="{{$user->email}}" data-id="{{$user->id}}" data-role="{{ implode(", ", $user->getRoleNames()->toArray()) }}"
+                  data-job="{{$user->job_title}}" data-org="{{$user->organisation}}" data-mobile="{{$user->mobile}}"                     
+                  data-lga_id="{{ implode(', ',$user->getDirectPermissions()->pluck('name')->toArray())}}" 
+                  data-state_id = "{{ ($user->state_id == 1 ? "All States" :$user->state->name ) }}"
+                  type="button" data-toggle="modal" data-target="#showUser">Details</button>
+            </a>
+
             @if(auth()->user()->hasPermissionTo(19))
               <a href="#">
                 <button class="btn btn-warning btn-sm" data-fname="{{$user->firstname}}" data-lname="{{$user->lastname}}"
@@ -157,6 +161,7 @@ Users
   
 @include('users.adduser')
 @include('users.edituser')
+@include('users.show')
 @include('users.block')
 @include('users.delete')
 
@@ -287,7 +292,36 @@ Users
  
       });//end edit
 
+      //show user
+      $('#showUser').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget)
+        var fname = button.data('fname')
+        var lname=button.data('lname')
+        var username=button.data('username')
+        var email=button.data('email')
+        var mobile=button.data('mobile')
+        var state_id=button.data('state_id')
+        var lga_permision=String(button.data('lga_id'))
+        var job=button.data('job') 
+        var org=button.data('org')   
+        var role=button.data('role')  
+        var lgaPermissions = button.data('lgaPermission')
+        var modal = $(this)
 
+
+        modal.find('.modal-body #firstname2').text(fname);
+        modal.find('.modal-body #lastname2').text(lname);
+        modal.find('.modal-body #username2').text(username);
+        modal.find('.modal-body #email2').text(email);
+        modal.find('.modal-body #job2').text(job);
+        modal.find('.modal-body #organisation2').text(org);
+        modal.find('.modal-body #role2').text(role);
+        modal.find('.modal-body #mobile2').text(mobile);
+        modal.find('.modal-body #state_id2').text(state_id);
+        modal.find('.modal-body #lga_id2').text(lga_permision);
+
+
+      });//end show
 
       //block user
       $('#disableUser').on('show.bs.modal', function (event) {

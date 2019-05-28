@@ -102,7 +102,7 @@ class HospitalsController extends Controller
             'phone_number'=>'nullable|min:13',
             'alternate_number'=>'nullable|min:13',
             'email_address'=>'nullable|email',
-            'website'=>'nullable|max:100|url',
+            'website'=>'nullable|max:100',
             'operational_days'=>'nullable',
             'operational_hours'=>'nullable',
             'operational_status_id'=>'required',
@@ -246,7 +246,7 @@ class HospitalsController extends Controller
             'phone_number'=>'nullable|max:20',
             'alternate_number'=>'nullable|max:20',
             'email_address'=>'nullable|email',
-            'website'=>'nullable',
+            'website'=>'nullable|max:100',
             'operational_days'=>'nullable',
             'operational_hours'=>'nullable',
             'operational_status_id'=>'required',
@@ -483,6 +483,7 @@ class HospitalsController extends Controller
         $operational_status_id = $request->operational_status_id;
         $registration_status_id = $request->registration_status_id;
         $license_status_id = $request->license_status_id;
+
     
         if ($geo_codes == 0){
             $cond = "<>";
@@ -517,7 +518,7 @@ class HospitalsController extends Controller
             $license_status_id='';
         }
 
-
+     
         $facilities = DB::table('hospital_details')
             ->where('state_id','like','%'.$state_id.'%')
             ->where('lga_id','like','%'.$lga_id.'%')
@@ -534,7 +535,7 @@ class HospitalsController extends Controller
             ->orderBy('facility_name')
             ->paginate(10)
             ->appends($request->all());
-        
+      
         $download = DB::table('hospital_details')
             ->select('unique_id','registration_no','start_date','facility_name','state','lga','ward','ownership',
              'facility_level','longitude','latitude','operation_status','registration_status','license_status')

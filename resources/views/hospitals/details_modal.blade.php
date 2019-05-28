@@ -28,7 +28,7 @@
                                         <div class="row">
                                                 <label class="col-md-4">State Unique ID:</label>
                                                 <div class="col-md-8" id="state_unique_id"></div>
-                                            </div>
+                                        </div>
                                         <div class="row">
                                             <label class="col-md-4">Registration No:</label>
                                             <div class="col-md-8" id="registration_no"></div>

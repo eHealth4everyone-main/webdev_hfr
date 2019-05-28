@@ -121,7 +121,7 @@ Facility Publication
                     @if (in_array($p->status_id,[7,14,21])) 
                         <span class="label label-danger"> Rejected </span> <br>
                     @endif
-                    <Strong>Date: </Strong>{{  ($p->published_at? date('d M Y', strtotime($p->published_at)) : '')}} <br>  
+                    <Strong>Date: </Strong> {{ ($p->published_at ? date('d M Y', strtotime($p->published_at)) : '') }} <br>  
                     <Strong>By: </Strong>{{$p->published_by}} <br>
                     <Strong>E-mail: </Strong>{{$p->published_email}} <br>
                     <Strong>Mobile: </Strong>{{ $p->published_mobile }} <br>
