@@ -10,7 +10,7 @@
 
 <div class="box box-primary">
   <div class="box-header with-border">
-    <h3 class="box-title">{{ $name }}</h3>
+    <h3 class="box-title">Updated values for  <font color="MediumSeaGreen"><Strong>{{ $name }}</Strong></font> </h3>
     
     
     <!-- /.box-tools -->

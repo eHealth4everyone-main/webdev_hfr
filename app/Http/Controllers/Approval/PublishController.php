@@ -54,16 +54,8 @@ class PublishController extends Controller
             ->whereIn('status_id',[7,14,21])
             ->get();
         }
-        else{
-            // $pending = DB::table('hospital_details_history')
-            // ->where('published_id', '=',Auth::user()->id)
-            // ->where('state_id', 'like', '%' .  $request->state_id . '%')
-            // ->where('action', 'like', '%' .  $request->action . '%')
-            // ->orderby('updated_at','desc')
-            // ->get();
-        }
         
-
+        $request->flash('request',$request);
         return view('approvals.pending_publish',compact('pending'));
     }
 
@@ -258,7 +250,13 @@ class PublishController extends Controller
                 // HFR DHIS 2 EXCHANGE END..
                 //******************************************************************************************************
         }else{
-            return redirect()->route('publish.pending');
+
+            if ($status_id == 13){
+                return redirect()->route('publish.pending');             
+            }else{  
+                return redirect()->back();                
+            }
+
         }
         
         
@@ -309,8 +307,8 @@ class PublishController extends Controller
             $message=$pending->count()." pending publications";  
         }
 
-        
-        return view('approvals.approval_tracking',compact('pending','message'));
+        $request->flash('request',$request);
+        return redirect()->back()->with(compact('pending','message'));
     }
 
    

@@ -48,7 +48,7 @@
                         <select class="form-control select2" id="facility_level_id"  name="facility_level_id" style="width: 100%;">
                             <option value="0">--Select Facility Level--</option>
                             @foreach(getLevelOfCare() as $st)
-                            <option value="{{ $st->id }}"  {{ ($st->id == $data['facility_level_id'] ? "selected":"") }}>{{ $st->name }}</option>
+                                <option value="{{ $st->id }}"  {{ ($st->id == $data['facility_level_id'] ? "selected":"") }}>{{ $st->name }}</option>
                             @endforeach
                         </select>        
                     </div>
@@ -57,7 +57,7 @@
                         <select class="form-control select2" id="ownership_id"  name="ownership_id" style="width: 100%;">
                             <option value="0">--Select Ownership--</option>
                             @foreach(getOwnership() as $st)
-                            <option value="{{$st->id}}" {{ ($st->id == $data['ownership_id']  ? "selected":"") }}>{{$st->name}}</option>
+                                <option value="{{$st->id}}" {{ ($st->id == $data['ownership_id']  ? "selected":"") }}>{{$st->name}}</option>
                             @endforeach
                             
                         </select>

@@ -81,7 +81,7 @@ class VerifyController extends Controller
             ->get();
         }
       
-     
+        $request->flash('request',$request);     
         return view('approvals.pending_verify',compact('pending')); 
     }
 
@@ -176,7 +176,13 @@ class VerifyController extends Controller
  
      
         session()->flash("alert-success", $message);
-        return redirect()->route('verify.pending');
+
+        
+        if ($status_id == 9 OR $status_id == 10){
+            return redirect()->route('verify.pending');
+        }else{  
+            return redirect()->back();                
+        }
     }
 
     public function recall(Request $request)

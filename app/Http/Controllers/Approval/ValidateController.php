@@ -74,7 +74,8 @@ class ValidateController extends Controller
             ->orderby('updated_at','desc')
             ->get();
         }
-
+        
+        $request->flash('request',$request);
         return view('approvals.pending_validation',compact('pending'));
     }
 
@@ -161,7 +162,12 @@ class ValidateController extends Controller
  
 
         session()->flash("alert-success", $message);
-        return redirect()->route('validate.pending');
+
+        if ($status_id == 11 OR $status_id == 12){
+            return redirect()->route('validate.pending');
+        }else{  
+            return redirect()->back();                
+        }
     }
 
      

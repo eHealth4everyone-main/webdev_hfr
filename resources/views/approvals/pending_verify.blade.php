@@ -21,18 +21,18 @@ Facility Verification
             <div class="form-group">
                 <div class="col-md-5">
                         <select class="form-control select2"  class="form-control" name="action"   data-width="100%">
-                                <option value="FACILITY">--Select Request Type--</option>    
-                                <option value="CREATE FACILITY">Create Facility</option>    
-                                <option value="UPDATE FACILITY">Update Facility</option>  
-                                <option value="DELETE FACILITY">Delete Facility</option>                           
+                            <option value="FACILITY">--Select Request Type--</option>         
+                            <option value="CREATE FACILITY" {{ ("CREATE FACILITY" == old('action') ? "selected":"") }}>Create Facility</option>    
+                            <option value="UPDATE FACILITY" {{ ("UPDATE FACILITY" == old('action') ? "selected":"") }}>Update Facility</option>  
+                            <option value="DELETE FACILITY" {{ ("DELETE FACILITY" == old('action') ? "selected":"") }}>Delete Facility</option>                          
                         </select>
                     </div>
                 <div class="col-md-5">
                     <select class="form-control select2"  class="form-control" name="status"   data-width="100%">
-                        <option value="1">My Pending Verifications</option>    
-                        <option value="2">My Accepted Verifications (Pending Validation)</option>     
-                        <option value="3">My Rejected Verifications</option>  
-                        <option value="4">My Verifications</option>                           
+                        <option value="1" {{ ("1" == old('status') ? "selected":"") }}>My Pending Verifications</option>    
+                        <option value="2" {{ ("2" == old('status') ? "selected":"") }}>My Accepted Verifications (Pending Validation)</option>     
+                        <option value="3" {{ ("3" == old('status') ? "selected":"") }}>My Rejected Verifications</option>  
+                        <option value="4" {{ ("4" == old('status') ? "selected":"") }}>My Verifications</option>                           
                     </select>
                 </div>
                 

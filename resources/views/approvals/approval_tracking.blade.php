@@ -22,24 +22,24 @@ Facility Approval Tracking
                         <select class="form-control select2" id="state_id" name ="state_id"  style="width: 100%;">
                                 <option value="1">--Select State--</option>
                                 @foreach(getStates() as $st)
-                                    <option value="{{$st->id}}">{{$st->name}}</option>
+                                    <option value="{{$st->id}}" {{ ($st->id == old('state_id') ? "selected":"") }}>{{$st->name}}</option>
                                 @endforeach
                         </select>
                     </div>
                     <div class="col-md-3">
                             <select class="form-control select2"  class="form-control" name="action"   data-width="100%">
                                     <option value="FACILITY">--Select Request Type--</option>    
-                                    <option value="CREATE FACILITY">Create Facility</option>    
-                                    <option value="UPDATE FACILITY">Update Facility</option>  
-                                    <option value="DELETE FACILITY">Delete Facility</option>                           
+                                    <option value="CREATE FACILITY" {{ ("CREATE FACILITY" == old('action') ? "selected":"") }}>Create Facility</option>    
+                                    <option value="UPDATE FACILITY" {{ ("UPDATE FACILITY" == old('action') ? "selected":"") }}>Update Facility</option>  
+                                    <option value="DELETE FACILITY" {{ ("DELETE FACILITY" == old('action') ? "selected":"") }}>Delete Facility</option>                           
                             </select>
                     </div>
                     
                     <div class="col-md-3">
                         <select class="form-control select2"  class="form-control" name="approval"   data-width="100%">
-                            <option value="1">Pending Verifications</option>   
-                            <option value="2">Pending Validations</option>     
-                            <option value="3">Pending Publications</option>  
+                            <option value="1"  {{ ("1" == old('approval') ? "selected":"") }}>Pending Verifications</option>   
+                            <option value="2"  {{ ("2" == old('approval') ? "selected":"") }}>Pending Validations</option>     
+                            <option value="3"  {{ ("3" == old('approval') ? "selected":"") }}>Pending Publications</option>  
                         </select>
                     </div>
                     <div class="col-sm-1">

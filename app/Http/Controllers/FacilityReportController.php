@@ -222,16 +222,13 @@ class FacilityReportController extends Controller
 
     public function approversSummary(Request $request){
 
-     if($request->level == 2){
+        if($request->level == 2){
             $summary = DB::table('hospital_details_history')
                 ->select(DB::raw('validated_by,count(*) as total'))
                 ->where('validated_by','<>','')
                 ->where('state_id','like','%'.$request->state_id.'%')
                 ->groupBy('validated_by')
                 ->get(); 
-
-            $data['state_id'] = $request->state_id;
-            $data['level'] = $request->level;
         }
         else{
      
@@ -241,11 +238,11 @@ class FacilityReportController extends Controller
                 ->where('state_id','like','%'.$request->state_id.'%')
                 ->groupBy('published_by')
                 ->get(); 
-
-            $data['state_id'] = $request->state_id;
-            $data['level'] = $request->level;
             
         }
+
+        $data['state_id'] = $request->state_id;
+        $data['level'] = $request->level;
 
         return view('reports.approvers_summary',compact('summary','data'));     
 
