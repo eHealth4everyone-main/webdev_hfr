@@ -346,6 +346,15 @@
                                         <div class="col-sm-2">                               
                                                 <input type='checkbox'name='permissions[]' value='69'> Approvers Summary Report
                                         </div>
+                                        <div class="col-sm-2">                               
+                                                <input type='checkbox'name='permissions[]' value='70'> View Lookup Values
+                                        </div>
+                                        <div class="col-sm-2">                               
+                                                <input type='checkbox'name='permissions[]' value='71'> Add Lookup Values
+                                        </div>
+                                        <div class="col-sm-2">                               
+                                                <input type='checkbox'name='permissions[]' value='72'> Edit Lookup Values
+                                        </div>
                               
                                </div>
                       

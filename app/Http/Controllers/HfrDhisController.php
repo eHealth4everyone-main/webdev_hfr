@@ -9,6 +9,7 @@ use GuzzleHttp\Psr7;
 use GuzzleHttp\Exception\RequestException;
 use App\DhisLog;
 use App\HfrDhis;
+use App\DhisLookup;
 use Auth;
 
 class HfrDhisController extends Controller
@@ -236,6 +237,42 @@ class HfrDhisController extends Controller
         $logs = DB::table('dhis_log_details')->paginate(100);
 
         return view('dhis.logs', compact("logs")); 
+    }
+
+    public function lookupIndex(){
+        $lookup = DhisLookup::paginate(15);
+        return view('dhis.lookup', compact("lookup")); 
+    }
+
+    public function lookupStore(Request $request){
+        $request->validate([
+            'dhis_uid' => 'required|unique:dhis_lookup',
+        ]);
+        $lookup = new DhisLookup;
+        $lookup->fill($request->all());
+        $lookup->save();
+        session()->flash("alert-success", "Value added successfully!");        
+        return back();
+    }
+
+    public function lookupUpdate(Request $request){
+        $lookup = new DhisLookup;
+        $lookup = DhisLookup::find($request->id);
+        $lookup->fill($request->all());
+        $lookup->save();
+        session()->flash("alert-success", "Value updated successfully!");        
+        return back();
+    }
+
+    public function lookupSearch(Request $request){
+        $lookup = DhisLookup::where('type',$request->type)
+                ->where('hfr_description', 'like', '%' .  $request->hfr_description . '%')
+                ->paginate(15)
+                ->appends($request->all());
+
+        
+        $request->flash('request',$request);
+        return view('dhis.lookup', compact("lookup")); 
     }
 
     

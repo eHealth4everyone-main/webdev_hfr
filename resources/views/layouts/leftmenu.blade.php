@@ -199,13 +199,25 @@
                         </ul>
                     @endif
                 </li>
-                <li> 
-                    @if(auth()->user()->hasPermissionTo(66))
-                        <a href="{{route('dhis.logs')}}">
-                            <i class="fa fa-exchange"></i>
-                            <span>HFR-DHIS2 Exchange</span>
+                <li  class="treeview"> 
+                        <a href="#">
+                                <i class="fa  fa-exchange"></i>
+                                <span>HFR-DHIS</span>
+                                <span class="pull-right-container">
+                                        <span class="label label-success pull-right">+</span>
+                                </span>
                         </a>
-                    @endif
+
+                        <ul class="treeview-menu">
+                                @if(auth()->user()->hasPermissionTo(66))
+                                    <li><a href="{{route('dhis.logs')}}"><i class="fa fa-file-text-o"></i>Logs</a></li>                               
+                                @endif
+                                @if(auth()->user()->hasPermissionTo(70))
+                                    <li><a href="{{route('dhis.lookup')}}"><i class="fa fa-file-text-o"></i>Lookup Table</a></li>                               
+                                @endif
+    
+                        </ul>
+                
                 </li>
           
             </ul>

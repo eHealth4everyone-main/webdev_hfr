@@ -2,7 +2,7 @@
 
 
 @section('content-title')
-Data Exchange Logs
+Exchange Logs
 
 @endsection
 
