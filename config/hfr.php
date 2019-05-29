@@ -16,4 +16,7 @@ return [
 
     'notify_publication' => env('SEND_EMAIL_NOTIFICATION_AFTER_PUBLICATION',false),
 
+    'integration_enabled' => env('DHIS_INTEGRATION',false),
+
+
 ];

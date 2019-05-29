@@ -226,37 +226,43 @@ class PublishController extends Controller
         }
         
         session()->flash("alert-success", $message);
-        
-         return redirect()->route('publish.pending');
-        
-        //******************************************************************************************************
-        // HFR DHIS 2 EXCHANGE
-        //******************************************************************************************************
-        //after publishing new facility, create a facility in dhis2 and send notifcation
-        
-        // if ($status_id == 6){
-        //     return view('dhis.store',compact('hosp','message'));
-        // }
-        // elseif($status_id == 13){  //after publishing facility updates, send updates to dhis2 and send notifcation
-        //     $dhis = new HfrDhis;
-        //     $data = $dhis->getDhisUpdatedValues($hosp, $request->id);
-        //     $id = $request->id;
 
-        //     if ($data != 'false'){
-        //         return view('dhis.update',compact('data','id','message'));
-        //     }else{
-        //         return redirect()->route('publish.pending');
-        //     }
-        // }else{  
-        //     //after publishing delete request,  send notification to dhis teaam
-        //     $dhis = new HfrDhis;
-        //     $dhis->sendEmailtoDhisTeamForDeletedFacility($facility_name, $ward_id);
-        //     return redirect()->route('publish.pending');
-        // }
+        if (config('hfr.integration_enabled')){
 
-        //******************************************************************************************************
-        // HFR DHIS 2 EXCHANGE END..
-        //******************************************************************************************************
+                //******************************************************************************************************
+                // HFR DHIS 2 EXCHANGE
+                //******************************************************************************************************
+                //after publishing new facility, create a facility in dhis2 and send notifcation
+                
+                if ($status_id == 6){
+                    return view('dhis.store',compact('hosp','message'));
+                }
+                elseif($status_id == 13){  //after publishing facility updates, send updates to dhis2 and send notifcation
+                    $dhis = new HfrDhis;
+                    $data = $dhis->getDhisUpdatedValues($hosp, $request->id);
+                    $id = $request->id;
+
+                    if ($data != 'false'){
+                        return view('dhis.update',compact('data','id','message'));
+                    }else{
+                        return redirect()->route('publish.pending');
+                    }
+                }else{  
+                    //after publishing delete request,  send notification to dhis teaam
+                    $dhis = new HfrDhis;
+                    $dhis->sendEmailtoDhisTeamForDeletedFacility($facility_name, $ward_id);
+                    return redirect()->route('publish.pending');
+                }
+
+                //******************************************************************************************************
+                // HFR DHIS 2 EXCHANGE END..
+                //******************************************************************************************************
+        }else{
+            return redirect()->route('publish.pending');
+        }
+        
+        
+    
     }
 
 
