@@ -25,19 +25,19 @@ Users
                           <option value="">--Select State permission--</option>  
                           
                           @if (Auth::user()->state_id == 1 )
-                              <option value="1">All States</option>    
+                              <option value="1" {{ ("1" == old('state') ? "selected":"") }}>All States</option>    
                           @endif
                           @foreach(getAssignedState() as $s)
-                              <option value="{{$s->id}}">{{$s->name}}</option>
+                              <option value="{{$s->id}}" {{ ($s->id == old('state') ? "selected":"") }}>{{$s->name}}</option>
                           @endforeach
                       </select>
               </div>
               {{-- <label class="col-sm-1 control-label">Role :</label> --}}
               <div class="col-md-3">
                       <select class="form-control select2"  class="form-control" id="role_id" name="role_id"   data-width="100%">
-                          <option value="0">--Select Role--</option>  
+                          <option value="0" {{ ("0" == old('role_id') ? "selected":"") }}>--Select Role--</option>  
                               @foreach(getRoles() as $s)
-                                  <option value="{{$s->id}}">{{$s->name}}</option>
+                                  <option value="{{$s->id}}" {{ ($s->id == old('role_id') ? "selected":"") }}>{{$s->name}}</option>
                               @endforeach
                       </select>
               </div>
@@ -45,13 +45,13 @@ Users
               <div class="col-md-2">
                       <select class="form-control select2"  class="form-control" id="status" name="status"   data-width="100%">
                           <option value="">--Select Status--</option>  
-                          <option value="-1">Inactive</option>    
-                          <option value="1">Active</option>     
-                          <option value="0">Blocked</option>                              
+                          <option value="-1" {{ ("-1" == old('status') ? "selected":"") }}>Inactive</option>    
+                          <option value="1" {{ ("1" == old('status') ? "selected":"") }}>Active</option>     
+                          <option value="0" {{ ("0" == old('status') ? "selected":"") }}>Blocked</option>                              
                       </select>
               </div>
               <div class="col-sm-3">
-                  <input class="form-control input-sm" type="text" name="name" id="name" class="form-control" placeholder="Firstname">
+              <input class="form-control input-sm" type="text" name="name" value="{{old('name')}}" class="form-control" placeholder="Firstname">
               </div> 
               <div class="col-sm-1">
                       <button type="submit" class="btn btn-success pull-right  btn-block btn-sm">Search</button>
@@ -156,6 +156,34 @@ Users
       
     </div>
     <!-- /.box-body -->
+    <div class="box-footer">
+        <div class="row">
+          
+              @php
+                $perpage = $users->perpage();
+                $currentpage = $users->currentpage();
+                $from = ($currentpage-1)*$perpage+1;
+                
+                if ($users->currentpage() == $users->lastpage()) {
+                  $to = $users->total();
+                } else {
+                  $to = $currentpage*$perpage;
+                }
+              @endphp
+         
+              <div class="col-md-4">
+                  Showing {{$from}} to {{$to}} of {{$users->total()}} entries
+                 
+              </div>
+              <div class="col-md-8">
+                  <div class="pull-right">
+                      {{$users->links()}}                  
+                  </div>
+              </div>
+  
+        </div>
+      </div>
+    
   </div>
   <!-- /.box -->
   
@@ -176,12 +204,7 @@ Users
 
 <script>
   $(document).ready(function(){
-    $('#table1').DataTable( {
-        "paging":   true,
-        "ordering": true,
-        "info":     true,
-        responsive: true
-    } );
+
   
     $('[data-mask]').inputmask();
 

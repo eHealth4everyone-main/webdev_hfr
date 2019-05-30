@@ -16,8 +16,7 @@ Facilities Status Summary
                         @csrf
             
                         <div class="form-group">
-                                <label class="col-sm-2">State: </label>
-                                <div class="col-sm-8">
+                                <div class="col-sm-10">
                                         <select class="form-control select2" id="state_id" name ="state_id">
                                             <option value="1">All States</option>
                                             @foreach(getStates() as $st)
@@ -28,7 +27,7 @@ Facilities Status Summary
                                     
                             
                                 <div class="col-sm-2">
-                                        <button type="submit" class="btn btn-success btn-block pull-right  btn-sm">Filter</button>
+                                        <button type="submit" class="btn btn-success btn-block pull-right  btn-sm">Show</button>
                                 </div> 
                         </div>    
                         <hr>

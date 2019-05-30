@@ -22,7 +22,8 @@ class UserController extends Controller
 
         public function index()
         {
-            $users = User::where('state_id', 'like','%'. Auth::user()->state_id. '%')->get();
+            $users = User::where('state_id', 'like','%'. Auth::user()->state_id. '%')
+                    ->paginate(10);
      
             return view('users.index', compact("users"));  
         }
@@ -110,17 +111,19 @@ class UserController extends Controller
             $users = User::where('state_id','like','%'.$request->state.'%')
                     ->where('status','like','%'.$request->status.'%')
                     ->where('firstname','like','%'.$request->name.'%')
-                    ->get();
+                    ->paginate(10)
+                    ->appends($request->all());
       }
       else{
             $users = User::role($request->role_id)
                     ->where('state_id','like','%'.$request->state.'%')
                     ->where('status','like','%'.$request->status.'%')
                     ->where('firstname','like','%'.$request->name.'%')
-                    ->get();
+                    ->paginate(10)
+                    ->appends($request->all());                    
       }
 
- 
+       $request->flash('request',$request); 
        return view('users.index', compact("users"));  
     }
 

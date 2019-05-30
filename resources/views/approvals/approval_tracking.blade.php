@@ -26,7 +26,7 @@ Facility Approval Tracking
                                 @endforeach
                         </select>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                             <select class="form-control select2"  class="form-control" name="action"   data-width="100%">
                                     <option value="FACILITY">--Select Request Type--</option>    
                                     <option value="CREATE FACILITY" {{ ("CREATE FACILITY" == old('action') ? "selected":"") }}>Create Facility</option>    
@@ -42,8 +42,7 @@ Facility Approval Tracking
                             <option value="3"  {{ ("3" == old('approval') ? "selected":"") }}>Pending Publications</option>  
                         </select>
                     </div>
-                    <div class="col-sm-1">
-                    </div>
+                   
                     <div class="col-sm-2">
                         <button type="submit" class="btn btn-success pull-right  btn-block btn-sm">Show</button>
                     </div> 

@@ -202,7 +202,7 @@
                 <li  class="treeview"> 
                         <a href="#">
                                 <i class="fa  fa-exchange"></i>
-                                <span>HFR-DHIS</span>
+                                <span>HFR-DHIS2</span>
                                 <span class="pull-right-container">
                                         <span class="label label-success pull-right">+</span>
                                 </span>
@@ -210,10 +210,10 @@
 
                         <ul class="treeview-menu">
                                 @if(auth()->user()->hasPermissionTo(66))
-                                    <li><a href="{{route('dhis.logs')}}"><i class="fa fa-file-text-o"></i>Logs</a></li>                               
+                                    <li><a href="{{route('dhis.logs')}}"><i class="fa fa-file-text"></i>Logs</a></li>                               
                                 @endif
                                 @if(auth()->user()->hasPermissionTo(70))
-                                    <li><a href="{{route('dhis.lookup')}}"><i class="fa fa-file-text-o"></i>Lookup Table</a></li>                               
+                                    <li><a href="{{route('dhis.lookup')}}"><i class="fa fa-table"></i>Lookup Table</a></li>                               
                                 @endif
     
                         </ul>

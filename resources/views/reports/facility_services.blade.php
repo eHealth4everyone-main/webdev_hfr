@@ -57,7 +57,7 @@ Facility Services Rendered
                             </div>   
                             <div class="col-sm-2">          </div>  
                             <div class="col-sm-2">
-                                    <button type="submit" class="btn btn-success btn-block pull-right  btn-sm">Generate</button>
+                                    <button type="submit" class="btn btn-success btn-block pull-right  btn-sm">Show</button>
                             </div> 
                         </div>
                     <hr>

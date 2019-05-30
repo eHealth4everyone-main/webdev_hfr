@@ -31,7 +31,7 @@ class HospitalsController extends Controller
             ->orderBy('state')
             ->orderBy('lga')
             ->orderBy('facility_name')
-            ->paginate(10);
+            ->paginate(15);
         }else{
             $facilities = DB::table('hospital_details')
             ->where('state_id', 'like', '%' .  Auth::user()->state_id . '%')
@@ -39,7 +39,7 @@ class HospitalsController extends Controller
             ->orderBy('state')
             ->orderBy('lga')
             ->orderBy('facility_name')
-            ->paginate(10);
+            ->paginate(15);
         }
       
 
@@ -533,7 +533,7 @@ class HospitalsController extends Controller
             ->orderBy('state')
             ->orderBy('lga')
             ->orderBy('facility_name')
-            ->paginate(10)
+            ->paginate(15)
             ->appends($request->all());
       
         $download = DB::table('hospital_details')
