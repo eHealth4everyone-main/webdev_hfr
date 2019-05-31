@@ -12,6 +12,7 @@ use Notification;
 use App\Notifications\sendNewFacilityEmailtoDhisTeam;
 use App\Notifications\sendUpdateFacilityEmailtoDhisTeam;
 use App\Notifications\sendDeleteFacilityEmailtoDhisTeam;
+use Carbon\Carbon;
 
 
 
@@ -81,7 +82,8 @@ class HfrDhis extends Model
     }
 
     //ownership i.e. private and public
-    public function assignOwnership($ownership_id,$orgUnit){      
+    public function assignOwnership($ownership_id,$orgUnit){     
+        $data= [];
         try{
             //get ownership uid
             $ownership = DB::table('dhis_lookup')
@@ -101,16 +103,21 @@ class HfrDhis extends Model
             ]);
             
             if ($response->getStatusCode() == '204'){
-                return 'Assigned';
+                $data[0] = 'Assigned';
             }else{
-                return 'Not Assigned';
+                $data[0] = 'Not assigned';
             }
-            
+            $data[1] = '';
+            return $data;
         } catch (RequestException $e) {
             if ($e->hasResponse()) {
-                return Psr7\str($e->getResponse());
+                $data[0] = 'Failed';
+                $data[1] =  $e->getResponse()->getBody()->getContents();
+                return $data;
             }else {
-                return "Exception Error";
+                $data[0] = 'Failed';
+                $data[1] = 'No response from the server';
+                return $data;
             }
         }
     }
@@ -142,15 +149,16 @@ class HfrDhis extends Model
             
         } catch (RequestException $e) {
             if ($e->hasResponse()) {
-                return Psr7\str($e->getResponse());
+                return $e->getResponse()->getBody()->getContents();                            
             }else {
-                return "Exception Error";
+                return "Exception_Error";
             }
         }
     }
 
     // level of care, Primary, Secodary & Tertiary
     public function assignLevelOfCare($levelId,$orgUnit){
+        $data = [];
         try{
             //get level of care uid
             $level = DB::table('dhis_lookup')
@@ -170,16 +178,22 @@ class HfrDhis extends Model
             ]);
 
             if ($response->getStatusCode() == '204'){
-                return 'Assigned';
+                $data[0] = 'Assigned';
             }else{
-                return 'Not Assigned';
+                $data[0] = 'Not Assigned';
             }
+            $data[1] = '';
+            return $data;
 
         } catch (RequestException $e) {
             if ($e->hasResponse()) {
-                return Psr7\str($e->getResponse());               
+                $data[0] = 'Failed';
+                $data[1] =  $e->getResponse()->getBody()->getContents();
+                return $data;
             }else {
-                return "Exception Error";
+                $data[0] = 'Failed';
+                $data[1] = 'No response from the server';
+                return $data;
             }
         }
     }
@@ -211,9 +225,9 @@ class HfrDhis extends Model
 
         } catch (RequestException $e) {
             if ($e->hasResponse()) {
-                return Psr7\str($e->getResponse());               
+                return $e->getResponse()->getBody()->getContents();               
             }else {
-                return "Exception Error";
+                return "Exception_Error";
             }
         }
     }
@@ -239,16 +253,23 @@ class HfrDhis extends Model
             ]);
 
             if ($response->getStatusCode() == '204'){
-                return 'Assigned';
+                $data[0] = 'Assigned';
             }else{
-                return 'Not Assigned';
+                $data[0] = 'Not Assigned';
             }
+
+            $data[1] = '';
+            return $data;
 
         } catch (RequestException $e) {
             if ($e->hasResponse()) {
-                return Psr7\str($e->getResponse());               
+                $data[0] = 'Failed';
+                $data[1] =  $e->getResponse()->getBody()->getContents();
+                return $data;
             }else {
-                return "Exception Error";
+                $data[0] = 'Failed';
+                $data[1] = 'No response from the server';
+                return $data;
             }
         }
     
@@ -283,7 +304,7 @@ class HfrDhis extends Model
             if ($e->hasResponse()) {
                 return Psr7\str($e->getResponse());               
             }else {
-                return "Exception Error";
+                return "Exception_Error";
             }
         }
     
@@ -334,7 +355,7 @@ class HfrDhis extends Model
         $allUpdatedValues= $audit->getModified();
 
         $dhisFields = ["facility_name","alt_facility_name","start_date","close_date","postal_address","email_address","website",
-          "phone_number","longitude","latitude","ownership_id","facility_level_id","facility_level_option_id"];
+          "phone_number","longitude","latitude","ownership_id","facility_level_id","facility_level_option_id","operational_status_id"];
         
         $dhisUpdatedFields = array_intersect($dhisFields, array_keys($allUpdatedValues));
         
@@ -346,20 +367,8 @@ class HfrDhis extends Model
             $orgUnitGroups =[];
             $dataArray = [];
             
-        
-            $data = [
-                'name' =>$dhis->formatName($hosp['facility_name'], $hosp['state_id']),
-                'shortName' => $dhis->getShortname($hosp['facility_name'],$hosp['alt_facility_name']),
-                'code' => $id,
-                'openingDate' => $dhis->formatDate($hosp['start_date']),
-                'closedDate' =>$dhis->formatDate($hosp['close_date']),
-                'address' => $hosp['postal_address'],
-                'coordinates' => $dhis->formatGeoCords($hosp['longitude'],$hosp['latitude']),
-                'email' => $hosp['email_address'],
-                'url' => $hosp['website'],
-                'phoneNumber' => $hosp['phone_number'],
-                'parent' => $dhis->getParent($hosp['ward_id'])
-            ];
+           
+            $close_date = $hosp['close_date'];
 
             foreach($allUpdatedValues as $key => $value) {
                 if(in_array($key,$dhisUpdatedFields )){
@@ -373,11 +382,35 @@ class HfrDhis extends Model
                         case "facility_level_option_id":
                             $orgUnitGroups['facility_level_option_id'] = $value['new'];                          
                             break;
+                        case "operational_status_id":
+                            if($hosp->operational_status_id > 1 && $hosp->operational_status_id < 5){
+                                $close_date= Carbon::now()->format('Y-m-d');  
+                            }
+                            elseif($hosp->operational_status_id > 4){
+                                $close_date = $hosp['close_date'];
+                            }else{
+                                $close_date = '';
+                            }            
+                            break;
                     }
                     
                 }
             }
 
+            $data = [
+                'name' =>$dhis->formatName($hosp['facility_name'], $hosp['state_id']),
+                'shortName' => $dhis->getShortname($hosp['facility_name'],$hosp['alt_facility_name']),
+                'code' => $id,
+                'openingDate' => $dhis->formatDate($hosp['start_date']),
+                'closedDate' =>$dhis->formatDate($close_date),
+                'address' => $hosp['postal_address'],
+                'coordinates' => $dhis->formatGeoCords($hosp['longitude'],$hosp['latitude']),
+                'email' => $hosp['email_address'],
+                'url' => $hosp['website'],
+                'phoneNumber' => $hosp['phone_number'],
+                'parent' => $dhis->getParent($hosp['ward_id'])
+            ];
+            
             $dataArray['updates'] = $data;
             $dataArray['facility_name'] = $hosp['facility_name'];
             $dataArray['ward_id'] = $hosp['ward_id'];
@@ -389,10 +422,9 @@ class HfrDhis extends Model
             }
 
             return $dataArray;
-            // $x = $this->sendUPdates($dataArray, $id);
-            // return x;
+        
         }else{
-            return 'false';
+            return false;
         }
 
     }
@@ -435,98 +467,6 @@ class HfrDhis extends Model
         $users = User::permission('Receive DHIS2 Notifications')->get();
         Notification::send($users, new sendDeleteFacilityEmailtoDhisTeam($name,$state,$lga,$ward_name));
     }
-
-    //temporary method, to be deleted
-    public function sendUPdates($data, $id){
-    
-        $uid = $this->getDhisFacilityUID($id);
-        
-        // dd($data['updates'], $uid);
-
-        if(strlen($uid) == 11){
-            try {
-                $client = new Client([
-                    'base_uri' =>  env('DHIS_BASE_URI')
-                ]);
-        
-                $response = $client->put('organisationUnits/'. $uid, [
-                    'auth' => [config('hfr.dhis_username'),config('hfr.dhis_password')],
-                    'json' => $data['updates']
-                ]);
-                
-                $status = $response->getReasonPhrase();
-                if ($status == 'OK'){
-                    $update_status = "Updated";
-                }else{
-                    $update_status = $status;
-                }
-
-    
-                //if any of the organiation groups is updated
-                $ownership_status = 'No Updates';
-                $level_status = 'No Updates';
-                $level_option_status = 'No Updates';
-
-                if (count($data['groups']) > 0){
-
-                    foreach($data['groups'] as $key => $value) {
-                        switch ($key) {
-                            case "ownership_id":
-                                $this->unAssignOwnership($value,$uid);
-                                $ownership_status = $this->AssignOwnership($value,$uid);
-                                break;
-                            case "facility_level_id":
-                                $this->unAssignLevelOfCare($value,$uid);
-                                $level_status = $this->AssignLevelOfCare($value,$uid);
-                                break;
-                            case "facility_level_option_id":
-                                if (in_array($value,[1,3,5])){
-                                    $this->unAssignLevelOfCareOption($value,$uid);
-                                    $level_option_status = $this->AssignLevelOfCareOption($value,$uid);
-                                }       
-                                break;
-                        }
-                    }
-                }
-    
-                //Save status of actions
-                $log = new DhisLog;
-                $log->hfr_id = $id;
-                $log->dhis_uid = $uid;
-                $log->facility_status = $update_status;
-                $log->ownership_status = $ownership_status;
-                $log->level_status = $level_status;
-                $log->level_option_status = $level_option_status;
-                $log->save();
-
-                return 'Updated';               
-    
-            } catch (RequestException $e) {
-                $log = new DhisLog;
-                if ($e->hasResponse()) {
-                    $response =  Psr7\str($e->getResponse());
-                    $log->hfr_id = $id;
-                    $log->facility_status = $response;
-                    $log->save();
-                    return "Exception Error";
-                }else {
-                    $log->hfr_id = $id;
-                    $log->facility_status = "Not updated due to network error";
-                    $log->save();
-                    return "Exception Error";
-                }
-            }
-
-        }else { // if failed to get facility uid from dhis
-            $log = new DhisLog;
-            $log->hfr_id = $id;
-            $log->facility_status = $uid;
-            $log->save();
-            return "Exception Error";
-        }
-       
-    }
-
 
 
 }

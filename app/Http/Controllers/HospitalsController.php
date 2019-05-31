@@ -71,10 +71,6 @@ class HospitalsController extends Controller
     {
         $lst_services = DB::table('lst_hosp_services')
                     ->get();
-
-        // $lga_permission = implode(', ',auth()->user()->getDirectPermissions()->pluck('id')->toArray());
-        // $lga_permission =auth()->user()->getDirectPermissions()->pluck('id')->toArray();
-
         
         return view('hospitals.create',compact('lst_services')); 
     }
@@ -102,7 +98,7 @@ class HospitalsController extends Controller
             'phone_number'=>'nullable|min:13',
             'alternate_number'=>'nullable|min:13',
             'email_address'=>'nullable|email',
-            'website'=>'nullable|max:100',
+            'website'=>'nullable|url|max:100',
             'operational_days'=>'nullable',
             'operational_hours'=>'nullable',
             'operational_status_id'=>'required',
@@ -136,15 +132,12 @@ class HospitalsController extends Controller
         
         $start_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->start_date)));
 
-        if($request->operational_status_id > 1 && $request->operational_status_id < 5){
-            $close_date= Carbon::now()->format('Y-m-d H:i:s');  
-        }
-        elseif($request->operational_status_id > 4){
+        if($request->operational_status_id > 4){
             $close_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->close_date)));
         }else{
             $close_date = null;
         }
-
+        
         $hosp = new HospitalHistory;
         $hosp->fill($request->all());
         $hosp->id = $hosp->generateUID();
@@ -246,7 +239,7 @@ class HospitalsController extends Controller
             'phone_number'=>'nullable|max:20',
             'alternate_number'=>'nullable|max:20',
             'email_address'=>'nullable|email',
-            'website'=>'nullable|max:100',
+            'website'=>'nullable|url|max:100',
             'operational_days'=>'nullable',
             'operational_hours'=>'nullable',
             'operational_status_id'=>'required',
@@ -277,10 +270,7 @@ class HospitalsController extends Controller
             'inpatient'=>'nullable',
         ]);
 
-        if($request->operational_status_id > 1 && $request->operational_status_id < 5){
-            $close_date= Carbon::now()->format('Y-m-d H:i:s');  
-        }
-        elseif($request->operational_status_id > 4){
+        if($request->operational_status_id > 4){
             $close_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->close_date)));
         }else{
             $close_date = null;

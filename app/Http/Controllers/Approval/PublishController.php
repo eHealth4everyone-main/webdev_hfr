@@ -234,7 +234,7 @@ class PublishController extends Controller
                     $data = $dhis->getDhisUpdatedValues($hosp, $request->id);
                     $id = $request->id;
 
-                    if ($data != 'false'){
+                    if ($data != false){
                         return view('dhis.update',compact('data','id','message'));
                     }else{
                         return redirect()->route('publish.pending');

@@ -15,7 +15,7 @@ HFR-DHIS2 Exchange
     </div> --}}
    
     <div id='updating'>
-        <h4>Updating DHIS2. Please wait...</h4>
+        <h4>Creating facility in DHIS2. Please wait...</h4>
     </div>
 
     <div id='progress' class="progress">
@@ -35,8 +35,8 @@ HFR-DHIS2 Exchange
   </div>
   <!-- /.box-body -->
   <div class="box-footer">
-      <a href="{{route('admin_home')}}">
-          <button type="button" class="btn btn-primary">Close</button>
+      <a href="{{route('dhis.logs')}}" id='btfooter' hidden>
+          <button type="button" class="btn btn-primary">View Logs</button>
       </a>
   </div>
 </div>
@@ -76,8 +76,10 @@ $(document).ready(function() {
       var facility_name ='{{ $hosp->facility_name}}';
       var alt_facility_name = '{{ (string)$hosp->alt_facility_name }}';
       var start_date = '{{ $hosp->start_date }}';
+      var close_date = '{{ $hosp->close_date }}';
       var postal_address = '{{ $hosp->postal_address }}';
       var email_address = '{{ $hosp->email_address }}';
+      var operational_status_id = '{{ $hosp->operational_status_id }}';
       var website = '{{ $hosp->website }}';
       var longitude = '{{ $hosp->longitude }}';
       var latitude = '{{ $hosp->latitude }}';
@@ -90,21 +92,25 @@ $(document).ready(function() {
       $.ajax({
           url:"{{route('dhis.store')}}",
           method:"POST",
-          data:{state_id:state_id, ward_id:ward_id, facility_name:facility_name, start_date:start_date, postal_address:postal_address,
-                email_address:email_address, website:website,longitude:longitude,  latitude:latitude, id:id,
+          data:{state_id:state_id, ward_id:ward_id, facility_name:facility_name, start_date:start_date, close_date:close_date, postal_address:postal_address,
+                email_address:email_address, website:website,longitude:longitude,  latitude:latitude, id:id, operational_status_id:operational_status_id,
                 alt_facility_name:alt_facility_name,  phone_number:phone_number,ownership_id:ownership_id,
                 facility_level_option_id:facility_level_option_id, facility_level_id:facility_level_id, _token:_token},
           success:function(result)
           {
               if (result =='Created'){
                   $("#fac_success").show();
+                  $("#btfooter").show();
                   $("#progress").hide();
                   $('#updating').hide();
+                  $("#fac_error").hide();
               }
-              if (result =='Exception Error'){
+              else{
                   $("#fac_error").show();
+                  $("#btfooter").show();
                   $("#progress").hide();
                   $('#updating').hide();
+                  $("#fac_success").hide();
               }
           }         
       })   
@@ -116,7 +122,6 @@ $(document).ready(function() {
                 .css("width", current_progress + "%")
                 .attr("aria-valuenow", current_progress)
                 .text(current_progress + "%");
-          $("#fac_success").show();
           $("#progress").hide();
           $('#updating').hide();
             

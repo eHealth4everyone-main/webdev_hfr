@@ -25,7 +25,7 @@ HFR-DHIS2 Exchange
     </div>
     <div id='fac_error' class="alert alert-danger alert-dismissible" hidden>
         <h4><i class="icon fa fa-warning"></i> Error!</h4>
-        Something went wrong while updating DHIS2. Please, check on logs for details!
+        Something went wrong while updating DHIS2. Please, check logs for details!
     </div>
     <div id='fac_success' class="alert alert-success alert-dismissible" hidden>
         <h4><i class="icon fa fa-check"></i> Success!</h4>
@@ -34,9 +34,9 @@ HFR-DHIS2 Exchange
 
   </div>
   <!-- /.box-body -->
-  <div class="box-footer">
-      <a href="{{route('admin_home')}}">
-          <button type="button" class="btn btn-primary">Close</button>
+  <div class="box-footer" id='btfooter'hidden>
+      <a href="{{route('dhis.logs')}}">
+          <button type="button" class="btn btn-primary">View Logs</button>
       </a>
   </div>
 </div>
@@ -53,8 +53,8 @@ HFR-DHIS2 Exchange
 
 
 $(document).ready(function() {
-      $("#fac_error").hide();
-      $("#fac_success").hide();
+    //   $("#fac_error").hide();
+    //   $("#fac_success").hide();
 
 
       var current_progress = 0;
@@ -69,6 +69,7 @@ $(document).ready(function() {
                   clearInterval(interval);
           }, 2000);
       });
+
       var data =  @json($data);
       var id = '{{ $id }}';
       var _token = $('input[name="_token"]').val();
@@ -81,13 +82,16 @@ $(document).ready(function() {
           {
               if (result =='Updated'){
                   $("#fac_success").show();
+                  $("#btfooter").show();
                   $("#progress").hide();
                   $('#updating').hide();
-              }
-              if (result =='Exception Error'){
+                  $("#fac_error").hide();
+              }else{
                   $("#fac_error").show();
+                  $("#btfooter").show();
                   $("#progress").hide();
                   $('#updating').hide();
+                  $("#fac_success").hide();
               }
           }         
       })   
@@ -99,7 +103,6 @@ $(document).ready(function() {
                 .css("width", current_progress + "%")
                 .attr("aria-valuenow", current_progress)
                 .text(current_progress + "%");
-          $("#fac_success").show();
           $("#progress").hide();
           $('#updating').hide();
             

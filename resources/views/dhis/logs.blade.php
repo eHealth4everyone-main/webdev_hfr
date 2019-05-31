@@ -14,15 +14,14 @@ Exchange Logs
       <thead>
         <tr>
           <th>ID</th>
+          <th>UID</th>
           <th>Facility Name</th>
-          <th>HFR UId</th>
-          <th>DHIS2 UId</th>
           <th>Facility </th>
           <th>Ownership</th>
           <th>Level of Care </th>
           <th>Level of Care Option</th>
-          <th>Date</th>
           <th>Published By</th>
+          <th>Date</th>
           <th>Action</th>
         </tr>
       </thead>
@@ -31,28 +30,94 @@ Exchange Logs
         @foreach($logs as $log)
         <tr>
           <td>{{ $log->id }}</td>
-          <td>{{$log->facility_name}}</td>
-          <td>{{$log->hfr_id}} </td>
-          <td>{{$log->dhis_uid}}</td>
-          <td>{{$log->facility_status}}</td>
-          <td>{{$log->ownership_status}}</td>
-          <td>{{$log->level_status}}</td>
-          <td>{{$log->level_option_status}}</td>
-          <td> {{ Carbon\Carbon::parse($log->created_at)->toFormattedDateString() }}</td>
-          <td>{{ $log->firstname.' '.$log->lastname }}</td>
           <td>
-            <a href="#">
-              <button class="btn btn-success btn-sm"  type="button" data-toggle="modal" data-target="#view_details"
-                  data-id="{{$log->id}}" data-facility_code="{{$log->facility_code}}"  data-start_date="{{$log->start_date}}" data-close_date="{{$log->close_date}}"
-                  data-facility_name="{{$log->facility_name}}" data-alt_facility_name="{{$log->alt_facility_name}}" data-state="{{$log->state}}"
-                  data-lga="{{$log->lga}}" data-ward="{{$log->ward}}" data-ownership="{{$log->ownership}}" 
-                  data-facility_level="{{$log->facility_level}}" data-facility_level_option="{{$log->facility_level_option}}"
-                  data-longitude="{{$log->longitude}}" data-latitude="{{$log->latitude}}"
-                  data-postal_address="{{$log->postal_address}}" data-phone_number="{{$log->phone_number}}" data-email_address="{{$log->email_address}}"
-                  data-website="{{$log->website}}"  >
-                  Details
-              </button>
-          </a> 
+            @if($log->facility_status =='Failed' or $log->ownership_status == 'Failed' or $log->level_status == 'Failed' or $log->level_option_status == 'Failed' )
+                <font color="red">  {{$log->facility_id}}</font>
+            @else
+                {{$log->facility_id}}
+            @endif
+          </td>
+          <td>
+            @if($log->facility_status =='Failed' or $log->ownership_status == 'Failed' or $log->level_status == 'Failed' or $log->level_option_status == 'Failed' )
+                <font color="red">  {{$log->facility_name}}</font>
+            @else
+                {{$log->facility_name}}
+            @endif
+          </td>
+          <td>
+              @if ($log->facility_status == 'Failed')
+              <font color="red">  {{$log->facility_status}}</font>
+              @else
+                {{$log->facility_status}}
+              @endif
+            
+          </td>
+          <td>
+              @if ($log->ownership_status == 'Failed')
+              <font color="red">  {{$log->ownership_status}}</font>
+              @else
+                {{$log->ownership_status}}
+              @endif
+            
+          </td>
+          <td>
+              @if ($log->level_status == 'Failed')
+              <font color="red">  {{$log->level_status}}</font>
+              @else
+                {{$log->level_status}}
+              @endif
+            
+          </td>
+          <td>
+              @if ($log->level_option_status == 'Failed')
+              <font color="red">  {{$log->level_option_status}}</font>
+              @else
+                {{$log->level_option_status}}
+              @endif
+            
+          </td>
+          <td>{{ $log->firstname.' '.$log->lastname }}</td>         
+          <td> {{ Carbon\Carbon::parse($log->created_at)->toFormattedDateString() }}</td>
+         
+          <td>
+                <form class="form-horizontal"  action="{{route('dhis.resend')}}" method="post">
+
+                    <a href="#">
+                        <button class="btn btn-success btn-sm"  type="button" data-toggle="modal" data-target="#view_details"
+                            data-id="{{$log->id}}" data-facility_code="{{$log->facility_code}}"  data-start_date="{{$log->start_date}}" data-close_date="{{$log->close_date}}"
+                            data-facility_name="{{$log->facility_name}}" data-alt_facility_name="{{$log->alt_facility_name}}" data-state="{{$log->state}}"
+                            data-lga="{{$log->lga}}" data-ward="{{$log->ward}}" data-ownership="{{$log->ownership}}" 
+                            data-facility_level="{{$log->facility_level}}" data-facility_level_option="{{$log->facility_level_option}}"
+                            data-longitude="{{$log->longitude}}" data-latitude="{{$log->latitude}}"
+                            data-postal_address="{{$log->postal_address}}" data-phone_number="{{$log->phone_number}}" data-email_address="{{$log->email_address}}"
+                            data-website="{{$log->website}}"  >
+                            Details
+                        </button>  
+                    </a> 
+                    @if($log->error_details != '')
+                        <a href="#">
+                            <button class="btn btn-warning btn-sm"  type="button" data-toggle="modal" data-target="#view_error"
+                                data-error="{{ (string)$log->error_details }}" >
+                                Error Details
+                            </button>  
+                        </a> 
+                    @endif
+
+                    @if($log->facility_status =='Failed' or $log->ownership_status == 'Failed' or $log->level_status == 'Failed' or $log->level_option_status == 'Failed' )
+                            @csrf
+                            <input type="hidden" name="facility_status" value={{$log->facility_status}}>
+                            <input type="hidden" name="ownership_status" value={{$log->ownership_status}}>
+                            <input type="hidden" name="level_status" value={{$log->level_status}}>
+                            <input type="hidden" name="level_option_status" value={{$log->level_option_status}}>
+                            <input type="hidden" name="facility_id" value={{$log->facility_id}}>
+                            <input type="hidden" name="log_id" value={{$log->id}}>
+                            <input type="hidden" name="request_type" value={{$log->request_type}}>
+
+                            
+                            <button type="submit" class="btn btn-primary btn-sm">Resend</button>
+                    @endif
+                </form>
+
           </td>
         </tr>
         @endforeach
@@ -181,6 +246,46 @@ Exchange Logs
   </div>
 </div><!--/.modal -->
 
+{{-- modal error details--}}
+<div class="modal fade" id="view_error" tabindex="-1" role="dialog">
+    <div class="modal-dialog " role="document">
+        <div class="modal-content">
+       
+            <div class="modal-body">
+                
+                <div class="panel-body">
+                    
+                    <div class="panel-group" id="accordion">
+                        {{-- panel one --}}
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">Error Details</a>
+                                </h4>
+                            </div>
+                            <div id="collapse1" class="panel-collapse collapse in">
+                                <div class="panel-body ;" >
+                      
+                                    <div class="row" >
+                                        <div class="col-md-12" id="error">    </div>
+                                    </div>
+                          
+                                  
+                                </div>
+                            </div>
+                        </div>             
+                    </div>              
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!--/.modal-dialog -->
+    </div>
+  </div><!--/.modal -->
+  
+
 @endsection 
 
 
@@ -226,7 +331,18 @@ Exchange Logs
             modal.find('.modal-body #website').text(button.data('website'));
          
        
-        });//end
+      });//end
+
+        
+      
+      $('#view_error').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var modal = $(this);
+            var error = button.data('error');
+
+            modal.find('.modal-body #error').text(JSON.stringify(error));
+       
+      });//end
 
 
 

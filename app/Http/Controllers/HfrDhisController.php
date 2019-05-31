@@ -11,24 +11,32 @@ use App\DhisLog;
 use App\HfrDhis;
 use App\DhisLookup;
 use Auth;
+use Carbon\Carbon;
+
 
 class HfrDhisController extends Controller
 {
-    public function index(){
-        return view('dhis.index');    
-    }
-
+ 
     public function store(Request $request){
         $dhis = new HfrDhis;
 
         $data= [];
-        
+       
+        if($request->operational_status_id > 1 && $request->operational_status_id < 5){
+            $close_date= Carbon::now()->format('Y-m-d');  
+        }
+        elseif($request->operational_status_id > 4){
+            $close_date = $request->close_date;
+        }else{
+            $close_date = '';
+        }
+
         $data = [
             'name' =>$dhis->formatName($request->facility_name, $request->state_id),
             'shortName' => $dhis->getShortname($request->facility_name,$request->alt_facility_name),
             'code' => $request->id,
             'openingDate' => $dhis->formatDate($request->start_date),
-            'closedDate' =>'',
+            'closedDate' =>$dhis->formatDate($close_date),
             'address' => $request->postal_address,
             'coordinates' => $dhis->formatGeoCords($request->longitude,$request->latitude),
             'email' => $request->email_address,
@@ -60,21 +68,34 @@ class HfrDhisController extends Controller
                 $level_status = $dhis->assignLevelOfCare($request->facility_level_id, $facility_uid);
        
                 //Assign Organisation unit - Level of Care Options
-                if (in_array($request->facility_level_id,[1,2,5])){
+                if ($request->facility_level_option_id > 0){
                     $level_option_status = $dhis->assignLevelOfCareOption($request->facility_level_option_id,$facility_uid);
+                }else{
+                    $level_option_status[0]='';
                 }
-                else{
-                    $level_option_status = 'Not set';
-                }
+                
 
                 //Save status of actions
+                $error = '';
+                if ($ownership_status[0]=='Failed'){
+                    $error = 'Ownership assignment error: '.$ownership_status[1];
+                }
+                if ($level_status[0]=='Failed'){
+                    $error = $error. ' Level of care assignment error: '.$level_status[1];
+                }
+                if ($level_option_status[0]=='Failed'){
+                    $error = $error. ' Level of care option assignment error: '.$level_option_status[1];
+                }
+
                 $log = new DhisLog;
                 $log->hfr_id = $request->id;
                 $log->dhis_uid = $facility_uid;
                 $log->facility_status = 'Created';
-                $log->ownership_status = $ownership_status;
-                $log->level_status = $level_status;
-                $log->level_option_status = $level_option_status;
+                $log->ownership_status = $ownership_status[0];
+                $log->level_status = $level_status[0];
+                $log->level_option_status = $level_option_status[0];
+                $log->error_details = $error;
+                $log->request_type = 'Create';
                 $log->user_id = Auth::user()->id;
                 $log->save();
 
@@ -87,18 +108,122 @@ class HfrDhisController extends Controller
         } catch (RequestException $e) {
             $log = new DhisLog;
             if ($e->hasResponse()) {
-                $response =  Psr7\str($e->getResponse());
                 $log->hfr_id = $request->id;
-                $log->facility_status = $response;
+                $log->facility_status = 'Failed' ;
+                $log->error_details = $e->getResponse()->getBody()->getContents();
                 $log->user_id = Auth::user()->id;
+                $log->request_type = 'Create';
                 $log->save();
-                return "Exception Error";
+                return "Exception_Error";
             }else {
                 $log->hfr_id = $request->id;
-                $log->facility_status = "Not created due to network error";
+                $log->facility_status = "Failed";
+                $log->error_details = 'No response from the server';
+                $log->user_id = Auth::user()->id;
+                $log->request_type = 'Create';
+                $log->save();
+                return "Exception_Error";
+            }
+        }
+       
+    }
+
+    public function store2(){
+        $dhis = new HfrDhis;
+
+        $data= [];
+        $parent = [];
+        $parent['id'] = 'allHBmjrOUA';
+        
+        $data = [
+            'name' =>'Beatus Test Facility',
+            'shortName' => 'Beatus TF',
+            // 'code' => '12456',
+            'openingDate' =>'2019-05-05',
+            'closedDate' =>'',
+            'address' => 'Box 777 Dar',
+            'email' =>'hfr@healt.com',
+            // 'url' => 'www.hfr.com',
+            'phoneNumber' => '12345678',
+            'parent' => $parent
+        ];
+       
+        try {
+            $client = new Client([
+                'base_uri' =>  config('hfr.dhis_url')
+            ]);
+    
+            $response = $client->post('organisationUnits', [
+                'auth' => [config('hfr.dhis_username'),config('hfr.dhis_password')],
+                'json' => $data
+            ]);
+
+
+            if ($response->getReasonPhrase() ==  'Created'){
+                $array = json_decode($response->getBody()->getContents(), true); 
+              
+                $facility_uid = $array['response']['uid'];
+           
+                //Assign Organisation unit - ownership
+                $ownership_status = $dhis->assignOwnership('1',$facility_uid);
+
+                //Assign Organisation unit - Level of Care
+                $level_status = $dhis->assignLevelOfCare('1', $facility_uid);
+       
+                //Assign Organisation unit - Level of Care Options
+                if (in_array('3',[1,2,5])){
+                    $level_option_status = $dhis->assignLevelOfCareOption('5',$facility_uid);
+                }
+                else{
+                    $level_option_status[0] = '';
+                }
+
+                //Save status of actions to log
+                $error = '';
+                if ($ownership_status[0]=='Failed'){
+                    $error = 'Ownership assignment error: '.$ownership_status[1];
+                }
+                if ($level_status[0]=='Failed'){
+                    $error = $error. ' Level of care assignment error: '.$level_status[1];
+                }
+                if ($level_option_status[0]=='Failed'){
+                    $error = $error. ' Level of care option assignment error: '.$level_option_status[1];
+                }
+
+                $log = new DhisLog;
+                $log->hfr_id = '71959570';
+                $log->dhis_uid = $facility_uid;
+                $log->facility_status = 'Created';
+                $log->ownership_status = $ownership_status[0];
+                $log->level_status = $level_status[0];
+                $log->level_option_status = $level_option_status[0];
+                $log->error_details = $error;
                 $log->user_id = Auth::user()->id;
                 $log->save();
-                return "Exception Error";
+
+                //send notification email to dhis team
+                //$dhis->sendEmailtoDhisTeamForNewFacility($request->facility_name, $request->ward_id);
+
+               dd('Created');
+            }
+            	
+            
+        } catch (RequestException $e) {
+            $log = new DhisLog;
+            if ($e->hasResponse()) {
+                $log->hfr_id = '71959570';
+                $log->facility_status = 'Failed' ;
+                $log->error_details = $e->getResponse()->getBody()->getContents() ;
+                $log->user_id = Auth::user()->id;
+                $log->save();
+                dd("Exception_Error1");
+            }else {
+                $log->hfr_id = '71959570';
+                $log->facility_status = "Failed";
+                $log->error_details = 'No response from the server';
+                $log->user_id = Auth::user()->id;
+                $log->save();
+                dd("Exception_Error2");
             }
         }
        
@@ -131,9 +256,9 @@ class HfrDhisController extends Controller
                 }
 
     
-                $ownership_status = 'No Updates';
-                $level_status = 'No Updates';
-                $level_option_status = 'No Updates';
+                $ownership_status[0] = '';
+                $level_status[0] = '';
+                $level_option_status[0] = '';
 
                 //if any of the organiation groups is updated
                 if ($data['groups'] != 'empty'){
@@ -149,26 +274,40 @@ class HfrDhisController extends Controller
                                 $level_status = $dhis->AssignLevelOfCare($value,$uid);
                                 break;
                             case "facility_level_option_id":
-                                if (in_array($value,[1,2,5])){ //1-Health post, 2-Primary Health Clinic, 5-Specialized Hospital
+                                if ($value > 0){ 
                                     $dhis->unAssignLevelOfCareOption($value,$uid);
                                     $level_option_status = $dhis->AssignLevelOfCareOption($value,$uid);
-                                }       
+                                }else{
+                                    $level_option_status[0]='';
+                                }      
                                 break;
                         }
                     }
                 }
     
-                //Save status of actions
+                //Save status of actions to log
+                $error = '';
+                if ($ownership_status[0]=='Failed'){
+                    $error = 'Ownership assignment error: '.$ownership_status[1];
+                }
+                if ($level_status[0]=='Failed'){
+                    $error = $error. ' Level of care assignment error: '.$level_status[1];
+                }
+                if ($level_option_status[0]=='Failed'){
+                    $error = $error. ' Level of care option assignment error: '.$level_option_status[1];
+                }
+
                 $log = new DhisLog;
                 $log->hfr_id = $id;
                 $log->dhis_uid = $uid;
                 $log->facility_status = $update_status;
-                $log->ownership_status = $ownership_status;
-                $log->level_status = $level_status;
-                $log->level_option_status = $level_option_status;
+                $log->ownership_status = $ownership_status[0];
+                $log->level_status = $level_status[0];
+                $log->level_option_status = $level_option_status[0];
+                $log->error_details = $error;
+                $log->request_type = 'Update';
                 $log->user_id = Auth::user()->id;
                 $log->save();
-
                 
                 //send notification email to dhis team
                 $dhis->sendEmailtoDhisTeamForUpdatedFacility($data['facility_name'], $data['ward_id']);
@@ -178,38 +317,236 @@ class HfrDhisController extends Controller
             } catch (RequestException $e) {
                 $log = new DhisLog;
                 if ($e->hasResponse()) {
-                    $response =  Psr7\str($e->getResponse());
-                    $log->hfr_id = $id;
-                    $log->facility_status = $response;
+                    $log->hfr_id = $request->id;
+                    $log->facility_status = 'Failed' ;
+                    $log->error_details = $e->getResponse()->getBody()->getContents();
                     $log->user_id = Auth::user()->id;
+                    $log->request_type = 'Update';
                     $log->save();
-                    return "Exception Error";
+                    return "Exception_Error";
                 }else {
-                    $log->hfr_id = $id;
-                    $log->facility_status = "Not updated due to network error";
+                    $log->hfr_id = $request->id;
+                    $log->facility_status = "Failed";
+                    $log->error_details = 'No response from the server';
                     $log->user_id = Auth::user()->id;
+                    $log->request_type = 'Update';
                     $log->save();
-                    return "Exception Error";
+                    return "Exception_Error";
                 }
             }
 
         }else { // if failed to get facility uid from dhis
             $log = new DhisLog;
             $log->hfr_id = $id;
-            $log->facility_status = $uid;
+            $log->facility_status = "Failed";
+            $log->error_details = 'Failed to get matching facility in DHIS2';
             $log->user_id = Auth::user()->id;
             $log->save();
-            return "Exception Error";
+            return "Exception_Error";
         }
        
     }
 
-  
+    public function resend(Request $request){
+
+        // dd($request->all());
+
+        $dhis = new HfrDhis;
+        $log = new DhisLog;
+        $log = DhisLog::find($request->log_id);
+
+        $hosp = new Hospital; 
+        $hosp= Hospital::find($request->facility_id);
+
+        if ($request->facility_status == 'Failed'){
+            $data= [];
+       
+            if($hosp['operational_status_id'] > 1 && $hosp['operational_status_id'] < 5){
+                $close_date= Carbon::now()->format('Y-m-d');  
+            }
+            elseif($hosp['operational_status_id'] > 4){
+                $close_date = $hosp['close_date'];
+            }else{
+                $close_date = '';
+            }
+
+            $data = [
+                'name' =>$dhis->formatName($hosp['facility_name'], $hosp['state_id']),
+                'shortName' => $dhis->getShortname($hosp['facility_name'],$hosp['alt_facility_name']),
+                'code' => $request->facility_id,
+                'openingDate' => $dhis->formatDate($hosp['start_date']),
+                'closedDate' =>$dhis->formatDate($close_date),
+                'address' => $hosp['postal_address'],
+                'coordinates' => $dhis->formatGeoCords($hosp['longitude'],$hosp['latitude']),
+                'email' => $hosp['email_address'],
+                'url' => $hosp['website'],
+                'phoneNumber' => $hosp['phone_number'],
+                'parent' => $dhis->getParent($hosp['ward_id'])
+            ];
+
+            $client = new Client([
+                'base_uri' =>  config('hfr.dhis_url')
+            ]);
+
+            if ($request->request_type == 'Create'){ // if request failed for new facility
+
+                try {
+                    $response = $client->post('organisationUnits', [
+                        'auth' => [config('hfr.dhis_username'),config('hfr.dhis_password')],
+                        'json' => $data
+                    ]);
+
+                    if ($response->getReasonPhrase() ==  'Created'){
+                        $array = json_decode($response->getBody()->getContents(), true); 
+                      
+                        $facility_uid = $array['response']['uid'];
+                   
+                        //Assign Organisation unit - ownership
+                        $ownership_status = $dhis->assignOwnership($hosp['ownership_id'],$facility_uid);
+        
+                        //Assign Organisation unit - Level of Care
+                        $level_status = $dhis->assignLevelOfCare($hosp['facility_level_id'], $facility_uid);
+               
+                        //Assign Organisation unit - Level of Care Options
+                        if ($hosp['facility_level_option_id'] > 0){
+                            $level_option_status = $dhis->assignLevelOfCareOption($hosp['facility_level_option_id'],$facility_uid);
+                        }else{
+                            $level_option_status[0]='';
+                        }
+                        
+        
+                        //Save status of actions
+                        $error = '';
+                        if ($ownership_status[0]=='Failed'){
+                            $error = 'Ownership assignment error: '.$ownership_status[1];
+                        }
+                        if ($level_status[0]=='Failed'){
+                            $error = $error. ' Level of care assignment error: '.$level_status[1];
+                        }
+                        if ($level_option_status[0]=='Failed'){
+                            $error = $error. ' Level of care option assignment error: '.$level_option_status[1];
+                        }
+        
+                        $log->dhis_uid = $facility_uid;
+                        $log->facility_status = 'Created';
+                        $log->ownership_status = $ownership_status[0];
+                        $log->level_status = $level_status[0];
+                        $log->level_option_status = $level_option_status[0];
+                        $log->error_details = $error;
+                        $log->save();
+        
+                        return 'Created';
+                    }
+                
+                } catch (RequestException $e) {
+                    if ($e->hasResponse()) {
+                        $log->facility_status = 'Failed' ;
+                        $log->error_details = $e->getResponse()->getBody()->getContents();
+                        $log->save();
+                        return "Exception_Error";
+                    }else {
+                        $log->facility_status = "Failed";
+                        $log->error_details = 'No response from the server';
+                        $log->save();
+                        return "Exception_Error";
+                    }
+                }
+            }//end if create
+            elseif($request->request_type == 'Update'){
+                $uid = $dhis->getDhisFacilityUID($request->facility_id);
+
+                if(strlen($uid) == 11){
+                    try {
+                        $response = $client->put('organisationUnits/'. $uid, [
+                            'auth' => [config('hfr.dhis_username'),config('hfr.dhis_password')],
+                            'json' => $data['updates']
+                        ]);
+                        
+                        $status = $response->getReasonPhrase();
+                        if ($status == 'OK'){
+                            $update_status = "Updated";
+                        }else{
+                            $update_status = $status;
+                        }
+
+                        $ownership_status[0] = '';
+                        $level_status[0] = '';
+                        $level_option_status[0] = '';
+
+                        //assign organiation units
+                        $dhis->unAssignOwnership($hosp['ownership_id'],$uid);
+                        $ownership_status = $dhis->AssignOwnership($hosp['ownership_id'],$uid);
+                        $dhis->unAssignLevelOfCare($hosp['facility_level_id'],$uid);
+                        $level_status = $dhis->AssignLevelOfCare($hosp['facility_level_id'],$uid);
+                       
+                        if ($hosp['facility_level_option_id'] > 0){
+                            $dhis->unAssignLevelOfCareOption($hosp['facility_level_option_id'],$uid);
+                            $level_option_status = $dhis->AssignLevelOfCareOption($hosp['facility_level_option_id'],$uid);
+                        }else{
+                            $level_option_status[0]='';
+                        }
+            
+                        //Save status of actions to log
+                        $error = '';
+                        if ($ownership_status[0]=='Failed'){
+                            $error = 'Ownership assignment error: '.$ownership_status[1];
+                        }
+                        if ($level_status[0]=='Failed'){
+                            $error = $error. ' Level of care assignment error: '.$level_status[1];
+                        }
+                        if ($level_option_status[0]=='Failed'){
+                            $error = $error. ' Level of care option assignment error: '.$level_option_status[1];
+                        }
+
+                        $log->dhis_uid = $uid;
+                        $log->facility_status = $update_status;
+                        $log->ownership_status = $ownership_status[0];
+                        $log->level_status = $level_status[0];
+                        $log->level_option_status = $level_option_status[0];
+                        $log->error_details = $error;
+                        $log->save();
+                        
+                        return 'Updated';               
+            
+                    } catch (RequestException $e) {
+                        $log = new DhisLog;
+                        if ($e->hasResponse()) {
+                            $log->facility_status = 'Failed' ;
+                            $log->error_details = $e->getResponse()->getBody()->getContents();
+                            $log->save();
+                            return "Exception_Error";
+                        }else {
+                            $log->facility_status = "Failed";
+                            $log->error_details = 'No response from the server';
+                            $log->save();
+                            return "Exception_Error";
+                        }
+                    }
+
+                }else { // if failed to get facility uid from dhis
+                    $log->facility_status = "Failed";
+                    $log->error_details = 'Failed to get matching facility in DHIS2';
+                    $log->save();
+                    return "Exception_Error";
+                }
+                      
+            }//if update
+
+        }//end if Facility status failed       
+
+        ///
+
+    
+
+   
+       
+       
+       
+    }
+
     public function test(){
      
         $dhis = new HfrDhis;
-        $data= $dhis->sendEmailtoDhisTeamForDeletedFacility('Fomalo Health Center','10014');
-        dd($data);
 
         $client = new Client([
             'base_uri' =>  config('hfr.dhis_url')
