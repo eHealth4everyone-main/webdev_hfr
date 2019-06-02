@@ -55,23 +55,24 @@ Route::middleware(["auth"])->group(function(){
             Route::post('admin/hospitals/myrequest/delete-resubmit','Approval\MyRequestController@resubmit')->name('myrequest.resubmit');
             Route::get('admin/hospitals/myrequest/show','Approval\MyRequestController@search')->name('myrequest.search');
 
-            //approvals
+            //approvals-verify
             Route::get('admin/hospitals/approvals/verify','Approval\VerifyController@index')->name('verify.pending');
             Route::post('admin/hospitals/approvals/verify','Approval\VerifyController@store')->name('verify.store');
             Route::post('admin/hospitals/approvals/verify-recall','Approval\VerifyController@recall')->name('verify.recall');
             Route::get('admin/hospitals/approvals/verify/show','Approval\VerifyController@search')->name('verify.search');
-
+            
+            //approvals-validation
             Route::get('admin/hospitals/approvals/validation','Approval\ValidateController@index')->name('validate.pending');
             Route::post('admin/hospitals/approvals/validation','Approval\ValidateController@store')->name('validate.store');
             Route::post('admin/hospitals/approvals/validation-recall','Approval\ValidateController@recall')->name('validate.recall');
             Route::get('admin/hospitals/approvals/validation/show','Approval\ValidateController@search')->name('validate.search');
-
+            //approvals-publication
             Route::get('admin/hospitals/approvals/publish','Approval\PublishController@index')->name('publish.pending');
             Route::post('admin/hospitals/approvals/publish','Approval\PublishController@store')->name('publish.store');
             Route::get('admin/hospitals/approvals/publish/show','Approval\PublishController@search')->name('publish.search');
-
-            Route::get('admin/hospitals/approvals/approval-tracking','Approval\PublishController@tracking')->name('approval.tracking');
-            Route::get('admin/hospitals/approvals/approval-tracking/show','Approval\PublishController@tracking_search')->name('approval.trackingsearch');
+            //approvals- tracking
+            Route::get('admin/hospitals/approvals/approval-tracking','Approval\ApprovalController@tracking')->name('approval.tracking');
+            Route::get('admin/hospitals/approvals/approval-tracking/show','Approval\ApprovalController@tracking_search')->name('approval.trackingsearch');
 
 
             Route::get('admin/hospitals/approvals/updated/{id}/{stage}','Approval\UpdatedRecordsController@updatedRecords')->name('view.updated_records');
@@ -122,14 +123,19 @@ Route::middleware(["auth"])->group(function(){
             Route::get('admin/reports/facility-list/updates-select','FacilityReportController@updateSelection')->name('updates.selection');
             Route::get('admin/reports/facility-list/updates','FacilityReportController@getUpdatesReport')->name('updates.report');
             Route::post('admin/reports/facility-list/updates-download','FacilityReportController@updatesDownload')->name('updates.download');
-            Route::get('admin/reports/facility-services/list','FacilityReportController@servicesIndex')->name('services.index');
+            Route::get('admin/reports/facility-services/index','FacilityReportController@servicesIndex')->name('services.index');
             Route::get('admin/reports/facility-services/report','FacilityReportController@getServicesReport')->name('services.report');
             Route::post('admin/reports/facility-services/download','FacilityReportController@servicesDownload')->name('services.download');
-            Route::get('admin/reports/facility-status/list','FacilityReportController@statusIndex')->name('status.index');
+            Route::get('admin/reports/facility-status/index','FacilityReportController@statusIndex')->name('status.index');
             Route::get('admin/reports/facility-status/report','FacilityReportController@getStatusReport')->name('status.report');
             Route::post('admin/reports/facility-status/download','FacilityReportController@statusDownload')->name('status.download');
             Route::get('admin/reports/approvers-summary','FacilityReportController@approversIndex')->name('approvers.index');
             Route::get('admin/reports/approvers-summary/report','FacilityReportController@approversSummary')->name('approvers.report');
+            Route::get('admin/reports/facility-status-details/index','FacilityReportController@statusDetailsIndex')->name('status.detailsIndex');
+            Route::get('admin/reports/facility-status-details/report','FacilityReportController@statusDetailsReport')->name('status.detailsReport');
+            Route::post('admin/reports/facility-status-details/download','FacilityReportController@statusDetailsDownload')->name('status.detailsDownload');
+
+            
 
 
 

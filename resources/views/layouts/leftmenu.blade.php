@@ -188,11 +188,20 @@
                             </a>
                       
                         <ul class="treeview-menu">
-                            <li><a href="{{route('updates.selection')}}"><i class="fa fa-file-text-o"></i>Facility Reports</a></li>
-                            <li><a href="{{route('status.index')}}"><i class="fa fa-file-text-o"></i>Facilities Status Summary</a></li>
-                            <li><a href="{{route('services.index')}}"><i class="fa fa-file-text-o"></i>Services Rendered</a></li>
+                            @if(auth()->user()->hasPermissionTo(73))
+                                <li><a href="{{route('updates.selection')}}"><i class="fa fa-file-text-o"></i>Facilities Update Report</a></li>
+                            @endif
+                            @if(auth()->user()->hasPermissionTo(74))
+                                <li><a href="{{route('status.index')}}"><i class="fa fa-file-text-o"></i>Facilities Status Summary</a></li>
+                            @endif
+                            @if(auth()->user()->hasPermissionTo(75))
+                                <li><a href="{{route('status.detailsIndex')}}"><i class="fa fa-file-text-o"></i>Facilities Status Details</a></li>
+                            @endif
+                            @if(auth()->user()->hasPermissionTo(76))
+                                <li><a href="{{route('services.index')}}"><i class="fa fa-file-text-o"></i>Services Rendered Report</a></li>
+                            @endif
                             @if(auth()->user()->hasPermissionTo(69))
-                                <li><a href="{{route('approvers.index')}}"><i class="fa fa-file-text-o"></i>Approvers Summary</a></li>                               
+                                <li><a href="{{route('approvers.index')}}"><i class="fa fa-file-text-o"></i>Approvers Summary Report</a></li>                               
                             @endif
 
 

@@ -248,7 +248,94 @@ class FacilityReportController extends Controller
 
     }
 
+    //facility status details report index
+    public function statusDetailsIndex(){
+        $facilities = DB::table('hospital_details_history')
+            ->where('state_id', 'like', '%' .  Auth::user()->state_id . '%')
+            ->where('status_id', '0')
+            ->orderBy('state')
+            ->orderBy('lga')
+            ->orderBy('facility_name')
+            ->paginate(15);
 
+        $message=$facilities->total()." facilities has never been updated";    
 
-   
+        return view('reports.facility_status_details',compact('facilities','message'));     
+
+    }
+
+    public function statusDetailsReport(Request $request){
+        if ($request->status_id == 2){
+            $status = [2,9,16];
+        }
+        elseif($request->status_id == 3){
+            $status = [3,10,17];
+        }
+        elseif($request->status_id == 4){
+            $status = [4,11,18];
+        }
+        elseif($request->status_id == 5){
+            $status = [5,12,19];
+        }
+        elseif($request->status_id == 7){
+            $status = [7,14,21];
+        }
+        else{
+            $status = [$request->status_id];
+        }
+
+        $facilities = DB::table('hospital_details_history')
+            ->where('state_id', 'like', '%' .  $request->state_id . '%')
+            ->where('lga_id', 'like', '%' .  $request->lga_id . '%')
+            ->whereIn('status_id', $status)
+            ->orderBy('state')
+            ->orderBy('lga')
+            ->orderBy('facility_name')
+            ->paginate(15)
+            ->appends($request->all());
+
+        $message=$facilities->total()." facilities found";  
+        
+        $request->flash('request',$request);
+
+        return view('reports.facility_status_details',compact('facilities','message'));     
+
+    }
+
+    public function statusDetailsDownload(Request $request){
+        if ($request->status == 2){
+            $status = [2,9,16];
+        }
+        elseif($request->status == 3){
+            $status = [3,10,17];
+        }
+        elseif($request->status == 4){
+            $status = [4,11,18];
+        }
+        elseif($request->status == 5){
+            $status = [5,12,19];
+        }
+        elseif($request->status == 7){
+            $status = [7,14,21];
+        }
+        else{
+            $status = [$request->status];
+        }
+
+        $facilities = DB::table('hospital_details_history')
+            ->select('state','lga','ward','id','unique_id','facility_name','ownership','facility_level','status','action')
+            ->where('state_id', 'like', '%' .  $request->state . '%')
+            ->where('lga_id', 'like', '%' .  $request->lga. '%')
+            ->whereIn('status_id', $status)
+            ->orderBy('state')
+            ->orderBy('lga')
+            ->orderBy('facility_name')
+            ->get();
+
+        $column_header = array('stat','lga','ward','id','code','facility_name','ownership','level','status','action_type');
+          
+                
+        return Excel::download(new HFExport( $facilities, $column_header), "data.xlsx");
+
+    }
 }

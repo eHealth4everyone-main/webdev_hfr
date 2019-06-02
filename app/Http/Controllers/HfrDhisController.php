@@ -12,6 +12,8 @@ use App\HfrDhis;
 use App\DhisLookup;
 use Auth;
 use Carbon\Carbon;
+use App\Hospital;
+
 
 
 class HfrDhisController extends Controller
@@ -347,6 +349,7 @@ class HfrDhisController extends Controller
        
     }
 
+    //try resending data to DHIS2 after failure
     public function resend(Request $request){
 
         // dd($request->all());
@@ -388,7 +391,8 @@ class HfrDhisController extends Controller
                 'base_uri' =>  config('hfr.dhis_url')
             ]);
 
-            if ($request->request_type == 'Create'){ // if request failed for new facility
+            // if request failed for new facility
+            if ($request->request_type == 'Create'){ 
 
                 try {
                     $response = $client->post('organisationUnits', [
@@ -412,6 +416,7 @@ class HfrDhisController extends Controller
                             $level_option_status = $dhis->assignLevelOfCareOption($hosp['facility_level_option_id'],$facility_uid);
                         }else{
                             $level_option_status[0]='';
+                            $level_option_status[1]='';
                         }
                         
         
@@ -435,7 +440,11 @@ class HfrDhisController extends Controller
                         $log->error_details = $error;
                         $log->save();
         
-                        return 'Created';
+                        //send notification email to dhis team
+                        $dhis->sendEmailtoDhisTeamForNewFacility($hosp['facility_name'], $hosp['ward_id']);
+
+                        session()->flash("alert-success", "Facility created successfully!");        
+                        return back();
                     }
                 
                 } catch (RequestException $e) {
@@ -443,15 +452,20 @@ class HfrDhisController extends Controller
                         $log->facility_status = 'Failed' ;
                         $log->error_details = $e->getResponse()->getBody()->getContents();
                         $log->save();
-                        return "Exception_Error";
+
+                        session()->flash("alert-danger", "Error creating facility in DHIS2!");        
+                        return back();
                     }else {
                         $log->facility_status = "Failed";
                         $log->error_details = 'No response from the server';
                         $log->save();
-                        return "Exception_Error";
+                          
+                        session()->flash("alert-danger", "Error creating facility in DHIS2!");        
+                        return back();
                     }
                 }
             }//end if create
+            //if the request failed was for update of facility
             elseif($request->request_type == 'Update'){
                 $uid = $dhis->getDhisFacilityUID($request->facility_id);
 
@@ -506,7 +520,11 @@ class HfrDhisController extends Controller
                         $log->error_details = $error;
                         $log->save();
                         
-                        return 'Updated';               
+                        //send notification email to dhis team
+                        $dhis->sendEmailtoDhisTeamForUpdatedFacility($hosp['facility_name'], $hosp['ward_id']);
+
+                        session()->flash("alert-success", "Facility updated successfully!");        
+                        return back();         
             
                     } catch (RequestException $e) {
                         $log = new DhisLog;
@@ -514,12 +532,16 @@ class HfrDhisController extends Controller
                             $log->facility_status = 'Failed' ;
                             $log->error_details = $e->getResponse()->getBody()->getContents();
                             $log->save();
-                            return "Exception_Error";
+                              
+                            session()->flash("alert-danger", "Error creating facility in DHIS2!");        
+                            return back();
                         }else {
                             $log->facility_status = "Failed";
                             $log->error_details = 'No response from the server';
                             $log->save();
-                            return "Exception_Error";
+                              
+                            session()->flash("alert-danger", "Error creating facility in DHIS2!");        
+                            return back();
                         }
                     }
 
@@ -527,16 +549,85 @@ class HfrDhisController extends Controller
                     $log->facility_status = "Failed";
                     $log->error_details = 'Failed to get matching facility in DHIS2';
                     $log->save();
-                    return "Exception_Error";
+                      
+                    session()->flash("alert-danger", "Failed to get matching facility in DHIS2!");        
+                    return back();
                 }
                       
-            }//if update
+            }//end if update
 
         }//end if Facility status failed       
 
-        ///
+        if ($request->ownership_status == 'Failed'){
+            $dhis->unAssignOwnership($hosp['ownership_id'],$request->dhis_uid);
+            $ownership_status = $dhis->AssignOwnership($hosp['ownership_id'],$request->dhis_uid);
+            
+            $error = '';
+            if ($ownership_status[0]=='Failed'){
+                $error = 'Ownership assignment error: '.$ownership_status[1];
+            }
+          
+            $log->ownership_status = $ownership_status[0];
+            $log->error_details = $error;
+            $log->save();
 
-    
+            if ($ownership_status[0]=='Failed'){
+                session()->flash("alert-danger", "Failed to assign facility ownership group");        
+                return back();
+            }else{
+                session()->flash("alert-success", "Facility ownership group assigned successfully!");        
+                return back();   
+            }
+        }
+
+        if ($request->level_status == 'Failed'){
+            $dhis->unAssignLevelOfCare($hosp['facility_level_id'],$request->dhis_uid);
+            $level_status = $dhis->AssignLevelOfCare($hosp['facility_level_id'],$request->dhis_uid);
+
+            $error = '';
+            if ($level_status[0]=='Failed'){
+                $error = $error. ' Level of care assignment error: '.$level_status[1];
+            }
+           
+            $log->level_status = $level_status[0];
+            $log->error_details = $error;
+            $log->save();
+
+            if ($level_status[0]=='Failed'){
+                session()->flash("alert-danger", "Failed to assign facility level of care group");        
+                return back();
+            }else{
+                session()->flash("alert-success", "Facility level of care group assigned successfully!");        
+                return back();   
+            }
+        }
+
+        if ($request->level_option_status == 'Failed'){
+            if ($hosp['facility_level_option_id'] > 0){
+                $dhis->unAssignLevelOfCareOption($hosp['facility_level_option_id'],$request->dhis_uid);
+                $level_option_status = $dhis->AssignLevelOfCareOption($hosp['facility_level_option_id'],$request->dhis_uid);
+            }else{
+                $level_option_status[0]='';
+            }
+
+            $error = '';
+            if ($level_option_status[0]=='Failed'){
+                $error = $error. ' Level of care option assignment error: '.$level_option_status[1];
+            }
+
+            $log->level_option_status = $level_option_status[0];
+            $log->error_details = $error;
+            $log->save();
+
+            if ($level_option_status[0]=='Failed'){
+                session()->flash("alert-danger", "Failed to assign facility level of care group");        
+                return back();
+            }else{
+                session()->flash("alert-success", "Facility level of care group assigned successfully!");        
+                return back();   
+            }
+        }
+
 
    
        

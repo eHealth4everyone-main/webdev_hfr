@@ -65,6 +65,12 @@
                                                             
                             </div>
                             <div class="form-group row">
+                                <label class="col-sm-2"></label>
+                                <div class="col-sm-2">                               
+                                        <input type='checkbox'name='permissions[]' value='62'> View Masters                                            
+                                </div>
+                            </div>
+                            <div class="form-group row">
                                     <label class="col-sm-2"></label>
                                     <div class="col-sm-2">                               
                                         <input type='checkbox'name='permissions[]' value='47'> View States                                                    
@@ -174,8 +180,10 @@
                                         <div class="col-sm-2">                               
                                                 <input type='checkbox'name='permissions[]' value='46'> Delete Lab Certification                                                     
                                         </div>
-                                        <div class="col-sm-2"></div>                              
+                                        <div class="col-sm-2"></div>      
                                 </div>
+                                <hr>                        
+
                            <div class="form-group row">
                                         <label class="col-sm-2"></label>
                                         <div class="col-sm-2">                               
@@ -191,6 +199,12 @@
                                             <input type='checkbox'name='permissions[]' value='4'> Delete Hospitals                                                       
                                         </div>
                                         <div class="col-sm-2"></div>                              
+                               </div>
+                               <div class="form-group row">
+                                        <label class="col-sm-2"></label>
+                                        <div class="col-sm-4">                               
+                                                <input type='checkbox'name='permissions[]' value='67'> Adminstrator Facility Update                                                                                                                                                      
+                                        </div>
                                </div>
                             <div class="form-group row">
                                 <div class="col-sm-2"></div>   
@@ -240,6 +254,7 @@
                                 </div>
                                 <div class="col-sm-2"></div>
                             </div>
+                            <hr>
                             <div class="form-group row">
                                     <div class="col-sm-2"></div>   
                                     <div class="col-sm-2">                               
@@ -272,7 +287,7 @@
                                     </div>
                                     <div class="col-sm-2"></div>
                             </div>
-  
+  <hr>
                             <div class="form-group row">
                                     <div class="col-sm-2"></div>   
                                     <div class="col-sm-2">                               
@@ -298,13 +313,12 @@
                                             <input type='checkbox'name='permissions[]' value='30'> View Download Request
                                     </div>
                                     <div class="col-sm-2">                               
-                                                <input type='checkbox'name='permissions[]' value='62'> View Masters                                            
+                                                <input type='checkbox'name='permissions[]' value='63'> Receive User's Feedback                                                                                                                                                
                                     </div>
-                                    <div class="col-sm-2">                               
-                                                <input type='checkbox'name='permissions[]' value='65'> View Reports
-                                    </div>
+                                  
                                     <div class="col-sm-2"></div>
                             </div>
+                            <hr>
                             <div class="form-group row">
                                         <label class="col-sm-2"></label>
                                       
@@ -318,34 +332,20 @@
                                             <input type='checkbox'name='permissions[]' value='61'> Publish Facility                                               
                                         </div>
                                         <div class="col-sm-2">                               
-                                                <input type='checkbox'name='permissions[]' value='63'> Receive Feedback                                                                                                                                                
+                                                <input type='checkbox'name='permissions[]' value='68'> View Approval Tracking                                                   
                                         </div>
                                         <div class="col-sm-2"></div>                              
                                </div>
-                      
+                               <div>
+
+                               </div>
+                               <hr>                      
                                <div class="form-group row">
                                         <label class="col-sm-2"></label>
                                         <div class="col-sm-2">                               
                                                 <input type='checkbox'name='permissions[]' value='66'> View DHIS2 Logs
                                         </div>
-                                        <div class="col-sm-2">                               
-                                            <input type='checkbox'name='permissions[]' value='64'> Receive DHIS2 Notifications                                                   
-                                        </div>
-                                        <div class="col-sm-2">                               
-                                                <input type='checkbox'name='permissions[]' value='67'> Adminstrator Facility Update                                                   
-                                        </div>
-                        
-                                        <div class="col-sm-2">                               
-                                                <input type='checkbox'name='permissions[]' value='68'> View Approval Tracking                                                   
-                                        </div>
-                                
-                                        <div class="col-sm-2"></div>                              
-                               </div>
-                               <div class="form-group row">
-                                        <label class="col-sm-2"></label>
-                                        <div class="col-sm-2">                               
-                                                <input type='checkbox'name='permissions[]' value='69'> Approvers Summary Report
-                                        </div>
+  
                                         <div class="col-sm-2">                               
                                                 <input type='checkbox'name='permissions[]' value='70'> View Lookup Values
                                         </div>
@@ -355,9 +355,49 @@
                                         <div class="col-sm-2">                               
                                                 <input type='checkbox'name='permissions[]' value='72'> Edit Lookup Values
                                         </div>
+                                
+                                        <div class="col-sm-2"></div>                              
+                               </div>
+                               <div class="form-group row">
+                                        <label class="col-sm-2"></label>
+                                        <div class="col-sm-4">  
+                                                        <input type='checkbox'name='permissions[]' value='64'> Receive DHIS2 Notifications                             
+                                        </div>
+                                        
+                                     
                               
                                </div>
-                      
+                               <hr>
+                               <div class="form-group row">
+                                        <label class="col-sm-2"></label>
+                                        <div class="col-sm-2">                               
+                                                <input type='checkbox'name='permissions[]' value='65'> View Reports
+                                        </div>
+                               </div>
+                               <div class="form-group row">
+                                        <label class="col-sm-2"></label>
+
+                                        <div class="col-sm-2">                               
+                                                        <input type='checkbox'name='permissions[]' value='73'> Facilities Update Report
+                                        </div>
+                                        <div class="col-sm-2">                               
+                                                        <input type='checkbox'name='permissions[]' value='74'> Facilities Status Summary Report
+                                        </div>
+                                        <div class="col-sm-2">                               
+                                                        <input type='checkbox'name='permissions[]' value='75'> Facilities Status Details Report
+                                        </div>
+                                        <div class="col-sm-2">                               
+                                                        <input type='checkbox'name='permissions[]' value='76'> Services Rendered Report
+                                        </div>
+                                        
+                               </div>
+                               <div class="form-group row">
+                                        <label class="col-sm-2"></label>
+
+                                        <div class="col-sm-2">                               
+                                                        <input type='checkbox'name='permissions[]' value='69'> Approvers Summary Report
+                                        </div>
+                               </div>
                 
                             
                     </div>

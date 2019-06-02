@@ -8,8 +8,35 @@ Exchange Logs
 
 @section("content")
 <div class="box">
+       
+    @if($flash = session("alert-success"))
+        <div class="alert alert-success alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+            <h4><i class="icon fa fa-check"></i> Success!</h4>
+            {{session("alert-success")}}
+        </div>
+    @endif
+    @if($flash = session("alert-danger"))
+        <div class="alert alert-danger alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+            <h4><i class="icon fa fa-check"></i> Errors!</h4>
+            {{session("alert-danger")}}
+        </div>
+    @endif
+
   <div class="box-body">
-    
+    <div id='resending' hidden>
+        <h4>Resending data to DHIS2. Please wait...</h4>
+    </div>
+
+    <div id='progress' class="progress" hidden>
+       
+        <div id="dynamic" class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+            <span id="current-progress"></span>
+        </div>
+    </div>
+
+
     <table id="table1" class="table table-bordered table-striped" style="width:100%">
       <thead>
         <tr>
@@ -20,8 +47,6 @@ Exchange Logs
           <th>Ownership</th>
           <th>Level of Care </th>
           <th>Level of Care Option</th>
-          <th>Published By</th>
-          <th>Date</th>
           <th>Action</th>
         </tr>
       </thead>
@@ -76,9 +101,7 @@ Exchange Logs
               @endif
             
           </td>
-          <td>{{ $log->firstname.' '.$log->lastname }}</td>         
-          <td> {{ Carbon\Carbon::parse($log->created_at)->toFormattedDateString() }}</td>
-         
+          
           <td>
                 <form class="form-horizontal"  action="{{route('dhis.resend')}}" method="post">
 
@@ -90,15 +113,15 @@ Exchange Logs
                             data-facility_level="{{$log->facility_level}}" data-facility_level_option="{{$log->facility_level_option}}"
                             data-longitude="{{$log->longitude}}" data-latitude="{{$log->latitude}}"
                             data-postal_address="{{$log->postal_address}}" data-phone_number="{{$log->phone_number}}" data-email_address="{{$log->email_address}}"
-                            data-website="{{$log->website}}"  >
-                            Details
+                            data-website="{{$log->website}}"   data-by="{{ $log->firstname.' '.$log->lastname }}"  data-date="{{Carbon\Carbon::parse($log->created_at)->toFormattedDateString()}}"  >
+                            More
                         </button>  
                     </a> 
                     @if($log->error_details != '')
                         <a href="#">
-                            <button class="btn btn-warning btn-sm"  type="button" data-toggle="modal" data-target="#view_error"
+                            <button class="btn btn-danger btn-sm"  type="button" data-toggle="modal" data-target="#view_error"
                                 data-error="{{ (string)$log->error_details }}" >
-                                Error Details
+                                Error
                             </button>  
                         </a> 
                     @endif
@@ -112,9 +135,10 @@ Exchange Logs
                             <input type="hidden" name="facility_id" value={{$log->facility_id}}>
                             <input type="hidden" name="log_id" value={{$log->id}}>
                             <input type="hidden" name="request_type" value={{$log->request_type}}>
+                            <input type="hidden" name="dhis_uid" value={{$log->dhis_uid}}>
 
                             
-                            <button type="submit" class="btn btn-primary btn-sm">Resend</button>
+                            <button type="submit" class="btn btn-primary btn-sm resend_data">Resend</button>
                     @endif
                 </form>
 
@@ -225,6 +249,14 @@ Exchange Logs
                                     <label class="col-md-4">Website:</label>
                                     <div class="col-md-8" id="website"></div>
                                 </div>
+                                <div class="row">
+                                    <label class="col-md-4">Published By:</label>
+                                    <div class="col-md-8" id="by"></div>
+                                </div>
+                                <div class="row">
+                                    <label class="col-md-4">Published Date:</label>
+                                    <div class="col-md-8" id="at"></div>
+                                </div>
                                 
                               </div>
                           </div>
@@ -292,6 +324,7 @@ Exchange Logs
 @push("bk_script")
 <script>
   $(document).ready( function () {
+
       $('#table1').DataTable( {
         "paging":   true,
         "ordering": true,
@@ -329,6 +362,9 @@ Exchange Logs
             modal.find('.modal-body #phone_number').text(button.data('phone_number'));
             modal.find('.modal-body #email_address').text(button.data('email_address'));
             modal.find('.modal-body #website').text(button.data('website'));
+            modal.find('.modal-body #by').text(button.data('by'));
+            modal.find('.modal-body #at').text(button.data('date'));
+
          
        
       });//end
@@ -345,7 +381,22 @@ Exchange Logs
       });//end
 
 
+     var current_progress = 0;
 
+    $(".resend_data").click(function(){
+        $("#resending").show();
+        $("#progress").show();
+
+        var interval = setInterval(function() {
+              current_progress += 5;
+              $("#dynamic")
+              .css("width", current_progress + "%")
+              .attr("aria-valuenow", current_progress)
+              .text(current_progress + "%");
+              if (current_progress >= 100)
+                  clearInterval(interval);
+          }, 2000);
+    });
 
   } );
 </script>

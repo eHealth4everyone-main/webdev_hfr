@@ -28,7 +28,7 @@ class AdminHomeController extends Controller
             };
      
             $num_downloads = DB::select("SELECT date_format(created_at,'%b %y') as name,month(created_at) mon,year(created_at) year, COUNT(id) y 
-                    FROM downloads group by name,mon,year order by year,mon asc  limit 12");
+                    FROM downloads group by name,mon,year order by year,mon asc  limit 24");
     
            
             $facility_status = DB::table('facility_status_state_pivot')->get();
@@ -36,7 +36,7 @@ class AdminHomeController extends Controller
             $completenes = DB::table('signature_domain_completenes')
                     ->select(DB::raw('state as name, CAST(avg(score) as unsigned) as y'))
                     ->groupBy('state')
-                    ->orderBy('state')
+                    ->orderBy('y','Desc')
                     ->get();
 
             return view("dashboard.federal",compact('num_downloads','facility_status','dates','visitors','completenes'));
@@ -46,15 +46,22 @@ class AdminHomeController extends Controller
                        
             $facility_status = DB::table('facility_status_lga_pivot')
                     ->where('state_id', 'like', '%' .  Auth::user()->state_id . '%')
+                    ->orderBy('lga')
+                    ->get();
+            
+            $completenes_all = DB::table('signature_domain_completenes')
+                    ->select(DB::raw('state as name, CAST(avg(score) as unsigned) as y'))
+                    ->groupBy('state')
+                    ->orderBy('y','Desc')
                     ->get();
 
             $completenes = DB::table('signature_domain_completenes')
                     ->select(DB::raw('lga as name, CAST(score as unsigned) as y'))
                     ->where('state_id',Auth::user()->state_id)
-                    ->orderBy('lga')
+                    ->orderBy('y','Desc')
                     ->get();
 
-            return view("dashboard.state",compact('facility_status','completenes'));
+            return view("dashboard.state",compact('facility_status','completenes','completenes_all'));
 
         }
         
@@ -64,7 +71,7 @@ class AdminHomeController extends Controller
         $completenes = DB::table('signature_domain_completenes')
                     ->select(DB::raw('lga as name, CAST(score as unsigned) as y'))
                     ->where('state',$request->state)
-                    ->orderBy('lga')
+                    ->orderBy('y','desc')
                     ->get();
 
         return $completenes;
@@ -73,6 +80,7 @@ class AdminHomeController extends Controller
     public function facilityStatus(Request $request){
         $facility_status = DB::table('facility_status_lga_pivot')
             ->where('state', $request->state)
+            ->orderBy('lga')
             ->get();
 
         return $facility_status;

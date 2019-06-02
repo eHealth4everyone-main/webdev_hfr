@@ -10,9 +10,7 @@ HFR-DHIS2 Exchange
 @section("content")
 <div class="box">
   <div class="box-body">
-    {{-- <div class="alert alert-success alert-dismissible">
-        <h4><i class="icon fa fa-check"></i>   {{ $message }}</h4>
-    </div> --}}
+
    
     <div id='updating'>
         <h4>Creating facility in DHIS2. Please wait...</h4>
@@ -23,6 +21,7 @@ HFR-DHIS2 Exchange
         <span id="current-progress"></span>
       </div>
     </div>
+    
     <div id='fac_error' class="alert alert-danger alert-dismissible" hidden>
         <h4><i class="icon fa fa-warning"></i> Error!</h4>
         Something went wrong while creating facility in DHIS2. Please, check on logs for details!

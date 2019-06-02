@@ -380,7 +380,7 @@ Highcharts.chart('visitors', {
         subtitle: {
             text: ''
         },
-        colors: ['#003399' ],
+        colors: ['#2f7ed8' ],
         xAxis: {
             type: 'category'
         },

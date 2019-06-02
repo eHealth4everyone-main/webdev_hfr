@@ -135,7 +135,7 @@ Hospitals and Clinics
                         <th>State</th>
                         <th>LGA</th>
                         <th>Ward</th>
-                        <th>Facility Code</th>
+                        <th>UID</th>
                         <th>Facility Name</th>
                         <th>Facility Level</th>
                         <th>Ownership</th>
@@ -149,7 +149,7 @@ Hospitals and Clinics
                         <td>{{ $fac->state }}</td>
                         <td>{{$fac->lga}}</td>
                         <td>{{$fac->ward}}</td>
-                        <td>{{$fac->unique_id}}</td>
+                        <td>{{$fac->id}}</td>
                         <td>{{$fac->facility_name}}</td>
                         <td>{{$fac->facility_level}}</td>
                         <td>{{$fac->ownership}}</td>
