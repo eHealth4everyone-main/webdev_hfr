@@ -41,18 +41,18 @@ Facilities Status Details
                                 </div>
                                 <div class="col-sm-4">
                                         <select class="form-control select2" name="status_id"  style="width: 100%;">
-                                            <option value="0" {{ (old('status')==0 ? "selected":"") }}>Facilities Never Updated</option>
-                                            <option value="1" {{ (old('status')==1 ? "selected":"") }}>New Facility Requests (Pending Verification)</option>
-                                            <option value="8" {{ (old('status')==8 ? "selected":"") }}>Update Requests (Pending Verification)</option>
-                                            <option value="15" {{ (old('status')==15 ? "selected":"") }}>Deletion Requests (Pending Verification) </option>
-                                            <option value="2" {{ (old('status')==2 ? "selected":"") }}>Verified Requests (Pending Validation)</option>
-                                            <option value="4" {{ (old('status')==4 ? "selected":"") }}>Validated Requests (Pending Publication)</option>
-                                            <option value="6" {{ (old('status')==6 ? "selected":"") }}>New Facility Published</option>
-                                            <option value="20" {{ (old('status')==20 ? "selected":"") }}>Update Request Published</option>   
-                                            <option value="13" {{ (old('status')==13 ? "selected":"") }}>Deletion Request Published</option>
-                                            <option value="3" {{ (old('status')==3 ? "selected":"") }}>Rejected Verifications </option>
-                                            <option value="5" {{ (old('status')==5 ? "selected":"") }}>Rejected Validations (Pending Verification)</option>
-                                            <option value="7" {{ (old('status')==7 ? "selected":"") }}>Rejected Publications (Pending Validation)</option>                                        
+                                            <option value="0" {{ (old('status_id')==0 ? "selected":"") }}>Facilities Never Updated</option>
+                                            <option value="1" {{ (old('status_id')==1 ? "selected":"") }}>New Facility Requests (Pending Verification)</option>
+                                            <option value="8" {{ (old('status_id')==8 ? "selected":"") }}>Update Requests (Pending Verification)</option>
+                                            <option value="15" {{ (old('status_id')==15 ? "selected":"") }}>Deletion Requests (Pending Verification) </option>
+                                            <option value="2" {{ (old('status_id')==2 ? "selected":"") }}>Verified Requests (Pending Validation)</option>
+                                            <option value="4" {{ (old('status_id')==4 ? "selected":"") }}>Validated Requests (Pending Publication)</option>
+                                            <option value="6" {{ (old('status_id')==6 ? "selected":"") }}>New Facility Published</option>
+                                            <option value="20" {{ (old('status_id')==20 ? "selected":"") }}>Update Request Published</option>   
+                                            <option value="13" {{ (old('status_id')==13 ? "selected":"") }}>Deletion Request Published</option>
+                                            <option value="3" {{ (old('status_id')==3 ? "selected":"") }}>Rejected Verifications </option>
+                                            <option value="5" {{ (old('status_id')==5 ? "selected":"") }}>Rejected Validations (Pending Verification)</option>
+                                            <option value="7" {{ (old('status_id')==7 ? "selected":"") }}>Rejected Publications (Pending Validation)</option>                                        
                                         </select>
                                 </div>
                                 <div class="col-sm-2">
