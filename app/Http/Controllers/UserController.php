@@ -23,6 +23,8 @@ class UserController extends Controller
         public function index()
         {
             $users = User::where('state_id', 'like','%'. Auth::user()->state_id. '%')
+                    ->orderBy('state_id')
+                    ->orderBy('firstname')
                     ->paginate(10);
      
             return view('users.index', compact("users"));  
