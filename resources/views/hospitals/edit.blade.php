@@ -20,6 +20,15 @@
     <input type="hidden" name="published_by" value="">
     <input type="hidden" name="published_at" value="">
 
+    <div>
+        @if(!in_array($status,[0,6,13]))
+            <div class="callout callout-danger">
+                <h4>Warning!</h4>
+                <p>There is another request for this facility on approval process. 
+                    Please wait for to the request to be published before you submit another request!</p>
+            </div>
+        @endif
+    </div>
     
     <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
         {{-- Tab One   --}}
@@ -27,22 +36,14 @@
             <div class="panel-heading" role="tab" id="headingOne">
                 <h4 class="panel-title">
                     <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                        Signature Elements
+                        Signature Domain
                     </a>
                 </h4>
             </div>
             <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
                 <div class="panel-body">
                     <div class="box-body">
-                            @if(!in_array($hosp->status_id,[0,6,13]))
-                                <div class="callout callout-warning">
-                                    <h4>Alert</h4>
-                                    <p>There is another request for this facility on approval process. 
-                                        Please wait for to the request to be published before you submit another request!</p>
-                                </div>
-                            @endif
-
-
+            
                         <div class="form-group">
                             <label for="cac_reg" class="col-sm-2 control-label">State Unique ID:</label>
                             <div class="col-sm-4">
@@ -415,14 +416,15 @@
                             </div> 
                            
                         </div>  
-                        <div class="form-group" id ='close_date_div' hidden>                        
+                        <div class="form-group" id ='close_date_div' hidden>   
+                                <div class="col-sm-6"></div>
                                 <label class="col-sm-2 control-label">Close Date:<font color="red">*</font></label>
                                 <div class="col-sm-4">
                                     <div class="input-group date" >
                                         <div class="input-group-addon">
                                             <i class="fa fa-calendar"></i>
                                         </div>
-                                        <input type="text" class="form-control pull-right" id="close_date" name="close_date" autocomplete="off" >
+                                        <input type="text" class="form-control pull-right" id="close_date" name="close_date" autocomplete="off" required>
                                     </div>
                                 </div>
                         </div>             
@@ -461,7 +463,7 @@
             <div class="panel-heading" role="tab" id="heading2">
                 <h4 class="panel-title">
                     <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse2" aria-expanded="false" aria-controls="collapse2">
-                        Service Elements
+                        Service Domain
                     </a>
                 </h4>
             </div>
@@ -893,7 +895,7 @@
     <a href="{{route('hospitals.index')}}">
         <button type="button" class="btn btn-warning">Return Back</button>
     </a>
-    @if(in_array($hosp->status_id,[0,6,13]))
+    @if(in_array($status,[0,6,13]))
         <button type="submit" class="btn btn-primary pull-right">Submit Update Request</button>
     @endif
     
@@ -1152,6 +1154,14 @@
         }
     });
 
+    var op_id ="{{$hosp->operational_status_id}}";
+    if(op_id == 5 || op_id == 6){
+            $('#close_date_div').show();
+            $('#close_date').prop('required',true);
+    }else{
+            $('#close_date').prop('required',false);
+            $('#close_date_div').hide();
+    }
 
 </script>
 

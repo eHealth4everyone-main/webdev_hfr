@@ -4,11 +4,11 @@
 @section('content-title')
 Hospitals and Clinics
 @if(auth()->user()->hasPermissionTo(2))
-<a href="{{route('hospitals.create')}}">
-    <button type="button" class="btn btn-primary pull-right">
-        Add Hospital or Clinic
-    </button>
-</a>
+    <a href="{{route('hospitals.create')}}">
+        <button type="button" class="btn btn-primary pull-right">
+            Add Hospital or Clinic
+        </button>
+    </a>
 @endif
 @endsection
 
@@ -26,13 +26,13 @@ Hospitals and Clinics
                                             <select class="form-control select2" id="state_id" name ="state_id"  style="width: 100%;">
                                                 <option value="1">--Select State--</option>
                                                 @foreach(getStates() as $st)
-                                                    <option value="{{$st->id}}">{{$st->name}}</option>
+                                                    <option value="{{$st->id}}" {{ (old('state_id')== $st->id ? "selected":"") }}>{{$st->name}}</option>
                                                 @endforeach
                                             </select>
                                         @else
                                             <select class="form-control select2 dynamic" id="state_id" name ="state_id" disabled required  style="width: 100%;">                                
                                                 @foreach(getStates() as $st)
-                                                    <option value="{{ $st->id }}">{{ $st->name }}</option>
+                                                    <option value="{{ $st->id }}" {{ (old('state_id')== $st->id ? "selected":"") }}>{{ $st->name }}</option>
                                                 @endforeach
                                                 
                                             </select>
@@ -55,7 +55,7 @@ Hospitals and Clinics
                                     <select class="form-control select2" id="facility_level_id"  name="facility_level_id" style="width: 100%;">
                                             <option value="0">--Select Facility Level--</option>
                                             @foreach(getLevelOfCare() as $st)
-                                                    <option value="{{ $st->id }}">{{ $st->name }}</option>
+                                                    <option value="{{ $st->id }}" {{ (old('facility_level_id')== $st->id ? "selected":"") }}>{{ $st->name }}</option>
                                             @endforeach
                                     </select>        
                                 </div>
@@ -76,7 +76,7 @@ Hospitals and Clinics
                                 <select class="form-control select2" id="operational_status_id" name ="operational_status_id" style="width: 100%;">
                                     <option value="0">--Select Operational Status--</option>
                                     @foreach(getOperationalStatus() as $st)
-                                            <option value="{{ $st->id }}">{{ $st->status }}</option>
+                                            <option value="{{ $st->id }}" {{ (old('operational_status_id')== $st->id ? "selected":"") }}>{{ $st->status }}</option>
                                     @endforeach
                                 </select>
                           </div>
@@ -84,7 +84,7 @@ Hospitals and Clinics
                                 <select class="form-control select2" id="registration_status_id" name="registration_status_id" style="width: 100%;">
                                     <option value="0">--Select Registration Status--</option>
                                     @foreach(getRegistrationStatus() as $st)
-                                        <option value="{{ $st->id }}" >{{ $st->status }}</option>
+                                        <option value="{{ $st->id }}" {{ (old('registration_status_id')== $st->id ? "selected":"") }}>{{ $st->status }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -92,7 +92,7 @@ Hospitals and Clinics
                                     <select class="form-control select2" id="license_status_id" name="license_status_id" style="width: 100%;">
                                         <option value="0">--Select License Status--</option>
                                         @foreach(getLicenseStatus() as $st)
-                                            <option value="{{ $st->id }}" >{{ $st->status }}</option>
+                                            <option value="{{ $st->id }}" {{ (old('license_status_id')== $st->id ? "selected":"") }} >{{ $st->status }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -101,15 +101,15 @@ Hospitals and Clinics
                       <div class="form-group">
                             <div class="col-sm-3">
                                     <select class="form-control select2" id="geo_codes" name="geo_codes"  style="width: 100%;">
-                                        <option value="0">--Select Coordinates--</option>
-                                        <option value="1">With Coordinates</option>
-                                        <option value="2">With No Coordinates</option>                            
+                                        <option value="0" {{ (old('geo_codes')== 0 ? "selected":"") }}>--Select Coordinates--</option>
+                                        <option value="1" {{ (old('geo_codes')== 1 ? "selected":"") }}>With Coordinates</option>
+                                        <option value="2" {{ (old('geo_codes')== 2 ? "selected":"") }}>With No Coordinates</option>                            
                                     </select>
                             </div>
                             
                           
                             <div class="col-sm-6" >
-                                <input class="form-control input-sm"type="text" name="facility_name" id="facility_name" class="form-control" placeholder="Facility name">
+                            <input class="form-control input-sm"type="text" name="facility_name" id="facility_name" value="{{old('facility_name')}}" class="form-control" placeholder="Facility name">
                             </div>
                             <div class="col-sm-3">
                                     <div class="form-group">
@@ -248,9 +248,18 @@ Hospitals and Clinics
                 <form class="form-horizontal"  action="{{route('hospitals.export')}}" method="post">
                     @csrf
                     
-                    <button type="submit" class="btn btn-info btn-sm" name='format' value='csv'>Download CSV</button>
-                    <button type="submit" class="btn btn-primary btn-sm" name='format' value='xls'>Download Excel</button>
+                    <input type="hidden" name="state_id" value="{{ old('state_id') }}" />
+                    <input type="hidden" name="lga_id" value="{{ old('lga_id') }}" />
+                    <input type="hidden" name="ward_id" value="{{ old('ward_id') }}" />
+                    <input type="hidden" name="facility_name" value="{{ old('facility_name') }}" />
+                    <input type="hidden" name="geo_codes" value="{{ old('geo_codes') }}" />
+                    <input type="hidden" name="facility_level_id" value="{{ old('facility_level_id') }}" />
+                    <input type="hidden" name="ownership_id" value="{{ old('ownership_id') }}" />
+                    <input type="hidden" name="operational_status_id" value="{{ old('operational_status_id') }}" />
+                    <input type="hidden" name="registration_status_id" value="{{ old('registration_status_id') }}" />
+                    <input type="hidden" name="license_status_id" value="{{ old('license_status_id') }}" />
 
+                    <button type="submit" class="btn btn-primary btn-sm" name='format' >Download</button>
                 </form>
             </div>
 
@@ -401,20 +410,11 @@ Hospitals and Clinics
     <script>
         
         $(document).ready( function () {
-     
-            $("#state_id").val({{ Auth::user()->state_id }}).change();
-            $("#geo_codes").val({{$geo_codes}}).change();
-            $("#facility_name").val("{{$facility_name}}");
-            $("#facility_level_id").val({{$facility_level_id}}).change();
-            $("#ownership_id").val({{$ownership_id}}).change();
-            $("#operational_status_id").val({{$operational_status_id}}).change();
-            $("#registration_status_id").val({{$registration_status_id}}).change();
-            $("#license_status_id").val({{$license_status_id}}).change();
-        
+           
 
             //get lgas
-            if({{ $searched}} == 1){
-                var stateID= {{$state_id}};
+            if( {{Auth::user()->state_id}} > 1){
+                var stateID= {{Auth::user()->state_id}};
                 var _token = $('input[name="_token"]').val();
                 $.ajax({
                     url:"{{route('getLgaList')}}",
@@ -423,32 +423,49 @@ Hospitals and Clinics
                     success:function(result)
                     {
                         $('#lga_id').html(result);
-                        $("#lga_id").val({{$lga_id}});
+                        $('#lga_id').val( "{{old('lga_id')}}" );
                     }         
                 });
             }
            
-
+            //get lgas after search
+            if( "{{old('state_id')}}" != 1){
+                var stateID= "{{old('state_id')}}";
+                var _token = $('input[name="_token"]').val();
+                $.ajax({
+                    url:"{{route('getLgaList')}}",
+                    method:"POST",
+                    data:{id:stateID, _token:_token},
+                    success:function(result)
+                    {
+                        $('#lga_id').html(result);
+                        $('#lga_id').val( "{{old('lga_id')}}" );
+                    }         
+                });
+            }
+           
             //get wards
-            // var lgaID = {{$lga_id}};
-            // if( lgaID != ''){
-            //     var _token = $('input[name="_token"]').val();
-            //     $.ajax({
-            //         url:"{{route('getWardList')}}",
-            //         method:"POST",
-            //         data:{lgaId:lgaID,_token:_token},
-            //         success:function(result)
-            //         {
-            //             $('#ward_id').html(result);
-            //             $('#ward_id').val({{$ward_id}});
-            //         }         
-            //     });
-            // }
-         
+            if( "{{old('lga_id')}}" != 1){
+                var lgaID= "{{old('lga_id')}}";
+                var _token = $('input[name="_token"]').val();
+                $.ajax({
+                    url:"{{route('getWardList')}}",
+                    method:"POST",
+                    data:{lgaId:lgaID,_token:_token},
+                    success:function(result)
+                    {
+                        $('#ward_id').html(result);
+                        $('#ward_id').val({{old('ward_id')}});
+                    }         
+                });
+            }
+
+
+
         });
         
         $("#reset").click(function(){
-           
+            $("#state_id").val(1).change();           
             $("#lga_id").val(1).change();
             $("#ward_id").val(0).change();
             $("#geo_codes").val(0).change();

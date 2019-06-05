@@ -40,30 +40,9 @@ class HospitalsController extends Controller
             ->orderBy('lga')
             ->orderBy('facility_name')
             ->paginate(15);
-        }
-      
-
-        //get data set for download option and cache it
-        $download = DB::table('hospital_details')
-                ->select('unique_id','registration_no','start_date','facility_name','state','lga','ward','ownership',
-                'facility_level','longitude','latitude','operation_status','registration_status','license_status')
-                ->Where('state_id', 'like', '%' .  Auth::user()->state_id . '%')
-                ->whereIn('lga_id', auth()->user()->getDirectPermissions()->pluck('id')->toArray())
-                ->orderBy('state')
-                ->orderBy('lga')
-                ->orderBy('facility_name')
-                ->get();
-
-        Cache::put('displayed_facilities', $download, 60);
+        }      
         
-
-        list($state_id, $lga_id, $ward_id,$facility_name, $geo_codes, $ward_id, 
-        $facility_level_id , $ownership_id,$operational_status_id,$registration_status_id,
-        $license_status_id,$searched) = [1,1,0,"",0,0,0,0,0,0,0,0,0];
-        
-        return view('hospitals.index',compact('facilities',
-        'state_id', 'lga_id','facility_name', 'geo_codes', 'ward_id','facility_level_id', 
-        'ownership_id','operational_status_id','registration_status_id', 'license_status_id','searched'));  
+        return view('hospitals.index',compact('facilities'));  
     }
        
   
@@ -198,6 +177,8 @@ class HospitalsController extends Controller
     public function edit($id)
     {
             $hosp =Hospital::findorfail($id);
+            $hosp_his =HospitalHistory::findorfail($id);
+            $status = $hosp_his['status_id'];
 
             $services = DB::table('hs_hospital_services')
                     ->select('service_id')
@@ -213,7 +194,7 @@ class HospitalsController extends Controller
             $lst_services = DB::table('lst_hosp_services')->get();
            
             
-            return view('hospitals.edit',compact('hosp','current_services','lst_services')); 
+            return view('hospitals.edit',compact('hosp','current_services','lst_services','status')); 
     }
     
   
@@ -526,44 +507,9 @@ class HospitalsController extends Controller
             ->paginate(15)
             ->appends($request->all());
       
-        $download = DB::table('hospital_details')
-            ->select('unique_id','registration_no','start_date','facility_name','state','lga','ward','ownership',
-             'facility_level','longitude','latitude','operation_status','registration_status','license_status')
-            ->where('state_id','like','%'.$state_id.'%')
-            ->where('lga_id','like','%'.$lga_id.'%')
-            ->where(DB::Raw("IFNULL(ward_id, '')"),'like','%'.$ward_id.'%')
-            ->where('facility_level_id','like','%'.$facility_level_id.'%')
-            ->where('ownership_id','like','%'.$ownership_id.'%')
-            ->where('operational_status_id','like','%'.$operational_status_id.'%')
-            ->where('registration_status_id','like','%'.$registration_status_id.'%')
-            ->where('license_status_id','like','%'.$license_status_id.'%')
-            ->Where('facility_name', 'like', '%' .  $facility_name . '%')
-            ->where(DB::Raw("IFNULL(latitude, '')"),$cond,$value)
-            ->orderBy('state')
-            ->orderBy('lga')
-            ->orderBy('facility_name')
-            ->get();
-            
-
-        Cache::put('displayed_facilities', $download, 60);
-
-        //return original values from request
-        $state_id = $request->state_id;
-        $lga_id = $request->lga_id;
-        $ward_id = $request->ward_id;
-        $facility_name =$request->facility_name;
-        $geo_codes = $request->geo_codes;
-        $facility_level_id = $request->facility_level_id;
-        $ownership_id = $request->ownership_id;
-        $operational_status_id = $request->operational_status_id;
-        $registration_status_id = $request->registration_status_id;
-        $license_status_id = $request->license_status_id;
-        $searched = 1;
-
-        
-        return view('hospitals.index',compact('facilities',
-        'state_id', 'lga_id','facility_name', 'geo_codes', 'ward_id','facility_level_id', 
-        'ownership_id','operational_status_id','registration_status_id', 'license_status_id','searched'));    
+        $request->flash('request',$request);    
+ 
+        return view('hospitals.index',compact('facilities'));    
     }
 
     public function getServices(Request $request)
@@ -587,24 +533,77 @@ class HospitalsController extends Controller
 
     public function export(Request $request){
 
-        if (Cache::has('displayed_facilities')) {
-            $facilities = Cache::get('displayed_facilities');
+        $state_id = $request->state_id;
+        $lga_id = $request->lga_id;
+        $ward_id = $request->ward_id;
+        $facility_name =$request->facility_name;
+        $geo_codes = $request->geo_codes;
+        $facility_level_id = $request->facility_level_id;
+        $ownership_id = $request->ownership_id;
+        $operational_status_id = $request->operational_status_id;
+        $registration_status_id = $request->registration_status_id;
+        $license_status_id = $request->license_status_id;
 
-
-            $column_header = array("facility_code","reg_number","start_date","facility_name","state","lga","ward","ownership",
-            "facility_level","longitude","latitude","operation_status","registration_status","license_status");
-        
-            if ($request->format == 'xls'){
-                $filename = 'data.xlsx';
-            }
-            if ($request->format == 'csv'){
-                $filename = 'data.csv';
-            }
-            
-            return Excel::download(new HFExport( $facilities->all(), $column_header), $filename );
+    
+        if ($geo_codes == 0){
+            $cond = "<>";
+            $value = 'XXX';
+        }
+        if ($geo_codes == 1){
+            $cond = "<>";
+            $value = '';
+        }
+        if ($geo_codes == 2){
+            $cond = "=";
+            $value = '';
         }
 
-        
+
+        if ($ward_id == 0){
+            $ward_id ='';
+        }
+        if($facility_level_id == 0){
+            $facility_level_id = '';
+        }
+        if($ownership_id==0 ){
+            $ownership_id=''; 
+        }
+        if($operational_status_id==0){
+            $operational_status_id='';
+        }
+        if($registration_status_id==0){
+            $registration_status_id='';
+        }
+        if($license_status_id==0){
+            $license_status_id='';
+        }
+
+     
+        $facilities = DB::table('hospital_details')
+            ->select('state','lga','ward','id','unique_id','facility_name','registration_no','start_date','close_date','ownership','ownership_type',
+            'facility_level','facility_level_option','longitude','latitude','operation_status','registration_status','license_status','created_at','updated_at')
+            ->where('state_id','like','%'.$state_id.'%')
+            ->where('lga_id','like','%'.$lga_id.'%')
+            ->where(DB::Raw("IFNULL(ward_id, '')"),'like','%'.$ward_id.'%')
+            ->where('facility_level_id','like','%'.$facility_level_id.'%')
+            ->where('ownership_id','like','%'.$ownership_id.'%')
+            ->where('operational_status_id','like','%'.$operational_status_id.'%')
+            ->where('registration_status_id','like','%'.$registration_status_id.'%')
+            ->where('license_status_id','like','%'.$license_status_id.'%')
+            ->Where('facility_name', 'like', '%' .  $facility_name . '%')
+            ->where(DB::Raw("IFNULL(latitude, '')"),$cond,$value)
+            ->orderBy('state')
+            ->orderBy('lga')
+            ->orderBy('facility_name')
+            ->get();
+      
+                
+
+        $column_header = array("state","lga","ward","uid","facility_code","facility_name","reg_number","start_date","close_date","ownership","ownership_type",
+            "facility_level","facility_level_option","longitude","latitude","operation_status","registration_status","license_status","created","last_updated");
+         
+        return Excel::download(new HFExport( $facilities->all(), $column_header), 'data.xlsx');
+
     }
 
 

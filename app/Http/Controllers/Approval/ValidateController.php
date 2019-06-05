@@ -81,92 +81,101 @@ class ValidateController extends Controller
 
     public function store(Request $request)
     {
-        $date = Carbon::now()->format('Y-m-d H:i:s');
-       
-        HospitalHistory::disableAuditing();        
-        $hosp = new HospitalHistory();
-        $hosp = HospitalHistory::findOrFail($request->id);
-
-        if($request->action == "approve"){
-            if($request->requested_action == "CREATE FACILITY"){
-                $status_id = 4;
-                $message = "Facility Creation Validated";
-                $mail_message = "Facility creation request has been validated. Please login to the system to review and Publish the request.";
-            }
-            elseif($request->requested_action == "UPDATE FACILITY"){
-                $status_id = 11;
-                $message = "Facility Update Validated";
-                $mail_message = "Facility update request has been validated. Please login to the system to review and Publish the request.";
-            }
-            else{
-                $status_id = 18;
-                $message = "Facility Deletion Validated";
-                $mail_message = "Facility deletion request has been validated. Please login to the system to review and Publish the request.";
-            }
-
-            //clear publish fields after reqest rejected at publish level and then re submiited
-            $hosp->published_by = $request->published_by;
-            $hosp->published_at = $request->published_at;
-            $hosp->publish_note = $request->publish_note;
-        }
-
-        if($request->action == "reject"){
-            if($request->requested_action == "CREATE FACILITY"){
-                $status_id = 5;
-                $message = "Facility Validation Rejected";
-                $mail_message = "Validator has rejected facility creation request. Please login to the system to review your request.";
-            }
-            elseif($request->requested_action == "UPDATE FACILITY"){
-                $status_id = 12;
-                $message = "Facility Validation Rejected";
-                $mail_message = "Validator has rejected facility update request. Please login to the system to review your request.";
-            }
-            else{
-                $status_id = 19;
-                $message = "Facility Validation Rejected";
-                $mail_message = "Validator has rejected facility deletion request. Please login to the system to review your request.";
-            }
-        }
-     
-
-        $hosp->status_id = $status_id;
-        $hosp->validated_by = Auth::user()->id;
-        $hosp->validated_at = $date;
-        $hosp->validate_note = $request->notes;
+        if (!$this->isValidated($request->id)){
+           
+            $date = Carbon::now()->format('Y-m-d H:i:s');
         
-        $status = new StatusTracking;
-        $status->hospital_id = $request->id;
-        $status->user_id = Auth::user()->id;
-        $status->status_id = $status_id;
-        $status->note = $request->notes;
-        $status->created_at = $date;
+            HospitalHistory::disableAuditing();        
+            $hosp = new HospitalHistory();
+            $hosp = HospitalHistory::findOrFail($request->id);
+
+            if($request->action == "approve"){
+                if($request->requested_action == "CREATE FACILITY"){
+                    $status_id = 4;
+                    $message = "Facility Creation Validated";
+                    $mail_message = "Facility creation request has been validated. Please login to the system to review and Publish the request.";
+                }
+                elseif($request->requested_action == "UPDATE FACILITY"){
+                    $status_id = 11;
+                    $message = "Facility Update Validated";
+                    $mail_message = "Facility update request has been validated. Please login to the system to review and Publish the request.";
+                }
+                else{
+                    $status_id = 18;
+                    $message = "Facility Deletion Validated";
+                    $mail_message = "Facility deletion request has been validated. Please login to the system to review and Publish the request.";
+                }
+
+                //clear publish fields after reqest rejected at publish level and then re submiited
+                $hosp->published_by = $request->published_by;
+                $hosp->published_at = $request->published_at;
+                $hosp->publish_note = $request->publish_note;
+            }
+
+            if($request->action == "reject"){
+                if($request->requested_action == "CREATE FACILITY"){
+                    $status_id = 5;
+                    $message = "Facility Validation Rejected";
+                    $mail_message = "Validator has rejected facility creation request. Please login to the system to review your request.";
+                }
+                elseif($request->requested_action == "UPDATE FACILITY"){
+                    $status_id = 12;
+                    $message = "Facility Validation Rejected";
+                    $mail_message = "Validator has rejected facility update request. Please login to the system to review your request.";
+                }
+                else{
+                    $status_id = 19;
+                    $message = "Facility Validation Rejected";
+                    $mail_message = "Validator has rejected facility deletion request. Please login to the system to review your request.";
+                }
+            }
+        
+
+            $hosp->status_id = $status_id;
+            $hosp->validated_by = Auth::user()->id;
+            $hosp->validated_at = $date;
+            $hosp->validate_note = $request->notes;
+            
+            $status = new StatusTracking;
+            $status->hospital_id = $request->id;
+            $status->user_id = Auth::user()->id;
+            $status->status_id = $status_id;
+            $status->note = $request->notes;
+            $status->created_at = $date;
+        
+            DB::beginTransaction();
+            try {
+                $hosp->save();
+                $status->save();
+        
+                DB::commit();
+            } catch (\Exception $ex) {
+                DB::rollback();
+                return response()->json(['error' => $ex->getMessage()], 500);
+            }
+
+            HospitalHistory::enableAuditing();
+
+            //****** send notifications *********
+            if(config('hfr.notify_publisher')){
+                $notify = new ApprovalNotifications;
+                $notify->sendValidationNotification($mail_message,$request->action);
+            }
     
-        DB::beginTransaction();
-        try {
-            $hosp->save();
-            $status->save();
-     
-            DB::commit();
-        } catch (\Exception $ex) {
-            DB::rollback();
-            return response()->json(['error' => $ex->getMessage()], 500);
-        }
 
-        HospitalHistory::enableAuditing();
+            session()->flash("alert-success", $message);
 
-        //****** send notifications *********
-        if(config('hfr.notify_publisher')){
-            $notify = new ApprovalNotifications;
-            $notify->sendValidationNotification($mail_message,$request->action);
-        }
- 
+            if ($status_id == 11 OR $status_id == 12){
+                return redirect()->route('validate.pending');
+            }else{  
+                return redirect()->back();                
+            }
 
-        session()->flash("alert-success", $message);
 
-        if ($status_id == 11 OR $status_id == 12){
-            return redirect()->route('validate.pending');
-        }else{  
-            return redirect()->back();                
+        }//end is not validated
+        else{
+            session()->flash("alert-success", 'The request is already validated');
+            return redirect()->route('validate.pending');            
         }
     }
 

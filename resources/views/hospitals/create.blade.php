@@ -17,7 +17,7 @@
             <div class="panel-heading" role="tab" id="headingOne">
                 <h4 class="panel-title">
                     <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                        Signature Elements
+                        Signature Domain
                     </a>
                 </h4>
             </div>
@@ -404,14 +404,15 @@
                             </div> 
                             
                         </div>
-                        <div class="form-group" id ='close_date_div' hidden>                        
+                        <div class="form-group" id ='close_date_div' hidden>       
+                            <div class="col-sm-6"></div>
                             <label class="col-sm-2 control-label">Close Date:<font color="red">*</font></label>
                             <div class="col-sm-4">
                                 <div class="input-group date" >
                                     <div class="input-group-addon">
                                         <i class="fa fa-calendar"></i>
                                     </div>
-                                    <input type="text" class="form-control pull-right" id="close_date" name="close_date" autocomplete="off" >
+                                    <input type="text" class="form-control pull-right" id="close_date" name="close_date" autocomplete="off" required>
                                 </div>
                             </div>
                         </div>
@@ -449,7 +450,7 @@
             <div class="panel-heading" role="tab" id="heading2">
                 <h4 class="panel-title">
                     <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse2" aria-expanded="false" aria-controls="collapse2">
-                        Service Elements
+                        Service Domain
                     </a>
                 </h4>
             </div>
@@ -1125,8 +1126,8 @@
         })            
     }
     
-      //if operation status is closed or temp close show close date
-      $("#operational_status_id").change(function(){
+    //if operation status is closed or temp close show close date
+    $("#operational_status_id").change(function(){
         if($(this).val() == 5 || $(this).val() == 6){
             $('#close_date_div').show();
             $('#close_date').prop('required',true);
@@ -1136,6 +1137,15 @@
 
         }
     });
+
+    var op_id = '{{ old('operational_status_id') }}';
+    if(op_id == 5 || op_id == 6){
+            $('#close_date_div').show();
+            $('#close_date').prop('required',true);
+    }else{
+            $('#close_date').prop('required',false);
+            $('#close_date_div').hide();
+    }
 
 </script>
 
