@@ -30,6 +30,7 @@ class HospitalsController extends Controller
             ->where('state_id', 'like', '%' .  Auth::user()->state_id . '%')
             ->orderBy('state')
             ->orderBy('lga')
+            ->orderBy('ward')
             ->orderBy('facility_name')
             ->paginate(15);
         }else{
@@ -38,6 +39,7 @@ class HospitalsController extends Controller
             ->whereIn('lga_id', auth()->user()->getDirectPermissions()->pluck('id')->toArray())
             ->orderBy('state')
             ->orderBy('lga')
+            ->orderBy('ward')
             ->orderBy('facility_name')
             ->paginate(15);
         }      
@@ -503,6 +505,7 @@ class HospitalsController extends Controller
             ->where(DB::Raw("IFNULL(latitude, '')"),$cond,$value)
             ->orderBy('state')
             ->orderBy('lga')
+            ->orderBy('ward')
             ->orderBy('facility_name')
             ->paginate(15)
             ->appends($request->all());

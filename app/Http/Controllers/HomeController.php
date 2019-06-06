@@ -35,7 +35,7 @@ class HomeController extends Controller
         //facilities with geo codes
         $geo_percent = Cache::remember('percent_facilities_geo', 30, function () {
             return DB::select("SELECT state as name, cast(SUM(case when latitude <> '' then 1 else 0 end)/count(id)*100 as unsigned) as y
-                    FROM hospital_details group by state");
+                    FROM hospital_details group by state order by y desc");
          });
          
        
@@ -68,7 +68,7 @@ class HomeController extends Controller
 
         //fac with Geo codes
         $geo_codes =  DB::select("SELECT lga as name, cast(SUM(case when latitude <> '' then 1 else 0 end)/count(id)*100 as unsigned) as y 
-        FROM hospital_details WHERE state_id=". $state_id ."  GROUP BY lga");
+        FROM hospital_details WHERE state_id=". $state_id ."  GROUP BY lga order by y desc");
 
 
         $result  = array();

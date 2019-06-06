@@ -129,7 +129,7 @@
                             <tr>
                                 <th>State</th>
                                 <th>LGA</th>
-                                {{-- <th>Ward</th> --}}
+                                <th>Ward</th>
                                 <th>Facility Code</th>
                                 <th>Facility Name</th>
                                 <th>Ownership</th>
@@ -142,7 +142,7 @@
                             <tr>
                                 <td>{{$fac->state}}</td>
                                 <td>{{$fac->lga}}</td>
-                                {{-- <td>{{$fac->ward}}</td> --}}
+                                <td>{{$fac->ward}}</td>
                                 <td>{{$fac->unique_id}}</td>
                                 <td>{{$fac->facility_name}}</td>
                                 <td>{{$fac->ownership}}</td>

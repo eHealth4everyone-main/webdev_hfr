@@ -15,6 +15,7 @@ class FacilityListingController extends Controller
         $facilities = DB::table('hospital_details')
             ->orderBy('state')
             ->orderBy('lga')
+            ->orderBy('ward')
             ->orderBy('facility_name')
             ->paginate(20);
 
@@ -123,6 +124,7 @@ class FacilityListingController extends Controller
             ->whereIn('id',$hospital_with_services)
             ->orderBy('state')
             ->orderBy('lga')
+            ->orderBy('ward')
             ->orderBy('facility_name')
             ->paginate(20)
             ->appends($request->all());
@@ -469,6 +471,7 @@ class FacilityListingController extends Controller
             ->Where('facility_name', 'like', '%' .  $facility_name . '%')
             ->orderBy('state')
             ->orderBy('lga')
+            ->orderBy('ward')
             ->orderBy('facility_name')
             ->paginate(20);
 
@@ -489,6 +492,7 @@ class FacilityListingController extends Controller
             ->where('created_at', '>=', Carbon::now()->startOfMonth())
             ->orderBy('state')
             ->orderBy('lga')
+            ->orderBy('ward')
             ->orderBy('facility_name')
             ->get();   
             $report=$facilities->count()." Facilities were created this Month";    
@@ -500,6 +504,7 @@ class FacilityListingController extends Controller
             ->whereBetween('created_at', [Carbon::now()->startOfMonth()->subMonth(), Carbon::now()->startOfMonth()])
             ->orderBy('state')
             ->orderBy('lga')
+            ->orderBy('ward')
             ->orderBy('facility_name')
             ->get();   
             $report=$facilities->count()." Facilities were created in the last Month";
@@ -511,6 +516,7 @@ class FacilityListingController extends Controller
             ->whereBetween('created_at', [Carbon::now()->subMonth(4), Carbon::now()->subMonth(1)])
             ->orderBy('state')
             ->orderBy('lga')
+            ->orderBy('ward')
             ->orderBy('facility_name')
             ->get();
             $report=$facilities->count()." Facilities were created in the last 3 Month";
@@ -522,6 +528,7 @@ class FacilityListingController extends Controller
             ->where('updated_at', '>=', Carbon::now()->startOfMonth())
             ->orderBy('state')
             ->orderBy('lga')
+            ->orderBy('ward')
             ->orderBy('facility_name')
             ->get();  
 
@@ -534,6 +541,7 @@ class FacilityListingController extends Controller
             ->whereBetween('updated_at', [Carbon::now()->startOfMonth()->subMonth(), Carbon::now()->startOfMonth()])
             ->orderBy('state')
             ->orderBy('lga')
+            ->orderBy('ward')
             ->orderBy('facility_name')
             ->get();  
             $report=$facilities->count()." Facilities were updated in the last Month";
@@ -545,6 +553,7 @@ class FacilityListingController extends Controller
             ->whereBetween('updated_at', [Carbon::now()->subMonth(4), Carbon::now()->subMonth(1)])
             ->orderBy('state')
             ->orderBy('lga')
+            ->orderBy('ward')
             ->orderBy('facility_name')
             ->get();  
             $report=$facilities->count()." Facilities were updated in the last 3 Month";
