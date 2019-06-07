@@ -429,6 +429,43 @@ class HfrDhis extends Model
 
     }
 
+    public function closeFacility($data,$uid){
+        try{
+     
+            $client = new Client([
+                'base_uri' =>  config('hfr.dhis_url')
+            ]);
+
+            $response = $client->put('organisationUnits/'. $uid, [
+                'auth' => [config('hfr.dhis_username'),config('hfr.dhis_password')],
+                'json' => $data
+            ]);
+
+      
+            if ( $response->getReasonPhrase() == 'OK'){
+                $data[0] = 'Closed';                
+            }else{
+                $data[0] = 'Not Closed';                                
+            }
+
+            $data[1] = '';
+            return $data;
+
+        } catch (RequestException $e) {
+            if ($e->hasResponse()) {
+                $data[0] = 'Failed';
+                $data[1] =  $e->getResponse()->getBody()->getContents();
+                return $data;
+            }else {
+                $data[0] = 'Failed';
+                $data[1] = 'No response from the server';
+                return $data;
+            }
+        }
+    
+    }
+
+
     public function sendEmailtoDhisTeamForNewFacility($name,$ward_id){
         $ward = DB::table('wards')
                 ->where('id',$ward_id)
@@ -468,5 +505,17 @@ class HfrDhis extends Model
         Notification::send($users, new sendDeleteFacilityEmailtoDhisTeam($name,$state,$lga,$ward_name));
     }
 
+    public function sendEmailtoDhisTeamForClosedFacility($name,$ward_id){
+        $ward = DB::table('wards')
+                ->where('id',$ward_id)
+                ->get();
+
+        $state = $ward[0]->state;
+        $lga = $ward[0]->lga;
+        $ward_name = $ward[0]->name;
+
+        $users = User::permission('Receive DHIS2 Notifications')->get();
+        Notification::send($users, new sendCloseFacilityEmailtoDhisTeam($name,$state,$lga,$ward_name));
+    }
 
 }

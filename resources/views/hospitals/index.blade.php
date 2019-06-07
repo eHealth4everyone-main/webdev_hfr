@@ -32,7 +32,7 @@ Hospitals and Clinics
                                         @else
                                             <select class="form-control select2 dynamic" id="state_id" name ="state_id" disabled required  style="width: 100%;">                                
                                                 @foreach(getStates() as $st)
-                                                    <option value="{{ $st->id }}" {{ (old('state_id')== $st->id ? "selected":"") }}>{{ $st->name }}</option>
+                                                    <option value="{{ $st->id }}" {{ (Auth::user()->state_id == $st->id ? "selected":"") }}>{{ $st->name }}</option>
                                                 @endforeach
                                                 
                                             </select>
@@ -413,7 +413,7 @@ Hospitals and Clinics
            
 
             //get lgas
-            if( {{Auth::user()->state_id}} > 1){
+            if( {{Auth::user()->state_id}} > 1 ){
                 var stateID= {{Auth::user()->state_id}};
                 var _token = $('input[name="_token"]').val();
                 $.ajax({
@@ -429,7 +429,7 @@ Hospitals and Clinics
             }
            
             //get lgas after search
-            if( "{{old('state_id')}}" != 1){
+            if( "{{old('state_id')}}" != ""){
                 var stateID= "{{old('state_id')}}";
                 var _token = $('input[name="_token"]').val();
                 $.ajax({

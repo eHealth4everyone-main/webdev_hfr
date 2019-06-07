@@ -7,7 +7,7 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class sendDeleteFacilityEmailtoDhisTeam extends Notification implements ShouldQueue
+class sendCloseFacilityEmailtoDhisTeam extends Notification implements ShouldQueue
 {
     use Queueable;
  
@@ -29,9 +29,9 @@ class sendDeleteFacilityEmailtoDhisTeam extends Notification implements ShouldQu
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject('Facility Deleted')
+            ->subject('Facility Closed')
             ->greeting('Hello,')
-            ->line('Facility ('. $this->name .') have been deleted in DHIS2. The facility was in '.$this->state. ' state, '.$this->lga. ' LGA, and '.$this->ward. ' ward.');
+            ->line('Facility ('. $this->name .') have been deleted in HFR and closed in DHIS2 as it has reported before. The facility is in '.$this->state. ' state, '.$this->lga. ' LGA, and '.$this->ward. ' ward.');
     }
 
  

@@ -12,8 +12,8 @@ HFR-DHIS2 Exchange
   <div class="box-body">
 
    
-    <div id='updating'>
-        <h4>Creating facility in DHIS2. Please wait...</h4>
+    <div id='deleting'>
+        <h4>Deleting facility in DHIS2. Please wait...</h4>
     </div>
 
     <div id='progress' class="progress">
@@ -24,13 +24,16 @@ HFR-DHIS2 Exchange
     
     <div id='fac_error' class="alert alert-danger alert-dismissible" hidden>
         <h4><i class="icon fa fa-warning"></i> Error!</h4>
-        Something went wrong while creating facility in DHIS2. Please, check logs for details!
+        Something went wrong while deleting facility in DHIS2. Please, check logs for details!
     </div>
-    <div id='fac_success' class="alert alert-success alert-dismissible" hidden>
+    <div id='fac_success_delete' class="alert alert-success alert-dismissible" hidden>
         <h4><i class="icon fa fa-check"></i> Success!</h4>
-        Facility was successfully created in DHIS2!
+        Facility was successfully deleted in DHIS2!
     </div>
-
+    <div id='fac_success_close' class="alert alert-success alert-dismissible" hidden>
+        <h4><i class="icon fa fa-check"></i> Success!</h4>
+        Facility was successfully closed in DHIS2!
+    </div>
   </div>
   <!-- /.box-body -->
   <div class="box-footer">
@@ -53,7 +56,9 @@ HFR-DHIS2 Exchange
 
 $(document).ready(function() {
       $("#fac_error").hide();
-      $("#fac_success").hide();
+      $("#fac_success_delete").hide();
+      $("#fac_success_close").hide();
+
 
 
       var current_progress = 0;
@@ -66,7 +71,7 @@ $(document).ready(function() {
               .text(current_progress + "%");
               if (current_progress >= 100)
                   clearInterval(interval);
-          }, 2000);
+          }, 3000);
       });
 
       var id = '{{ $hosp->id }}';
@@ -89,7 +94,7 @@ $(document).ready(function() {
       var _token = $('input[name="_token"]').val();
       
       $.ajax({
-          url:"{{route('dhis.store')}}",
+          url:"{{route('dhis.delete')}}",
           method:"POST",
           data:{state_id:state_id, ward_id:ward_id, facility_name:facility_name, start_date:start_date, close_date:close_date, postal_address:postal_address,
                 email_address:email_address, website:website,longitude:longitude,  latitude:latitude, id:id, operational_status_id:operational_status_id,
@@ -97,19 +102,29 @@ $(document).ready(function() {
                 facility_level_option_id:facility_level_option_id, facility_level_id:facility_level_id, _token:_token},
           success:function(result)
           {
-              if (result =='Created'){
-                  $("#fac_success").show();
+              if (result =='Closed'){
+                  $("#fac_success_close").show();
+                  $("#fac_success_delete").hide();
                   $("#btfooter").show();
                   $("#progress").hide();
-                  $('#updating').hide();
+                  $('#deleting').hide();
+                  $("#fac_error").hide();
+              }
+              else if(result == 'Deleted'){
+                  $("#fac_success_delete").show();
+                  $("#fac_success_close").hide();
+                  $("#btfooter").show();
+                  $("#progress").hide();
+                  $('#deleting').hide();
                   $("#fac_error").hide();
               }
               else{
                   $("#fac_error").show();
+                  $("#fac_success_close").hide();
+                  $("#fac_success_delete").hide();
                   $("#btfooter").show();
                   $("#progress").hide();
-                  $('#updating').hide();
-                  $("#fac_success").hide();
+                  $('#deleting').hide();
               }
           }         
       })   
@@ -122,7 +137,7 @@ $(document).ready(function() {
                 .attr("aria-valuenow", current_progress)
                 .text(current_progress + "%");
           $("#progress").hide();
-          $('#updating').hide();
+          $('#deleting').hide();
             
       });
       

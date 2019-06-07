@@ -635,29 +635,151 @@ class HfrDhisController extends Controller
        
     }
 
-    public function test(){
-     
+  
+    public function delete(Request $request){
         $dhis = new HfrDhis;
-
-        $client = new Client([
-            'base_uri' =>  config('hfr.dhis_url')
-        ]);
-
-        $response = $client->get('organisationUnits?filter=code:eq:139556', [
-            'auth' => [config('hfr.dhis_username'),config('hfr.dhis_password')]
-        ]);
-        $response;
-
-        $array = json_decode($response->getBody()->getContents(), true); 
-
-        if ($array['pager']['total'] > 0){
-            $orgUnits = $array['organisationUnits'][0]['id'];
-        }else{
-            $orgUnits = 'None';
-        }
-    
+        $log = new DhisLog;
+        $data = [];
+        $fac_id = $request->id;
+        $uid = $dhis->getDhisFacilityUID($fac_id );
         
-        return $orgUnits;
+        $close_date= Carbon::now()->format('Y-m-d');
+
+        $data = [
+            'name' =>$dhis->formatName($request->facility_name, $request->state_id),
+            'shortName' => $dhis->getShortname($request->facility_name,$request->alt_facility_name),
+            'code' => $request->id,
+            'openingDate' => $dhis->formatDate($request->start_date),
+            'closedDate' =>$dhis->formatDate($close_date),
+            'address' => $request->postal_address,
+            'coordinates' => $dhis->formatGeoCords($request->longitude,$request->latitude),
+            'email' => $request->email_address,
+            'url' => $request->website,
+            'phoneNumber' => $request->phone_number,
+            'parent' => $dhis->getParent($request->ward_id)
+        ];
+
+        if(strlen($uid) == 11){
+            try {
+                $client = new Client([
+                    'base_uri' =>  config('hfr.dhis_url')
+                ]);
+        
+                $response=$client->delete('organisationUnits/'. $uid, [
+                    'auth' => [config('hfr.dhis_username'),config('hfr.dhis_password')],
+                ]);
+                
+                if ($response->getReasonPhrase() == 'OK'){
+                    $log->hfr_id = $fac_id;
+                    $log->dhis_uid = $uid;
+                    $log->facility_status = "Deleted";
+                    $log->error_details = "";
+                    $log->request_type = 'Delete';
+                    $log->user_id = Auth::user()->id;
+                    $log->save();
+
+                    $dhis->sendEmailtoDhisTeamForDeletedFacility($request->facility_name, $request->ward_id);
+
+                    return 'Deleted';
+                }else{
+                    $log->hfr_id = $fac_id;
+                    $log->dhis_uid = $uid;
+                    $log->facility_status = "Not Deleted";
+                    $log->error_details = "";
+                    $log->request_type = 'Delete';
+                    $log->user_id = Auth::user()->id;
+                    $log->save();
+                    return 'Not Deleted';
+                }
+  
+                //send notification email to dhis team
+    
+            } catch (RequestException $e) {
+                if ($e->hasResponse()) {
+                    $error = (string) $e->getResponse()->getBody()->getContents();
+
+                    if (strpos($error, '502 Bad Gateway') !== false){ //facilited has beed deleted
+                        $log->hfr_id = $fac_id;
+                        $log->dhis_uid = $uid;
+                        $log->facility_status = "Deleted";
+                        $log->error_details = "";
+                        $log->request_type = 'Delete';
+                        $log->user_id = Auth::user()->id;
+                        $log->save();
+
+                        $dhis->sendEmailtoDhisTeamForDeletedFacility($request->facility_name, $request->ward_id);
+
+                        return "Deleted";
+                    }
+                    elseif (strpos($error, 'Could not delete due to association with another object: DataValue') !== false){
+                        //if the facility has data mark it as closed
+                        $status = [];
+                        $status[0] ='';
+                        $status = $dhis->closeFacility($data,$uid);
+
+                        if ($status[0] =='Closed'){
+                            $log->hfr_id = $fac_id;
+                            $log->facility_status = 'Closed' ;
+                            $log->error_details = '';
+                            $log->user_id = Auth::user()->id;
+                            $log->request_type = 'Delete';
+                            $log->save();
+                            
+                            $dhis->sendEmailtoDhisTeamForClosedFacility($request->facility_name, $request->ward_id);
+
+                            return "Closed";
+                        }
+                        if ($status[0]=='Not Closed'){
+                            $log->hfr_id = $fac_id;
+                            $log->facility_status = 'Not Closed' ;
+                            $log->error_details = '';
+                            $log->user_id = Auth::user()->id;
+                            $log->request_type = 'Delete';
+                            $log->save();
+                            return "Not Closed";
+                        }
+                        if ($status[0]=='Failed'){
+                            $log->hfr_id = $fac_id;
+                            $log->facility_status = $status[0] ;
+                            $log->error_details = $status[1];
+                            $log->user_id = Auth::user()->id;
+                            $log->request_type = 'Delete';
+                            $log->save();
+                            return "Exception_Error";
+                        }
+                                           
+                    }else{
+                        $log->hfr_id = $fac_id;
+                        $log->facility_status = "Failed" ;
+                        $log->error_details = $error;
+                        $log->user_id = Auth::user()->id;
+                        $log->request_type = 'Delete';
+                        $log->save();
+                        return "Exception_Error";
+                    }
+
+                }else {
+                    $log->hfr_id = $fac_id;
+                    $log->facility_status = "Failed";
+                    $log->error_details = 'No response from the server';
+                    $log->user_id = Auth::user()->id;
+                    $log->request_type = 'Delete';
+                    $log->save();
+                    return "Exception_Error";
+                }
+            }
+
+        }else { // if failed to get facility uid from dhis
+            $log->hfr_id = $fac_id;
+            $log->facility_status = "Failed";
+            $log->error_details = 'Could not get a facility with code '. $fac_id .' in DHIS2';
+            $log->user_id = Auth::user()->id;
+            $log->save();
+            return "Exception_Error";
+        }
+
+     
+       
     }
 
 
