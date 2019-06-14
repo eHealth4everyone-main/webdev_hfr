@@ -521,7 +521,7 @@ class HospitalsController extends Controller
             join lst_hosp_services s on hs.service_id=s.id
             where hospital_id='".$request->hosp_id."'");
 
-      return $services;
+        return $services;
     }
 
     public function getServicesHistory(Request $request)
@@ -530,7 +530,7 @@ class HospitalsController extends Controller
             join lst_hosp_services s on hs.service_id=s.id
             where hospital_id='".$request->hosp_id."'");
 
-      return $services;
+        return $services;
     }
 
 
