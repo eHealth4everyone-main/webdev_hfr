@@ -418,7 +418,7 @@ body {
     position: relative;
 }
 .header-top-right > .content > a {color: #fff}
-.header-top-right .content:hover > a {color: #2d3e50;}
+.header-top-right .content:hover > a {color: #2d3e;}
 .header-top-right > .content i {font-size: 14px; margin-right: 8px;}
 .header-top-right {float: right; padding-top: 23px}
 .header-top-right > .content:after {

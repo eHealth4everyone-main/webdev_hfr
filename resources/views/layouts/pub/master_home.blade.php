@@ -61,12 +61,11 @@
                                         </div>
                                         <div class="col-lg-5 col-md-6 col-sm-7 col-xs-12">
                                             <div class="header-top-right">
-                                                    <div class="content"><a href="{{route('about')}}"> About</a></div>
-                                                    <div class="content"><a href="{{route('open_contact_form')}}"> Contact Us</a></div>
-                                                <div class="content"><a href="/login"><i class="zmdi zmdi-account"></i> My Account</a>
-                                
-                                                </div>
-                                               
+                                                <div class="content"><a href="{{route('about')}}"> About</a></div>
+                                                <div class="content"><a href="{{route('open_contact_form')}}"> Contact Us</a></div>
+                                                <div class="content"><a href="/login"><i class="zmdi zmdi-account"></i> My Account</a></div>
+                            
+                                                                            
                                             </div>
                                         </div>
                                 </div>
