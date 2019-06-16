@@ -29,7 +29,8 @@
         <link rel="stylesheet" href="{{asset("design/css/bootstrap.min.css")}}">
 
         <link rel="stylesheet" href="{{asset("design/css/font-awesome.min.css")}}">
-	
+        <link rel="stylesheet" href="{{asset("design/css/meanmenu.min.css")}}">
+        <link rel="stylesheet" href="{{asset("design/css/animate.css")}}">
         <link rel="stylesheet" href="{{asset("design/css/jquery-ui.css")}}">
 
         <link rel="stylesheet" href="{{asset("design/css/material-design-iconic-font.css")}}">
@@ -82,12 +83,41 @@
                                         </div>
                                         
                                 </div>
-                                
-                                @include('layouts.pub.menu')
+                                <div class="col-md-9">
+                                    <div class="mainmenu-area pull-right">
+                                        <div class="mainmenu hidden-sm hidden-xs">
+                                            <nav>
+                                                <ul id="nav">
+                                               
+                                                     @include('layouts.pub.menu')
+                                      
+                                                </ul>
+                                            </nav>
+                                        </div>
+                                 
+                                    </div> 
+                                </div>
 
                             </div>
                         </div>
                     </div>  
+                    <!-- Mobile Menu Area start -->
+                    <div class="mobile-menu-area">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12">
+                                    <div class="mobile-menu">
+                                        <nav id="dropdown">
+                                            <ul>
+                                                @include('layouts.pub.menu')
+                                            </ul>
+                                        </nav>
+                                    </div>					
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Mobile Menu Area end -->   
                       
                 </header>
                 <!--End of Header Area-->
@@ -174,15 +204,17 @@
 
 
 
-
-<script src="{{asset("design/js/vendor/jquery-1.12.4.min.js")}}"></script>
-        	
-<script src="{{asset("design/js/bootstrap.min.js")}}"></script>
- 
-<script src="{{asset("design/js/jquery.scrollUp.min.js")}}"></script>
+        <script src="{{asset("design/js/vendor/jquery-1.12.4.min.js")}}"></script>
+        <script src="{{asset("design/js/bootstrap.min.js")}}"></script>
+        <script src="{{asset("design/js/jquery.meanmenu.js")}}"></script>        	
+        <script src="{{asset("design/js/wow.min.js")}}"></script>
+        {{-- <script src="{{asset("design/js/jquery.scrollUp.min.js")}}"></script>
+        <script src="{{asset("design/js/waypoints.min.js")}}"></script>
+        <script src="{{asset("design/js/jquery.counterup.min.js")}}"></script> --}}
         
-{{-- <script src="{{asset("design/js/main.js")}}"></script> --}}
-<script src="{{asset("dist/js/select2.full.min.js")}}"></script>
+        <script src="{{asset("dist/js/select2.full.min.js")}}"></script>
+        <script src="{{asset("design/js/main.js")}}"></script>
+
 
         <script>
     

@@ -461,27 +461,7 @@ class FacilityListingController extends Controller
 
         return view('public.list_imaging',compact('facilities','data'));     
     }
-    //search hospital from top banner search option
-    public function searchHospital(Request $request)
-    {
-      
-        $facility_name = $request->facility_name;
-
-        $facilities = DB::table('hospital_details')
-            ->Where('facility_name', 'like', '%' .  $facility_name . '%')
-            ->orderBy('state')
-            ->orderBy('lga')
-            ->orderBy('ward')
-            ->orderBy('facility_name')
-            ->paginate(20);
-
-
-        $facilities->appends([
-            'facility_name'=>$request->facility_name,
-        ]);
-
-        return view('public.hospital_search',compact("facilities"));        
-    }
+  
 
     public function getUpdates(Request $request)
     {

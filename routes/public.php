@@ -23,7 +23,6 @@ Route::get('facilities/imaging-search', 'FacilityListingController@searchImaging
 
 Route::get('facilities/latest-updates/view', 'FacilityListingController@getUpdates')->name('view.updates');
 Route::get('facilities/latest-updates', 'FacilityListingController@updates')->name('latest.updates');
-Route::get('facilities/hospital-search', 'FacilityListingController@searchHospital')->name('searchHospitals');
 
 
 
