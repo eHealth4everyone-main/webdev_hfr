@@ -23,12 +23,12 @@
                             <br>
                             <p><span class="c-icon"><i class="zmdi zmdi-email"></i></span><span class="c-text"> Email</span></p>
                             <a href=""> hfr@health.gov.ng<br></a>
-                            <a href="">info@health.gov.ng<br></a>
-                            <a href="">hmoffice@health.gov.ng<br></a>
+                           
                             <br>
                             <p><span class="c-icon"><i class="zmdi zmdi-phone"></i></span><span class="c-text">Telephone</span></p>
-                             HMH Office: 08127256638<br>
-                             HMSH Office: 08022139767<br>
+                             +234 805 965 9211 <br>
+                             +234 806 644 9855 <br>
+                             
                           
                     </div>
                     

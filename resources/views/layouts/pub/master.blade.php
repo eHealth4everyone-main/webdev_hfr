@@ -143,7 +143,7 @@
                                 <div class="container">
                                     <div class="row">
                                   
-                                        <div class="col-md-8">
+                                        <div class="col-md-4 col-sm-4">
                                             <div class="single-footer-widget">
                                                 <h3>Nigeria HFR PARTNERS</h3>
                                                 <div class="instagram-image">
@@ -160,6 +160,16 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="col-md-4 col-sm-4">
+                                                <div class="single-footer-widget">
+                                                        <h3>Feedback</h3>
+                                                        <ul class="footer-list">
+                                                            <li><a rel="noopener noreferrer"href="{{route('open_contact_form')}}">Send us feedback</a></li>
+                                                        </ul>
+                                                    </div>
+                                        </div>
+
+                                       
                                         <div class="col-md-4 hidden-sm">
                                                 <div class="single-footer-widget">
                                                     <h3>Useful Links</h3>
