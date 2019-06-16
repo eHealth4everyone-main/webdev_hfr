@@ -37,6 +37,7 @@
         <link rel="stylesheet" href="{{asset("design/css/material-design-iconic-font.css")}}">
        
         <link rel="stylesheet" href="{{asset("design/style.css")}}">
+        <link rel="stylesheet" href="{{asset("design/css/responsive.css")}}">
         <link rel="stylesheet" href="{{asset("design/css/color.css")}}">
     	
         <link rel="stylesheet" href="{{asset("/dist/css/select2.min.css")}}">
@@ -53,7 +54,7 @@
                 <!--Header Area Start-->
                 <header>
                     <div class="header-top bg-green effect-blue">
-                        <div class="container">
+                        <div class="container ">
                                 <div class="row">
                                         <div class="col-lg-7 col-md-6 col-sm-5 hidden-xs">
                                             {{-- <a href=""><img src="/img/logo.png"  width="50" height="50" alt="FMOH"></a> --}}
@@ -63,9 +64,7 @@
                                             <div class="header-top-right">
                                                 <div class="content"><a href="{{route('about')}}"> About</a></div>
                                                 <div class="content"><a href="{{route('open_contact_form')}}"> Contact Us</a></div>
-                                                <div class="content"><a href="/login"><i class="zmdi zmdi-account"></i> My Account</a></div>
-                            
-                                                                            
+                                                <div class="content"><a href="/login"><i class="zmdi zmdi-account"></i> My Account</a></div>                                                                            
                                             </div>
                                         </div>
                                 </div>
