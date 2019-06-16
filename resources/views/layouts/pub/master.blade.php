@@ -33,8 +33,9 @@
         <link rel="stylesheet" href="{{asset("design/css/jquery-ui.css")}}">
 
         <link rel="stylesheet" href="{{asset("design/css/material-design-iconic-font.css")}}">
-        <link rel="stylesheet" href="{{asset("design/css/responsive.css")}}">
+    
         <link rel="stylesheet" href="{{asset("design/style.css")}}">
+        <link rel="stylesheet" href="{{asset("design/css/responsive.css")}}">
         <link rel="stylesheet" href="{{asset("design/css/color.css")}}">
     	
         <link rel="stylesheet" href="{{asset("/dist/css/select2.min.css")}}">
