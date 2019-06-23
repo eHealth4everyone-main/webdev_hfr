@@ -55,6 +55,7 @@ Wards
               <tr>
                 <th>State</th>
                 <th>LGA</th>
+                <th>Ward ID</th>
                 <th>Ward</th>
                 <th>Action</th>
               </tr>
@@ -65,6 +66,7 @@ Wards
                 <tr>
                   <td>{{$w->state}}</td>
                   <td>{{$w->lga}}</td>
+                  <td>{{$w->id}}</td>
                   <td>{{$w->name}}</td>
                   <td>
                       @if(auth()->user()->hasPermissionTo(57))

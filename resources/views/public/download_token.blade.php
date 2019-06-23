@@ -14,7 +14,7 @@
                                     <label for="token" class="col-md-3 control-label"></label>                                    
                                     <div class="col-md-6">
                                             <div role="alert" class="alert alert-success"> 
-                                                    Please enter verification code sent in your email
+                                                    Please enter verification code sent in your email. <font color="red"> If you dont see email in your inbox, Please check your spam/junk folder!</font>
                                             </div> 
                                     </div>
                                    

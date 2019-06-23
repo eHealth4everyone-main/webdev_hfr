@@ -33,11 +33,13 @@
 
         <div class="panel-body">
                 @if (session('status'))
-                    <div class="alert alert-success" role="alert">
-                        {{ session('status') }}
+                    <div class="alert alert-success" role="alert"> 
+                        {{ session('status') }} <br>
+                        <font color="black"> If you dont see email in your inbox, Please check your spam/junk folder!</font>
                     </div>
+                   
                 @endif
-
+              
                <form method="POST" action="{{route('password.email') }}" aria-label="{{ __('Reset Password') }}">
                 @csrf
                     
