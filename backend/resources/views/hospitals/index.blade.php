@@ -165,13 +165,13 @@
 
                     @foreach ($facilities as $fac)
                         <tr>
-                            <td>{{ $fac->state }}</td>
-                            <td>{{ $fac->lga }}</td>
-                            <td>{{ $fac->ward }}</td>
+                            <td>{{ $fac->state_id }}</td>
+                            <td>{{ $fac->lga_id }}</td>
+                            <td>{{ $fac->ward_id }}</td>
                             <td>{{ $fac->id }}</td>
                             <td>{{ $fac->facility_name }}</td>
-                            <td>{{ $fac->facility_level }}</td>
-                            <td>{{ $fac->ownership }}</td>
+                            <td>{{ $fac->facility_level_id }}</td>
+                            <td>{{ $fac->ownership_id }}</td>
                             <td>
 
                                 <a href="#">
@@ -182,11 +182,11 @@
                                         data-start_date="{{ $fac->start_date }}"
                                         data-facility_name="{{ $fac->facility_name }}"
                                         data-alt_facility_name="{{ $fac->alt_facility_name }}"
-                                        data-state="{{ $fac->state }}" data-lga="{{ $fac->lga }}"
-                                        data-ward="{{ $fac->ward }}" data-ownership="{{ $fac->ownership }}"
-                                        data-ownership_type="{{ $fac->ownership_type }}"
-                                        data-facility_level="{{ $fac->facility_level }}"
-                                        data-facility_level_option="{{ $fac->facility_level_option }}"
+                                        data-state="{{ $fac->state_id }}" data-lga="{{ $fac->lga_id }}"
+                                        data-ward="{{ $fac->ward_id }}" data-ownership="{{ $fac->ownership_id }}"
+                                        data-ownership_type="{{ $fac->ownership_type_id }}"
+                                        data-facility_level="{{ $fac->facility_level_id }}"
+                                        data-facility_level_option="{{ $fac->facility_level_option_id }}"
                                         data-physical_location="{{ $fac->physical_location }}"
                                         data-alternate_number="{{ $fac->alternate_number }}"
                                         data-longitude="{{ $fac->longitude }}" data-latitude="{{ $fac->latitude }}"
@@ -196,9 +196,9 @@
                                         data-website="{{ $fac->website }}"
                                         data-operational_days="{{ $fac->operational_days }}"
                                         data-operational_hours="{{ $fac->operational_hours }}"
-                                        data-operation_status="{{ $fac->operation_status }}"
-                                        data-registration_status="{{ $fac->registration_status }}"
-                                        data-license_status="{{ $fac->license_status }}"
+                                        {{-- data-operation_status="{{ $fac->operation_status }}" --}}
+                                        data-registration_status="{{ $fac->registration_status_id }}"
+                                        data-license_status="{{ $fac->license_status_id }}"
                                         data-doctors="{{ $fac->doctors }}" data-pharmacists="{{ $fac->pharmacists }}"
                                         data-dentist="{{ $fac->dentist }}"
                                         data-pharmacy_technicians="{{ $fac->pharmacy_technicians }}"
@@ -366,7 +366,7 @@
 
                                             <div class="row">
                                                 <label class="col-md-4">Reason for Delete:<font color="red">*</font>
-                                                    </label>
+                                                </label>
                                                 <div class="col-md-8">
                                                     <textarea class="form-control" rows="3" name="reason" placeholder="Please enter reason" required></textarea>
                                                 </div>

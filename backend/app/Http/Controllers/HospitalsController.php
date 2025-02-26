@@ -28,18 +28,18 @@ class HospitalsController extends Controller
         if (auth()->user()->hasPermissionTo('All LGAs')) {
             $facilities = DB::table('hospital_details')
                 ->where('state_id', 'like', '%' .  Auth::user()->state_id . '%')
-                ->orderBy('state')
-                ->orderBy('lga')
-                ->orderBy('ward')
+                ->orderBy('state_id')
+                ->orderBy('lga_id')
+                ->orderBy('ward_id')
                 ->orderBy('facility_name')
                 ->paginate(15);
         } else {
             $facilities = DB::table('hospital_details')
                 ->where('state_id', 'like', '%' .  Auth::user()->state_id . '%')
                 ->whereIn('lga_id', auth()->user()->getDirectPermissions()->pluck('id')->toArray())
-                ->orderBy('state')
-                ->orderBy('lga')
-                ->orderBy('ward')
+                ->orderBy('state_id')
+                ->orderBy('lga_id')
+                ->orderBy('ward_id')
                 ->orderBy('facility_name')
                 ->paginate(15);
         }
@@ -59,7 +59,7 @@ class HospitalsController extends Controller
     public function store(Request $request)
     {
 
-        // dd($request->all());
+
         $request->validate([
             'registration_no' => 'nullable|max:20',
             'start_date' => 'required|date',
@@ -110,6 +110,8 @@ class HospitalsController extends Controller
             'beds' => 'nullable|numeric',
             'outpatient' => 'nullable',
             'inpatient' => 'nullable',
+
+            // 'images.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
 
@@ -121,8 +123,25 @@ class HospitalsController extends Controller
             $close_date = null;
         }
 
+
+        $imagePaths = [];
+
+        // Check if there are files to upload
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $imagePaths[] = env('APP_URL') . "/storage/" . $image->store('hospitals', 'public');
+            }
+        }
+
+        \Log::info(json_encode($imagePaths));
+
+
+        // dd($request->all());
         $hosp = new HospitalHistory;
-        $hosp->fill($request->all());
+
+        $hosp->fill($request->except(['images']));
+
+        // $hosp->fill($request->all());
         $hosp->id = $hosp->generateUID();
         $hosp->unique_id = $hosp->generateFacilityCode($request->lga_id, '1', $request->facility_level_id, $request->ownership_id);
         $hosp->start_date = $start_date;
@@ -131,6 +150,9 @@ class HospitalsController extends Controller
         $hosp->status_id = 1;
         $hosp->created_by = Auth::user()->id;
         $hosp->requested_by = Auth::user()->id;
+
+        $hosp->image_url = json_encode($imagePaths);
+
         $hosp->operational_days = $hosp->arrayValuesTostring($request->operational_days);
 
 
@@ -138,7 +160,7 @@ class HospitalsController extends Controller
         try {
             $hosp->save();
 
-            
+
             //get id of inserted record
             $hosp_id = $hosp->id;
 
@@ -163,7 +185,7 @@ class HospitalsController extends Controller
             }
             DB::commit();
         } catch (\Exception $ex) {
-            dd($ex->getMessage()); 
+            dd($ex->getMessage());
             DB::rollback();
             return response()->json(['error' => $ex->getMessage()], 500);
         }

@@ -26,7 +26,6 @@
                         <option value="4">Facilities Updated This Month </option>
                         <option value="5">Facilities Updated Last Month </option>
                         <option value="6">Facilities Updated Last 3 Months </option>
-
                     </select>
                 </div>
                 <div class="col-sm-2">

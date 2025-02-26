@@ -13,9 +13,9 @@ class FacilityListingController extends Controller
     {
        
         $facilities = DB::table('hospital_details')
-            ->orderBy('state_id')
-            ->orderBy('lga_id')
-            ->orderBy('ward_id')
+            ->orderBy('state')
+            ->orderBy('lga')
+            ->orderBy('ward')
             ->orderBy('facility_name')
             ->paginate(20);
 

@@ -255,8 +255,8 @@
                          <li><a href="{{ route('slider.index') }}"><i class="fa fa-gear"></i> Slider</a></li>
                      @endif
                      @if (auth()->user()->hasPermissionTo(51))
-                         <li><a href="{{ route('about-us.index') }}"><i class="fa fa-gear"></i> About us</a></li>
-                         <li><a href="{{ route('process.index') }}"><i class="fa fa-gear"></i> About us</a></li>
+                         <li><a href="{{ route('about-us.index') }}"><i class="fa fa-gear"></i> Origin</a></li>
+                         <li><a href="{{ route('process.index') }}"><i class="fa fa-gear"></i>Process</a></li>
                      @endif
 
                  </ul>

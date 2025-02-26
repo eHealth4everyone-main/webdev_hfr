@@ -1,60 +1,208 @@
-<p align="center"><img src="https://laravel.com/assets/img/components/logo-laravel.svg"></p>
+# Laravel 5 Backend
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
-</p>
+This is the backend of the **HFR** project, built with Laravel 5. This guide will help you set up and configure the application.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as:
+## 📌 1. Installation and Setup
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Step 1: Clone the Repository
 
-Laravel is accessible, yet powerful, providing tools needed for large, robust applications.
+```bash
+git clone https://gitlab.com/e4e-webdev2/hfr.git
+cd hfr/backend
+```
 
-## Learning Laravel
+### Step 2: Install Dependencies
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of any modern web application framework, making it a breeze to get started learning the framework.
+Ensure you have **PHP (>=7.4), Composer, and MySQL** installed. Then, run:
 
-If you're not in the mood to read, [Laracasts](https://laracasts.com) contains over 1100 video tutorials on a range of topics including Laravel, modern PHP, unit testing, JavaScript, and more. Boost the skill level of yourself and your entire team by digging into our comprehensive video library.
+```bash
+composer install
+```
 
-## Laravel Sponsors
+### Step 3: Setup Environment Variables
 
-We would like to extend our thanks to the following sponsors for helping fund on-going Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell):
+Copy the example environment file and update the required variables.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[British Software Development](https://www.britishsoftware.co)**
-- [Fragrantica](https://www.fragrantica.com)
-- [SOFTonSOFA](https://softonsofa.com/)
-- [User10](https://user10.com)
-- [Soumettre.fr](https://soumettre.fr/)
-- [CodeBrisk](https://codebrisk.com)
-- [1Forge](https://1forge.com)
-- [TECPRESSO](https://tecpresso.co.jp/)
-- [Runtime Converter](http://runtimeconverter.com/)
-- [WebL'Agence](https://weblagence.com/)
-- [Invoice Ninja](https://www.invoiceninja.com)
+```bash
+cp .env.example .env
+```
 
-## Contributing
+Edit `.env` and set the following variables:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```ini
+APP_NAME="HFR Backend"
+APP_ENV=local
+APP_KEY=base64:GENERATE_KEY_HERE
+APP_DEBUG=true
+APP_URL=http://your-backend-url.test
 
-## Security Vulnerabilities
+FRONTEND_URL=http://your-frontend-url.test
+CONTACT_US_MAIL=your-email@example.com
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=hfr_database
+DB_USERNAME=root
+DB_PASSWORD=your_password
+```
 
-## License
+### Step 4: Generate Application Key
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+php artisan key:generate
+```
+
+### Step 5: Set Up Storage Symlink
+
+To make files in `storage/app/public` accessible via `public/storage`, run:
+
+```bash
+php artisan storage:link
+```
+
+---
+
+## 📌 2. Database Setup
+
+Since we are **not using models or migrations**, manually create the necessary tables.
+
+### Step 1: Access MySQL
+
+```bash
+mysql -u root -p
+```
+
+### Step 2: Create Database
+
+```sql
+CREATE DATABASE hfr_database;
+```
+
+### Step 3: Use Database
+
+```sql
+USE hfr_database;
+```
+
+### Step 4: Create Tables Manually
+
+Create your tables based on the project requirements. Example:
+
+```sql
+CREATE TABLE sliders (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    sub_title VARCHAR(255) NOT NULL,
+    image_url VARCHAR(255) NOT NULL,
+    status TINYINT(1) NOT NULL DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE origins (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE processes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE process_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    status TINYINT(1) NOT NULL DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE hs_hospitals_history 
+ADD COLUMN image_url JSON NULL AFTER facility_name;
+
+```
+
+---
+
+## 📌 3. SMTP Setup (Email Configuration)
+
+To enable email sending, configure SMTP in `.env`:
+
+```ini
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.mailtrap.io
+MAIL_PORT=2525
+MAIL_USERNAME=your_smtp_username
+MAIL_PASSWORD=your_smtp_password
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=no-reply@example.com
+MAIL_FROM_NAME="HFR Backend"
+```
+
+---
+
+## 📌 4. Running the Application
+
+### Start the Laravel Development Server
+
+```bash
+php artisan serve
+```
+
+By default, it runs on `http://127.0.0.1:8000/`.
+
+---
+
+## 📌 5. Common Issues & Solutions
+
+### 1️⃣ **Error: `.env` Not Loaded**
+
+Run:
+
+```bash
+php artisan config:clear
+php artisan cache:clear
+```
+
+### 2️⃣ **Storage Link Not Working**
+
+```bash
+php artisan storage:link
+```
+
+### 3️⃣ **Permission Issues (Linux)**
+
+```bash
+chmod -R 777 storage bootstrap/cache
+```
+
+---
+
+## 📌 6. API Documentation
+
+Refer to the `routes/api.php` file for API endpoints.
+
+---
+
+## 📌 7. Contribution Guidelines
+
+1. **Create a new branch** before making changes.
+2. **Commit messages should be clear and descriptive.**
+3. **Test before pushing changes.**
+
+---
+
+## 📌 8. Contact
+
+For issues or questions, contact the team at **your-email@example.com**.
