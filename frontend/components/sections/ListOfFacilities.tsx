@@ -7,11 +7,11 @@ import {
   TabPanels,
   Tab,
   TabPanel,
-  Text,
 } from "@chakra-ui/react";
-import SectionContainer from "../ui/SectionContainer";
 import HospitalTab from "./Tabs/HospitalTab";
-import HospitalTable from "./Tabs/HospitalTable";
+import Pharmaceutical from "./Tabs/PharmaceuticalTab";
+import LaboratoryTab from "./Tabs/LaboratoryTab";
+import RadiologyTab from "./Tabs/RadiologyTab";
 
 const ListOfFacilities = () => {
   return (
@@ -78,11 +78,24 @@ const UserTabs = () => {
               <HospitalTab />
             </div>
           </TabPanel>
+
           <TabPanel>
-            <Text>Messages data</Text>
+            <div className="w-full overflow-x-auto">
+              <Pharmaceutical />
+            </div>
           </TabPanel>
-          <TabPanel>Tab Two</TabPanel>
-          <TabPanel>Tab Three</TabPanel>
+
+          <TabPanel>
+            <div className="w-full overflow-x-auto">
+              <LaboratoryTab />
+            </div>
+          </TabPanel>
+
+          <TabPanel>
+            <div className="w-full overflow-x-auto">
+              <RadiologyTab />
+            </div>
+          </TabPanel>
         </TabPanels>
       </Tabs>
     </div>

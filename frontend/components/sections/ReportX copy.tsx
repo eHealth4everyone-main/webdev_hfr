@@ -48,14 +48,14 @@ const ReportX = () => {
     }
   };
 
+  // console.log("reportData", reportData);
+
   return (
     <div className="w-full p-4 sm:p-6">
-      <div className="flex flex-wrap lg:flex-nowrap items-center justify-between gap-4 max-w-7xl mx-auto w-full">
-        {/* Select & Search Button */}
-        <div className="flex items-center gap-2 w-full lg:w-auto">
+      <div className="flex flex-col sm:flex-row items-center justify-between mb-4 gap-4 sm:gap-0">
+        <div className="flex flex-col sm:flex-row items-center w-full sm:w-auto space-y-2 sm:space-y-0 sm:space-x-2">
           <SelectComponent
             options={options}
-            // className="w-full sm:w-[300px] md:w-[250px] lg:w-[500px]"
             className="w-full sm:w-[300px] lg:w-[400px]"
             placeholder="Select Report"
             onChange={(e) => setSelectedReport(e.target.value)}
@@ -67,37 +67,25 @@ const ReportX = () => {
             {loading ? "Loading..." : "Show"}
           </button>
         </div>
-
-        {/* Upload Button */}
         <button className="w-full sm:w-[200px] border shadow-sm p-2 sm:p-3 rounded-lg flex items-center justify-center gap-2">
           <GrUploadOption size={16} />
           <span>Upload data</span>
         </button>
       </div>
-
       <hr className="border-[#f1f1f1]" />
 
       <div className="flex flex-col gap-4">
-        {/* Error Message */}
         {error && (
-          <div className="bg-red-500 text-white p-3 rounded-lg text-center">
-            {error}
-          </div>
+          <div className="bg-red-500 text-white p-3 rounded-lg">{error}</div>
         )}
 
-        {/* Report Message */}
         {report && (
-          <div className="bg-[#E8F0E2] p-4 mt-4 rounded-lg text-center">
+          <div className="bg-[#E8F0E2] p-4 mt-4 rounded-lg">
             <p>{report}</p>
           </div>
         )}
 
-        {/* Table Wrapper for Responsiveness */}
-        <div className="grid overflow-x-auto">
-          <div className="min-w-full min-w-[500px] sm:min-w-[700px] md:min-w-[1200] lg:min-w-900px]">
-            <ReportsTable data={reportData || []} report={report} />
-          </div>
-        </div>
+        <ReportsTable data={reportData ? reportData : []} report={report} />
       </div>
     </div>
   );

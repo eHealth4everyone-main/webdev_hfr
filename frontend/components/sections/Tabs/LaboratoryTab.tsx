@@ -2,13 +2,12 @@ import Input from "@/components/ui/Input";
 import SelectComponent from "@/components/ui/SelectComponent";
 import { GreenButton, Text } from "@/components/ui/Typography";
 import React, { useEffect, useState } from "react";
-// import HospitalTable from "./HospitalTable";
-import dynamic from "next/dynamic";
-const HospitalTable = dynamic(() => import("./HospitalTable"), { ssr: false });
-
 import axios from "axios";
 
-const HospitalTab = () => {
+import dynamic from "next/dynamic";
+const LaboratoryTable = dynamic(() => import("./LaboratoryTable"), { ssr: false });
+
+const LaboratoryTab = () => {
   const [states, setStates] = useState([]); // Store states
   const [lgas, setLgas] = useState([]); // Store LGAs
   const [wards, setWards] = useState([]); // Store wards
@@ -17,6 +16,7 @@ const HospitalTab = () => {
   const [operationals, setOperational] = useState([]);
   const [registrations, setRegistration] = useState([]);
   const [licenses, setLicense] = useState([]);
+  const [accreditations, setAccreditation] = useState([]);
   const [serviceCategories, setServiceCategory] = useState([]);
   const [services, setService] = useState([]);
 
@@ -28,19 +28,23 @@ const HospitalTab = () => {
   const [selectedOperational, setSelectedOperational] = useState("");
   const [selectedRegistration, setSelectedRegistration] = useState("");
   const [selectedLicense, setSelectedLicense] = useState("");
+  const [selectedAccreditation, setSelectedAccreditation] = useState("");
 
   const [selectedServiceCategory, setSelectedServiceCategory] = useState("");
   const [selectedService, setSelectedService] = useState("");
-  const [fetchError, setFetchError] = useState<string>(""); // State for error messages
 
   const [selectedGeoCode, setSelectedGeoCode] = useState("0");
   const [selectedServiceType, setSelectedServiceType] = useState("0");
 
+  const [fetchError, setFetchError] = useState<string>(""); // State for error messages
   const [loading, setLoading] = useState<boolean>(true); // Loading state
 
   const [data, setData] = useState([]); // Store API response
   const [currentPage, setCurrentPage] = useState(1); // Track pagination
   const [totalPages, setTotalPages] = useState(1); // Store total pages
+
+  const [search, setSearch] = useState("");
+  const [filteredData, setFilteredData] = useState(data);
 
   useEffect(() => {
     fetchStates();
@@ -49,6 +53,7 @@ const HospitalTab = () => {
     operational();
     registrationStatus();
     license();
+    accreditation();
     serviceCategory();
   }, []);
 
@@ -56,7 +61,7 @@ const HospitalTab = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_API}/facilities-hospitals-search`,
+        `${process.env.NEXT_PUBLIC_BACKEND_API}/facilities/lab-list`,
         {
           state_id: selectedState,
           lga_id: selectedLga,
@@ -106,7 +111,7 @@ const HospitalTab = () => {
       }
     } catch (error) {
       console.error("Error fetching states:", error);
-      // setFetchError("Failed to fetch states.");
+      setFetchError("Failed to fetch states.");
     } finally {
       setLoading(false);
     }
@@ -172,7 +177,7 @@ const HospitalTab = () => {
       }
     } catch (error) {
       console.error("Error fetching facility-level:", error);
-      // setFetchError("Failed to fetch facility-level.");
+      setFetchError("Failed to fetch facility-level.");
     } finally {
       setLoading(false);
     }
@@ -193,7 +198,7 @@ const HospitalTab = () => {
       }
     } catch (error) {
       console.error("Error fetching ownership:", error);
-      // setFetchError("Failed to fetch ownership.");
+      setFetchError("Failed to fetch ownership.");
     } finally {
       setLoading(false);
     }
@@ -214,7 +219,7 @@ const HospitalTab = () => {
       }
     } catch (error) {
       console.error("Error fetching operational:", error);
-      // setFetchError("Failed to fetch operational.");
+      setFetchError("Failed to fetch operational.");
     } finally {
       setLoading(false);
     }
@@ -235,7 +240,7 @@ const HospitalTab = () => {
       }
     } catch (error) {
       console.error("Error fetching operational:", error);
-      // setFetchError("Failed to fetch operational.");
+      setFetchError("Failed to fetch operational.");
     } finally {
       setLoading(false);
     }
@@ -256,7 +261,28 @@ const HospitalTab = () => {
       }
     } catch (error) {
       console.error("Error fetching operational:", error);
-      // setFetchError("Failed to fetch operational.");
+      setFetchError("Failed to fetch operational.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch accreditation status
+  const accreditation = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_API}/accreditation-status`
+      );
+      const data = response?.data?.data; // Axios automatically parses JSON
+
+      // console.log("response", data);
+
+      if (data && Array.isArray(data)) {
+        setAccreditation(data);
+      }
+    } catch (error) {
+      console.error("Error fetching accreditation:", error);
+      setFetchError("Failed to fetch accreditation.");
     } finally {
       setLoading(false);
     }
@@ -277,7 +303,7 @@ const HospitalTab = () => {
       }
     } catch (error) {
       console.error("Error fetching operational:", error);
-      // setFetchError("Failed to fetch operational.");
+      setFetchError("Failed to fetch operational.");
     } finally {
       setLoading(false);
     }
@@ -301,7 +327,7 @@ const HospitalTab = () => {
       }
     } catch (error) {
       console.error("Error fetching LGAs:", error);
-      // setFetchError("Failed to fetch LGAs.");
+      setFetchError("Failed to fetch LGAs.");
     }
   };
 
@@ -323,7 +349,7 @@ const HospitalTab = () => {
 
   return (
     <div>
-      <Text className="text-2xl pt-5 pb-5">Hospitals and Clinics</Text>
+      <Text className="text-2xl pt-5 pb-5">Laboratories</Text>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4 w-full">
         {/* State Selection */}
@@ -444,6 +470,20 @@ const HospitalTab = () => {
           placeholder="Select License status"
         />
 
+        {/* licenses */}
+        <SelectComponent
+          className="w-full max-w-[350px]"
+          value={selectedAccreditation} // Track selected value
+          onChange={(e) => {
+            setSelectedAccreditation(e.target.value); // Update state
+          }}
+          options={accreditations.map((items) => ({
+            value: items.id, // Use items ID
+            name: items.status, // Show items name
+          }))}
+          placeholder="Select Accreditation status"
+        />
+
         {/* Select Coordinates */}
         <SelectComponent
           className="w-full max-w-[350px]"
@@ -458,65 +498,13 @@ const HospitalTab = () => {
           ]}
           placeholder="Select Coordinates"
         />
-
-        {/* Select Service Type */}
-        <SelectComponent
-          className="w-full max-w-[350px]"
-          value={selectedServiceType} // Track selected value
-          onChange={(e) => {
-            setSelectedServiceType(e.target.value); // Update state
-          }}
-          options={[
-            { value: "0", name: "Select Service Type" },
-            { value: "1", name: "Out Patient" },
-            { value: "2", name: "In Patient" },
-          ]}
-          placeholder="Select Service Type"
-        />
-
-        {/* Select Service type */}
-
-        <SelectComponent
-          className="w-full max-w-[350px]"
-          value={selectedServiceCategory}
-          onChange={(e) => {
-            const serviceId = e.target.value; // Get the state ID
-            setSelectedServiceCategory(serviceId);
-            fetchService(serviceId);
-          }}
-          options={serviceCategories.map((items) => ({
-            value: items.id, // Use items ID
-            name: items.description, // Show items name
-          }))}
-          placeholder="Select Service Category"
-        />
-
-        <SelectComponent
-          className="w-full max-w-[350px]"
-          value={selectedService}
-          onChange={(e) => {
-            setSelectedService(e.target.value);
-          }}
-          options={services.map((item) => ({
-            value: item.id, // Use item ID
-            name: item.name, // Show item name
-          }))}
-          placeholder="Select Service"
-          disabled={!selectedState} // Disable until State is selected
-        />
       </div>
 
       <div className="flex flex-wrap items-center justify-center gap-4 bg-[#D1D1D1] p-4 mt-4 w-full md:grid md:grid-cols-2 lg:flex lg:gap-6">
         {/* Facility Name Input */}
         <Input
-          className="w-full max-w-[400px] h-[55px] text-sm"
+          className="w-full max-w-[700px] h-[55px] text-sm"
           placeholder="Facility Name"
-        />
-
-        {/* Entries Per Page Dropdown */}
-        <SelectComponent
-          className="w-full max-w-[300px] h-[44px] text-sm"
-          placeholder="Entries Per Page"
         />
 
         {/* Reset Button */}
@@ -526,6 +514,11 @@ const HospitalTab = () => {
         >
           Reset
         </button>
+
+        {/* Search Button */}
+        {/* <GreenButton className="bg-[#5BBA62] w-full max-w-[200px] h-[44px] flex items-center justify-center text-sm">
+          Search
+        </GreenButton> */}
 
         <GreenButton
           onClick={fetchFacilities}
@@ -540,7 +533,7 @@ const HospitalTab = () => {
       </div> */}
       <div className="w-full overflow-x-auto lg:overflow-x-scroll xl:overflow-x-hidden">
         <div className="min-w-[700px] lg:min-w-[900px]">
-          <HospitalTable
+          <LaboratoryTable
             data={data}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
@@ -554,4 +547,4 @@ const HospitalTab = () => {
   );
 };
 
-export default HospitalTab;
+export default LaboratoryTab;

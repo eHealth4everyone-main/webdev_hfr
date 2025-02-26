@@ -6,6 +6,9 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ChakraProviders } from "@/components/layouts/ChakraProvider";
+
+
+
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang="en">

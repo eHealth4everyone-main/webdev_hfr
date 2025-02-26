@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import { IoMdArrowDown, IoMdArrowBack, IoArrowForward } from "react-icons/io";
-// import DataTable from "react-data-table-component";
-// import DataTableExtensions from "react-data-table-component-extensions";
+
 import dynamic from "next/dynamic";
-import DetailsModal from "./DetailsModal";
 const DataTable = dynamic(() => import("react-data-table-component"), {
   ssr: false,
 });
@@ -12,33 +10,27 @@ const DataTableExtensions = dynamic(
   { ssr: false }
 );
 
-const HospitalTable = ({
+const PharmaceuticalTable = ({
   data,
   currentPage,
   setCurrentPage,
   totalPages,
   fetchFacilities,
 }) => {
-  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [filteredData, setFilteredData] = useState(data);
 
-  const [showModal, setShowModal] = useState(false);
-  const [selectedRow, setSelectedRow] = useState(null);
+  // Handle search input change
+  const handleSearch = (event) => {
+    const value = event.target.value.toLowerCase();
+    setSearch(value);
 
-  const openModal = (row) => {
-    setSelectedRow(row);
-    setShowModal(true);
+    const filteredResults = data.filter((facility) =>
+      facility.facility_name.toLowerCase().includes(value)
+    );
+
+    setFilteredData(filteredResults);
   };
-
-  const closeModal = () => {
-    setShowModal(false);
-    setSelectedRow(null);
-  };
-
-  useEffect(() => {
-    if (data.length > 0) {
-      setLoading(false); // Data is loaded
-    }
-  }, [data]);
 
   const columns = [
     {
@@ -60,36 +52,15 @@ const HospitalTable = ({
       name: "Facility Name",
       selector: (row) => row.facility_name,
       sortable: true,
-      wrap: true, // ✅ Ensures wrapping
-      grow: 2, // ✅ Increases width to take more space
     },
-    {
-      name: "Facility Level",
-      selector: (row) => row.facility_level_name,
-      sortable: true,
-      cell: (row) => (
-        <span
-          className={`px-2 py-1 rounded-sm text-white text-sm font- ${
-            row.facility_level_name === "Primary"
-              ? "bg-green-500"
-              : row.facility_level_name === "Secondary"
-              ? "bg-blue-500"
-              : row.facility_level_name === "Tertiary"
-              ? "bg-red-500"
-              : "bg-gray-500"
-          }`}
-        >
-          {row.facility_level_name}
-        </span>
-      ),
-    },
+
     {
       name: "Ownership",
       selector: (row) => row.ownership_name,
       sortable: true,
       cell: (row) => (
         <span
-          className={`px-2 py-1 rounded-sm text-white text-sm font- ${
+          className={`px-2 py-1 rounded-md text-white text-sm font-semibold ${
             row.ownership_name === "Public"
               ? "bg-green-600"
               : row.ownership_name === "Private"
@@ -101,22 +72,10 @@ const HospitalTable = ({
         </span>
       ),
     },
-    // {
-    //   name: "Details",
-    //   cell: () => (
-    //     <span className="text-[#5BBA62] text-sm underline cursor-pointer">
-    //       Details
-    //     </span>
-    //   ),
-    // },
-
     {
       name: "Details",
-      cell: (row) => (
-        <span
-          onClick={() => openModal(row)}
-          className="text-green-600 underline cursor-pointer"
-        >
+      cell: () => (
+        <span className="text-[#5BBA62] text-sm underline cursor-pointer">
           Details
         </span>
       ),
@@ -128,26 +87,24 @@ const HospitalTable = ({
       style: {
         backgroundColor: "#E8F0E2", // Header background color
         color: "#333", // Text color
-        fontSize: "14px", // Header font size
+        fontSize: "18px", // Header font size
         fontWeight: "bold", // Bold header text
       },
     },
     headCells: {
       style: {
-        fontSize: "14px", // Column header font size
+        fontSize: "18px", // Column header font size
         fontWeight: "bold",
       },
     },
     rows: {
       style: {
-        fontSize: "14px", // Row data font size
+        fontSize: "16px", // Row data font size
       },
     },
     cells: {
       style: {
-        fontSize: "14px",
-        whiteSpace: "normal", // ✅ Allow text to wrap
-        overflow: "visible", // ✅ Prevent truncation
+        fontSize: "16px", // Individual cell font size
       },
     },
   };
@@ -181,19 +138,10 @@ const HospitalTable = ({
             noRowsPerPage: true,
           }}
           onChangePage={(page) => setCurrentPage(page)}
-          progressPending={loading}
         />
       </DataTableExtensions>
-
-      {/* Modal */}
-      {/* {showModal && selectedRow && (
-        <DetailsModal row={selectedRow} onClose={closeModal} />
-      )} */}
-      {showModal && selectedRow && (
-        <DetailsModal row={selectedRow} onClose={closeModal} />
-      )}
     </div>
   );
 };
 
-export default HospitalTable;
+export default PharmaceuticalTable;

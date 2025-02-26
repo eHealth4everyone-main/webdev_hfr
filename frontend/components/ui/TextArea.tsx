@@ -1,3 +1,5 @@
+"use client";
+
 import { MdError } from "react-icons/md";
 import React from "react";
 
@@ -16,7 +18,7 @@ const TextArea = ({
   defaultValue,
 }: {
   label?: string;
-  defaultValue?:string;
+  defaultValue?: string;
   type?: string;
   value?: string | [];
   onChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
@@ -32,11 +34,11 @@ const TextArea = ({
 
   return (
     <div className="flex w-full flex-col gap-2">
-      {label && <p className="text-sm">{label}</p>}
+      {label && <p className="font-bold text-sm">{label}</p>}
       <label>
         <textarea
-        rows={6}
-        defaultValue={defaultValue}
+          rows={6}
+          defaultValue={defaultValue}
           className={`textarea textarea-bordered leading-5 textarea-md w-full ${inputBorderColor}`}
           name={name}
           type={type}

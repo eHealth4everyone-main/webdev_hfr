@@ -1,22 +1,8 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import {
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  TableContainer,
-  Button,
-} from "@chakra-ui/react";
-import { useBreakpointValue } from "@chakra-ui/react";
-import { IoMdArrowBack, IoMdArrowDown } from "react-icons/io";
-import { IoArrowForward } from "react-icons/io5";
-import { Text } from "@/components/ui/Typography";
+import { useEffect, useState } from "react";
+import { IoMdArrowDown, IoMdArrowBack, IoArrowForward } from "react-icons/io";
+
 
 import dynamic from "next/dynamic";
-import DetailsModal from "./DetailsModal";
 const DataTable = dynamic(() => import("react-data-table-component"), {
   ssr: false,
 });
@@ -25,27 +11,27 @@ const DataTableExtensions = dynamic(
   { ssr: false }
 );
 
-const ReportsTable = ({ data, report }) => {
-  const [loading, setLoading] = useState(true);
+const LaboratoryTable = ({
+  data,
+  currentPage,
+  setCurrentPage,
+  totalPages,
+  fetchFacilities,
+}) => {
+  const [search, setSearch] = useState("");
+  const [filteredData, setFilteredData] = useState(data);
 
-  const [showModal, setShowModal] = useState(false);
-  const [selectedRow, setSelectedRow] = useState(null);
+  // Handle search input change
+  const handleSearch = (event) => {
+    const value = event.target.value.toLowerCase();
+    setSearch(value);
 
-  const openModal = (row) => {
-    setSelectedRow(row);
-    setShowModal(true);
+    const filteredResults = data.filter((facility) =>
+      facility.facility_name.toLowerCase().includes(value)
+    );
+
+    setFilteredData(filteredResults);
   };
-
-  const closeModal = () => {
-    setShowModal(false);
-    setSelectedRow(null);
-  };
-
-  useEffect(() => {
-    // if (data.length > 0) {
-    //   setLoading(false); // Data is loaded
-    // }
-  }, [data]);
 
   const columns = [
     {
@@ -64,28 +50,17 @@ const ReportsTable = ({ data, report }) => {
       sortable: true,
     },
     {
-      name: "Facility Code",
-      selector: (row) => row.facility_name,
-      sortable: true,
-      wrap: true, // ✅ Ensures wrapping
-      grow: 2, // ✅ Increases width to take more space
-    },
-    {
       name: "Facility Name",
       selector: (row) => row.facility_name,
       sortable: true,
-      wrap: true, // ✅ Ensures wrapping
-      grow: 2, // ✅ Increases width to take more space
     },
     {
       name: "Facility Level",
       selector: (row) => row.facility_level_name,
       sortable: true,
-      wrap: true, // ✅ Ensures wrapping
-      grow: 2, // ✅ Increases width to take more space
       cell: (row) => (
         <span
-          className={`px-2 py-1 rounded-sm text-white text-sm font- ${
+          className={`px-2 py-1 rounded-md text-white text-sm font-semibold ${
             row.facility_level_name === "Primary"
               ? "bg-green-500"
               : row.facility_level_name === "Secondary"
@@ -105,7 +80,7 @@ const ReportsTable = ({ data, report }) => {
       sortable: true,
       cell: (row) => (
         <span
-          className={`px-2 py-1 rounded-sm text-white text-sm font- ${
+          className={`px-2 py-1 rounded-md text-white text-sm font-semibold ${
             row.ownership_name === "Public"
               ? "bg-green-600"
               : row.ownership_name === "Private"
@@ -117,14 +92,10 @@ const ReportsTable = ({ data, report }) => {
         </span>
       ),
     },
-
     {
       name: "Details",
-      cell: (row) => (
-        <span
-          onClick={() => openModal(row)}
-          className="text-green-600 underline cursor-pointer"
-        >
+      cell: () => (
+        <span className="text-[#5BBA62] text-sm underline cursor-pointer">
           Details
         </span>
       ),
@@ -136,26 +107,24 @@ const ReportsTable = ({ data, report }) => {
       style: {
         backgroundColor: "#E8F0E2", // Header background color
         color: "#333", // Text color
-        fontSize: "14px", // Header font size
+        fontSize: "18px", // Header font size
         fontWeight: "bold", // Bold header text
       },
     },
     headCells: {
       style: {
-        fontSize: "14px", // Column header font size
+        fontSize: "18px", // Column header font size
         fontWeight: "bold",
       },
     },
     rows: {
       style: {
-        fontSize: "14px", // Row data font size
+        fontSize: "16px", // Row data font size
       },
     },
     cells: {
       style: {
-        fontSize: "14px",
-        whiteSpace: "normal", // ✅ Allow text to wrap
-        overflow: "visible", // ✅ Prevent truncation
+        fontSize: "16px", // Individual cell font size
       },
     },
   };
@@ -166,9 +135,14 @@ const ReportsTable = ({ data, report }) => {
   };
 
   return (
-
-    <div className="w-full overflow-x-auto">
-      <div className="min-w-full">
+    <div className="mt-6">
+      <DataTableExtensions
+        {...tableData}
+        export={false}
+        print={false}
+        filter={true}
+        filterPlaceholder="Search Facilities name"
+      >
         <DataTable
           highlightOnHover
           columns={columns}
@@ -177,19 +151,17 @@ const ReportsTable = ({ data, report }) => {
           data={data}
           pagination
           paginationServer
+          paginationTotalRows={totalPages * 15} // Laravel sends per_page: 10
           paginationPerPage={15}
+          // paginationPerPage={10}
           paginationComponentOptions={{
             noRowsPerPage: true,
           }}
-          responsive
+          onChangePage={(page) => setCurrentPage(page)}
         />
-
-        {showModal && selectedRow && (
-          <DetailsModal row={selectedRow} onClose={closeModal} />
-        )}
-      </div>
+      </DataTableExtensions>
     </div>
   );
 };
 
-export default ReportsTable;
+export default LaboratoryTable;
