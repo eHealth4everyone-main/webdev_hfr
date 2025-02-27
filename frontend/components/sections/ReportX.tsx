@@ -54,7 +54,7 @@ const ReportX = () => {
         {/* Select & Search Button */}
         <div className="flex items-center gap-2 w-full lg:w-auto">
           <SelectComponent
-            // options={options}
+            options={options}
             // className="w-full sm:w-[300px] md:w-[250px] lg:w-[500px]"
             className="w-full sm:w-[300px] lg:w-[400px]"
             placeholder="Select Report"
