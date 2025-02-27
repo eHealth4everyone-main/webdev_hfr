@@ -1,6 +1,11 @@
 import React from "react";
 
-const DetailsModal = ({ row, onClose }) => {
+// const DetailsModal = ({ row, onClose }) => {
+
+const DetailsModal: React.FC<{ row: any; onClose: () => void }> = ({
+  row,
+  onClose,
+}) => {
   if (!row) return null; // Prevent rendering if no data
 
   return (

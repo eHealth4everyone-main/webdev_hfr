@@ -28,13 +28,21 @@ const DownloadedData = () => {
   const [loading, setLoading] = useState(false);
 
   // Handle Input Change
+  // const handleChange = (
+  //   e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  // ) => {
+  //   setFormData({
+  //     ...formData,
+  //     [e.target.name]: e.target.value,
+  //   });
+  // };
+
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   // Handle Form Submission with correct typing
@@ -179,11 +187,21 @@ const DownloadedData = () => {
           <div className="flex justify-end">
             <GreenButton
               className="bg-[#5BBA62]"
-              type="submit"
-              disabled={loading}
+              // type="submit"
+              // disabled={loading}
             >
               {loading ? "Submitting..." : "Submit request"}
             </GreenButton>
+
+            {/* <button
+              type="submit"
+              disabled={loading}
+              className="bg-[#5BBA62] px-4 py-2 rounded"
+            >
+              <GreenButton>
+                {loading ? "Submitting..." : "Submit request"}
+              </GreenButton>
+            </button> */}
           </div>
         </form>
       </div>

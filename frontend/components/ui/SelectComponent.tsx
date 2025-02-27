@@ -5,6 +5,7 @@ const SelectComponent = ({
   label,
   // options,
   options = [], // Default empty array
+
   type,
   value,
   onChange,
@@ -20,11 +21,13 @@ const SelectComponent = ({
   className,
   created_at,
   updated_at,
+  disabled,
 }: {
   label?: string;
   defaultValue?: string;
   type?: string;
-  options?: string[];
+  // options?: string[];
+  options?: { value: string | number; name: string }[];
   value?: string | [];
   onChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
   icon?: React.ReactNode;
@@ -38,6 +41,7 @@ const SelectComponent = ({
   className?: string;
   created_at?: Date;
   updated_at?: Date;
+  disabled?: boolean;
 }) => {
   const inputBorderColor = touched && error ? "input-error" : "";
 
@@ -53,7 +57,7 @@ const SelectComponent = ({
           multiple={isMulti}
         >
           <option value="">{placeholder || "Select an option"}</option>
-          {options.map((option) => (
+          {options?.map((option) => (
             <option key={option.value} value={option.value}>
               {option.name}
             </option>

@@ -23,6 +23,7 @@ import {
   Menu,
   Copy,
 } from "lucide-react";
+import Image from "next/image";
 
 const libraries: "places"[] = ["places"];
 
@@ -57,44 +58,6 @@ function Facility() {
   useEffect(() => {
     console.log("Hospitals state updated:", hospitals);
   }, [hospitals]);
-
-  const onMapLoad = useCallback((map: google.maps.Map) => {
-    setMap(map);
-    if (searchInputRef.current) {
-      const searchBox = new google.maps.places.SearchBox(
-        searchInputRef.current
-      );
-      setSearchBox(searchBox);
-      map.addListener("bounds_changed", () => {
-        searchBox.setBounds(map.getBounds() as google.maps.LatLngBounds);
-      });
-
-      searchBox.addListener("places_changed", () => {
-        const places = searchBox.getPlaces();
-        if (!places || places.length === 0) return;
-
-        const bounds = new google.maps.LatLngBounds();
-        const place = places[0];
-
-        if (!place.geometry || !place.geometry.location) return;
-
-        const newCenter = {
-          lat: place.geometry.location.lat(),
-          lng: place.geometry.location.lng(),
-        };
-        setCenter(newCenter);
-        searchNearbyHospitals(newCenter);
-
-        if (place.geometry.viewport) {
-          bounds.union(place.geometry.viewport);
-        } else {
-          bounds.extend(place.geometry.location);
-        }
-
-        map.fitBounds(bounds);
-      });
-    }
-  }, []);
 
   const searchNearbyHospitals = useCallback(
     async (location: { lat: number; lng: number }) => {
@@ -214,6 +177,47 @@ function Facility() {
     [map]
   );
 
+  const onMapLoad = useCallback(
+    (map: google.maps.Map) => {
+      setMap(map);
+      if (searchInputRef.current) {
+        const searchBox = new google.maps.places.SearchBox(
+          searchInputRef.current
+        );
+        setSearchBox(searchBox);
+        map.addListener("bounds_changed", () => {
+          searchBox.setBounds(map.getBounds() as google.maps.LatLngBounds);
+        });
+
+        searchBox.addListener("places_changed", () => {
+          const places = searchBox.getPlaces();
+          if (!places || places.length === 0) return;
+
+          const bounds = new google.maps.LatLngBounds();
+          const place = places[0];
+
+          if (!place.geometry || !place.geometry.location) return;
+
+          const newCenter = {
+            lat: place.geometry.location.lat(),
+            lng: place.geometry.location.lng(),
+          };
+          setCenter(newCenter);
+          searchNearbyHospitals(newCenter);
+
+          if (place.geometry.viewport) {
+            bounds.union(place.geometry.viewport);
+          } else {
+            bounds.extend(place.geometry.location);
+          }
+
+          map.fitBounds(bounds);
+        });
+      }
+    },
+    [searchNearbyHospitals]
+  );
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto p-4">
@@ -273,14 +277,25 @@ function Facility() {
                       onClick={() => setSelectedHospital(hospital)}
                     >
                       <div className="flex gap-4 p-4">
-                        <img
+                        {/* <img
                           src={
                             hospital.photoUrl ||
                             "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=300&h=200&fit=crop"
                           }
                           alt={hospital.name}
                           className="w-24 h-24 object-cover rounded-lg"
+                        /> */}
+
+                        <Image
+                          src={
+                            hospital.photoUrl ||
+                            "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=300&h=200&fit=crop"
+                          }
+                          alt={hospital.name}
+                          className="w-24 h-24 object-cover rounded-lg"
+                          priority
                         />
+
                         <div className="flex-1">
                           <div className="flex justify-between items-start">
                             <h3 className="font-semibold text-gray-900">

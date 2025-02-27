@@ -1,64 +1,78 @@
 import { useEffect, useState } from "react";
-import { IoMdArrowDown, IoMdArrowBack, IoArrowForward } from "react-icons/io";
+// import { IoMdArrowDown, IoMdArrowBack, IoArrowForward } from "react-icons/io";
+import { IoMdArrowDown, IoMdArrowBack, IoMdArrowForward } from "react-icons/io";
 
 import dynamic from "next/dynamic";
 const DataTable = dynamic(() => import("react-data-table-component"), {
   ssr: false,
 });
+// const DataTableExtensions = dynamic(
+//   () => import("react-data-table-component-extensions"),
+//   { ssr: false }
+// );
+
 const DataTableExtensions = dynamic(
-  () => import("react-data-table-component-extensions"),
+  () => Promise.resolve(require("react-data-table-component-extensions")),
   { ssr: false }
 );
 
-const PharmaceuticalTable = ({
-  data,
-  currentPage,
-  setCurrentPage,
-  totalPages,
-  fetchFacilities,
-}) => {
+// const PharmaceuticalTable = ({
+//   data,
+//   currentPage,
+//   setCurrentPage,
+//   totalPages,
+//   fetchFacilities,
+// }) => {
+
+const PharmaceuticalTable: React.FC<{
+  data: any[];
+  currentPage: number;
+  setCurrentPage: (page: number) => void;
+  totalPages: number;
+  fetchFacilities: () => void;
+}> = ({ data, currentPage, setCurrentPage, totalPages, fetchFacilities }) => {
   const [search, setSearch] = useState("");
   const [filteredData, setFilteredData] = useState(data);
 
   // Handle search input change
-  const handleSearch = (event) => {
-    const value = event.target.value.toLowerCase();
-    setSearch(value);
+  // const handleSearch = (event) => {
+  //   const value = event.target.value.toLowerCase();
+  //   setSearch(value);
 
-    const filteredResults = data.filter((facility) =>
-      facility.facility_name.toLowerCase().includes(value)
-    );
+  //   const filteredResults = data.filter((facility) =>
+  //     facility.facility_name.toLowerCase().includes(value)
+  //   );
 
-    setFilteredData(filteredResults);
-  };
+  //   setFilteredData(filteredResults);
+  // };
 
   const columns = [
     {
       name: "State",
-      selector: (row) => row.state_name,
+      selector: (row: any) => row.state_name,
       sortable: true,
     },
     {
       name: "LGA",
-      selector: (row) => row.lga_name,
+      selector: (row: any) => row.lga_name,
       sortable: true,
     },
     {
       name: "Ward",
-      selector: (row) => row.ward_name ?? "N/A",
+      selector: (row: any) => row.ward_name ?? "N/A",
       sortable: true,
     },
     {
       name: "Facility Name",
-      selector: (row) => row.facility_name,
+      selector: (row: any) => row.facility_name,
       sortable: true,
     },
 
     {
       name: "Ownership",
-      selector: (row) => row.ownership_name,
+      selector: (row: any) => row.ownership_name,
       sortable: true,
-      cell: (row) => (
+      cell: (row: any) => (
         <span
           className={`px-2 py-1 rounded-md text-white text-sm font-semibold ${
             row.ownership_name === "Public"
@@ -116,13 +130,13 @@ const PharmaceuticalTable = ({
 
   return (
     <div className="mt-6">
-      <DataTableExtensions
+      {/* <DataTableExtensions
         {...tableData}
         export={false}
         print={false}
         filter={true}
         filterPlaceholder="Search Facilities name"
-      >
+      > */}
         <DataTable
           highlightOnHover
           columns={columns}
@@ -139,7 +153,7 @@ const PharmaceuticalTable = ({
           }}
           onChangePage={(page) => setCurrentPage(page)}
         />
-      </DataTableExtensions>
+      {/* </DataTableExtensions> */}
     </div>
   );
 };

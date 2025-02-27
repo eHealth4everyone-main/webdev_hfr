@@ -3,23 +3,25 @@ import _ from "lodash";
 import Input from "@/components/ui/Input";
 import SelectComponent from "@/components/ui/SelectComponent";
 import { GreenButton, Text } from "@/components/ui/Typography";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 
 import dynamic from "next/dynamic";
-const RadiologyTable = dynamic(() => import("./RadiologyTable"), { ssr: false });
+const RadiologyTable = dynamic(() => import("./RadiologyTable"), {
+  ssr: false,
+});
 
 const RadiologyTab = () => {
-  const [states, setStates] = useState([]); // Store states
-  const [lgas, setLgas] = useState([]); // Store LGAs
-  const [wards, setWards] = useState([]); // Store wards
-  const [facilityLevels, setFacilityLevel] = useState([]);
-  const [ownerships, setOwnership] = useState([]);
-  const [operationals, setOperational] = useState([]);
-  const [registrations, setRegistration] = useState([]);
-  const [licenses, setLicense] = useState([]);
-  const [serviceCategories, setServiceCategory] = useState([]);
-  const [services, setService] = useState([]);
+  const [states, setStates] = useState<any[]>([]); // Store states
+  const [lgas, setLgas] = useState<any[]>([]); // Store LGAs
+  const [wards, setWards] = useState<any[]>([]); // Store wards
+  const [facilityLevels, setFacilityLevel] = useState<any[]>([]);
+  const [ownerships, setOwnership] = useState<any[]>([]);
+  const [operationals, setOperational] = useState<any[]>([]);
+  const [registrations, setRegistration] = useState<any[]>([]);
+  const [licenses, setLicense] = useState<any[]>([]);
+  const [serviceCategories, setServiceCategory] = useState<any[]>([]);
+  const [services, setService] = useState<any[]>([]);
 
   const [selectedState, setSelectedState] = useState(""); // Selected state
   const [selectedLga, setSelectedLga] = useState(""); // Selected LGA
@@ -39,25 +41,16 @@ const RadiologyTab = () => {
   const [fetchError, setFetchError] = useState<string>(""); // State for error messages
   const [loading, setLoading] = useState<boolean>(true); // Loading state
 
-  const [data, setData] = useState([]); // Store API response
+  const [data, setData] = useState<any[]>([]); // Store API response
   const [currentPage, setCurrentPage] = useState(1); // Track pagination
   const [totalPages, setTotalPages] = useState(1); // Store total pages
 
   const [search, setSearch] = useState("");
   const [filteredData, setFilteredData] = useState(data);
 
-  useEffect(() => {
-    fetchStates();
-    facilityLevel();
-    ownership();
-    operational();
-    registrationStatus();
-    license();
-    serviceCategory();
-  }, []);
-
-  const fetchFacilities = async () => {
+  const fetchFacilities4 = useCallback(async () => {
     setLoading(true);
+    setFetchError(""); // Reset errors before fetching
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BACKEND_API}/facilities/imaging-list`,
@@ -81,22 +74,24 @@ const RadiologyTab = () => {
 
       setData(response.data?.data?.facilities?.data); // Laravel pagination response (data array)
       setTotalPages(response.data?.data?.facilities?.last_page); // Set total pages from API
-      console.log("response by adams", response.data.data.facilities.last_page);
+      // console.log("response by adams", response.data.data.facilities.last_page);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
     setLoading(false);
-  };
-
-  // Fetch data whenever `currentPage` changes
-  useEffect(() => {
-    if (currentPage) {
-      fetchFacilities();
-    }
-  }, [currentPage]);
+  }, [
+    currentPage,
+    selectedState,
+    selectedLga,
+    selectedWard,
+    selectedownership,
+    selectedOperational,
+    selectedRegistration,
+    selectedLicense,
+  ]);
 
   // Fetch states
-  const fetchStates = _.debounce(async () => {
+  const fetchStates4 = useCallback(async () => {
     try {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_BACKEND_API}/states`
@@ -114,10 +109,10 @@ const RadiologyTab = () => {
     } finally {
       setLoading(false);
     }
-  }, 1000);
+  }, []);
 
   // Fetch LGAs based on selected state
-  const fetchLgas = async (stateId: string) => {
+  const fetchLgas = useCallback(async (stateId: string) => {
     try {
       setLgas([]); // Reset LGAs
       setWards([]); // Reset wards
@@ -138,10 +133,10 @@ const RadiologyTab = () => {
       console.error("Error fetching LGAs:", error);
       setFetchError("Failed to fetch LGAs.");
     }
-  };
+  }, []);
 
   // Fetch wards based on selected LGA
-  const fetchWards = async (lgaId: string) => {
+  const fetchWards = useCallback(async (lgaId: string) => {
     try {
       setWards([]); // Reset wards
 
@@ -159,10 +154,10 @@ const RadiologyTab = () => {
       console.error("Error fetching wards:", error);
       setFetchError("Failed to fetch wards.");
     }
-  };
+  }, []);
 
   // Fetch facilityLevel
-  const facilityLevel = _.debounce(async () => {
+  const facilityLevel = useCallback(async () => {
     try {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_BACKEND_API}/facility-level`
@@ -180,10 +175,10 @@ const RadiologyTab = () => {
     } finally {
       setLoading(false);
     }
-  }, 1000);
+  }, []);
 
   // Fetch ownership
-  const ownership = _.debounce(async () => {
+  const ownership4 = useCallback(async () => {
     try {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_BACKEND_API}/ownership`
@@ -201,10 +196,51 @@ const RadiologyTab = () => {
     } finally {
       setLoading(false);
     }
-  }, 1000);
+  }, []);
+
+  // // Fetch operational
+  // const operational = useCallback(async () => {
+  //   setLoading(true);
+  //   try {
+  //     const response = await axios.get(
+  //       `${process.env.NEXT_PUBLIC_BACKEND_API}/operational-status`
+  //     );
+  //     const data = response?.data?.data; // Axios automatically parses JSON
+  //     if (data && Array.isArray(data)) {
+  //       setOperational(data);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching operational:", error);
+  //     setFetchError("Failed to fetch operational.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }, []);
+
+  // // Fetch registration status
+  // const registrationStatus = useCallback(async () => {
+  //   setLoading(true);
+  //   try {
+  //     const response = await axios.get(
+  //       `${process.env.NEXT_PUBLIC_BACKEND_API}/registration-status`
+  //     );
+  //     const data = response?.data?.data; // Axios automatically parses JSON
+
+  //     // console.log("response", data);
+
+  //     if (data && Array.isArray(data)) {
+  //       setRegistration(data);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching operational:", error);
+  //     setFetchError("Failed to fetch operational.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }, []);
 
   // Fetch operational
-  const operational = _.debounce(async () => {
+  const operational4 = useCallback(async () => {
     try {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_BACKEND_API}/operational-status`
@@ -218,14 +254,14 @@ const RadiologyTab = () => {
       }
     } catch (error) {
       console.error("Error fetching operational:", error);
-      setFetchError("Failed to fetch operational.");
+      // setFetchError("Failed to fetch operational.");
     } finally {
       setLoading(false);
     }
-  }, 1000);
+  }, []);
 
   // Fetch registration status
-  const registrationStatus = _.debounce(async () => {
+  const registrationStatus4 = useCallback(async () => {
     try {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_BACKEND_API}/registration-status`
@@ -239,14 +275,14 @@ const RadiologyTab = () => {
       }
     } catch (error) {
       console.error("Error fetching operational:", error);
-      setFetchError("Failed to fetch operational.");
+      // setFetchError("Failed to fetch operational.");
     } finally {
       setLoading(false);
     }
-  }, 1000);
+  }, []);
 
   // Fetch license status
-  const license = _.debounce(async () => {
+  const license4 = useCallback(async () => {
     try {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_BACKEND_API}/license-status`
@@ -264,10 +300,10 @@ const RadiologyTab = () => {
     } finally {
       setLoading(false);
     }
-  }, 1000);
+  }, []);
 
   // Fetch service-category
-  const serviceCategory = async () => {
+  const serviceCategory4 = useCallback(async () => {
     try {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_BACKEND_API}/service-category`
@@ -285,7 +321,7 @@ const RadiologyTab = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   const fetchService = async (serviceId: string) => {
     try {
@@ -324,6 +360,44 @@ const RadiologyTab = () => {
     setSelectedGeoCode("");
     setSelectedServiceType("");
   };
+
+  useEffect(() => {
+    fetchStates4();
+    // facilityLevel();
+    ownership4();
+    operational4();
+    registrationStatus4();
+    license4();
+    serviceCategory4();
+  }, [
+    fetchStates4,
+    ownership4,
+    operational4,
+    registrationStatus4,
+    license4,
+    serviceCategory4,
+  ]); // Runs only once when the component mounts
+
+  // Fetch LGAs when `states` change
+  useEffect(() => {
+    if (selectedState) {
+      fetchLgas(selectedState);
+    }
+  }, [selectedState, fetchLgas]); // Runs when `selectedState` changes
+
+  // Fetch Wards when `lgas` change
+  useEffect(() => {
+    if (selectedLga) {
+      fetchWards(selectedLga);
+    }
+  }, [selectedLga, fetchWards]); // Runs when `selectedLga` changes
+
+  // Fetch paginated facilities when `currentPage` changes
+  useEffect(() => {
+    if (currentPage) {
+      fetchFacilities4();
+    }
+  }, [currentPage, fetchFacilities4]); // Runs when `currentPage` changes
 
   return (
     <div>
@@ -471,7 +545,7 @@ const RadiologyTab = () => {
         </GreenButton> */}
 
         <GreenButton
-          onClick={fetchFacilities}
+          onClick={fetchFacilities4}
           className="bg-[#5BBA62] w-full max-w-[200px] h-[44px] flex items-center justify-center text-sm"
         >
           {loading ? "Loading..." : "Search"}
@@ -488,7 +562,7 @@ const RadiologyTab = () => {
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
             totalPages={totalPages}
-            fetchFacilities={fetchFacilities} // Pass function to child
+            fetchFacilities={fetchFacilities4} // Pass function to child
             // loading={loading}
           />
         </div>

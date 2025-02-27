@@ -5,28 +5,33 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "daisyui.com",
-        pathname: "/**",
+        port: "",
       },
       {
         protocol: "https",
         hostname: "img.daisyui.com",
-        pathname: "/**",
+        port: "",
       },
       {
         protocol: "https",
         hostname: "storage.googleapis.com",
-        pathname: "/**",
+        port: "",
       },
+      // {
+      //   protocol: "https",
+      //   hostname: "C:\fakepath\"",
+      //   port: "",
+      // },
+
       {
         protocol: "http",
         hostname: "127.0.0.1",
-        port: "8001",
-        pathname: "/**", // Allow all images from your local API
+        port: "8001", // Allow images from your local backend
       },
+
       {
         protocol: "https",
-        hostname: process.env.NEXT_PUBLIC_SITE_URL || "your-production-domain.com",
-        pathname: "/**",
+        hostname: "your-production-domain.com", // Add your production domain
       },
     ],
   },

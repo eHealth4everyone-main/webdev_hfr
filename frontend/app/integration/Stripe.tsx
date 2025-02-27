@@ -3,7 +3,7 @@
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe, StripeElementsOptions } from "@stripe/stripe-js";
 import CheckoutForm from "./CheckoutForm";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { VerifyStripePayment } from "../lib/actions/company-actions";
 import useUtilityService, { CourseData } from "@/helpers/UtilityService";
@@ -20,23 +20,23 @@ export default function Stripe() {
   const { getCourseFromLocalStorage } = useUtilityService();
   const data = getCourseFromLocalStorage() as CourseData;
 
-  const handleStripePayment = async () => {
-    try {
-      const response = await VerifyStripePayment({
-        description: data?.course,
-        price: 50,
-      });
-      if (response) {
-        setClientSecret(response?.clientSecret);
-      }
-    } catch (error: any) {
-      toast.error(error.message);
-    }
-  };
+  // const handleStripePayment = useCallback(async () => {
+  //   try {
+  //     const response = await VerifyStripePayment({
+  //       description: data?.course,
+  //       price: 50,
+  //     });
+  //     if (response) {
+  //       setClientSecret(response?.clientSecret);
+  //     }
+  //   } catch (error: any) {
+  //     toast.error(error.message);
+  //   }
+  // }, []);
 
-  useEffect(() => {
-    handleStripePayment();
-  }, []);
+  // useEffect(() => {
+  //   handleStripePayment();
+  // }, [handleStripePayment]);
 
   const appearance = {
     theme: "stripe" as const,

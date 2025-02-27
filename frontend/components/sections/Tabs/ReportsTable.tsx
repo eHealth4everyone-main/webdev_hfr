@@ -25,13 +25,20 @@ const DataTableExtensions = dynamic(
   { ssr: false }
 );
 
-const ReportsTable = ({ data, report }) => {
+interface ReportsTableProps {
+  data: any[]; // Replace 'any' with the actual type if possible
+  report: any; // Replace 'any' with the actual type if possible
+}
+
+// const ReportsTable = ({ data, report }) => {
+
+const ReportsTable: React.FC<ReportsTableProps> = ({ data, report }) => {
   const [loading, setLoading] = useState(true);
 
   const [showModal, setShowModal] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
 
-  const openModal = (row) => {
+  const openModal = (row: any) => {
     setSelectedRow(row);
     setShowModal(true);
   };
@@ -50,40 +57,40 @@ const ReportsTable = ({ data, report }) => {
   const columns = [
     {
       name: "State",
-      selector: (row) => row.state_name,
+      selector: (row: any) => row.state_name,
       sortable: true,
     },
     {
       name: "LGA",
-      selector: (row) => row.lga_name,
+      selector: (row: any) => row.lga_name,
       sortable: true,
     },
     {
       name: "Ward",
-      selector: (row) => row.ward_name ?? "N/A",
+      selector: (row: any) => row.ward_name ?? "N/A",
       sortable: true,
     },
     {
       name: "Facility Code",
-      selector: (row) => row.facility_name,
+      selector: (row: any) => row.facility_name,
       sortable: true,
       wrap: true, // ✅ Ensures wrapping
       grow: 2, // ✅ Increases width to take more space
     },
     {
       name: "Facility Name",
-      selector: (row) => row.facility_name,
+      selector: (row: any) => row.facility_name,
       sortable: true,
       wrap: true, // ✅ Ensures wrapping
       grow: 2, // ✅ Increases width to take more space
     },
     {
       name: "Facility Level",
-      selector: (row) => row.facility_level_name,
+      selector: (row: any) => row.facility_level_name,
       sortable: true,
       wrap: true, // ✅ Ensures wrapping
       grow: 2, // ✅ Increases width to take more space
-      cell: (row) => (
+      cell: (row: any) => (
         <span
           className={`px-2 py-1 rounded-sm text-white text-sm font- ${
             row.facility_level_name === "Primary"
@@ -101,9 +108,9 @@ const ReportsTable = ({ data, report }) => {
     },
     {
       name: "Ownership",
-      selector: (row) => row.ownership_name,
+      selector: (row: any) => row.ownership_name,
       sortable: true,
-      cell: (row) => (
+      cell: (row: any) => (
         <span
           className={`px-2 py-1 rounded-sm text-white text-sm font- ${
             row.ownership_name === "Public"
@@ -120,7 +127,7 @@ const ReportsTable = ({ data, report }) => {
 
     {
       name: "Details",
-      cell: (row) => (
+      cell: (row: any) => (
         <span
           onClick={() => openModal(row)}
           className="text-green-600 underline cursor-pointer"
@@ -166,7 +173,6 @@ const ReportsTable = ({ data, report }) => {
   };
 
   return (
-
     <div className="w-full overflow-x-auto">
       <div className="min-w-full">
         <DataTable

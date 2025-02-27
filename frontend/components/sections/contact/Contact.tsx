@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { ChangeEvent, FormEvent, useState } from "react";
 import { Mail, Phone, MapPin, Clock } from "lucide-react";
 import { Text } from "@/components/ui/Typography";
 
@@ -16,11 +16,18 @@ const ContactPage = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
+  // const handleChange = (e) => {
+  //   setFormData({ ...formData, [e.target.name]: e.target.value });
+  // };
+
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  // const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     // Basic Frontend Validation
@@ -55,7 +62,6 @@ const ContactPage = () => {
 
     setLoading(false);
   };
-
 
   return (
     <div className="w-full">

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { IoMdArrowDown, IoMdArrowBack, IoArrowForward } from "react-icons/io";
+// import { IoMdArrowDown, IoMdArrowBack, IoArrowForward } from "react-icons/io";
+import { IoMdArrowDown, IoMdArrowBack, IoMdArrowForward } from "react-icons/io";
 // import DataTable from "react-data-table-component";
 // import DataTableExtensions from "react-data-table-component-extensions";
 import dynamic from "next/dynamic";
@@ -7,24 +8,46 @@ import DetailsModal from "./DetailsModal";
 const DataTable = dynamic(() => import("react-data-table-component"), {
   ssr: false,
 });
+
+//@ts-ignore
 const DataTableExtensions = dynamic(
   () => import("react-data-table-component-extensions"),
   { ssr: false }
 );
 
-const HospitalTable = ({
-  data,
-  currentPage,
-  setCurrentPage,
-  totalPages,
-  fetchFacilities,
-}) => {
+// import DataTableExtensions from 'react-data-table-component-extensions';
+import "react-data-table-component-extensions/dist/index.css";
+
+// @ts-ignore
+// const DataTableExtensions = dynamic(
+//   () => Promise.resolve(require("react-data-table-component-extensions")),
+//   { ssr: false }
+// );
+
+// import DataTableExtensions, { DataTableExtensionsProps } from "react-data-table-component-extensions";
+
+// Unified Interface for Hospital Data
+
+// const HospitalTable = ({
+//   data,
+//   currentPage,
+//   setCurrentPage,
+//   totalPages,
+//   fetchFacilities,
+// }) => {
+const HospitalTable: React.FC<{
+  data: any[];
+  currentPage: number;
+  setCurrentPage: (page: number) => void;
+  totalPages: number;
+  fetchFacilities: () => void;
+}> = ({ data, currentPage, setCurrentPage, totalPages, fetchFacilities }) => {
   const [loading, setLoading] = useState(true);
 
   const [showModal, setShowModal] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
 
-  const openModal = (row) => {
+  const openModal = (row: any) => {
     setSelectedRow(row);
     setShowModal(true);
   };
@@ -43,31 +66,31 @@ const HospitalTable = ({
   const columns = [
     {
       name: "State",
-      selector: (row) => row.state_name,
+      selector: (row: any) => row.state_name,
       sortable: true,
     },
     {
       name: "LGA",
-      selector: (row) => row.lga_name,
+      selector: (row: any) => row.lga_name,
       sortable: true,
     },
     {
       name: "Ward",
-      selector: (row) => row.ward_name ?? "N/A",
+      selector: (row: any) => row.ward_name ?? "N/A",
       sortable: true,
     },
     {
       name: "Facility Name",
-      selector: (row) => row.facility_name,
+      selector: (row: any) => row.facility_name,
       sortable: true,
       wrap: true, // ✅ Ensures wrapping
       grow: 2, // ✅ Increases width to take more space
     },
     {
       name: "Facility Level",
-      selector: (row) => row.facility_level_name,
+      selector: (row: any) => row.facility_level_name,
       sortable: true,
-      cell: (row) => (
+      cell: (row: any) => (
         <span
           className={`px-2 py-1 rounded-sm text-white text-sm font- ${
             row.facility_level_name === "Primary"
@@ -85,9 +108,9 @@ const HospitalTable = ({
     },
     {
       name: "Ownership",
-      selector: (row) => row.ownership_name,
+      selector: (row: any) => row.ownership_name,
       sortable: true,
-      cell: (row) => (
+      cell: (row: any) => (
         <span
           className={`px-2 py-1 rounded-sm text-white text-sm font- ${
             row.ownership_name === "Public"
@@ -112,7 +135,7 @@ const HospitalTable = ({
 
     {
       name: "Details",
-      cell: (row) => (
+      cell: (row: any) => (
         <span
           onClick={() => openModal(row)}
           className="text-green-600 underline cursor-pointer"
@@ -159,31 +182,31 @@ const HospitalTable = ({
 
   return (
     <div className="mt-6">
-      <DataTableExtensions
+      {/* <DataTableExtensions
         {...tableData}
         export={false}
         print={false}
         filter={true}
         filterPlaceholder="Search Facilities name"
-      >
-        <DataTable
-          highlightOnHover
-          columns={columns}
-          customStyles={customStyles}
-          striped
-          data={data}
-          pagination
-          paginationServer
-          paginationTotalRows={totalPages * 15} // Laravel sends per_page: 10
-          paginationPerPage={15}
-          // paginationPerPage={10}
-          paginationComponentOptions={{
-            noRowsPerPage: true,
-          }}
-          onChangePage={(page) => setCurrentPage(page)}
-          progressPending={loading}
-        />
-      </DataTableExtensions>
+      > */}
+      <DataTable
+        highlightOnHover
+        columns={columns}
+        customStyles={customStyles}
+        striped
+        data={data}
+        pagination
+        paginationServer
+        paginationTotalRows={totalPages * 15} // Laravel sends per_page: 10
+        paginationPerPage={15}
+        // paginationPerPage={10}
+        paginationComponentOptions={{
+          noRowsPerPage: true,
+        }}
+        onChangePage={(page) => setCurrentPage(page)}
+        progressPending={loading}
+      />
+      {/* </DataTableExtensions> */}
 
       {/* Modal */}
       {/* {showModal && selectedRow && (

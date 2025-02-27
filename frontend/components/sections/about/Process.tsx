@@ -46,7 +46,7 @@ const Process = () => {
           `${process.env.NEXT_PUBLIC_BACKEND_API}/process-item`
         );
 
-        console.log('Adams', response.data.data);
+        console.log("Adams", response.data.data);
 
         // Assuming the API returns the title and content in the response data
         setProcessItemData(response.data.data);
@@ -63,14 +63,11 @@ const Process = () => {
   // if (loading) return <Text>Loading...</Text>;
   // if (error) return <Text>{error}</Text>;
 
-  console.log("Adams 2", processData?.title);
-
+  // console.log("Adams 2", processData?.title);
 
   return (
     <div className="flex flex-col gap-[1.5rem] flex flex-col mt-[2rem] w-full lg:w-[1200px] px-8 lg:px-0 lg:mx-auto">
-      <Text className="text-center font-semibold">
-        {processData?.title}
-      </Text>
+      <Text className="text-center font-semibold">{processData?.title}</Text>
       {/* <Text className="w-full">
         The development of the HFR followed a consultative process among the
         different stakeholders working within the Federal Ministry of Health,
@@ -82,11 +79,17 @@ const Process = () => {
 
       <div
         className="content w-full"
-        dangerouslySetInnerHTML={{ __html: processData?.content }}
+        dangerouslySetInnerHTML={{ __html: processData?.content || "" }}
       />
 
       <ul className="list-disc flex flex-col gap-[1rem] w-full  lg:mx-[0]">
-        {processItemData?.map((item: string, index: number) => (
+        {/* {processItemData?.map((item: string, index: number) => (
+          <li key={index} className="w-full">
+            {item?.title || ""}
+          </li>
+        ))} */}
+
+        {processItemData?.map((item: { title: string }, index: number) => (
           <li key={index} className="w-full">
             {item.title}
           </li>

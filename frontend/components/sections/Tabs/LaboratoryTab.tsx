@@ -1,24 +1,26 @@
 import Input from "@/components/ui/Input";
 import SelectComponent from "@/components/ui/SelectComponent";
 import { GreenButton, Text } from "@/components/ui/Typography";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 
 import dynamic from "next/dynamic";
-const LaboratoryTable = dynamic(() => import("./LaboratoryTable"), { ssr: false });
+const LaboratoryTable = dynamic(() => import("./LaboratoryTable"), {
+  ssr: false,
+});
 
 const LaboratoryTab = () => {
-  const [states, setStates] = useState([]); // Store states
-  const [lgas, setLgas] = useState([]); // Store LGAs
-  const [wards, setWards] = useState([]); // Store wards
-  const [facilityLevels, setFacilityLevel] = useState([]);
-  const [ownerships, setOwnership] = useState([]);
-  const [operationals, setOperational] = useState([]);
-  const [registrations, setRegistration] = useState([]);
-  const [licenses, setLicense] = useState([]);
-  const [accreditations, setAccreditation] = useState([]);
-  const [serviceCategories, setServiceCategory] = useState([]);
-  const [services, setService] = useState([]);
+  const [states, setStates] = useState<any[]>([]); // Store states
+  const [lgas, setLgas] = useState<any[]>([]); // Store LGAs
+  const [wards, setWards] = useState<any[]>([]); // Store wards
+  const [facilityLevels, setFacilityLevel] = useState<any[]>([]);
+  const [ownerships, setOwnership] = useState<any[]>([]);
+  const [operationals, setOperational] = useState<any[]>([]);
+  const [registrations, setRegistration] = useState<any[]>([]);
+  const [licenses, setLicense] = useState<any[]>([]);
+  const [accreditations, setAccreditation] = useState<any[]>([]);
+  const [serviceCategories, setServiceCategory] = useState<any[]>([]);
+  const [services, setService] = useState<any[]>([]);
 
   const [selectedState, setSelectedState] = useState(""); // Selected state
   const [selectedLga, setSelectedLga] = useState(""); // Selected LGA
@@ -39,26 +41,16 @@ const LaboratoryTab = () => {
   const [fetchError, setFetchError] = useState<string>(""); // State for error messages
   const [loading, setLoading] = useState<boolean>(true); // Loading state
 
-  const [data, setData] = useState([]); // Store API response
+  const [data, setData] = useState<any[]>([]); // Store API response
   const [currentPage, setCurrentPage] = useState(1); // Track pagination
   const [totalPages, setTotalPages] = useState(1); // Store total pages
 
   const [search, setSearch] = useState("");
   const [filteredData, setFilteredData] = useState(data);
 
-  useEffect(() => {
-    fetchStates();
-    facilityLevel();
-    ownership();
-    operational();
-    registrationStatus();
-    license();
-    accreditation();
-    serviceCategory();
-  }, []);
-
-  const fetchFacilities = async () => {
+  const fetchFacilities2 = useCallback(async () => {
     setLoading(true);
+    setFetchError("");
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BACKEND_API}/facilities/lab-list`,
@@ -82,22 +74,26 @@ const LaboratoryTab = () => {
 
       setData(response.data?.data?.facilities?.data); // Laravel pagination response (data array)
       setTotalPages(response.data?.data?.facilities?.last_page); // Set total pages from API
-      console.log("response by adams", response.data.data.facilities.last_page);
+      // console.log("response by adams", response.data.data.facilities.last_page);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
     setLoading(false);
-  };
-
-  // Fetch data whenever `currentPage` changes
-  useEffect(() => {
-    if (currentPage) {
-      fetchFacilities();
-    }
-  }, [currentPage]);
+  }, [
+    currentPage,
+    selectedState,
+    selectedLga,
+    selectedWard,
+    selectedFacilityLevel,
+    selectedownership,
+    selectedOperational,
+    selectedRegistration,
+    selectedLicense,
+    selectedServiceType,
+  ]);
 
   // Fetch states
-  const fetchStates = async () => {
+  const fetchStates2 = useCallback(async () => {
     try {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_BACKEND_API}/states`
@@ -115,10 +111,10 @@ const LaboratoryTab = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Fetch LGAs based on selected state
-  const fetchLgas = async (stateId: string) => {
+  const fetchLgas = useCallback(async (stateId: string) => {
     try {
       setLgas([]); // Reset LGAs
       setWards([]); // Reset wards
@@ -139,10 +135,10 @@ const LaboratoryTab = () => {
       console.error("Error fetching LGAs:", error);
       setFetchError("Failed to fetch LGAs.");
     }
-  };
+  }, []);
 
   // Fetch wards based on selected LGA
-  const fetchWards = async (lgaId: string) => {
+  const fetchWards = useCallback(async (lgaId: string) => {
     try {
       setWards([]); // Reset wards
 
@@ -160,10 +156,10 @@ const LaboratoryTab = () => {
       console.error("Error fetching wards:", error);
       setFetchError("Failed to fetch wards.");
     }
-  };
+  }, []);
 
   // Fetch facilityLevel
-  const facilityLevel = async () => {
+  const facilityLevel2 = useCallback(async () => {
     try {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_BACKEND_API}/facility-level`
@@ -181,10 +177,10 @@ const LaboratoryTab = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Fetch ownership
-  const ownership = async () => {
+  const ownership2 = useCallback(async () => {
     try {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_BACKEND_API}/ownership`
@@ -202,10 +198,10 @@ const LaboratoryTab = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Fetch operational
-  const operational = async () => {
+  const operational2 = useCallback(async () => {
     try {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_BACKEND_API}/operational-status`
@@ -223,10 +219,10 @@ const LaboratoryTab = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Fetch registration status
-  const registrationStatus = async () => {
+  const registrationStatus2 = useCallback(async () => {
     try {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_BACKEND_API}/registration-status`
@@ -244,17 +240,15 @@ const LaboratoryTab = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Fetch license status
-  const license = async () => {
+  const license2 = useCallback(async () => {
     try {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_BACKEND_API}/license-status`
       );
       const data = response?.data?.data; // Axios automatically parses JSON
-
-      // console.log("response", data);
 
       if (data && Array.isArray(data)) {
         setLicense(data);
@@ -264,11 +258,12 @@ const LaboratoryTab = () => {
       setFetchError("Failed to fetch operational.");
     } finally {
       setLoading(false);
+      223;
     }
-  };
+  }, []);
 
   // Fetch accreditation status
-  const accreditation = async () => {
+  const accreditation2 = useCallback(async () => {
     try {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_BACKEND_API}/accreditation-status`
@@ -286,10 +281,10 @@ const LaboratoryTab = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Fetch service-category
-  const serviceCategory = async () => {
+  const serviceCategory2 = useCallback(async () => {
     try {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_BACKEND_API}/service-category`
@@ -307,7 +302,7 @@ const LaboratoryTab = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   const fetchService = async (serviceId: string) => {
     try {
@@ -346,6 +341,47 @@ const LaboratoryTab = () => {
     setSelectedGeoCode("");
     setSelectedServiceType("");
   };
+
+  useEffect(() => {
+    fetchStates2();
+    facilityLevel2();
+    ownership2();
+    operational2();
+    registrationStatus2();
+    license2();
+    accreditation2();
+    serviceCategory2();
+  }, [
+    fetchStates2,
+    facilityLevel2,
+    ownership2,
+    operational2,
+    registrationStatus2,
+    license2,
+    accreditation2,
+    serviceCategory2,
+  ]); // Runs only once when the component mounts
+
+  // Fetch LGAs when `states` change
+  useEffect(() => {
+    if (selectedState) {
+      fetchLgas(selectedState);
+    }
+  }, [selectedState, fetchLgas]); // Runs when `selectedState` changes
+
+  // Fetch Wards when `lgas` change
+  useEffect(() => {
+    if (selectedLga) {
+      fetchWards(selectedLga);
+    }
+  }, [selectedLga, fetchWards]); // Runs when `selectedLga` changes
+
+  // Fetch paginated facilities when `currentPage` changes
+  useEffect(() => {
+    if (currentPage) {
+      fetchFacilities2();
+    }
+  }, [currentPage, fetchFacilities2]); // Runs when `currentPage` changes
 
   return (
     <div>
@@ -521,7 +557,7 @@ const LaboratoryTab = () => {
         </GreenButton> */}
 
         <GreenButton
-          onClick={fetchFacilities}
+          onClick={fetchFacilities2}
           className="bg-[#5BBA62] w-full max-w-[200px] h-[44px] flex items-center justify-center text-sm"
         >
           {loading ? "Loading..." : "Search"}
@@ -538,7 +574,7 @@ const LaboratoryTab = () => {
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
             totalPages={totalPages}
-            fetchFacilities={fetchFacilities} // Pass function to child
+            fetchFacilities={fetchFacilities2} // Pass function to child
             // loading={loading}
           />
         </div>

@@ -45,7 +45,7 @@ const GreenButtonWithIcon = ({
       className={`flex gap-[.5rem] bg-[#078586] rounded-lg w-full  p-2 justify-center ${className} text-white`}
       onClick={onClick}
     >
-      {source && <Image src={source} width={20} height={20} alt="att" />}
+      {source && <Image src="" width={20} height={20} alt="att" />}
       {children}
     </div>
   );
@@ -62,7 +62,7 @@ const WhiteButtonWithIcon = ({
       onClick={onClick}
     >
       {children}
-      {source && <Image src={source} width={20} height={20} alt="att" />}
+      {source && <Image src="" width={20} height={20} alt="att" />}
     </div>
   );
 };

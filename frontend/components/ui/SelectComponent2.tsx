@@ -58,7 +58,7 @@ const SelectComponent2 = ({
           <option value="">{placeholder || "Facility Level"}</option>
           {options?.map((option, index) => (
             <option key={index} value={option}>
-              {option.name}
+              {/* {option.name} */}
             </option>
           ))}
         </select>

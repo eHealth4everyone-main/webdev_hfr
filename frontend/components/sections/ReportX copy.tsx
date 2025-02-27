@@ -55,7 +55,7 @@ const ReportX = () => {
       <div className="flex flex-col sm:flex-row items-center justify-between mb-4 gap-4 sm:gap-0">
         <div className="flex flex-col sm:flex-row items-center w-full sm:w-auto space-y-2 sm:space-y-0 sm:space-x-2">
           <SelectComponent
-            options={options}
+            // options={options}
             className="w-full sm:w-[300px] lg:w-[400px]"
             placeholder="Select Report"
             onChange={(e) => setSelectedReport(e.target.value)}

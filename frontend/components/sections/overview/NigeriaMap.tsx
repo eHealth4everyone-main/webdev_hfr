@@ -44,26 +44,6 @@ const getPolygonOptions = (stateName: string) => ({
 });
 
 const NigeriaMap: React.FC = () => {
-  //   const [selectedState, setSelectedState] = useState(null);
-
-  // Example: Fake hospital data (Replace with real data)
-  //   const hospitalData = {
-  //     Kaduna: 1539,
-  //     Lagos: 2100,
-  //     Kano: 1800,
-  //     Rivers: 1200,
-  //     // Add for other states...
-  //   };
-
-  // Function to get color based on hospital count
-  //   const getColor = (stateName) => {
-  //     const count = hospitalData[stateName] || 0;
-  //     if (count > 2000) return "#00441b"; // Dark green (High)
-  //     if (count > 1500) return "#238b45"; // Medium green
-  //     if (count > 1000) return "#66c2a4"; // Light green
-  //     return "#ccece6"; // Very light green (Low)
-  //   };
-
   const [mapsLoaded, setMapsLoaded] = useState(false);
 
   useEffect(() => {
@@ -87,17 +67,30 @@ const NigeriaMap: React.FC = () => {
       >
         {nigeriaStatePolygon.features.map((state, index) => {
           const stateName = state.properties.name;
+
           const stateCenter = {
-            lat: state.geometry.coordinates[0][0][1],
-            lng: state.geometry.coordinates[0][0][0],
+            lat: Array.isArray(state.geometry.coordinates[0][0])
+              ? (state.geometry.coordinates[0][0][1] as number)
+              : 0, // Default fallback
+            lng: Array.isArray(state.geometry.coordinates[0][0])
+              ? (state.geometry.coordinates[0][0][0] as number)
+              : 0, // Default fallback
           };
+
+          // const stateCenter = {
+          //   lat: state.geometry.coordinates[0][0][1],
+          //   lng: state.geometry.coordinates[0][0][0],
+          // };
 
           return (
             <div key={index}>
               <Polygon
-                paths={state.geometry.coordinates.map((polygon) =>
+                paths={state.geometry.coordinates.flatMap((polygon) =>
                   polygon.map((ring) =>
-                    ring.map((coord) => ({ lat: coord[1], lng: coord[0] }))
+                    ring.map((coord) => {
+                      const [lng, lat] = coord as [number, number]; // Explicitly enforce the structure
+                      return { lat, lng };
+                    })
                   )
                 )}
                 options={{
@@ -107,6 +100,7 @@ const NigeriaMap: React.FC = () => {
                   strokeWeight: 1.5,
                 }}
               />
+
               {mapsLoaded && (
                 <Marker
                   position={stateCenter}

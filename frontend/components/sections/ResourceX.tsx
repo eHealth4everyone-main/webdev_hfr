@@ -2,7 +2,7 @@
 
 import { FileText } from "lucide-react";
 import { GreenButton } from "../ui/Typography";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 
 const resources = [
@@ -12,13 +12,19 @@ const resources = [
   "M&E Framework for MFL and HFR in Nigeria",
 ];
 
+type Resource = {
+  description: string;
+  filename: string;
+};
+
 export default function ResourceX() {
-  const [resources, setResources] = useState<string[]>([]);
+  // const [resources, setResources] = useState<string[]>([]);
+  const [resources, setResources] = useState<Resource[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedResource, setSelectedResource] = useState("");
 
-  const fetchResource = async () => {
+  const fetchResource = useCallback(async () => {
     try {
       setResources([]); // Reset LGAs
       setSelectedResource(""); // Reset selected LGA
@@ -40,11 +46,11 @@ export default function ResourceX() {
       setLoading(false);
       // setFetchError("Failed to fetch LGAs.");
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchResource();
-  }, []);
+  }, [fetchResource]);
 
   const handleDownload = (url: string) => {
     window.open(url, "_blank");

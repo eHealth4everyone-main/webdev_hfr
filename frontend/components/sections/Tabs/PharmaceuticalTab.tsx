@@ -1,24 +1,25 @@
 import Input from "@/components/ui/Input";
 import SelectComponent from "@/components/ui/SelectComponent";
 import { GreenButton, Text } from "@/components/ui/Typography";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 
 import dynamic from "next/dynamic";
-const PharmaceuticalTable = dynamic(() => import("./PharmaceuticalTable"), { ssr: false });
-
+const PharmaceuticalTable = dynamic(() => import("./PharmaceuticalTable"), {
+  ssr: false,
+});
 
 const Pharmaceutical = () => {
-  const [states, setStates] = useState([]); // Store states
-  const [lgas, setLgas] = useState([]); // Store LGAs
-  const [wards, setWards] = useState([]); // Store wards
-  const [facilityLevels, setFacilityLevel] = useState([]);
-  const [ownerships, setOwnership] = useState([]);
-  const [operationals, setOperational] = useState([]);
-  const [registrations, setRegistration] = useState([]);
-  const [licenses, setLicense] = useState([]);
-  const [serviceCategories, setServiceCategory] = useState([]);
-  const [services, setService] = useState([]);
+  const [states, setStates] = useState<any[]>([]); // Store states
+  const [lgas, setLgas] = useState<any[]>([]); // Store LGAs
+  const [wards, setWards] = useState<any[]>([]); // Store wards
+  const [facilityLevels, setFacilityLevel] = useState<any[]>([]);
+  const [ownerships, setOwnership] = useState<any[]>([]);
+  const [operationals, setOperational] = useState<any[]>([]);
+  const [registrations, setRegistration] = useState<any[]>([]);
+  const [licenses, setLicense] = useState<any[]>([]);
+  const [serviceCategories, setServiceCategory] = useState<any[]>([]);
+  const [services, setService] = useState<any[]>([]);
 
   const [selectedState, setSelectedState] = useState(""); // Selected state
   const [selectedLga, setSelectedLga] = useState(""); // Selected LGA
@@ -38,25 +39,16 @@ const Pharmaceutical = () => {
   const [fetchError, setFetchError] = useState<string>(""); // State for error messages
   const [loading, setLoading] = useState<boolean>(true); // Loading state
 
-  const [data, setData] = useState([]); // Store API response
+  const [data, setData] = useState<any[]>([]); // Store API response
   const [currentPage, setCurrentPage] = useState(1); // Track pagination
   const [totalPages, setTotalPages] = useState(1); // Store total pages
 
   const [search, setSearch] = useState("");
   const [filteredData, setFilteredData] = useState(data);
 
-  useEffect(() => {
-    fetchStates();
-    facilityLevel();
-    ownership();
-    operational();
-    registrationStatus();
-    license();
-    serviceCategory();
-  }, []);
-
-  const fetchFacilities = async () => {
+  const fetchFacilities3 = useCallback(async () => {
     setLoading(true);
+    setFetchError("");
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BACKEND_API}/facilities/pharmacies-list`,
@@ -80,22 +72,26 @@ const Pharmaceutical = () => {
 
       setData(response.data?.data?.facilities?.data); // Laravel pagination response (data array)
       setTotalPages(response.data?.data?.facilities?.last_page); // Set total pages from API
-      console.log("response by adams", response.data.data.facilities.last_page);
+      // console.log("response by adams", response.data.data.facilities.last_page);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
     setLoading(false);
-  };
-
-  // Fetch data whenever `currentPage` changes
-  useEffect(() => {
-    if (currentPage) {
-      fetchFacilities();
-    }
-  }, [currentPage]);
+  }, [
+    currentPage,
+    selectedState,
+    selectedLga,
+    selectedWard,
+    // selectedFacilityLevel,
+    selectedownership,
+    selectedOperational,
+    selectedRegistration,
+    selectedLicense,
+    // selectedServiceType,
+  ]);
 
   // Fetch states
-  const fetchStates = async () => {
+  const fetchStates3 = useCallback(async () => {
     try {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_BACKEND_API}/states`
@@ -113,10 +109,10 @@ const Pharmaceutical = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Fetch LGAs based on selected state
-  const fetchLgas = async (stateId: string) => {
+  const fetchLgas = useCallback(async (stateId: string) => {
     try {
       setLgas([]); // Reset LGAs
       setWards([]); // Reset wards
@@ -137,10 +133,10 @@ const Pharmaceutical = () => {
       console.error("Error fetching LGAs:", error);
       setFetchError("Failed to fetch LGAs.");
     }
-  };
+  }, []);
 
   // Fetch wards based on selected LGA
-  const fetchWards = async (lgaId: string) => {
+  const fetchWards = useCallback(async (lgaId: string) => {
     try {
       setWards([]); // Reset wards
 
@@ -158,10 +154,10 @@ const Pharmaceutical = () => {
       console.error("Error fetching wards:", error);
       setFetchError("Failed to fetch wards.");
     }
-  };
+  }, []);
 
   // Fetch facilityLevel
-  const facilityLevel = async () => {
+  const facilityLevel3 = useCallback(async () => {
     try {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_BACKEND_API}/facility-level`
@@ -179,10 +175,10 @@ const Pharmaceutical = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Fetch ownership
-  const ownership = async () => {
+  const ownership3 = useCallback(async () => {
     try {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_BACKEND_API}/ownership`
@@ -200,10 +196,10 @@ const Pharmaceutical = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Fetch operational
-  const operational = async () => {
+  const operational3 = useCallback(async () => {
     try {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_BACKEND_API}/operational-status`
@@ -221,10 +217,10 @@ const Pharmaceutical = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Fetch registration status
-  const registrationStatus = async () => {
+  const registrationStatus3 = useCallback(async () => {
     try {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_BACKEND_API}/registration-status`
@@ -242,10 +238,10 @@ const Pharmaceutical = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Fetch license status
-  const license = async () => {
+  const license3 = useCallback(async () => {
     try {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_BACKEND_API}/license-status`
@@ -263,10 +259,10 @@ const Pharmaceutical = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Fetch service-category
-  const serviceCategory = async () => {
+  const serviceCategory3 = useCallback(async () => {
     try {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_BACKEND_API}/service-category`
@@ -284,7 +280,7 @@ const Pharmaceutical = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   const fetchService = async (serviceId: string) => {
     try {
@@ -312,7 +308,7 @@ const Pharmaceutical = () => {
     setSelectedState("");
     setSelectedLga("");
     setSelectedWard("");
-    setSelectedFacilityLevel("");
+    // setSelectedFacilityLevel("");
     setSelectedownership("");
     setSelectedOperational("");
     setSelectedRegistration("");
@@ -321,8 +317,65 @@ const Pharmaceutical = () => {
     setSelectedServiceCategory("");
     setSelectedService("");
     setSelectedGeoCode("");
-    setSelectedServiceType("");
+    // setSelectedServiceType("");
   };
+
+  // useEffect(() => {
+  //   fetchStates();
+  //   facilityLevel();
+  //   ownership();
+  //   operational();
+  //   registrationStatus();
+  //   license();
+  //   serviceCategory();
+  // }, [
+  //   fetchStates,
+  //   facilityLevel,
+  //   ownership,
+  //   operational,
+  //   registrationStatus,
+  //   license,
+  //   serviceCategory,
+  // ]);
+
+  useEffect(() => {
+    fetchStates3();
+    facilityLevel3();
+    ownership3();
+    operational3();
+    registrationStatus3();
+    license3();
+    serviceCategory3();
+  }, [
+    fetchStates3,
+    facilityLevel3,
+    ownership3,
+    operational3,
+    registrationStatus3,
+    license3,
+    serviceCategory3,
+  ]); // Runs only once when the component mounts
+
+  // Fetch LGAs when `states` change
+  useEffect(() => {
+    if (selectedState) {
+      fetchLgas(selectedState);
+    }
+  }, [selectedState, fetchLgas]); // Runs when `selectedState` changes
+
+  // Fetch Wards when `lgas` change
+  useEffect(() => {
+    if (selectedLga) {
+      fetchWards(selectedLga);
+    }
+  }, [selectedLga, fetchWards]); // Runs when `selectedLga` changes
+
+  // Fetch paginated facilities when `currentPage` changes
+  useEffect(() => {
+    if (currentPage) {
+      fetchFacilities3();
+    }
+  }, [currentPage, fetchFacilities3]); // Runs when `currentPage` changes
 
   return (
     <div>
@@ -470,7 +523,7 @@ const Pharmaceutical = () => {
         </GreenButton> */}
 
         <GreenButton
-          onClick={fetchFacilities}
+          onClick={fetchFacilities3}
           className="bg-[#5BBA62] w-full max-w-[200px] h-[44px] flex items-center justify-center text-sm"
         >
           {loading ? "Loading..." : "Search"}
@@ -487,7 +540,7 @@ const Pharmaceutical = () => {
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
             totalPages={totalPages}
-            fetchFacilities={fetchFacilities} // Pass function to child
+            fetchFacilities={fetchFacilities3} // Pass function to child
             // loading={loading}
           />
         </div>
