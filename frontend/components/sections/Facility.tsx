@@ -1,9 +1,9 @@
 "use client";
+
 import { Button, Card } from "@chakra-ui/react";
 import { CiSliderHorizontal } from "react-icons/ci";
 import { MdLocationPin } from "react-icons/md";
 import { IoCopy } from "react-icons/io5";
-import { useRouter } from "next/navigation";
 import Input from "../ui/Input";
 import SelectComponent from "../ui/SelectComponent";
 import { GreenButton, Text, WhiteButton } from "../ui/Typography";
@@ -14,6 +14,8 @@ import {
   GoogleMap,
   Marker,
   InfoWindow,
+  DirectionsRenderer,
+  DirectionsService,
 } from "@react-google-maps/api";
 import {
   MapPin,
@@ -23,200 +25,286 @@ import {
   Menu,
   Copy,
 } from "lucide-react";
+
 import Image from "next/image";
+import axios from "axios";
+
+import { useRouter } from "next/navigation";
+
+// import { useRouter } from "next/router";
 
 const libraries: "places"[] = ["places"];
 
-type Hospital = {
-  id: string;
-  name: string;
-  address: string;
-  lat: number;
-  lng: number;
-  rating?: number;
-  openNow?: boolean;
-  photoUrl?: string;
-  phoneNumber?: string;
-  facilityType?: string;
-  plansAccepted?: string[];
-};
-
 function Facility() {
+  const { push } = useRouter();
+  const router = useRouter();
+
   const [map, setMap] = useState<google.maps.Map | null>(null);
+
   const [searchBox, setSearchBox] =
     useState<google.maps.places.SearchBox | null>(null);
-  const [hospitals, setHospitals] = useState<Hospital[]>([]);
-  const [selectedHospital, setSelectedHospital] = useState<Hospital | null>(
-    null
-  );
+
+  const [hospitals, setHospitals] = useState<any[]>([]);
+
+  const [selectedHospital, setSelectedHospital] = useState<any | null>(null);
+
   const [center, setCenter] = useState({ lat: 9.0765, lng: 7.3986 }); // Abuja coordinates
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
 
+  const [facilityTypes, setFacilityTypes] = useState<
+    { id: string; name: string }[]
+  >([]);
+
+  const [facilityLevels, setFacilityLevel] = useState<any[]>([]);
+
+  const [fetchError, setFetchError] = useState<string>(""); // State for error
+
+  const [selectedFacilityLevel, setSelectedFacilityLevel] = useState("");
+  const [selectedFacilityType, setSelectedFacilityType] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const [data, setData] = useState([]); // Store API response
+  const [currentPage, setCurrentPage] = useState(1); // Track pagination
+  const [totalPages, setTotalPages] = useState(1); // Store total pages
+
+  const [search, setSearch] = useState("");
+
+  // const [directions, setDirections] = useState(null);
+  // const [directions, setDirections] = useState<null>(null);
+  const [directions, setDirections] =
+    useState<google.maps.DirectionsResult | null>(null);
+
+  const [directionsRenderer, setDirectionsRenderer] = useState(null);
+
+  const [directionsService, setDirectionsService] =
+    useState<google.maps.DirectionsService | null>(null);
+  const [userLocation, setUserLocation] =
+    useState<google.maps.LatLngLiteral | null>(null);
+
+  // Initialize Google Directions Service
+  const onMapLoad = (map: any) => {
+    setMap(map);
+    // setDirectionsService(new window.google.maps.DirectionsService());
+    setDirectionsService(() => new window.google.maps.DirectionsService());
+  };
+
   useEffect(() => {
-    console.log("Hospitals state updated:", hospitals);
+    if (selectedHospital) {
+      setCenter({
+        lat: selectedHospital.latitude,
+        lng: selectedHospital.longitude,
+      });
+
+      // Request directions from current location to selected hospital
+      const directionsService = new window.google.maps.DirectionsService();
+
+      if (!userLocation) {
+        console.error("User location is not available.");
+        return; // Exit the function early
+      }
+
+      directionsService.route(
+        {
+          origin: userLocation, // User's location
+          destination: {
+            lat: selectedHospital.latitude,
+            lng: selectedHospital.longitude,
+          },
+          travelMode: window.google.maps.TravelMode.DRIVING,
+        },
+        (result, status) => {
+          if (status === window.google.maps.DirectionsStatus.OK) {
+            if (result) {
+              setDirections(result);
+            }
+            // setDirections(result);
+          } else {
+            console.error("Error fetching directions", status);
+          }
+        }
+      );
+    }
+  }, [selectedHospital, userLocation]);
+
+  // Function to handle clicking "View Direction"
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        });
+        console.log(
+          "User Location Set:",
+          position.coords.latitude,
+          position.coords.longitude
+        );
+      },
+      (error) => console.error("Error getting location:", error),
+      { enableHighAccuracy: true }
+    );
+  }, []);
+
+  const handleGetDirections = (hospital: any) => {
+    if (!userLocation) {
+      console.error("User location not available yet.");
+      return;
+    }
+
+    if (!hospital || !hospital.latitude || !hospital.longitude) {
+      console.error("Invalid hospital data:", hospital);
+      return;
+    }
+
+    const destination = {
+      lat: parseFloat(hospital.latitude),
+      lng: parseFloat(hospital.longitude),
+    };
+
+    if (isNaN(destination.lat) || isNaN(destination.lng)) {
+      console.error("Invalid coordinates for hospital:", hospital);
+      return;
+    }
+
+    // console.log("Getting directions from:", userLocation, "to:", destination);
+
+    const directionsService = new google.maps.DirectionsService();
+
+    directionsService.route(
+      {
+        origin: userLocation, // Use current location
+        destination, // Use parsed coordinates
+        travelMode: google.maps.TravelMode.DRIVING,
+      },
+      (result, status) => {
+        if (status === google.maps.DirectionsStatus.OK) {
+          setDirections(result);
+          setCenter(destination); // Center map on selected hospital
+        } else {
+          console.error("Directions request failed:", status);
+        }
+      }
+    );
+  };
+
+  const fetchFacilitiesOLD = useCallback(async () => {
+    setLoading(true);
+    setFetchError("");
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_API}/facilities-hospitals-search2`,
+        {
+          facility_level_id: selectedFacilityLevel,
+          facility_type_id: selectedFacilityType,
+          facility_name: searchQuery,
+          search,
+        }
+      );
+
+      // console.log("record", response.data?.data?.facilities?.data);
+
+      // setData(response.data?.data?.facilities?.data);
+      setHospitals(response.data?.data?.facilities?.data);
+      setTotalPages(response.data?.data?.facilities?.last_page);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [selectedFacilityLevel, selectedFacilityType, searchQuery, search]);
+
+  const fetchFacilities = async (searchValues: {
+    facilityLevel?: string;
+    facilityType?: string;
+    search?: string;
+  }) => {
+    setLoading(true);
+    setFetchError("");
+
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_API}/facilities-hospitals-search2`,
+        {
+          facility_level_id: searchValues.facilityLevel,
+          facility_type_id: searchValues.facilityType,
+          facility_name: searchValues.search,
+        }
+      );
+
+      setHospitals(response.data?.data?.facilities?.data);
+      setTotalPages(response.data?.data?.facilities?.last_page);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch data from the API
+  const fetchFacilityTypes = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_API}/facility-type`
+      );
+
+      const data = response?.data?.data;
+      console.log("fetchFacilityTypes data", data);
+
+      if (data && Array.isArray(data)) {
+        setFacilityTypes(data);
+      }
+    } catch (error) {
+      setFetchError("Failed to fetch facility types.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const fetchFacilityLevels = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_API}/facility-level`
+      );
+
+      const data = response?.data?.data; // Axios automatically parses JSON
+      // console.log("data", data);
+
+      if (data && Array.isArray(data)) {
+        setFacilityLevel(data); // Set the options from the fetched data
+      }
+
+      console.log("fetchFacilityLevels data", data);
+    } catch (error) {
+      setFetchError("Failed to fetch facility types.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchFacilityTypes();
+    fetchFacilityLevels();
+  }, [fetchFacilityTypes, fetchFacilityLevels]);
+
+  useEffect(() => {
+    // console.log("Hospitals state updated:", hospitals);
   }, [hospitals]);
 
-  const searchNearbyHospitals = useCallback(
-    async (location: { lat: number; lng: number }) => {
-      if (!map) return;
+  const handleSearch = () => {
+    setLoading(true);
 
-      setLoading(true);
-      setError(null);
-      setHospitals([]); // Clear existing hospitals before new search
+    // Call fetchFacilities with selected values
+    fetchFacilities({
+      search,
+      facilityType: selectedFacilityType,
+      facilityLevel: selectedFacilityLevel,
+    });
 
-      try {
-        const service = new google.maps.places.PlacesService(map);
-        const request = {
-          location: new google.maps.LatLng(location.lat, location.lng),
-          radius: 5000,
-          type: "hospital",
-        };
-
-        service.nearbySearch(request, (results, status) => {
-          if (status === google.maps.places.PlacesServiceStatus.OK && results) {
-            console.log("Initial search results:", results);
-
-            const hospitalPromises = results.map(async (place) => {
-              return new Promise<Hospital>((resolve) => {
-                service.getDetails(
-                  {
-                    placeId: place.place_id!,
-                    fields: [
-                      "name",
-                      "formatted_address",
-                      "formatted_phone_number",
-                      "photos",
-                      "opening_hours",
-                      "rating",
-                    ],
-                  },
-                  (details, detailStatus) => {
-                    if (
-                      detailStatus ===
-                        google.maps.places.PlacesServiceStatus.OK &&
-                      details
-                    ) {
-                      resolve({
-                        id: place.place_id || `hospital-${Math.random()}`,
-                        name: details.name || "Unknown Hospital",
-                        address:
-                          details.formatted_address || "Address not available",
-                        lat: place.geometry?.location?.lat() || 0,
-                        lng: place.geometry?.location?.lng() || 0,
-                        rating: details.rating,
-                        openNow: details.opening_hours?.isOpen(),
-                        photoUrl: details.photos?.[0]?.getUrl({
-                          maxWidth: 300,
-                          maxHeight: 200,
-                        }),
-                        phoneNumber: details.formatted_phone_number,
-                        facilityType: "Primary Health Care (PHC)",
-                        plansAccepted: [
-                          "Exclusive Provider Organization (EPO)",
-                          "HMO",
-                          "Medi-Cal Managed Care",
-                          "Point-of-Service Plan (POS)",
-                          "Senior Advantage",
-                        ],
-                      });
-                    } else {
-                      resolve({
-                        id: place.place_id || `hospital-${Math.random()}`,
-                        name: place.name || "Unknown Hospital",
-                        address: place.vicinity || "Address not available",
-                        lat: place.geometry?.location?.lat() || 0,
-                        lng: place.geometry?.location?.lng() || 0,
-                        rating: place.rating,
-                        openNow: place.opening_hours?.isOpen(),
-                        photoUrl: place.photos?.[0]?.getUrl({
-                          maxWidth: 300,
-                          maxHeight: 200,
-                        }),
-                        facilityType: "Primary Health Care (PHC)",
-                        plansAccepted: [
-                          "Exclusive Provider Organization (EPO)",
-                          "HMO",
-                          "Medi-Cal Managed Care",
-                          "Point-of-Service Plan (POS)",
-                          "Senior Advantage",
-                        ],
-                      });
-                    }
-                  }
-                );
-              });
-            });
-
-            Promise.all(hospitalPromises)
-              .then((hospitalResults) => {
-                console.log("Setting hospitals:", hospitalResults);
-                setHospitals(hospitalResults);
-              })
-              .catch((error) => {
-                console.error("Error resolving hospital promises:", error);
-                setError("Error processing hospital data");
-              })
-              .finally(() => {
-                setLoading(false);
-              });
-          } else {
-            console.log("No results or error status:", status);
-            setError("No hospitals found in this area");
-            setLoading(false);
-          }
-        });
-      } catch (err) {
-        console.error("Search error:", err);
-        setError("Error searching for hospitals");
-        setLoading(false);
-      }
-    },
-    [map]
-  );
-
-  const onMapLoad = useCallback(
-    (map: google.maps.Map) => {
-      setMap(map);
-      if (searchInputRef.current) {
-        const searchBox = new google.maps.places.SearchBox(
-          searchInputRef.current
-        );
-        setSearchBox(searchBox);
-        map.addListener("bounds_changed", () => {
-          searchBox.setBounds(map.getBounds() as google.maps.LatLngBounds);
-        });
-
-        searchBox.addListener("places_changed", () => {
-          const places = searchBox.getPlaces();
-          if (!places || places.length === 0) return;
-
-          const bounds = new google.maps.LatLngBounds();
-          const place = places[0];
-
-          if (!place.geometry || !place.geometry.location) return;
-
-          const newCenter = {
-            lat: place.geometry.location.lat(),
-            lng: place.geometry.location.lng(),
-          };
-          setCenter(newCenter);
-          searchNearbyHospitals(newCenter);
-
-          if (place.geometry.viewport) {
-            bounds.union(place.geometry.viewport);
-          } else {
-            bounds.extend(place.geometry.location);
-          }
-
-          map.fitBounds(bounds);
-        });
-      }
-    },
-    [searchNearbyHospitals]
-  );
+    setLoading(false);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -227,22 +315,55 @@ function Facility() {
           </h1>
 
           <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+              {/* 🔍 Search Location */}
               <div className="relative lg:col-span-2">
                 <input
                   ref={searchInputRef}
                   type="text"
                   placeholder="Enter location"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
                   className="w-full p-3 pr-10 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 />
-                <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                {/* <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" /> */}
               </div>
-              <select className="p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
-                <option>Select type</option>
+
+              {/* 🏥 Facility Type */}
+              <select
+                value={selectedFacilityType}
+                onChange={(e) => setSelectedFacilityType(e.target.value)}
+                className="p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              >
+                <option value="">Select Facility Type</option>
+                {facilityTypes?.map((type) => (
+                  <option key={type.id} value={type.id}>
+                    {type.name}
+                  </option>
+                ))}
               </select>
-              <select className="p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
-                <option>Select category</option>
+
+              {/* 📊 Facility Level */}
+              <select
+                value={selectedFacilityLevel}
+                onChange={(e) => setSelectedFacilityLevel(e.target.value)}
+                className="p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              >
+                <option value="">Select Facility Level</option>
+                {facilityLevels?.map((level) => (
+                  <option key={level.id} value={level.id}>
+                    {level.name}
+                  </option>
+                ))}
               </select>
+
+              <GreenButton
+                onClick={handleSearch}
+                className="w-full max-w-[200px] h-[44px] flex items-center justify-center text-sm"
+              >
+                {loading ? "Loading..." : "Search Location"}
+              </GreenButton>
+
               <button className="flex items-center justify-center gap-2 p-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">
                 <SlidersHorizontal size={20} />
                 <span>More filters</span>
@@ -264,108 +385,83 @@ function Facility() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="space-y-4 max-h-[600px] overflow-y-auto">
-                {loading ? (
-                  <div className="text-center p-4">
-                    Searching for hospitals...
-                  </div>
-                ) : hospitals.length > 0 ? (
-                  hospitals.map((hospital) => (
-                    <div
-                      key={hospital.id}
-                      className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow"
-                      onClick={() => setSelectedHospital(hospital)}
-                    >
-                      <div className="flex gap-4 p-4">
-                        {/* <img
-                          src={
-                            hospital.photoUrl ||
-                            "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=300&h=200&fit=crop"
-                          }
-                          alt={hospital.name}
-                          className="w-24 h-24 object-cover rounded-lg"
-                        /> */}
+              <div className={`flex-1`}>
+                {hospitals.slice(0, 2).map((hospital) => {
+                  const imageUrl =
+                    Array.isArray(hospital.image_url) &&
+                    hospital.image_url.length > 0
+                      ? hospital.image_url[0]
+                      : "/gh1.svg";
 
-                        <Image
-                          src={
-                            hospital.photoUrl ||
-                            "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=300&h=200&fit=crop"
-                          }
-                          alt={hospital.name}
-                          className="w-24 h-24 object-cover rounded-lg"
-                          priority
-                        />
-
-                        <div className="flex-1">
-                          <div className="flex justify-between items-start">
-                            <h3 className="font-semibold text-gray-900">
-                              {hospital.name}
-                            </h3>
-                            <button className="text-gray-400 hover:text-gray-600">
-                              <Copy size={16} />
-                            </button>
-                          </div>
-                          <div className="flex items-start mt-1 text-gray-600 text-sm">
-                            <MapPin className="w-4 h-4 mt-1 mr-2 flex-shrink-0" />
-                            <p>{hospital.address}</p>
-                          </div>
-                          <div className="mt-2">
-                            <div className="text-sm text-gray-600">
-                              <span className="font-medium">Contact Info:</span>
-                              <span className="ml-2">
-                                {hospital.phoneNumber || "Not available"}
-                              </span>
-                            </div>
-                            <div className="text-sm text-gray-600">
-                              <span className="font-medium">
-                                Facility Type:
-                              </span>
-                              <span className="ml-2">
-                                {hospital.facilityType}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="mt-2 flex flex-wrap gap-2">
-                            <span
-                              className={`text-sm px-2 py-1 rounded ${
-                                hospital.openNow
-                                  ? "bg-green-100 text-green-800"
-                                  : "bg-red-100 text-red-800"
-                              }`}
-                            >
-                              {hospital.openNow ? "Open" : "Closed"}
-                            </span>
-                            {hospital.rating && (
-                              <span className="text-sm text-gray-600 bg-gray-100 px-2 py-1 rounded">
-                                Rating: {hospital.rating} ⭐
-                              </span>
-                            )}
-                          </div>
+                  return (
+                    <Card key={hospital.id} className="mb-4 p-8">
+                      {/* Responsive Grid: Image on top for small screens, side-by-side for large screens */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+                        {/* Hospital Image - Takes full width on small screens, half width on larger screens */}
+                        <div className="w-full h-[250px] flex items-center">
+                          <Image
+                            src={imageUrl}
+                            width={250}
+                            height={150}
+                            alt={hospital.facility_name ?? "N/A"}
+                            className="object-cover w-full h-full rounded-lg"
+                          />
                         </div>
-                      </div>
-                      <div className="px-4 pb-4">
-                        <div className="text-sm text-gray-600">
-                          <span className="font-medium">Plans accepted:</span>
-                          <p className="mt-1 text-gray-500">
-                            {hospital.plansAccepted?.join(", ")}
+
+                        {/* Hospital Details - Below image on small screens, beside it on large screens */}
+                        <div className="flex flex-col gap-4">
+                          <h2 className="text-lg font-semibold">
+                            {hospital.facility_name ?? "N/A"}
+                          </h2>
+                          <p className="text-sm text-gray-600">
+                            {hospital.address ?? "N/A"}
                           </p>
-                        </div>
-                        <div className="mt-3 flex gap-2">
-                          <button className="text-green-600 text-sm hover:text-green-700">
-                            View direction
-                          </button>
-                          <button className="text-green-600 text-sm hover:text-green-700">
-                            View more details
-                          </button>
+                          <p className="text-sm text-gray-600">
+                            Contact info: {hospital.phone_number ?? "N/A"}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            Plans accepted: Exclusive Provider Organization
+                            (EPO), HMO, Medi-Cal Managed Care, Point-of-Service
+                            Plan (POS), Senior Advantage
+                          </p>
+
+                          {/* Buttons */}
+                          <div className="flex space-x-4">
+                            <a
+                              href="javascript:void(0)"
+                              rel="noopener noreferrer"
+                              type="button"
+                              className="text-green-600 font-semibold text-center"
+                              onClick={() => handleGetDirections(hospital)}
+                            >
+                              View Direction
+                            </a>
+
+                            <a
+                              href="javascript:void(0)"
+                              rel="noopener noreferrer"
+                              type="button"
+                              className="text-green-600 font-semibold text-center"
+                              onClick={(e) => {
+                                e.preventDefault(); // Prevent full page reload
+                                router.push(
+                                  `/facilityfinder/details/${hospital.id}`
+                                );
+                              }}
+
+                              // onClick={(e) => {
+                              //   e.preventDefault();
+                              //   handleViewDetails(hospital);
+                              // }}
+                            >
+                              View Details
+                            </a>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-center p-4 text-gray-500">
-                    {error || "Enter a location to search for hospitals"}
-                  </div>
-                )}
+                    </Card>
+                  );
+                })}
               </div>
 
               <div className="h-[600px] rounded-lg overflow-hidden">
@@ -378,40 +474,50 @@ function Facility() {
                   <GoogleMap
                     mapContainerClassName="w-full h-full"
                     center={center}
-                    zoom={13}
-                    onLoad={onMapLoad}
+                    zoom={15}
                   >
-                    {hospitals.map((hospital) => (
-                      <Marker
-                        key={hospital.id}
-                        position={{ lat: hospital.lat, lng: hospital.lng }}
-                        onClick={() => setSelectedHospital(hospital)}
-                      />
-                    ))}
+                    {/* User's Location Marker */}
+                    {/* <Marker position={userLocation} label="You" /> */}
+                    {userLocation && (
+                      <Marker position={userLocation} label="You" />
+                    )}
 
+                    {/* Selected Hospital Marker */}
+                    {selectedHospital && (
+                      <Marker
+                        key={selectedHospital.id}
+                        position={{
+                          lat: selectedHospital.latitude,
+                          lng: selectedHospital.longitude,
+                        }}
+                        onClick={() => setSelectedHospital(selectedHospital)}
+                      />
+                    )}
+
+                    {/* Route Line */}
+                    {directions && (
+                      <DirectionsRenderer directions={directions} />
+                    )}
+
+                    {/* InfoWindow for Selected Hospital */}
                     {selectedHospital && (
                       <InfoWindow
                         position={{
-                          lat: selectedHospital.lat,
-                          lng: selectedHospital.lng,
+                          lat: selectedHospital.latitude,
+                          lng: selectedHospital.longitude,
                         }}
                         onCloseClick={() => setSelectedHospital(null)}
                       >
                         <div className="p-2">
                           <h3 className="font-bold mb-2">
-                            {selectedHospital.name}
+                            {selectedHospital.facility_name}
                           </h3>
                           <p className="text-sm mb-1">
                             {selectedHospital.address}
                           </p>
-                          {selectedHospital.phoneNumber && (
+                          {selectedHospital.phone_number && (
                             <p className="text-sm text-blue-600">
-                              {selectedHospital.phoneNumber}
-                            </p>
-                          )}
-                          {selectedHospital.rating && (
-                            <p className="text-sm mt-1">
-                              Rating: {selectedHospital.rating} ⭐
+                              {selectedHospital.phone_number}
                             </p>
                           )}
                         </div>

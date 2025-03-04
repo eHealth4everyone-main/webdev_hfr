@@ -17,6 +17,10 @@ export const NavLinks = [
     navitem: "Contact Us",
     link: "/contact-us",
   },
+  {
+    navitem: "Finders",
+    link: "/facilityfinder",
+  },
 ];
 
 export const navData = [
