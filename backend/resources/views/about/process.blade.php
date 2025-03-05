@@ -24,13 +24,13 @@
                     <div class="mb-5">
                         <label for="title" class="form-label">Title</label>
                         <input type="text" class="form-control" id="title" aria-describedby=""
-                            value="{{ $aboutProcess->title }}" name="title">
+                            value="{{ $aboutProcess ? $aboutProcess->title : '' }}" name="title">
                     </div>
                     <br>
 
                     <div class="mb-3">
                         <label for="content" class="form-label">Description</label>
-                        <div id="content">{!! $aboutProcess->content !!}</div> <!-- Quill Editor -->
+                        <div id="content">{!! $aboutProcess ? $aboutProcess->content : '' !!}</div> <!-- Quill Editor -->
                         <input type="hidden" name="content" id="hiddenContent"> <!-- Hidden input -->
                     </div>
 
@@ -265,7 +265,10 @@
         });
 
         // Set initial content from the database
-        var initialContent = `{!! addslashes($aboutProcess->content) !!}`;
+        // var initialContent = `{!! addslashes($aboutProcess->content) !!}`;
+        // Check if $aboutOrigin exists before using its content
+        var initialContent = `{!! isset($aboutProcess) ? addslashes($aboutProcess->content) : '' !!}`;
+
         quill.root.innerHTML = initialContent;
 
         // Set the hidden input immediately after Quill is initialized
