@@ -34,7 +34,6 @@ import { useRouter } from "next/navigation";
 // import { useRouter } from "next/router";
 
 const libraries: "places"[] = ["places"];
-const itemsPerPage = 2;
 
 function Facility() {
   const { push } = useRouter();
@@ -65,9 +64,11 @@ function Facility() {
 
   const [selectedFacilityLevel, setSelectedFacilityLevel] = useState("");
   const [selectedFacilityType, setSelectedFacilityType] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
+  const [data, setData] = useState([]); // Store API response
   const [currentPage, setCurrentPage] = useState(1); // Track pagination
-  const [totalPages1, setTotalPages] = useState(1); // Store total pages
+  const [totalPages, setTotalPages] = useState(1); // Store total pages
 
   const [search, setSearch] = useState("");
 
@@ -189,36 +190,48 @@ function Facility() {
     );
   };
 
-  // Calculate total pages
-  const totalPages = Math.ceil(hospitals.length / itemsPerPage);
+  const fetchFacilitiesOLD = useCallback(async () => {
+    setLoading(true);
+    setFetchError("");
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_API}/facilities-hospitals-search2`,
+        {
+          facility_level_id: selectedFacilityLevel,
+          facility_type_id: selectedFacilityType,
+          facility_name: searchQuery,
+          search,
+        }
+      );
 
-  // Get hospitals for the current page
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentHospitals = hospitals.slice(indexOfFirstItem, indexOfLastItem);
+      // console.log("record", response.data?.data?.facilities?.data);
 
-  const fetchFacilities = async (
-    searchValues: {
-      facilityLevel?: string;
-      facilityType?: string;
-      search?: string;
-    } = {}
-  ) => {
+      // setData(response.data?.data?.facilities?.data);
+      setHospitals(response.data?.data?.facilities?.data);
+      setTotalPages(response.data?.data?.facilities?.last_page);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [selectedFacilityLevel, selectedFacilityType, searchQuery, search]);
+
+  const fetchFacilities = async (searchValues: {
+    facilityLevel?: string;
+    facilityType?: string;
+    search?: string;
+  }) => {
     setLoading(true);
     setFetchError("");
 
     try {
-      // Build request body dynamically
-      const requestBody: any = {};
-      if (searchValues.facilityLevel)
-        requestBody.facility_level_id = searchValues.facilityLevel;
-      if (searchValues.facilityType)
-        requestBody.facility_type_id = searchValues.facilityType;
-      if (searchValues.search) requestBody.facility_name = searchValues.search;
-
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BACKEND_API}/facilities-hospitals-search2`,
-        requestBody
+        {
+          facility_level_id: searchValues.facilityLevel,
+          facility_type_id: searchValues.facilityType,
+          facility_name: searchValues.search,
+        }
       );
 
       setHospitals(response.data?.data?.facilities?.data);
@@ -280,11 +293,6 @@ function Facility() {
     // console.log("Hospitals state updated:", hospitals);
   }, [hospitals]);
 
-  // 🚀 Fetch all hospitals when component mounts
-  useEffect(() => {
-    fetchFacilities(); // Fetch all hospitals by default
-  }, []);
-
   const handleSearch = () => {
     setLoading(true);
 
@@ -307,7 +315,7 @@ function Facility() {
           </h1>
 
           <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-8 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
               {/* 🔍 Search Location */}
               <div className="relative lg:col-span-2">
                 <input
@@ -322,46 +330,39 @@ function Facility() {
               </div>
 
               {/* 🏥 Facility Type */}
-              <div className="lg:col-span-2">
-                <select
-                  value={selectedFacilityType}
-                  onChange={(e) => setSelectedFacilityType(e.target.value)}
-                  className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                >
-                  <option value="">Select Facility Type</option>
-                  {facilityTypes?.map((type) => (
-                    <option key={type.id} value={type.id}>
-                      {type.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <select
+                value={selectedFacilityType}
+                onChange={(e) => setSelectedFacilityType(e.target.value)}
+                className="p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              >
+                <option value="">Select Facility Type</option>
+                {facilityTypes?.map((type) => (
+                  <option key={type.id} value={type.id}>
+                    {type.name}
+                  </option>
+                ))}
+              </select>
 
               {/* 📊 Facility Level */}
-              <div className="lg:col-span-2">
-                <select
-                  value={selectedFacilityLevel}
-                  onChange={(e) => setSelectedFacilityLevel(e.target.value)}
-                  className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                >
-                  <option value="">Select Facility Level</option>
-                  {facilityLevels?.map((level) => (
-                    <option key={level.id} value={level.id}>
-                      {level.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <select
+                value={selectedFacilityLevel}
+                onChange={(e) => setSelectedFacilityLevel(e.target.value)}
+                className="p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              >
+                <option value="">Select Facility Level</option>
+                {facilityLevels?.map((level) => (
+                  <option key={level.id} value={level.id}>
+                    {level.name}
+                  </option>
+                ))}
+              </select>
 
-              {/* 🔍 Search Button */}
-              <div className="lg:col-span-2 flex items-center">
-                <GreenButton
-                  onClick={handleSearch}
-                  className="w-full h-[44px] flex items-center justify-center text-sm"
-                >
-                  {loading ? "Loading..." : "Search Location"}
-                </GreenButton>
-              </div>
+              <GreenButton
+                onClick={handleSearch}
+                className="w-full max-w-[200px] h-[44px] flex items-center justify-center text-sm"
+              >
+                {loading ? "Loading..." : "Search Location"}
+              </GreenButton>
 
               {/* <button className="flex items-center justify-center gap-2 p-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">
                 <SlidersHorizontal size={20} />
@@ -373,7 +374,7 @@ function Facility() {
               <p className="text-gray-700">
                 {hospitals.length} healthcare facilities found in your area
               </p>
-              <div className="flex gap-2">
+              <div className="flex gap-1">
                 <button className="p-2 bg-gray-900 text-white rounded-lg">
                   <Menu size={20} />
                 </button>
@@ -384,9 +385,8 @@ function Facility() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* <div className={`flex-1`}>
+              <div className={`flex-1`}>
                 {hospitals.slice(0, 2).map((hospital) => {
-                 
                   const imageUrl =
                     Array.isArray(hospital.image_url) &&
                     hospital.image_url.length > 0
@@ -395,9 +395,9 @@ function Facility() {
 
                   return (
                     <Card key={hospital.id} className="mb-4 p-8">
-                      
+                      {/* Responsive Grid: Image on top for small screens, side-by-side for large screens */}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-                       
+                        {/* Hospital Image - Takes full width on small screens, half width on larger screens */}
                         <div className="w-full h-[250px] flex items-center">
                           <Image
                             src={imageUrl}
@@ -408,7 +408,7 @@ function Facility() {
                           />
                         </div>
 
-                        
+                        {/* Hospital Details - Below image on small screens, beside it on large screens */}
                         <div className="flex flex-col gap-4">
                           <h2 className="text-lg font-semibold">
                             {hospital.facility_name ?? "N/A"}
@@ -425,82 +425,12 @@ function Facility() {
                             Plan (POS), Senior Advantage
                           </p>
 
-                         
-                          <div className="flex space-x-4">
-                            <a
-                              href="javascript:void(0)"
-                              rel="noopener noreferrer"
-                              type="button"
-                              className="text-green-600 font-semibold text-center"
-                              onClick={() => handleGetDirections(hospital)}
-                            >
-                              View Direction
-                            </a>
-
-                            <a
-                              href="javascript:void(0)"
-                              rel="noopener noreferrer"
-                              type="button"
-                              className="text-green-600 font-semibold text-center"
-                              onClick={(e) => {
-                                e.preventDefault(); 
-                                router.push(
-                                  `/facilityfinder/details/${hospital.id}`
-                                );
-                              }}
-                            >
-                              View Details
-                            </a>
-                          </div>
-                        </div>
-                      </div>
-                    </Card>
-                  );
-                })}
-              </div> */}
-
-              <div className="flex-1">
-                {currentHospitals.map((hospital) => {
-                  const imageUrl =
-                    Array.isArray(hospital.image_url) &&
-                    hospital.image_url.length > 0
-                      ? hospital.image_url[0]
-                      : "/gh1.svg";
-
-                  return (
-                    <Card key={hospital.id} className="mb-4 p-8">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-                        {/* Image */}
-                        <div className="w-full h-[250px] flex items-center">
-                          <Image
-                            src={imageUrl}
-                            width={250}
-                            height={150}
-                            alt={hospital.facility_name ?? "N/A"}
-                            className="object-cover w-full h-full rounded-lg"
-                          />
-                        </div>
-
-                        {/* Details */}
-                        <div className="flex flex-col gap-4">
-                          <h2 className="text-lg font-semibold">
-                            {hospital.facility_name ?? "N/A"}
-                          </h2>
-                          <p className="text-sm text-gray-600">
-                            {hospital.address ?? "N/A"}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            Contact info: {hospital.phone_number ?? "N/A"}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            Plans accepted: EPO, HMO, Medi-Cal Managed Care,
-                            POS, Senior Advantage
-                          </p>
-
                           {/* Buttons */}
                           <div className="flex space-x-4">
                             <a
                               href="javascript:void(0)"
+                              rel="noopener noreferrer"
+                              type="button"
                               className="text-green-600 font-semibold text-center"
                               onClick={() => handleGetDirections(hospital)}
                             >
@@ -509,13 +439,20 @@ function Facility() {
 
                             <a
                               href="javascript:void(0)"
+                              rel="noopener noreferrer"
+                              type="button"
                               className="text-green-600 font-semibold text-center"
                               onClick={(e) => {
-                                e.preventDefault();
+                                e.preventDefault(); // Prevent full page reload
                                 router.push(
                                   `/facilityfinder/details/${hospital.id}`
                                 );
                               }}
+
+                              // onClick={(e) => {
+                              //   e.preventDefault();
+                              //   handleViewDetails(hospital);
+                              // }}
                             >
                               View Details
                             </a>
@@ -525,41 +462,6 @@ function Facility() {
                     </Card>
                   );
                 })}
-
-                {/* Pagination Controls */}
-                <div className="flex justify-center items-center gap-4 mt-6">
-                  <button
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.max(prev - 1, 1))
-                    }
-                    disabled={currentPage === 1}
-                    className={`px-4 py-2 border rounded ${
-                      currentPage === 1
-                        ? "opacity-50 cursor-not-allowed"
-                        : "hover:bg-gray-100"
-                    }`}
-                  >
-                    Previous
-                  </button>
-
-                  <span className="text-gray-600">
-                    Page {currentPage} of {totalPages}
-                  </span>
-
-                  <button
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                    }
-                    disabled={currentPage === totalPages}
-                    className={`px-4 py-2 border rounded ${
-                      currentPage === totalPages
-                        ? "opacity-50 cursor-not-allowed"
-                        : "hover:bg-gray-100"
-                    }`}
-                  >
-                    Next
-                  </button>
-                </div>
               </div>
 
               <div className="h-[600px] rounded-lg overflow-hidden">

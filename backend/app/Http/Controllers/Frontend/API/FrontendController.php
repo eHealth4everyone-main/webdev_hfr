@@ -1167,18 +1167,18 @@ class FrontendController extends Controller
             ->where(DB::raw("IFNULL(hs_hospitals_history.latitude, '')"), $cond, $value)
             ->whereIn('hs_hospitals_history.id', $hospitalIds)
 
-            // ->orderBy('hs_hospitals_history.state_id')
-            // ->orderBy('hs_hospitals_history.lga_id')
-            // ->orderBy('hs_hospitals_history.ward_id')
-            // ->orderBy('hs_hospitals_history.facility_name')
-            ->orderBy('hs_hospitals_history.created_at', 'desc')
+            ->orderBy('hs_hospitals_history.state_id')
+            ->orderBy('hs_hospitals_history.lga_id')
+            ->orderBy('hs_hospitals_history.ward_id')
+            ->orderBy('hs_hospitals_history.facility_name')
+            // ->orderBy('hs_hospitals_history.created_at', 'desc')
 
             // ->orderBy('hs_hospitals_history.state_id', 'desc')
             // ->orderBy('hs_hospitals_history.lga_id', 'desc')
             // ->orderBy('hs_hospitals_history.ward_id', 'desc')
             // ->orderBy('hs_hospitals_history.facility_name', 'desc')
             // ->paginate(10)
-            ->paginate(1000)
+            ->paginate(1000000)
             ->appends($request->all());
 
 
