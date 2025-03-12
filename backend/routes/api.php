@@ -25,9 +25,8 @@ Route::group(['middleware' => 'cors'], function () {
     Route::get('origin', [FrontendController::class, 'origin']);
     Route::get('process', [FrontendController::class, 'process']);
     Route::get('process-item', [FrontendController::class, 'processItem']);
+
     Route::get('facility-type', [FrontendController::class, 'facilityType']);
-
-
     Route::get('facility-level', [FrontendController::class, 'facilityLevel']);
 
     Route::get('states', [FrontendController::class, 'states']);
@@ -48,6 +47,8 @@ Route::group(['middleware' => 'cors'], function () {
 
 
     Route::post('facilities-hospitals-search/{page?}', [FrontendController::class, 'searchHospitals']);
+    Route::get('facilities-hospital/{facilityId}', [FrontendController::class, 'HospitalDetail']);
+    Route::post('facilities-hospitals-search2/{page?}', [FrontendController::class, 'searchHospitals2']);
     Route::post('facilities/pharmacies-list/{page?}', [FrontendController::class, 'searchPharmacy']);
     Route::post('facilities/lab-list/{page?}', [FrontendController::class, 'searchLab']);
     Route::post('facilities/imaging-list/{page?}', [FrontendController::class, 'searchImaging']);

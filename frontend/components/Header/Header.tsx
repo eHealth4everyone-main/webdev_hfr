@@ -79,9 +79,15 @@ const Header = () => {
               alt="cart"
               className="cursor-pointer"
             />
-            <Link href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/login`}>
+            <Link
+              href={
+                process.env.NEXT_PUBLIC_BACKEND_URL
+                  ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/login`
+                  : "/login"
+              }
+            >
               <button className="hover:text-[#202020] text-[#4F4D55] bg-[transparent]">
-                Login 
+                Login
               </button>
             </Link>
           </Flex>

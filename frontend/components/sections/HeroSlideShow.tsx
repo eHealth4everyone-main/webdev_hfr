@@ -32,7 +32,7 @@ const HeroSlideShow = () => {
           `${process.env.NEXT_PUBLIC_BACKEND_API}/slider`
         );
 
-        console.error("API response is not an array:", response.data.data);
+        // console.error("API response is not an array:", response.data.data);
         setSwiperData(response.data.data); // Assuming the backend returns an array of slider items
         setLoading(false);
       } catch (error) {
