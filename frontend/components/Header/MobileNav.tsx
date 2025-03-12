@@ -27,7 +27,13 @@ export const MobileNav = () => {
         marginTop={"1rem"}
         alignItems={"left"}
       >
-        <Link href={"/login"}>
+        <Link
+          href={
+            process.env.NEXT_PUBLIC_BACKEND_URL
+              ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/login`
+              : "/login"
+          }
+        >
           <Button
             className="btn btn-md rounded-md hover:text-[#fff] hover:bg-[#078586] hover:border-[#fff] btn-outline text-[#4F4D55] bg-[transparent] border-2 border-[#E6E6E6] w-[180px]"
             variant="outline"

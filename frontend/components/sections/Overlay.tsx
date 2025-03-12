@@ -1,3 +1,5 @@
+"use client"; // Ensure this is the first line
+
 import React, { useCallback, useEffect, useState } from "react";
 import { GreenButton, Text } from "../ui/Typography";
 import Input from "../ui/Input";
@@ -5,15 +7,24 @@ import SelectComponent from "../ui/SelectComponent";
 import SelectComponent2 from "../ui/SelectComponent2";
 import axios from "axios";
 
-const Overlay = () => {
-  // const [facilityTypes, setFacilityTypes] = useState<string[]>([]); // State to store options
-  const [facilityTypes, setFacilityTypes] = useState<{ id: string; name: string }[]>([]);
+// import { useRouter } from "next/router"; // Import Next.js Router
+import { useRouter } from "next/navigation";
 
-  // const [facilityLevels, setFacilityLevel] = useState([]);
+const Overlay = () => {
+  const [isClient, setIsClient] = useState(false);
+  const router = useRouter();
+
+  const [facilityTypes, setFacilityTypes] = useState<any[]>([]);
   const [facilityLevels, setFacilityLevel] = useState<any[]>([]);
 
   const [loading, setLoading] = useState<boolean>(true); // State for loading state
   const [fetchError, setFetchError] = useState<string>(""); // State for error
+
+  const [search, setSearch] = useState("");
+  const [selectedFacilityLevel, setSelectedFacilityLevel] = useState("");
+  const [selectedFacilityType, setSelectedFacilityType] = useState("");
+  const [hospitals, setHospitals] = useState<any[]>([]);
+  const [totalPages, setTotalPages] = useState(1); // Store total pages
 
   // Fetch data from the API
   const fetchFacilityTypes = useCallback(async () => {
@@ -59,7 +70,41 @@ const Overlay = () => {
     fetchFacilityLevels(); // Call the function to fetch data
   }, [fetchFacilityTypes, fetchFacilityLevels]); // Empty dependency array ensures it runs only once on component mount
 
-  // console.log("facilityTypes", facilityTypes);
+  const handleSearch = async () => {
+    setLoading(true);
+
+    const searchValues = {
+      search: search || "",
+      facilityType: selectedFacilityType || "",
+      facilityLevel: selectedFacilityLevel || "",
+    };
+
+    try {
+      // Fetch the facilities from the backend
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_API}/facilities-hospitals-search2`,
+        {
+          facility_level_id: searchValues.facilityLevel,
+          facility_type_id: searchValues.facilityType,
+          facility_name: searchValues.search,
+        }
+      );
+
+      const facilities = response.data?.data?.facilities?.data || [];
+
+      // Store search results and parameters in localStorage BEFORE navigating
+      localStorage.setItem("searchResults", JSON.stringify(facilities));
+      localStorage.setItem("searchParams", JSON.stringify(searchValues));
+
+      // Now, navigate to FacilityFinder page
+      const queryParams = new URLSearchParams(searchValues).toString();
+      router.push(`/facilityfinder?${queryParams}`);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="w-full bg-[#F5F7FA] mx-auto lg:w-[1200px] rounded-lg md:h-[268px] mt-[-7rem] z-50 pt-[1rem] flex flex-col justify-center items-center">
@@ -71,28 +116,37 @@ const Overlay = () => {
         Search for Health Facilities Close To You
       </Text>
       <div className="grid grid-cols-1 md:grid-cols-2 md:justify-items-center lg:flex lg:flex-row mx-[1rem] lg:mx-[0] justify-center items-center gap-[1rem] mt-[1rem]">
-        <Input className="mt-[-.3rem]" placeholder="Input your location" />
+        <Input
+          className="mt-[-.3rem]"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Input your location"
+        />
 
         <SelectComponent
           options={facilityTypes?.map((type) => ({
             value: type.id, // Use type ID
             name: type.name, // Show type name
           }))}
+          value={selectedFacilityType}
+          onChange={(e) => setSelectedFacilityType(e.target.value)}
           error={fetchError}
           placeholder="Select Facility Type"
         />
 
         <SelectComponent
-          // options={facilityLevels}
+          value={selectedFacilityLevel}
+          onChange={(e) => setSelectedFacilityLevel(e.target.value)}
           options={facilityLevels.map((level) => ({
             value: level.id, // Use level ID
             name: level.name, // Show level name
           }))}
-          // loading={loading}
           error={fetchError}
           placeholder="Select Facility Level"
         />
-        <GreenButton className="w-[250px] p-3">Search</GreenButton>
+        <GreenButton onClick={handleSearch} className="w-[250px] p-3">
+          Search
+        </GreenButton>
       </div>
     </div>
   );

@@ -28,6 +28,10 @@ const nextConfig = {
         hostname: process.env.NEXT_PUBLIC_SITE_URL || "your-production-domain.com",
         pathname: "/**",
       },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      }
     ],
   },
 };
