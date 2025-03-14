@@ -51,11 +51,27 @@ const Footer = () => {
           <Text className="font-[600]">Get in touch</Text>
           <div className="font-[400] flex gap-[.5rem]">
             <CiMail color="#fff" fontSize={24} />
-            <Text>hfr@health.gov.ng</Text>
+            <Text>
+              <a
+                href="mailto:hfr@health.gov.ng"
+                className="text-white hover:underline"
+              >
+                hfr@health.gov.ng
+              </a>
+            </Text>
           </div>
           <div className="font-[400] flex gap-[.5rem]">
             <CiGlobe color="#fff" fontSize={24} />
-            <Text>https://hfr.health.gov.ng</Text>
+            <Text>
+              <a
+                href="https://hfr.health.gov.ng"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white hover:underline"
+              >
+                https://hfr.health.gov.ng
+              </a>
+            </Text>
           </div>
           <div className="font-[400] flex gap-[.5rem]">
             <FaLocationDot color="#fff" fontSize={24} />

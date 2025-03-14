@@ -3,6 +3,7 @@ import { FaArrowRight, FaLocationDot } from "react-icons/fa6";
 import { useRouter, usePathname } from "next/navigation";
 import AvatarGroup from "../ui/Avatar";
 import Image from "next/image";
+import Link from "next/link";
 
 type BannerProps = {
   image_url: string;
@@ -84,9 +85,11 @@ const MainPageBanner = ({ items, index }: itemsProps) => {
               <FaLocationDot color="#fff" fontSize={24} />
               <p
                 className="text-[#fff] font-[400]"
-                onClick={() => push("/facilityfinder")}
+                // onClick={() => push("/facilityfinder")}
               >
-                Find Now
+                <Link href="/facilityfinder" passHref>
+                  Find Now
+                </Link>
               </p>
             </div>
           </div>

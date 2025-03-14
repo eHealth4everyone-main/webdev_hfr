@@ -1,6 +1,7 @@
 import Image from "next/image";
 import SectionContainer from "../ui/SectionContainer";
 import { Text } from "../ui/Typography";
+import Link from "next/link";
 
 export const InteractiveSearch = () => {
   return (
@@ -8,7 +9,12 @@ export const InteractiveSearch = () => {
       <div className="flex flex-col lg:flex-row md:justify-center items-center gap-[3rem]">
         <div className="flex flex-col gap-[1rem] p-4">
           <Text className="font-[600] md:text-center lg:text-start">
-            Interactive <span className="text-[#5CB85C]">Search & Filter</span>
+            Interactive{" "}
+            <span className="text-[#5CB85C]">
+              <Link href="/facilitieslist" passHref>
+                Search & Filter
+              </Link>
+            </span>
           </Text>
 
           <Text className="font-[400] w-full md:text-center lg:text-start lg:w-[440px]">
@@ -53,7 +59,12 @@ export const PublicResources = () => {
       <div className="flex flex-col lg:flex-row md:justify-center items-center gap-[3rem]">
         <div className="flex flex-col gap-[1rem]">
           <Text className="font-[600] md:text-center lg:text-start p-4 md:p-0">
-            Public <span className="text-[#5CB85C]">Resources</span>
+            Public{" "}
+            <span className="text-[#5CB85C]">
+              <Link href="/resources" passHref>
+                Resources
+              </Link>
+            </span>
           </Text>
 
           <Text className="font-[400]  w-full lg:w-[440px] md:text-center lg:text-start p-4 md:p-0">

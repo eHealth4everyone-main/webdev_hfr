@@ -168,7 +168,7 @@ function Facility() {
       return;
     }
 
-    // console.log("Getting directions from:", userLocation, "to:", destination);
+    console.log("Getting directions from:", userLocation, "to:", destination);
 
     const directionsService = new google.maps.DirectionsService();
 
@@ -313,7 +313,7 @@ function Facility() {
                 <input
                   ref={searchInputRef}
                   type="text"
-                  placeholder="Enter location"
+                  placeholder="Enter location or facility name"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="w-full p-3 pr-10 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"

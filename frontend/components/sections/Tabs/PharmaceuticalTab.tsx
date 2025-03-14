@@ -46,6 +46,8 @@ const Pharmaceutical = () => {
   const [search, setSearch] = useState("");
   const [filteredData, setFilteredData] = useState(data);
 
+  const [entriesPerPage, setEntriesPerPage] = useState(10);
+
   const fetchFacilities3 = useCallback(async () => {
     setLoading(true);
     setFetchError("");
@@ -56,14 +58,10 @@ const Pharmaceutical = () => {
           state_id: selectedState,
           lga_id: selectedLga,
           ward_id: selectedWard,
-          // facility_level_id: selectedFacilityLevel,
           ownership_id: selectedownership,
           operational_status_id: selectedOperational,
           registration_status_id: selectedRegistration,
           license_status_id: selectedLicense,
-          // outpatient: selectedServiceType ? 1 : 0,
-          // inpatient: selectedServiceType ? 1 : 0,
-          // facility_name: searchQuery,
           page: currentPage,
         }
       );
@@ -317,26 +315,9 @@ const Pharmaceutical = () => {
     setSelectedServiceCategory("");
     setSelectedService("");
     setSelectedGeoCode("");
+    setSearch("");
     // setSelectedServiceType("");
   };
-
-  // useEffect(() => {
-  //   fetchStates();
-  //   facilityLevel();
-  //   ownership();
-  //   operational();
-  //   registrationStatus();
-  //   license();
-  //   serviceCategory();
-  // }, [
-  //   fetchStates,
-  //   facilityLevel,
-  //   ownership,
-  //   operational,
-  //   registrationStatus,
-  //   license,
-  //   serviceCategory,
-  // ]);
 
   useEffect(() => {
     fetchStates3();
@@ -376,6 +357,30 @@ const Pharmaceutical = () => {
       fetchFacilities3();
     }
   }, [currentPage, fetchFacilities3]); // Runs when `currentPage` changes
+
+  const fetchFacilities34 = useCallback(async () => {
+    setLoading(true);
+    setFetchError("");
+
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_API}/facilities/pharmacies-list`,
+        {
+          facility_name: search, // Include facility name search
+          per_page: entriesPerPage, // Send number of entries per page
+          page: currentPage,
+        }
+      );
+
+      setData(response.data?.data?.facilities?.data);
+      setTotalPages(response.data?.data?.facilities?.last_page);
+    } catch (error) {
+      setFetchError("Failed to fetch hospitals");
+      console.error("Error fetching hospitals:", error);
+    }
+
+    setLoading(false);
+  }, [search, entriesPerPage, currentPage]);
 
   return (
     <div>
@@ -507,6 +512,8 @@ const Pharmaceutical = () => {
         <Input
           className="w-full max-w-[700px] h-[55px] text-sm"
           placeholder="Facility Name"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
         />
 
         {/* Reset Button */}
@@ -523,7 +530,7 @@ const Pharmaceutical = () => {
         </GreenButton> */}
 
         <GreenButton
-          onClick={fetchFacilities3}
+          onClick={fetchFacilities34}
           className="bg-[#5BBA62] w-full max-w-[200px] h-[44px] flex items-center justify-center text-sm"
         >
           {loading ? "Loading..." : "Search"}
