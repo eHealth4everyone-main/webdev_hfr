@@ -8,7 +8,7 @@
          <!-- sidebar menu: : style can be found in sidebar.less -->
          <ul class="sidebar-menu" data-widget="tree">
              <li>
-                 <a target="_blank" rel="noopener noreferrer" href="{{ route('home') }}">
+                 <a target="_blank" rel="noopener noreferrer" href="{{ env('FRONTEND_URL') }}">
                      <i class="fa fa-home"></i>
                      <span>Public Portal</span>
                  </a>

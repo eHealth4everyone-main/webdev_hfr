@@ -306,6 +306,13 @@ class FrontendController extends Controller
             ->where(DB::raw("IFNULL(hs_hospitals_history.outpatient, '')"), 'like', '%' . $outpatient . '%')
             ->where(DB::raw("IFNULL(hs_hospitals_history.inpatient, '')"), 'like', '%' . $inpatient . '%')
             ->where('hs_hospitals_history.facility_name', 'like', '%' . $request->facility_name . '%')
+
+            // Search by Location (State, LGA, or Ward)
+            // ->orWhere('ou_states.name', 'like', '%' . $request->facility_name . '%')
+            // ->orWhere('ou_lgas.name', 'like', '%' . $request->facility_name . '%')
+            // ->orWhere('ou_wards.name', 'like', '%' . $request->facility_name . '%')
+
+
             ->where(DB::raw("IFNULL(hs_hospitals_history.latitude, '')"), $cond, $value)
             ->whereIn('hs_hospitals_history.id', $hospitalIds)
 
@@ -494,11 +501,17 @@ class FrontendController extends Controller
             ->where('pharmacies.registration_status_id', 'like', '%' . $registration_status_id . '%')
             ->where('pharmacies.license_status_id', 'like', '%' . $license_status_id . '%')
             ->where('pharmacies.facility_name', 'like', '%' . $facility_name . '%')
+
+            // Search by Location (State, LGA, or Ward)
+            ->orWhere('ou_states.name', 'like', '%' . $request->facility_name . '%')
+            ->orWhere('ou_lgas.name', 'like', '%' . $request->facility_name . '%')
+            ->orWhere('ou_wards.name', 'like', '%' . $request->facility_name . '%')
+
             ->where('pharmacies.latitude', $cond, $value)
             ->orderBy('pharmacies.state_id')
             ->orderBy('pharmacies.lga_id')
             ->orderBy('pharmacies.facility_name')
-            ->paginate(15)
+            ->paginate(1500)
             ->appends($request->all());
 
 
@@ -607,6 +620,12 @@ class FrontendController extends Controller
             ->where('lb_laboratories.license_status_id', 'like', '%' . $license_status_id . '%')
             ->where('lb_laboratories.accreditation_status_id', 'like', '%' . $accreditation_status_id . '%')
             ->where('lb_laboratories.facility_name', 'like', '%' . $facility_name . '%')
+
+            // Search by Location (State, LGA, or Ward)
+            // ->orWhere('ou_states.name', 'like', '%' . $request->facility_name . '%')
+            // ->orWhere('ou_lgas.name', 'like', '%' . $request->facility_name . '%')
+            // ->orWhere('ou_wards.name', 'like', '%' . $request->facility_name . '%')
+
             ->where('lb_laboratories.latitude', $cond, $value)
             ->orderBy('lb_laboratories.state_id')
             ->orderBy('lb_laboratories.lga_id')
@@ -799,7 +818,7 @@ class FrontendController extends Controller
             Mail::to($email)->send(new DownloadVerificationCode($code));
             return true;
         } catch (\Exception $ex) {
-            \Log::error("Email sending failed: " . $ex->getMessage());
+            // \Log::error("Email sending failed: " . $ex->getMessage());
             return false;
         }
     }
@@ -1163,7 +1182,15 @@ class FrontendController extends Controller
             ->where('hs_hospitals_history.license_status_id', 'like', '%' . $license_status_id . '%')
             ->where(DB::raw("IFNULL(hs_hospitals_history.outpatient, '')"), 'like', '%' . $outpatient . '%')
             ->where(DB::raw("IFNULL(hs_hospitals_history.inpatient, '')"), 'like', '%' . $inpatient . '%')
+
             ->where('hs_hospitals_history.facility_name', 'like', '%' . $request->facility_name . '%')
+
+            // Search by Location (State, LGA, or Ward)
+            ->orWhere('ou_states.name', 'like', '%' . $request->facility_name . '%')
+            ->orWhere('ou_lgas.name', 'like', '%' . $request->facility_name . '%')
+            ->orWhere('ou_wards.name', 'like', '%' . $request->facility_name . '%')
+
+
             ->where(DB::raw("IFNULL(hs_hospitals_history.latitude, '')"), $cond, $value)
             ->whereIn('hs_hospitals_history.id', $hospitalIds)
 
@@ -1171,13 +1198,6 @@ class FrontendController extends Controller
             ->orderBy('hs_hospitals_history.lga_id')
             ->orderBy('hs_hospitals_history.ward_id')
             ->orderBy('hs_hospitals_history.facility_name')
-            // ->orderBy('hs_hospitals_history.created_at', 'desc')
-
-            // ->orderBy('hs_hospitals_history.state_id', 'desc')
-            // ->orderBy('hs_hospitals_history.lga_id', 'desc')
-            // ->orderBy('hs_hospitals_history.ward_id', 'desc')
-            // ->orderBy('hs_hospitals_history.facility_name', 'desc')
-            // ->paginate(10)
             ->paginate(1000000)
             ->appends($request->all());
 
