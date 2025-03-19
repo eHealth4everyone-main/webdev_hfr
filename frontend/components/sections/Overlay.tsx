@@ -82,7 +82,7 @@ const Overlay = () => {
     try {
       // Fetch the facilities from the backend
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_API}/facilities-hospitals-search2`,
+        `${process.env.NEXT_PUBLIC_BACKEND_API}/facilities-hospitals-search3`,
         {
           facility_level_id: searchValues.facilityLevel,
           facility_type_id: searchValues.facilityType,
@@ -90,15 +90,16 @@ const Overlay = () => {
         }
       );
 
-      const facilities = response.data?.data?.facilities?.data || [];
+      // const facilities = response.data?.data?.facilities?.data || [];
+      const facilities = response.data?.data?.facilities || [];
 
       // Store search results and parameters in localStorage BEFORE navigating
       localStorage.setItem("searchResults", JSON.stringify(facilities));
-      localStorage.setItem("searchParams", JSON.stringify(searchValues));
+      // localStorage.setItem("searchParams", JSON.stringify(searchValues));
 
       // Now, navigate to FacilityFinder page
-      const queryParams = new URLSearchParams(searchValues).toString();
-      router.push(`/facilityfinder?${queryParams}`);
+      // const queryParams = new URLSearchParams(searchValues).toString();
+      router.push("/facilityfinder"); // Navigate without query parameters
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -145,7 +146,7 @@ const Overlay = () => {
           placeholder="Select Facility Level"
         />
         <GreenButton onClick={handleSearch} className="w-[250px] p-3">
-          Search
+          {loading ? "Loading..." : "Search"}
         </GreenButton>
       </div>
     </div>

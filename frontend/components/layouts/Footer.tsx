@@ -76,16 +76,50 @@ const Footer = () => {
           <div className="font-[400] flex gap-[.5rem]">
             <FaLocationDot color="#fff" fontSize={24} />
             <Text className="lg:w-[400px]">
-              New Federal Secretariat Complex, Ahmadu Bello Way, Central
-              Business District.
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=New+Federal+Secretariat+Complex,+Ahmadu+Bello+Way,+Central+Business+District"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="lg:w-[400px] cursor-pointer"
+              >
+                New Federal Secretariat Complex, Ahmadu Bello Way, Central
+                Business District.
+              </a>
             </Text>
           </div>
         </div>
         <div className="flex flex-col gap-[1rem]">
           <Text className="font-[600]">Useful links</Text>
-          <Text className="font-[400]">Federal Ministry of Health</Text>
-          <Text className="font-[400]">NPHCDA</Text>
-          <Text className="font-[400]">Nigeria DHIS2</Text>
+          <Text className="font-[400]">
+            <a
+              href="http://health.gov.ng/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white hover:underline"
+            >
+              Federal Ministry of Health
+            </a>
+          </Text>
+          <Text className="font-[400]">
+            <a
+              href="http://nphcda.gov.ng/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white hover:underline"
+            >
+              NPHCDA
+            </a>
+          </Text>
+          <Text className="font-[400]">
+            <a
+              href="https://dhis2nigeria.org.ng/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white hover:underline"
+            >
+              Nigeria DHIS2
+            </a>
+          </Text>
         </div>
       </div>
     </div>
