@@ -32,6 +32,7 @@ import Image from "next/image";
 import axios from "axios";
 
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const libraries: "places"[] = ["places"];
 const itemsPerPage = 2;
@@ -161,8 +162,6 @@ function Facility() {
     useState<google.maps.DirectionsService | null>(null);
   const [userLocation, setUserLocation] =
     useState<google.maps.LatLngLiteral | null>(null);
-
-
 
   // Initialize Google Directions Service
   const onMapLoad = (map: any) => {
@@ -320,7 +319,14 @@ function Facility() {
           requestBody
         );
 
-        const fetchedFacilities = response.data?.data?.facilities || [];
+        // const fetchedFacilities = response.data?.data?.facilities || [];
+        let fetchedFacilities;
+
+        if (response.data?.data?.facilities.total) {
+          fetchedFacilities = response.data?.data?.facilities.data || [];
+        } else {
+          fetchedFacilities = response.data?.data?.facilities || [];
+        }
 
         console.log(response.data?.data);
 
@@ -630,41 +636,22 @@ function Facility() {
                           </p>
 
                           {/* Buttons */}
-                          {/* <div className="flex space-x-4">
-                            <a
-                              href="#"
-                              className="text-green-600 font-semibold text-center"
-                              onClick={() => handleGetDirections(hospital)}
-                            >
-                              View Direction
-                            </a>
-
-                            <a
-                              href="#"
-                              className="text-green-600 font-semibold text-center"
-                              target="__blank"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                router.push(
-                                  `/facilityfinder/details/${hospital.id}`
-                                );
-                              }}
-                            >
-                              View Details
-                            </a>
-                          </div> */}
-
-                          {/* Buttons */}
                           <div className="grid grid-cols-1 md:flex md:space-x-4 gap-2 w-full">
-                            <a
+                            {/* <a
                               href="#"
                               className="text-green-600 font-semibold text-center w-full md:w-auto"
                               onClick={() => handleGetDirections(hospital)}
                             >
                               View Direction
-                            </a>
+                            </a> */}
 
-                            <a
+                            <button
+                              className="text-green-600 font-semibold text-center w-full md:w-auto"
+                              onClick={() => handleGetDirections(hospital)}
+                            >
+                              View Direction
+                            </button>
+                            {/* <a
                               href="#"
                               className="text-green-600 font-semibold text-center w-full md:w-auto"
                               target="__blank"
@@ -676,7 +663,14 @@ function Facility() {
                               }}
                             >
                               View Details
-                            </a>
+                            </a> */}
+
+                            <Link
+                              href={`/facilityfinder/details/${hospital.id}`}
+                              className="text-green-600 font-semibold text-center w-full md:w-auto"
+                            >
+                              View Details
+                            </Link>
                           </div>
                         </div>
                       </div>

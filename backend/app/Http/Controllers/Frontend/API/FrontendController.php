@@ -1354,10 +1354,19 @@ class FrontendController extends Controller
             });
 
         // Log the raw SQL query and bindings for debugging
-        \Log::info($query->toSql());
-        \Log::info($query->getBindings());
+        // \Log::info($query->toSql());
+        // \Log::info($query->getBindings());
 
-        $data['facilities'] = $query->get();
+        // $data['facilities'] = $query->get();
+
+        // Check if there are any search parameters
+        $hasSearchParams = $request->facility_level_id || $request->facility_type_id || $request->facility_name;
+
+        if ($hasSearchParams) {
+            $data['facilities'] = $query->get();
+        } else {
+            $data['facilities'] = $query->paginate(2000);
+        }
 
         return response()->json([
             'success' => true,
