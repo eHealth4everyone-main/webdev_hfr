@@ -7,11 +7,12 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ChakraProviders } from "@/components/layouts/ChakraProvider";
 
-
-
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/favicon.png" type="image/png" />
+      </head>
       <body className="font-body">
         <ToastContainer />
         <ChakraProviders>

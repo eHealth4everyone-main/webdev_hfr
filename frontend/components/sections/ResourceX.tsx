@@ -60,8 +60,8 @@ export default function ResourceX() {
     <div className="max-w-5xl mx-auto p-6">
       <h2 className="text-2xl font-bold">Resources</h2>
       <p className="text-gray-600 mt-2">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate
-        libero et velit interdum, ac aliquet odio mattis.
+        Access to downloadable reports, guidelines, and FAQs to improve
+        transparency.
       </p>
 
       <div className="bg-green-100 text-green-800 p-3 rounded-md mt-4 font-medium">

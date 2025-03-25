@@ -32,7 +32,6 @@ import Image from "next/image";
 import axios from "axios";
 
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 
 const libraries: "places"[] = ["places"];
 const itemsPerPage = 2;
@@ -117,6 +116,42 @@ interface Facility {
   created_by?: string | null;
 }
 
+
+const getLocationFromGoogleAPI = async () => {
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAP_API;
+
+  const requestData = {
+    considerIp: true,
+    // wifiAccessPoints: [
+    //   {
+    //     macAddress: "00:11:22:33:44:55",
+    //     signalStrength: -65,
+    //     signalToNoiseRatio: 40,
+    //   },
+    // ],
+  };
+
+  try {
+    const response = await axios.post(
+      `https://www.googleapis.com/geolocation/v1/geolocate?key=${apiKey}`,
+      requestData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    console.log("Location:", response.data.location);
+    return response.data.location;
+  } catch (error) {
+    // console.error(
+    //   "Error fetching location:",
+    //   error?.response?.data || error?.message
+    // );
+  }
+};
+
 function Facility() {
   const router = useRouter();
 
@@ -147,7 +182,6 @@ function Facility() {
   const [selectedFacilityType, setSelectedFacilityType] = useState("");
 
   const [currentPage, setCurrentPage] = useState(1); // Track pagination
-  const [totalPages1, setTotalPages] = useState(1); // Store total pages
 
   const [search, setSearch] = useState("");
 
@@ -160,44 +194,52 @@ function Facility() {
 
   const [directionsService, setDirectionsService] =
     useState<google.maps.DirectionsService | null>(null);
-  const [userLocation, setUserLocation] =
-    useState<google.maps.LatLngLiteral | null>(null);
+
+  // const [userLocation, setUserLocation] =
+  //   useState<google.maps.LatLngLiteral | null>(null);
+
+  const [userLocation, setUserLocation] = useState(defaultLocation);
 
   // Initialize Google Directions Service
-  const onMapLoad = (map: any) => {
-    setMap(map);
-    setDirectionsService(() => new window.google.maps.DirectionsService());
-  };
+  // const onMapLoad = (map: any) => {
+  //   setMap(map);
+  //   setDirectionsService(() => new window.google.maps.DirectionsService());
+  // };
 
-  // 1️⃣ 📍 Detect User’s Initial Location (Runs Once)
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // 📍 Detect User’s Initial Location (Runs Once)
   useEffect(() => {
     if (!navigator.geolocation) {
-      console.warn("Geolocation is not supported");
-      setUserLocation(defaultLocation);
+      console.warn("⚠️ Geolocation is not supported");
+      getLocationFromGoogleAPI().then(setCenter);
       return;
     }
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
         console.log("📍 Accurate Location:", position.coords);
-        setUserLocation({
+        const newLocation = {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
-        });
+        };
+        setUserLocation(newLocation);
+        setCenter(newLocation);
       },
       (error) => {
         console.error("🚨 Location Error:", error);
-        setUserLocation(defaultLocation); // Fallback to Abuja
+        getLocationFromGoogleAPI().then(setCenter);
       },
       {
-        enableHighAccuracy: true, // Forces GPS instead of IP
-        timeout: 15000, // Waits 15s before failing
-        maximumAge: 0, // Prevents cached locations
+        enableHighAccuracy: true,
+        timeout: 15000,
+        maximumAge: 0,
       }
     );
   }, []);
 
   // 2️⃣ 🛰️ Continuously Track User’s Location (Watches for Changes)
+  // 🛰️ Continuously Track User’s Location
   useEffect(() => {
     const watchId = navigator.geolocation.watchPosition(
       (position) => {
@@ -215,6 +257,7 @@ function Facility() {
   }, []);
 
   // 3️⃣ 🗺️ Update Map & Get Directions When a Hospital is Selected
+  // 🗺️ Update Map & Get Directions When a Hospital is Selected
   useEffect(() => {
     if (!selectedHospital || !userLocation) return;
 
@@ -224,18 +267,17 @@ function Facility() {
     });
 
     const directionsService = new window.google.maps.DirectionsService();
-
     directionsService.route(
       {
-        origin: userLocation, // User's location
+        origin: userLocation,
         destination: {
           lat: selectedHospital.latitude,
           lng: selectedHospital.longitude,
         },
-        travelMode: window.google.maps.TravelMode.DRIVING,
+        travelMode: google.maps.TravelMode.DRIVING,
       },
       (result, status) => {
-        if (status === window.google.maps.DirectionsStatus.OK) {
+        if (status === google.maps.DirectionsStatus.OK) {
           setDirections(result);
         } else {
           console.error("❌ Error fetching directions:", status);
@@ -243,6 +285,24 @@ function Facility() {
       }
     );
   }, [selectedHospital, userLocation]);
+
+  // 🗺️ Initialize Google Directions Service
+  // 🗺️ Initialize Google Directions Service
+  const onMapLoad = (mapInstance: any) => {
+    setMap(mapInstance);
+  };
+
+  // 🏥 Set Map Center to the First Search Result
+  useEffect(() => {
+    if (hospitals.length > 0) {
+      setCenter({
+        lat: hospitals[0].latitude,
+        lng: hospitals[0].longitude,
+      });
+    }
+  }, [hospitals]);
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////
 
   const handleGetDirections = (hospital: any) => {
     if (!userLocation) {
@@ -319,14 +379,7 @@ function Facility() {
           requestBody
         );
 
-        // const fetchedFacilities = response.data?.data?.facilities || [];
-        let fetchedFacilities;
-
-        if (response.data?.data?.facilities.total) {
-          fetchedFacilities = response.data?.data?.facilities.data || [];
-        } else {
-          fetchedFacilities = response.data?.data?.facilities || [];
-        }
+        const fetchedFacilities = response.data?.data?.facilities || [];
 
         console.log(response.data?.data);
 
@@ -412,16 +465,6 @@ function Facility() {
     fetchFacilityLevels();
   }, [fetchFacilityTypes, fetchFacilityLevels]);
 
-  // Set the Map Center to the First Search Result
-  useEffect(() => {
-    if (hospitals.length > 0) {
-      setCenter({
-        lat: hospitals[0].latitude,
-        lng: hospitals[0].longitude,
-      });
-    }
-  }, [hospitals]);
-
   useEffect(() => {
     // Retrieve search results from localStorage
     const storedResults: Facility[] = JSON.parse(
@@ -458,23 +501,6 @@ function Facility() {
       fetchFacilities();
     }
   }, [fetchFacilities]);
-
-  // const handleSearch = () => {
-  //   setLoading(true);
-
-  //   // Call fetchFacilities with selected values
-  //   fetchFacilities({
-  //     search,
-  //     facilityType: selectedFacilityType,
-  //     facilityLevel: selectedFacilityLevel,
-  //   });
-
-  //   setTimeout(() => {
-  //     setLoading(false);
-  //   }, 2000);
-
-  //   localStorage.removeItem("searchResults");
-  // };
 
   const handleSearch = async () => {
     setLoading(true);
@@ -636,22 +662,41 @@ function Facility() {
                           </p>
 
                           {/* Buttons */}
+                          {/* <div className="flex space-x-4">
+                            <a
+                              href="#"
+                              className="text-green-600 font-semibold text-center"
+                              onClick={() => handleGetDirections(hospital)}
+                            >
+                              View Direction
+                            </a>
+
+                            <a
+                              href="#"
+                              className="text-green-600 font-semibold text-center"
+                              target="__blank"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                router.push(
+                                  `/facilityfinder/details/${hospital.id}`
+                                );
+                              }}
+                            >
+                              View Details
+                            </a>
+                          </div> */}
+
+                          {/* Buttons */}
                           <div className="grid grid-cols-1 md:flex md:space-x-4 gap-2 w-full">
-                            {/* <a
+                            <a
                               href="#"
                               className="text-green-600 font-semibold text-center w-full md:w-auto"
                               onClick={() => handleGetDirections(hospital)}
                             >
                               View Direction
-                            </a> */}
+                            </a>
 
-                            <button
-                              className="text-green-600 font-semibold text-center w-full md:w-auto"
-                              onClick={() => handleGetDirections(hospital)}
-                            >
-                              View Direction
-                            </button>
-                            {/* <a
+                            <a
                               href="#"
                               className="text-green-600 font-semibold text-center w-full md:w-auto"
                               target="__blank"
@@ -663,14 +708,7 @@ function Facility() {
                               }}
                             >
                               View Details
-                            </a> */}
-
-                            <Link
-                              href={`/facilityfinder/details/${hospital.id}`}
-                              className="text-green-600 font-semibold text-center w-full md:w-auto"
-                            >
-                              View Details
-                            </Link>
+                            </a>
                           </div>
                         </div>
                       </div>
@@ -724,31 +762,15 @@ function Facility() {
                   <GoogleMap
                     mapContainerClassName="w-full h-full"
                     center={center}
-                    // zoom={14}
-                    zoom={selectedHospital ? 14 : 10} // Zoom in if showing one facility
+                    zoom={selectedHospital ? 14 : 10}
+                    onLoad={onMapLoad}
                   >
+                    {/* User's Location Marker */}
                     {userLocation &&
                       !isNaN(userLocation.lat) &&
                       !isNaN(userLocation.lng) && (
                         <Marker position={userLocation} label="You" />
                       )}
-
-                    {/* 📍 Facility Markers */}
-                    {/* {hospitals.map((hospital) => (
-                      <Marker
-                        key={hospital.id}
-                        position={{
-                          lat: hospital.latitude,
-                          lng: hospital.longitude,
-                        }}
-                        onClick={() => setSelectedHospital(hospital)}
-                        // icon={{
-                        //   // url: "https://maps.google.com/mapfiles/ms/icons/green-dot.png", // Use a smaller marker icon
-                        //   url: "data:image/svg+xml;charset=UTF-8,<svg height='137px' width='137px' version='1.1' id='Capa_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 293.334 293.334' xml:space='preserve' fill='%231f8802' stroke='%231f8802'><g id='SVGRepo_bgCarrier' stroke-width='0'></g><g id='SVGRepo_tracerCarrier' stroke-linecap='round' stroke-linejoin='round'></g><g id='SVGRepo_iconCarrier'> <g> <g> <path style='fill:%231f8802;' d='M146.667,0C94.903,0,52.946,41.957,52.946,93.721c0,22.322,7.849,42.789,20.891,58.878 c4.204,5.178,11.237,13.331,14.903,18.906c21.109,32.069,48.19,78.643,56.082,116.864c1.354,6.527,2.986,6.641,4.743,0.212 c5.629-20.609,20.228-65.639,50.377-112.757c3.595-5.619,10.884-13.483,15.409-18.379c6.554-7.098,12.009-15.224,16.154-24.084 c5.651-12.086,8.882-25.466,8.882-39.629C240.387,41.962,198.43,0,146.667,0z M146.667,144.358 c-28.892,0-52.313-23.421-52.313-52.313c0-28.887,23.421-52.307,52.313-52.307s52.313,23.421,52.313,52.307 C198.98,120.938,175.559,144.358,146.667,144.358z'></path> <circle style='fill:%231f8802;' cx='146.667' cy='90.196' r='21.756'></circle> </g> </g> </g></svg>",
-                        //   scaledSize: new window.google.maps.Size(40, 40), // Adjust the size
-                        // }}
-                      />
-                    ))} */}
 
                     {/* Show all hospitals if no specific facility is selected */}
                     {!selectedHospital &&
@@ -777,6 +799,7 @@ function Facility() {
                     {directions && (
                       <DirectionsRenderer directions={directions} />
                     )}
+
                     {/* 🏥 Facility InfoWindow */}
                     {selectedHospital && (
                       <InfoWindow

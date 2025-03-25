@@ -306,6 +306,13 @@ class FrontendController extends Controller
             ->where(DB::raw("IFNULL(hs_hospitals_history.outpatient, '')"), 'like', '%' . $outpatient . '%')
             ->where(DB::raw("IFNULL(hs_hospitals_history.inpatient, '')"), 'like', '%' . $inpatient . '%')
             ->where('hs_hospitals_history.facility_name', 'like', '%' . $request->facility_name . '%')
+
+            // Search by Location (State, LGA, or Ward)
+            // ->orWhere('ou_states.name', 'like', '%' . $request->facility_name . '%')
+            // ->orWhere('ou_lgas.name', 'like', '%' . $request->facility_name . '%')
+            // ->orWhere('ou_wards.name', 'like', '%' . $request->facility_name . '%')
+
+
             ->where(DB::raw("IFNULL(hs_hospitals_history.latitude, '')"), $cond, $value)
             ->whereIn('hs_hospitals_history.id', $hospitalIds)
 
@@ -494,6 +501,12 @@ class FrontendController extends Controller
             ->where('pharmacies.registration_status_id', 'like', '%' . $registration_status_id . '%')
             ->where('pharmacies.license_status_id', 'like', '%' . $license_status_id . '%')
             ->where('pharmacies.facility_name', 'like', '%' . $facility_name . '%')
+
+            // Search by Location (State, LGA, or Ward)
+            // ->orWhere('ou_states.name', 'like', '%' . $request->facility_name . '%')
+            // ->orWhere('ou_lgas.name', 'like', '%' . $request->facility_name . '%')
+            // ->orWhere('ou_wards.name', 'like', '%' . $request->facility_name . '%')
+
             ->where('pharmacies.latitude', $cond, $value)
             ->orderBy('pharmacies.state_id')
             ->orderBy('pharmacies.lga_id')
@@ -607,6 +620,12 @@ class FrontendController extends Controller
             ->where('lb_laboratories.license_status_id', 'like', '%' . $license_status_id . '%')
             ->where('lb_laboratories.accreditation_status_id', 'like', '%' . $accreditation_status_id . '%')
             ->where('lb_laboratories.facility_name', 'like', '%' . $facility_name . '%')
+
+            // Search by Location (State, LGA, or Ward)
+            // ->orWhere('ou_states.name', 'like', '%' . $request->facility_name . '%')
+            // ->orWhere('ou_lgas.name', 'like', '%' . $request->facility_name . '%')
+            // ->orWhere('ou_wards.name', 'like', '%' . $request->facility_name . '%')
+
             ->where('lb_laboratories.latitude', $cond, $value)
             ->orderBy('lb_laboratories.state_id')
             ->orderBy('lb_laboratories.lga_id')
@@ -799,7 +818,7 @@ class FrontendController extends Controller
             Mail::to($email)->send(new DownloadVerificationCode($code));
             return true;
         } catch (\Exception $ex) {
-            \Log::error("Email sending failed: " . $ex->getMessage());
+            // \Log::error("Email sending failed: " . $ex->getMessage());
             return false;
         }
     }
@@ -1163,7 +1182,15 @@ class FrontendController extends Controller
             ->where('hs_hospitals_history.license_status_id', 'like', '%' . $license_status_id . '%')
             ->where(DB::raw("IFNULL(hs_hospitals_history.outpatient, '')"), 'like', '%' . $outpatient . '%')
             ->where(DB::raw("IFNULL(hs_hospitals_history.inpatient, '')"), 'like', '%' . $inpatient . '%')
+
             ->where('hs_hospitals_history.facility_name', 'like', '%' . $request->facility_name . '%')
+
+            // Search by Location (State, LGA, or Ward)
+            // ->orWhere('ou_states.name', 'like', '%' . $request->facility_name . '%')
+            // ->orWhere('ou_lgas.name', 'like', '%' . $request->facility_name . '%')
+            // ->orWhere('ou_wards.name', 'like', '%' . $request->facility_name . '%')
+
+
             ->where(DB::raw("IFNULL(hs_hospitals_history.latitude, '')"), $cond, $value)
             ->whereIn('hs_hospitals_history.id', $hospitalIds)
 
@@ -1171,13 +1198,6 @@ class FrontendController extends Controller
             ->orderBy('hs_hospitals_history.lga_id')
             ->orderBy('hs_hospitals_history.ward_id')
             ->orderBy('hs_hospitals_history.facility_name')
-            // ->orderBy('hs_hospitals_history.created_at', 'desc')
-
-            // ->orderBy('hs_hospitals_history.state_id', 'desc')
-            // ->orderBy('hs_hospitals_history.lga_id', 'desc')
-            // ->orderBy('hs_hospitals_history.ward_id', 'desc')
-            // ->orderBy('hs_hospitals_history.facility_name', 'desc')
-            // ->paginate(10)
             ->paginate(1000000)
             ->appends($request->all());
 
@@ -1205,6 +1225,156 @@ class FrontendController extends Controller
             'data' => $data
         ], 200);
     }
+
+    public function searchHospitals3OLD(Request $request)
+    {
+
+        // Extracting request parameters
+        $facility_level_id = $request->facility_level_id == 0 ? '' : $request->facility_level_id;
+
+
+        // Handling hospital services filtering
+        if (!empty($request->services)) {
+            $hospitalIds = DB::table('hs_hospital_services')
+                ->whereIn('service_id', $request->services)
+                ->distinct()
+                ->pluck('hospital_id')
+                ->toArray();
+        } else {
+            $hospitalIds = DB::table('hs_hospitals_history')->pluck('id')->toArray();
+        }
+
+        \Log::info($request);
+
+        $data['facilities'] = DB::table('hs_hospitals_history')
+            ->leftJoin('ou_states', 'hs_hospitals_history.state_id', '=', 'ou_states.id')
+            ->leftJoin('ou_lgas', 'hs_hospitals_history.lga_id', '=', 'ou_lgas.id')
+            ->leftJoin('ou_wards', 'hs_hospitals_history.ward_id', '=', 'ou_wards.id')
+            ->leftJoin('lst_level_of_care', 'hs_hospitals_history.facility_level_id', '=', 'lst_level_of_care.id')
+            ->leftJoin('lst_ownerships', 'hs_hospitals_history.ownership_id', '=', 'lst_ownerships.id')
+            ->leftJoin('lst_oparational_status', 'hs_hospitals_history.operational_status_id', '=', 'lst_oparational_status.id')
+            ->leftJoin('lst_registration_status', 'hs_hospitals_history.registration_status_id', '=', 'lst_registration_status.id')
+            ->leftJoin('lst_license_status', 'hs_hospitals_history.license_status_id', '=', 'lst_license_status.id')
+            ->select(
+                'hs_hospitals_history.*',
+                'ou_states.name as state_name',
+                'ou_lgas.name as lga_name',
+                'ou_wards.name as ward_name',
+                'lst_level_of_care.name as facility_level_name',
+                'lst_ownerships.name as ownership_name',
+                'lst_oparational_status.status as operational_status_name',
+                'lst_registration_status.status as registration_status_name',
+                'lst_license_status.status as license_status_name'
+            )
+
+
+            ->when($request->facility_level_id, function ($q, $facilityLevel) {
+                return $q->where('hs_hospitals_history.facility_level_id', $facilityLevel);
+            })
+            ->when($request->facility_type_id, function ($q, $facilityType) {
+                return $q->where('hs_hospitals_history.facility_type_id', $facilityType);
+            })
+
+            ->when($request->facility_name, function ($q, $facilityName) {
+                $q->where(function ($subQuery) use ($facilityName) {
+                    $subQuery->where('ou_states.name', 'like', '%' . $facilityName . '%')
+                        ->orWhere('ou_lgas.name', 'like', '%' . $facilityName . '%')
+                        ->orWhere('ou_wards.name', 'like', '%' . $facilityName . '%');
+                });
+            })
+
+            ->orderBy('hs_hospitals_history.facility_name')
+            ->paginate(5000)
+            ->appends($request->all());
+
+
+
+
+        // Returning request values
+        $data += [
+            'state_id' => $request->state_id,
+            'lga_id' => $request->lga_id,
+            'ward_id' => $request->ward_id,
+            'facility_name' => $request->facility_name,
+            'geo_codes' => $request->geo_codes,
+            'facility_level_id' => $request->facility_level_id,
+            'ownership_id' => $request->ownership_id,
+            'operational_status_id' => $request->operational_status_id,
+            'registration_status_id' => $request->registration_status_id,
+            'license_status_id' => $request->license_status_id,
+            'service_type' => $request->service_type,
+            'service_category_id' => $request->service_category_id,
+            'searched' => 1
+        ];
+
+        // Returning JSON response
+        return response()->json([
+            'success' => true,
+            'data' => $data
+        ], 200);
+    }
+
+
+
+    public function searchHospitals3(Request $request)
+    {
+        $query = DB::table('hs_hospitals_history')
+            ->leftJoin('ou_states', 'hs_hospitals_history.state_id', '=', 'ou_states.id')
+            ->leftJoin('ou_lgas', 'hs_hospitals_history.lga_id', '=', 'ou_lgas.id')
+            ->leftJoin('ou_wards', 'hs_hospitals_history.ward_id', '=', 'ou_wards.id')
+            ->leftJoin('lst_level_of_care', 'hs_hospitals_history.facility_level_id', '=', 'lst_level_of_care.id')
+            ->leftJoin('lst_ownerships', 'hs_hospitals_history.ownership_id', '=', 'lst_ownerships.id')
+            ->leftJoin('lst_oparational_status', 'hs_hospitals_history.operational_status_id', '=', 'lst_oparational_status.id')
+            ->leftJoin('lst_registration_status', 'hs_hospitals_history.registration_status_id', '=', 'lst_registration_status.id')
+            ->leftJoin('lst_license_status', 'hs_hospitals_history.license_status_id', '=', 'lst_license_status.id')
+            ->select(
+                'hs_hospitals_history.*',
+                'ou_states.name as state_name',
+                'ou_lgas.name as lga_name',
+                'ou_wards.name as ward_name',
+                'lst_level_of_care.name as facility_level_name',
+                'lst_ownerships.name as ownership_name',
+                'lst_oparational_status.status as operational_status_name',
+                'lst_registration_status.status as registration_status_name',
+                'lst_license_status.status as license_status_name'
+            )
+            ->when($request->facility_level_id, function ($q, $facilityLevel) {
+                return $q->where('hs_hospitals_history.facility_level_id', $facilityLevel);
+            })
+            ->when($request->facility_type_id, function ($q, $facilityType) {
+                return $q->where('hs_hospitals_history.facility_type_id', $facilityType);
+            })
+            ->when($request->facility_name, function ($q, $facilityName) {
+                return $q->where(function ($subQuery) use ($facilityName) {
+                    $subQuery->where('ou_states.name', 'like', '%' . $facilityName . '%')
+                        ->orWhere('ou_lgas.name', 'like', '%' . $facilityName . '%')
+                        ->orWhere('ou_wards.name', 'like', '%' . $facilityName . '%')
+                        ->orWhere('hs_hospitals_history.facility_name', 'like', '%' . $facilityName . '%');
+                });
+            });
+
+        // Log the raw SQL query and bindings for debugging
+        // \Log::info($query->toSql());
+        // \Log::info($query->getBindings());
+
+        // $data['facilities'] = $query->get();
+
+        // Check if there are any search parameters
+        $hasSearchParams = $request->facility_level_id || $request->facility_type_id || $request->facility_name;
+
+        if ($hasSearchParams) {
+            $data['facilities'] = $query->get();
+        } else {
+            $data['facilities'] = $query->paginate(2000);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $data
+        ], 200);
+    }
+
+
 
 
     public function HospitalDetail(Request $request, $facilityId)

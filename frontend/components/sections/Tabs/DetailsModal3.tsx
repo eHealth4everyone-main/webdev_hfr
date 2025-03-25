@@ -2,7 +2,7 @@ import React from "react";
 
 // const DetailsModal = ({ row, onClose }) => {
 
-const DetailsModal: React.FC<{ row: any; onClose: () => void }> = ({
+const DetailsModal3: React.FC<{ row: any; onClose: () => void }> = ({
   row,
   onClose,
 }) => {
@@ -14,7 +14,7 @@ const DetailsModal: React.FC<{ row: any; onClose: () => void }> = ({
         {/* Modal Header */}
         <div className="flex justify-between items-center border-b pb-3">
           <h3 className="text-2xl font-bold">
-            Facility Details
+            Radiologies and Imagings Details
             {/*  */}
           </h3>
           <button
@@ -106,4 +106,4 @@ const DetailsModal: React.FC<{ row: any; onClose: () => void }> = ({
   );
 };
 
-export default DetailsModal;
+export default DetailsModal3;

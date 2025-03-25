@@ -1,7 +1,7 @@
 import Input from "@/components/ui/Input";
 import SelectComponent from "@/components/ui/SelectComponent";
 import { GreenButton, Text } from "@/components/ui/Typography";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 // import HospitalTable from "./HospitalTable";
 import dynamic from "next/dynamic";
 const HospitalTable = dynamic(() => import("./HospitalTable"), { ssr: false });
@@ -42,6 +42,11 @@ const HospitalTab = () => {
   const [currentPage, setCurrentPage] = useState(1); // Track pagination
   const [totalPages, setTotalPages] = useState(1); // Store total pages
 
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  const [search, setSearch] = useState("");
+  const [entriesPerPage, setEntriesPerPage] = useState(10);
+
   const fetchFacilities = useCallback(async () => {
     setLoading(true);
     setFetchError("");
@@ -59,8 +64,9 @@ const HospitalTab = () => {
           license_status_id: selectedLicense,
           outpatient: selectedServiceType ? 1 : 0,
           inpatient: selectedServiceType ? 1 : 0,
-          // facility_name: searchQuery,
+          // facility_name: search,
           page: currentPage,
+          // per_page: entriesPerPage, // Send number of entries per page
         }
       );
 
@@ -68,7 +74,7 @@ const HospitalTab = () => {
 
       setData(response.data?.data?.facilities?.data); // Laravel pagination response (data array)
       setTotalPages(response.data?.data?.facilities?.last_page); // Set total pages from API
-      console.log("response by adams", response.data.data.facilities.last_page);
+      // console.log("response by adams", response.data.data.facilities.data);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -87,6 +93,30 @@ const HospitalTab = () => {
     selectedLicense,
     selectedServiceType,
   ]);
+
+  const fetchFacilities2 = useCallback(async () => {
+    setLoading(true);
+    setFetchError("");
+
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_API}/facilities-hospitals-search`,
+        {
+          facility_name: search, // Include facility name search
+          per_page: entriesPerPage, // Send number of entries per page
+          page: currentPage,
+        }
+      );
+
+      setData(response.data?.data?.facilities?.data);
+      setTotalPages(response.data?.data?.facilities?.last_page);
+    } catch (error) {
+      setFetchError("Failed to fetch hospitals");
+      console.error("Error fetching hospitals:", error);
+    }
+
+    setLoading(false);
+  }, [search, entriesPerPage, currentPage]);
 
   // Fetch states
   const fetchStates = useCallback(async () => {
@@ -356,6 +386,7 @@ const HospitalTab = () => {
     setSelectedService("");
     setSelectedGeoCode("");
     setSelectedServiceType("");
+    setSearch("");
   }, [
     // currentPage,
     setSelectedState,
@@ -370,6 +401,7 @@ const HospitalTab = () => {
     setSelectedService,
     setSelectedGeoCode,
     setSelectedServiceType,
+    setSearch,
   ]);
 
   return (
@@ -559,15 +591,34 @@ const HospitalTab = () => {
 
       <div className="flex flex-wrap items-center justify-center gap-4 bg-[#D1D1D1] p-4 mt-4 w-full md:grid md:grid-cols-2 lg:flex lg:gap-6">
         {/* Facility Name Input */}
-        <Input
+        {/* <Input
+          ref={searchInputRef}
           className="w-full max-w-[400px] h-[55px] text-sm"
           placeholder="Facility Name"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        /> */}
+
+        {/* Facility Name Input */}
+        <Input
+          className="w-full max-w-[400px] h-[47px] text-sm"
+          placeholder="Facility Name"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
         />
+
+        {/* Entries Per Page Dropdown */}
+        {/* <SelectComponent
+          className="w-full max-w-[300px] h-[44px] text-sm"
+          placeholder="Entries Per Page"
+        /> */}
 
         {/* Entries Per Page Dropdown */}
         <SelectComponent
           className="w-full max-w-[300px] h-[44px] text-sm"
           placeholder="Entries Per Page"
+          value={String(entriesPerPage)} // Convert number to string
+          onChange={(e) => setEntriesPerPage(parseInt(e.target.value, 10))}
         />
 
         {/* Reset Button */}
@@ -579,7 +630,7 @@ const HospitalTab = () => {
         </button>
 
         <GreenButton
-          onClick={fetchFacilities}
+          onClick={fetchFacilities2}
           className="bg-[#5BBA62] w-full max-w-[200px] h-[44px] flex items-center justify-center text-sm"
         >
           {loading ? "Loading..." : "Search"}

@@ -48,6 +48,8 @@ const RadiologyTab = () => {
   const [search, setSearch] = useState("");
   const [filteredData, setFilteredData] = useState(data);
 
+  const [entriesPerPage, setEntriesPerPage] = useState(10);
+
   const fetchFacilities4 = useCallback(async () => {
     setLoading(true);
     setFetchError(""); // Reset errors before fetching
@@ -198,47 +200,6 @@ const RadiologyTab = () => {
     }
   }, []);
 
-  // // Fetch operational
-  // const operational = useCallback(async () => {
-  //   setLoading(true);
-  //   try {
-  //     const response = await axios.get(
-  //       `${process.env.NEXT_PUBLIC_BACKEND_API}/operational-status`
-  //     );
-  //     const data = response?.data?.data; // Axios automatically parses JSON
-  //     if (data && Array.isArray(data)) {
-  //       setOperational(data);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching operational:", error);
-  //     setFetchError("Failed to fetch operational.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }, []);
-
-  // // Fetch registration status
-  // const registrationStatus = useCallback(async () => {
-  //   setLoading(true);
-  //   try {
-  //     const response = await axios.get(
-  //       `${process.env.NEXT_PUBLIC_BACKEND_API}/registration-status`
-  //     );
-  //     const data = response?.data?.data; // Axios automatically parses JSON
-
-  //     // console.log("response", data);
-
-  //     if (data && Array.isArray(data)) {
-  //       setRegistration(data);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching operational:", error);
-  //     setFetchError("Failed to fetch operational.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }, []);
-
   // Fetch operational
   const operational4 = useCallback(async () => {
     try {
@@ -359,6 +320,7 @@ const RadiologyTab = () => {
     setSelectedService("");
     setSelectedGeoCode("");
     setSelectedServiceType("");
+    setSearch("");
   };
 
   useEffect(() => {
@@ -398,6 +360,30 @@ const RadiologyTab = () => {
       fetchFacilities4();
     }
   }, [currentPage, fetchFacilities4]); // Runs when `currentPage` changes
+
+  const fetchFacilities34 = useCallback(async () => {
+    setLoading(true);
+    setFetchError("");
+
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_API}/facilities/imaging-list`,
+        {
+          facility_name: search, // Include facility name search
+          per_page: entriesPerPage, // Send number of entries per page
+          page: currentPage,
+        }
+      );
+
+      setData(response.data?.data?.facilities?.data);
+      setTotalPages(response.data?.data?.facilities?.last_page);
+    } catch (error) {
+      setFetchError("Failed to fetch hospitals");
+      console.error("Error fetching hospitals:", error);
+    }
+
+    setLoading(false);
+  }, [search, entriesPerPage, currentPage]);
 
   return (
     <div>
@@ -529,6 +515,8 @@ const RadiologyTab = () => {
         <Input
           className="w-full max-w-[700px] h-[55px] text-sm"
           placeholder="Facility Name"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
         />
 
         {/* Reset Button */}
@@ -545,7 +533,7 @@ const RadiologyTab = () => {
         </GreenButton> */}
 
         <GreenButton
-          onClick={fetchFacilities4}
+          onClick={fetchFacilities34}
           className="bg-[#5BBA62] w-full max-w-[200px] h-[44px] flex items-center justify-center text-sm"
         >
           {loading ? "Loading..." : "Search"}
