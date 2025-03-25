@@ -48,6 +48,8 @@ const LaboratoryTab = () => {
   const [search, setSearch] = useState("");
   const [filteredData, setFilteredData] = useState(data);
 
+  const [entriesPerPage, setEntriesPerPage] = useState(10);
+
   const fetchFacilities2 = useCallback(async () => {
     setLoading(true);
     setFetchError("");
@@ -340,6 +342,7 @@ const LaboratoryTab = () => {
     setSelectedService("");
     setSelectedGeoCode("");
     setSelectedServiceType("");
+    setSearch("");
   };
 
   useEffect(() => {
@@ -382,6 +385,30 @@ const LaboratoryTab = () => {
       fetchFacilities2();
     }
   }, [currentPage, fetchFacilities2]); // Runs when `currentPage` changes
+
+  const fetchFacilities34 = useCallback(async () => {
+    setLoading(true);
+    setFetchError("");
+
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_API}/facilities/lab-list`,
+        {
+          facility_name: search, // Include facility name search
+          per_page: entriesPerPage, // Send number of entries per page
+          page: currentPage,
+        }
+      );
+
+      setData(response.data?.data?.facilities?.data);
+      setTotalPages(response.data?.data?.facilities?.last_page);
+    } catch (error) {
+      setFetchError("Failed to fetch hospitals");
+      console.error("Error fetching hospitals:", error);
+    }
+
+    setLoading(false);
+  }, [search, entriesPerPage, currentPage]);
 
   return (
     <div>
@@ -541,6 +568,8 @@ const LaboratoryTab = () => {
         <Input
           className="w-full max-w-[700px] h-[55px] text-sm"
           placeholder="Facility Name"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
         />
 
         {/* Reset Button */}
@@ -557,7 +586,7 @@ const LaboratoryTab = () => {
         </GreenButton> */}
 
         <GreenButton
-          onClick={fetchFacilities2}
+          onClick={fetchFacilities34}
           className="bg-[#5BBA62] w-full max-w-[200px] h-[44px] flex items-center justify-center text-sm"
         >
           {loading ? "Loading..." : "Search"}

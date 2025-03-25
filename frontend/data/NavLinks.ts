@@ -19,7 +19,7 @@ export const NavLinks = [
   },
   // {
   //   navitem: "Finders",
-  //   link: "/facilityfinder",
+  //   link: "/facilitieslist",
   // },
 ];
 

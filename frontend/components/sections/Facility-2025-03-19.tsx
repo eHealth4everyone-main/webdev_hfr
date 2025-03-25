@@ -8,8 +8,6 @@ import Input from "../ui/Input";
 import SelectComponent from "../ui/SelectComponent";
 import { GreenButton, Text, WhiteButton } from "../ui/Typography";
 
-import { LoadScriptNext } from "@react-google-maps/api";
-
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import {
   LoadScript,
@@ -32,7 +30,6 @@ import Image from "next/image";
 import axios from "axios";
 
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 
 const libraries: "places"[] = ["places"];
 const itemsPerPage = 2;
@@ -166,6 +163,7 @@ function Facility() {
   // Initialize Google Directions Service
   const onMapLoad = (map: any) => {
     setMap(map);
+    // setDirectionsService(new window.google.maps.DirectionsService());
     setDirectionsService(() => new window.google.maps.DirectionsService());
   };
 
@@ -208,7 +206,7 @@ function Facility() {
         console.log("📍 Updated Location:", position.coords);
       },
       (error) => console.error("❌ Error tracking location:", error),
-      { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
+      { enableHighAccuracy: true, maximumAge: 10000, timeout: 5000 }
     );
 
     return () => navigator.geolocation.clearWatch(watchId); // Cleanup
@@ -294,77 +292,66 @@ function Facility() {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentHospitals = hospitals.slice(indexOfFirstItem, indexOfLastItem);
 
-  const fetchFacilities = useCallback(
-    async (
-      searchValues: {
-        facilityLevel?: string;
-        facilityType?: string;
-        search?: string;
-      } = {}
-    ) => {
-      setLoading(true);
-      setFetchError("");
+  const fetchFacilities = async (
+    searchValues: {
+      facilityLevel?: string;
+      facilityType?: string;
+      search?: string;
+    } = {}
+  ) => {
+    setLoading(true);
+    setFetchError("");
 
-      try {
-        const requestBody: any = {};
-        if (searchValues.facilityLevel)
-          requestBody.facility_level_id = searchValues.facilityLevel;
-        if (searchValues.facilityType)
-          requestBody.facility_type_id = searchValues.facilityType;
-        if (searchValues.search)
-          requestBody.facility_name = searchValues.search;
+    try {
+      const requestBody: any = {};
+      if (searchValues.facilityLevel)
+        requestBody.facility_level_id = searchValues.facilityLevel;
+      if (searchValues.facilityType)
+        requestBody.facility_type_id = searchValues.facilityType;
+      if (searchValues.search) requestBody.facility_name = searchValues.search;
 
-        const response = await axios.post(
-          `${process.env.NEXT_PUBLIC_BACKEND_API}/facilities-hospitals-search3`,
-          requestBody
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_API}/facilities-hospitals-search3`,
+        requestBody
+      );
+
+      const fetchedFacilities = response.data?.data?.facilities?.data || [];
+
+      console.log(fetchedFacilities);
+
+      // Ensure latitude and longitude are numbers
+      const validFacilities: Facility[] = fetchedFacilities
+        .map(
+          (facility: any): Facility => ({
+            ...facility,
+            latitude:
+              facility.latitude && !isNaN(Number(facility.latitude))
+                ? Number(facility.latitude)
+                : null,
+            longitude:
+              facility.longitude && !isNaN(Number(facility.longitude))
+                ? Number(facility.longitude)
+                : null,
+          })
+        )
+        .filter(
+          (facility: Facility) =>
+            facility.latitude !== null && facility.longitude !== null
         );
 
-        // const fetchedFacilities = response.data?.data?.facilities || [];
-        let fetchedFacilities;
+      console.log("Valid Facilities:", validFacilities); // Debugging
 
-        if (response.data?.data?.facilities.total) {
-          fetchedFacilities = response.data?.data?.facilities.data || [];
-        } else {
-          fetchedFacilities = response.data?.data?.facilities || [];
-        }
+      console.log(validFacilities.length);
 
-        console.log(response.data?.data);
-
-        // Ensure latitude and longitude are numbers
-        const validFacilities: Facility[] = fetchedFacilities
-          .map(
-            (facility: any): Facility => ({
-              ...facility,
-              latitude:
-                facility.latitude && !isNaN(Number(facility.latitude))
-                  ? Number(facility.latitude)
-                  : null,
-              longitude:
-                facility.longitude && !isNaN(Number(facility.longitude))
-                  ? Number(facility.longitude)
-                  : null,
-            })
-          )
-          .filter(
-            (facility: Facility) =>
-              facility.latitude !== null && facility.longitude !== null
-          );
-
-        console.log("Valid Facilities:", validFacilities); // Debugging
-
-        console.log(validFacilities.length);
-
-        setHospitals(validFacilities);
-        // setTotalPages(response.data?.data?.facilities?.last_page);
-        setSelectedHospital(null);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    },
-    []
-  );
+      setHospitals(validFacilities);
+      setTotalPages(response.data?.data?.facilities?.last_page);
+      setSelectedHospital(null);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Fetch data from the API
   const fetchFacilityTypes = useCallback(async () => {
@@ -422,99 +409,47 @@ function Facility() {
     }
   }, [hospitals]);
 
+  // 🚀 Fetch all hospitals when component mounts
   useEffect(() => {
-    // Retrieve search results from localStorage
-    const storedResults: Facility[] = JSON.parse(
-      localStorage.getItem("searchResults") || "[]"
-    );
+    const facilityId = localStorage.getItem("selectedFacilityId");
 
-    if (storedResults.length > 0) {
-      // console.log("Using localStorage data for hospitals.");
+    console.log({ facilityId });
 
-      // Ensure latitude and longitude are valid numbers
-      const validFacilities: Facility[] = storedResults
-        .map(
-          (facility: any): Facility => ({
-            ...facility,
-            latitude:
-              facility.latitude && !isNaN(Number(facility.latitude))
-                ? Number(facility.latitude)
-                : null,
-            longitude:
-              facility.longitude && !isNaN(Number(facility.longitude))
-                ? Number(facility.longitude)
-                : null,
-          })
+    if (facilityId) {
+      // Fetch only this facility's data
+      axios
+        .get(
+          `${process.env.NEXT_PUBLIC_BACKEND_API}/facilities-hospital/${facilityId}`
         )
-        .filter(
-          (facility: Facility) =>
-            facility.latitude !== null && facility.longitude !== null
-        );
-
-      setHospitals(validFacilities);
-      // localStorage.removeItem("searchResults"); // Uncomment if you want to clear storage
+        .then((response) => {
+          const data = response?.data?.data?.hospital;
+          setSelectedHospital(data);
+        })
+        .catch((error) => {
+          console.error("Error fetching facility details:", error);
+        })
+        .finally(() => {
+          localStorage.removeItem("selectedFacilityId"); // Remove after use
+        });
     } else {
-      console.log("Fetching from API because localStorage is empty.");
-      fetchFacilities();
+      fetchFacilities(); // Fetch all hospitals by default
     }
-  }, [fetchFacilities]);
 
-  // const handleSearch = () => {
-  //   setLoading(true);
+    // fetchFacilities(); // Fetch all hospitals by default
+  }, []);
 
-  //   // Call fetchFacilities with selected values
-  //   fetchFacilities({
-  //     search,
-  //     facilityType: selectedFacilityType,
-  //     facilityLevel: selectedFacilityLevel,
-  //   });
-
-  //   setTimeout(() => {
-  //     setLoading(false);
-  //   }, 2000);
-
-  //   localStorage.removeItem("searchResults");
-  // };
-
-  const handleSearch = async () => {
+  const handleSearch = () => {
     setLoading(true);
 
-    try {
-      await fetchFacilities({
-        search,
-        facilityType: selectedFacilityType,
-        facilityLevel: selectedFacilityLevel,
-      });
+    // Call fetchFacilities with selected values
+    fetchFacilities({
+      search,
+      facilityType: selectedFacilityType,
+      facilityLevel: selectedFacilityLevel,
+    });
 
-      // Optional delay (only if needed)
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-    } catch (error) {
-      console.error("Error fetching facilities:", error);
-    } finally {
-      setLoading(false);
-    }
-
-    localStorage.removeItem("searchResults");
+    setLoading(false);
   };
-
-  useEffect(() => {
-    const handleRouteChange = () => {
-      console.log(
-        "Navigation detected, clearing searchResults from localStorage."
-      );
-      localStorage.removeItem("searchResults");
-    };
-
-    const originalPush = router.push;
-    router.push = (...args) => {
-      handleRouteChange(); // Clear localStorage before navigation
-      return originalPush(...args);
-    };
-
-    return () => {
-      router.push = originalPush; // Restore original push function on cleanup
-    };
-  }, [router]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -531,7 +466,7 @@ function Facility() {
                 <input
                   ref={searchInputRef}
                   type="text"
-                  placeholder="Enter location"
+                  placeholder="Enter location or facility name"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="w-full p-3 pr-10 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
@@ -636,22 +571,41 @@ function Facility() {
                           </p>
 
                           {/* Buttons */}
+                          {/* <div className="flex space-x-4">
+                            <a
+                              href="#"
+                              className="text-green-600 font-semibold text-center"
+                              onClick={() => handleGetDirections(hospital)}
+                            >
+                              View Direction
+                            </a>
+
+                            <a
+                              href="#"
+                              className="text-green-600 font-semibold text-center"
+                              target="__blank"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                router.push(
+                                  `/facilityfinder/details/${hospital.id}`
+                                );
+                              }}
+                            >
+                              View Details
+                            </a>
+                          </div> */}
+
+                          {/* Buttons */}
                           <div className="grid grid-cols-1 md:flex md:space-x-4 gap-2 w-full">
-                            {/* <a
+                            <a
                               href="#"
                               className="text-green-600 font-semibold text-center w-full md:w-auto"
                               onClick={() => handleGetDirections(hospital)}
                             >
                               View Direction
-                            </a> */}
+                            </a>
 
-                            <button
-                              className="text-green-600 font-semibold text-center w-full md:w-auto"
-                              onClick={() => handleGetDirections(hospital)}
-                            >
-                              View Direction
-                            </button>
-                            {/* <a
+                            <a
                               href="#"
                               className="text-green-600 font-semibold text-center w-full md:w-auto"
                               target="__blank"
@@ -663,14 +617,7 @@ function Facility() {
                               }}
                             >
                               View Details
-                            </a> */}
-
-                            <Link
-                              href={`/facilityfinder/details/${hospital.id}`}
-                              className="text-green-600 font-semibold text-center w-full md:w-auto"
-                            >
-                              View Details
-                            </Link>
+                            </a>
                           </div>
                         </div>
                       </div>
@@ -715,7 +662,7 @@ function Facility() {
               </div>
 
               <div className="h-[600px] rounded-lg overflow-hidden">
-                <LoadScriptNext
+                <LoadScript
                   googleMapsApiKey={
                     process.env.NEXT_PUBLIC_GOOGLE_MAP_API ?? ""
                   }
@@ -724,8 +671,7 @@ function Facility() {
                   <GoogleMap
                     mapContainerClassName="w-full h-full"
                     center={center}
-                    // zoom={14}
-                    zoom={selectedHospital ? 14 : 10} // Zoom in if showing one facility
+                    zoom={14}
                   >
                     {userLocation &&
                       !isNaN(userLocation.lat) &&
@@ -734,7 +680,7 @@ function Facility() {
                       )}
 
                     {/* 📍 Facility Markers */}
-                    {/* {hospitals.map((hospital) => (
+                    {hospitals.map((hospital) => (
                       <Marker
                         key={hospital.id}
                         position={{
@@ -748,30 +694,7 @@ function Facility() {
                         //   scaledSize: new window.google.maps.Size(40, 40), // Adjust the size
                         // }}
                       />
-                    ))} */}
-
-                    {/* Show all hospitals if no specific facility is selected */}
-                    {!selectedHospital &&
-                      hospitals.map((hospital) => (
-                        <Marker
-                          key={hospital.id}
-                          position={{
-                            lat: hospital.latitude,
-                            lng: hospital.longitude,
-                          }}
-                          onClick={() => setSelectedHospital(hospital)}
-                        />
-                      ))}
-
-                    {/* Show only the selected facility */}
-                    {selectedHospital && (
-                      <Marker
-                        position={{
-                          lat: selectedHospital.latitude,
-                          lng: selectedHospital.longitude,
-                        }}
-                      />
-                    )}
+                    ))}
 
                     {/* Route Line */}
                     {directions && (
@@ -802,7 +725,7 @@ function Facility() {
                       </InfoWindow>
                     )}
                   </GoogleMap>
-                </LoadScriptNext>
+                </LoadScript>
               </div>
             </div>
           </div>

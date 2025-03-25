@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { IoMdArrowDown, IoMdArrowBack, IoMdArrowForward } from "react-icons/io";
 
 import dynamic from "next/dynamic";
+import DetailsModal2 from "./DetailsModal2";
 const DataTable = dynamic(() => import("react-data-table-component"), {
   ssr: false,
 });
@@ -31,20 +32,20 @@ const PharmaceuticalTable: React.FC<{
   totalPages: number;
   fetchFacilities: () => void;
 }> = ({ data, currentPage, setCurrentPage, totalPages, fetchFacilities }) => {
-  const [search, setSearch] = useState("");
-  const [filteredData, setFilteredData] = useState(data);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
 
-  // Handle search input change
-  // const handleSearch = (event) => {
-  //   const value = event.target.value.toLowerCase();
-  //   setSearch(value);
+  const [loading, setLoading] = useState(true);
 
-  //   const filteredResults = data.filter((facility) =>
-  //     facility.facility_name.toLowerCase().includes(value)
-  //   );
+  const openModal = (row: any) => {
+    setSelectedRow(row);
+    setShowModal(true);
+  };
 
-  //   setFilteredData(filteredResults);
-  // };
+  const closeModal = () => {
+    setShowModal(false);
+    setSelectedRow(null);
+  };
 
   const columns = [
     {
@@ -88,8 +89,11 @@ const PharmaceuticalTable: React.FC<{
     },
     {
       name: "Details",
-      cell: () => (
-        <span className="text-[#5BBA62] text-sm underline cursor-pointer">
+      cell: (row: any) => (
+        <span
+          onClick={() => openModal(row)}
+          className="text-green-600 underline cursor-pointer"
+        >
           Details
         </span>
       ),
@@ -137,23 +141,27 @@ const PharmaceuticalTable: React.FC<{
         filter={true}
         filterPlaceholder="Search Facilities name"
       > */}
-        <DataTable
-          highlightOnHover
-          columns={columns}
-          customStyles={customStyles}
-          striped
-          data={data}
-          pagination
-          paginationServer
-          paginationTotalRows={totalPages * 15} // Laravel sends per_page: 10
-          paginationPerPage={15}
-          // paginationPerPage={10}
-          paginationComponentOptions={{
-            noRowsPerPage: true,
-          }}
-          onChangePage={(page) => setCurrentPage(page)}
-        />
+      <DataTable
+        highlightOnHover
+        columns={columns}
+        customStyles={customStyles}
+        striped
+        data={data}
+        pagination
+        paginationServer
+        paginationTotalRows={totalPages * 15} // Laravel sends per_page: 10
+        paginationPerPage={15}
+        // paginationPerPage={10}
+        paginationComponentOptions={{
+          noRowsPerPage: true,
+        }}
+        onChangePage={(page) => setCurrentPage(page)}
+      />
       {/* </DataTableExtensions> */}
+
+      {showModal && selectedRow && (
+        <DetailsModal2 row={selectedRow} onClose={closeModal} />
+      )}
     </div>
   );
 };

@@ -4,6 +4,7 @@ import Image from "next/image";
 type childrenProps = {
   children: React.ReactNode;
   className?: string;
+  disabled?: string;
   source?: string | StaticImport | React.ReactNode;
   onClick?: () => void;
 };
