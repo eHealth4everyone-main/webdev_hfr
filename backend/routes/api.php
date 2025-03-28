@@ -66,14 +66,6 @@ Route::group(['middleware' => 'cors'], function () {
 
 
 
-
-
-
-
-
-
-
-
     Route::post('facilitiesbyLga', [FrontendController::class, 'getFacilitesByLGA']);
     Route::post('googlemap', [FrontendController::class, 'getFacilitesGMap']);
 });

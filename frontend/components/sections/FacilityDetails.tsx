@@ -574,7 +574,7 @@ const HospitalDetails = ({
 }) => {
   const [copied, setCopied] = useState(false);
 
-  const shareLocation = () => {
+  const shareLocationOLD = () => {
     if (!hospital?.latitude || !hospital?.longitude) {
       alert("Location not available");
       return;
@@ -583,6 +583,15 @@ const HospitalDetails = ({
     const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${hospital.latitude},${hospital.longitude}`;
 
     navigator.clipboard.writeText(googleMapsUrl).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000); // Reset after 2s
+    });
+  };
+
+  const shareLocation = () => {
+    const currentUrl = window.location.href; // Get the current page URL
+
+    navigator.clipboard.writeText(currentUrl).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000); // Reset after 2s
     });

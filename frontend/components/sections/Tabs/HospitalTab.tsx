@@ -206,6 +206,23 @@ const HospitalTab = () => {
     }
   }, []);
 
+  const [ownershipCategories, setOwnershipCategories] = useState<
+    { id: string; name: string }[]
+  >([]);
+  const [selectedOwnershipCategory, setSelectedOwnershipCategory] =
+    useState("");
+
+  const privateOwnershipCats = [
+    { id: "1", name: "For Profit" },
+    { id: "2", name: "Not For Profit" },
+  ];
+
+  const publicOwnershipCats = [
+    { id: "1", name: "Federal" },
+    { id: "2", name: "State" },
+    { id: "3", name: "Military & Paramilitary" },
+  ];
+
   // Fetch ownership
   const ownership = useCallback(async () => {
     try {
@@ -227,6 +244,29 @@ const HospitalTab = () => {
     }
   }, []);
 
+  // Function to update categories based on selected ownership type
+  const fetchOwnershipCategories = useCallback((ownershipId: string) => {
+    if (!ownershipId) {
+      setOwnershipCategories([]);
+      return;
+    }
+
+    if (ownershipId === "2") {
+      setOwnershipCategories(privateOwnershipCats);
+    } else if (ownershipId === "1") {
+      setOwnershipCategories(publicOwnershipCats);
+    } else {
+      setOwnershipCategories([]);
+    }
+  }, []);
+  // Handle ownership selection
+  const handleOwnershipChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedValue = e.target.value;
+    setSelectedownership(selectedValue);
+
+    // Fetch the corresponding categories for this ownership type
+    fetchOwnershipCategories(selectedValue);
+  };
   // Fetch operational
   const operational = useCallback(async () => {
     try {
@@ -471,19 +511,31 @@ const HospitalTab = () => {
           placeholder="Select Facility Level"
         />
 
-        {/* ownership Selection */}
+        {/* Ownership Selection */}
         <SelectComponent
           className="w-full max-w-[350px]"
           value={selectedownership} // Track selected value
-          onChange={(e) => {
-            setSelectedownership(e.target.value); // Update state
-          }}
-          options={ownerships.map((items) => ({
-            value: items.id, // Use items ID
-            name: items.name, // Show items name
+          onChange={handleOwnershipChange}
+          options={ownerships.map((item) => ({
+            value: item.id, // Use items ID
+            name: item.name, // Show items name
           }))}
           placeholder="Select Ownership"
         />
+
+        {/* Show Ownership Category Dropdown Only When Ownership is Selected */}
+        {selectedownership && (
+          <SelectComponent
+            className="w-full max-w-[350px]"
+            value={selectedOwnershipCategory}
+            onChange={(e) => setSelectedOwnershipCategory(e.target.value)}
+            options={ownershipCategories.map((item) => ({
+              value: item.id, // Map `id` to `value`
+              name: item.name,
+            }))}
+            placeholder="Select Ownership Type"
+          />
+        )}
 
         {/* operational Selection */}
         <SelectComponent
@@ -543,7 +595,7 @@ const HospitalTab = () => {
         />
 
         {/* Select Service Type */}
-        <SelectComponent
+        {/* <SelectComponent
           className="w-full max-w-[350px]"
           value={selectedServiceType} // Track selected value
           onChange={(e) => {
@@ -555,7 +607,7 @@ const HospitalTab = () => {
             { value: "2", name: "In Patient" },
           ]}
           placeholder="Select Service Type"
-        />
+        /> */}
 
         {/* Select Service type */}
 
