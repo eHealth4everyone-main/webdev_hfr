@@ -654,17 +654,6 @@ function Facility() {
                 </p>
                 <div className="flex gap-2">
                   <button
-                    onClick={() => setIsGridView(true)}
-                    className={`p-2 rounded-lg transition-colors duration-200 ${
-                      isGridView
-                        ? "bg-gray-900 text-white"
-                        : "bg-white text-gray-900"
-                    }`}
-                  >
-                    <Menu size={20} />
-                  </button>
-
-                  <button
                     onClick={() => setIsGridView(false)}
                     className={`p-2 rounded-lg transition-colors duration-200 ${
                       !isGridView
@@ -673,6 +662,17 @@ function Facility() {
                     }`}
                   >
                     <LayoutDashboard size={20} />
+                  </button>
+
+                  <button
+                    onClick={() => setIsGridView(true)}
+                    className={`p-2 rounded-lg transition-colors duration-200 ${
+                      isGridView
+                        ? "bg-gray-900 text-white"
+                        : "bg-white text-gray-900"
+                    }`}
+                  >
+                    <Menu size={20} />
                   </button>
                 </div>
               </div>
@@ -793,7 +793,7 @@ function Facility() {
                       </p>
                     </div>
                   </div>
-                  {!isGridView ? (
+                  {isGridView ? (
                     // ✅ TABLE VIEW
                     <div className="overflow-x-auto w-full">
                       <table className="min-w-full bg-white border border-gray-300 rounded-lg shadow-sm text-sm">
@@ -821,8 +821,13 @@ function Facility() {
                                 className="border-t hover:bg-gray-50 transition-colors"
                               >
                                 <td className="px-4 py-3 relative group cursor-pointer">
-                                  {hospital.facility_name ?? "N/A"}
-
+                                  <span className="font-semibold text-gray-900">
+                                    {hospital.facility_name ?? "N/A"}
+                                  </span>
+                                  <br />
+                                  <span className="text-sm text-gray-500">
+                                    {hospital.physical_location ?? "N/A"}
+                                  </span>
                                   {/* Tooltip */}
                                   <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded-md px-3 py-1 shadow-lg z-10 whitespace-nowrap">
                                     Click buttons to view map or facility
