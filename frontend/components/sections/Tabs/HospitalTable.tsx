@@ -57,6 +57,8 @@ const HospitalTable: React.FC<{
   //   type: typeof entriesPerPage,
   // });
 
+  // console.log({ tofunmi: data });
+
   const columns = [
     // {
     //   name: "#",

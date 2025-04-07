@@ -13,7 +13,13 @@ const HospitalTab = () => {
   const [lgas, setLgas] = useState<any[]>([]); // Store LGAs
   const [wards, setWards] = useState<any[]>([]); // Store wards
   const [facilityLevels, setFacilityLevel] = useState<any[]>([]);
+
   const [ownerships, setOwnership] = useState<any[]>([]);
+  const [ownershipCategories, setOwnershipCategories] = useState<any[]>([]);
+  // const [ownershipCategories, setOwnershipCategories] = useState<
+  //   { id: string; name: string }[]
+  // >([]);
+
   const [operationals, setOperational] = useState<any[]>([]);
   const [registrations, setRegistration] = useState<any[]>([]);
   const [licenses, setLicense] = useState<any[]>([]);
@@ -24,7 +30,11 @@ const HospitalTab = () => {
   const [selectedLga, setSelectedLga] = useState(""); // Selected LGA
   const [selectedWard, setSelectedWard] = useState("");
   const [selectedFacilityLevel, setSelectedFacilityLevel] = useState("");
+
   const [selectedownership, setSelectedownership] = useState("");
+  const [selectedOwnershipCategory, setSelectedOwnershipCategory] =
+    useState("");
+
   const [selectedOperational, setSelectedOperational] = useState("");
   const [selectedRegistration, setSelectedRegistration] = useState("");
   const [selectedLicense, setSelectedLicense] = useState("");
@@ -33,7 +43,7 @@ const HospitalTab = () => {
   const [selectedService, setSelectedService] = useState("");
   const [fetchError, setFetchError] = useState<string>(""); // State for error messages
 
-  const [selectedGeoCode, setSelectedGeoCode] = useState("0");
+  const [selectedGeoCode, setSelectedGeoCode] = useState("");
   const [selectedServiceType, setSelectedServiceType] = useState("0");
 
   const [loading, setLoading] = useState<boolean>(true); // Loading state
@@ -86,11 +96,16 @@ const HospitalTab = () => {
           ward_id: selectedWard,
           facility_level_id: selectedFacilityLevel,
           ownership_id: selectedownership,
+          ownership_type_id: selectedOwnershipCategory,
           operational_status_id: selectedOperational,
           registration_status_id: selectedRegistration,
           license_status_id: selectedLicense,
           outpatient: selectedServiceType ? 1 : 0,
           inpatient: selectedServiceType ? 1 : 0,
+          geo_codes: selectedGeoCode,
+
+          service_category_id: selectedServiceCategory,
+          services: selectedService,
           // facility_name: search,
           page: currentPage,
           per_page: entriesPerPage,
@@ -123,11 +138,15 @@ const HospitalTab = () => {
     selectedWard,
     selectedFacilityLevel,
     selectedownership,
+    selectedOwnershipCategory,
     selectedOperational,
     selectedRegistration,
     selectedLicense,
     selectedServiceType,
     entriesPerPage,
+    selectedGeoCode,
+    selectedServiceCategory,
+    selectedService,
   ]);
 
   const fetchFacilities2 = useCallback(async () => {
@@ -255,25 +274,9 @@ const HospitalTab = () => {
     }
   }, []);
 
-  const [ownershipCategories, setOwnershipCategories] = useState<
-    { id: string; name: string }[]
-  >([]);
-  const [selectedOwnershipCategory, setSelectedOwnershipCategory] =
-    useState("");
-
-  const privateOwnershipCats = [
-    { id: "1", name: "For Profit" },
-    { id: "2", name: "Not For Profit" },
-  ];
-
-  const publicOwnershipCats = [
-    { id: "1", name: "Federal" },
-    { id: "2", name: "State" },
-    { id: "3", name: "Military & Paramilitary" },
-  ];
-
   // Fetch ownership
   const ownership = useCallback(async () => {
+    setLoading(true); // ✅ Add this
     try {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_BACKEND_API}/ownership`
@@ -293,29 +296,38 @@ const HospitalTab = () => {
     }
   }, []);
 
-  // Function to update categories based on selected ownership type
-  const fetchOwnershipCategories = useCallback((ownershipId: string) => {
-    if (!ownershipId) {
+  // Fetch service-category
+  const ownershipCategory = useCallback(async (ownershipId: string) => {
+    setLoading(true); // ✅ Add this
+    try {
       setOwnershipCategories([]);
-      return;
-    }
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_API}/ownership-type`,
+        { ownership_id: ownershipId },
+        { headers: { "Content-Type": "application/json" } }
+      );
 
-    if (ownershipId === "2") {
-      setOwnershipCategories(privateOwnershipCats);
-    } else if (ownershipId === "1") {
-      setOwnershipCategories(publicOwnershipCats);
-    } else {
-      setOwnershipCategories([]);
+      const data = response?.data?.data; // Axios automatically parses JSON
+
+      console.log("response ownershipCategory", data);
+
+      if (data && Array.isArray(data)) {
+        setOwnershipCategories(data);
+      }
+    } catch (error) {
+      console.error("Error fetching operational:", error);
+      // setFetchError("Failed to fetch operational.");
+    } finally {
+      setLoading(false);
     }
   }, []);
-  // Handle ownership selection
-  const handleOwnershipChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedValue = e.target.value;
-    setSelectedownership(selectedValue);
 
-    // Fetch the corresponding categories for this ownership type
-    fetchOwnershipCategories(selectedValue);
-  };
+  useEffect(() => {
+    if (selectedownership) {
+      ownershipCategory(selectedownership);
+    }
+  }, [selectedownership, ownershipCategory]); // Runs when `selectedLga` changes
+
   // Fetch operational
   const operational = useCallback(async () => {
     try {
@@ -480,6 +492,7 @@ const HospitalTab = () => {
     setSelectedGeoCode("");
     setSelectedServiceType("");
     setSearch("");
+    setSelectedOwnershipCategory("");
     // setEntriesPerPage(50); // Reset to default 50 entries per page
     // setCurrentPage(1); // Reset to first page
 
@@ -502,21 +515,9 @@ const HospitalTab = () => {
     setSelectedGeoCode,
     setSelectedServiceType,
     setSearch,
-    // setEntriesPerPage,
+    setSelectedOwnershipCategory,
     // setCurrentPage,
   ]);
-
-  const handleSelectChange4444 = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedValue = parseInt(e.target.value, 10);
-    if (!isNaN(selectedValue)) {
-      console.log("Entries per page changed:", selectedValue);
-      setEntriesPerPage(selectedValue);
-      setCurrentPage(1); // Reset current page to 1 when changing entries per page
-      // fetchFacilities();
-    } else {
-      console.error("Invalid value selected:", e.target.value);
-    }
-  };
 
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = parseInt(e.target.value);
@@ -601,7 +602,11 @@ const HospitalTab = () => {
         <SelectComponent
           className="w-full max-w-[350px]"
           value={selectedownership} // Track selected value
-          onChange={handleOwnershipChange}
+          onChange={(e) => {
+            const ownershipId = e.target.value;
+            setSelectedownership(ownershipId);
+            ownershipCategory(ownershipId); // Fetch Wards for selected LGA
+          }}
           options={ownerships.map((item) => ({
             value: item.id, // Use items ID
             name: item.name, // Show items name
@@ -617,7 +622,7 @@ const HospitalTab = () => {
             onChange={(e) => setSelectedOwnershipCategory(e.target.value)}
             options={ownershipCategories.map((item) => ({
               value: item.id, // Map `id` to `value`
-              name: item.name,
+              name: item.type,
             }))}
             placeholder="Select Ownership Type"
           />

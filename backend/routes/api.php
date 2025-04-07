@@ -41,6 +41,8 @@ Route::group(['middleware' => 'cors'], function () {
     Route::get('registration-status', [FrontendController::class, 'getRegistrationStatus']);
     Route::get('license-status', [FrontendController::class, 'getLicenseStatus']);
     Route::get('accreditation-status', [FrontendController::class, 'getAccreditationStatus']);
+
+    
     Route::get('service-category', [FrontendController::class, 'getServiceCategory']);
     Route::post('services-by-category', [FrontendController::class, 'getServicesByCategory']);
 
