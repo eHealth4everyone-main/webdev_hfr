@@ -94,7 +94,13 @@ const Overlay = () => {
       const facilities = response.data?.data?.facilities || [];
 
       // Store search results and parameters in localStorage BEFORE navigating
-      localStorage.setItem("searchResults", JSON.stringify(facilities));
+      // localStorage.setItem("searchResults", JSON.stringify(facilities));
+      // Always store result — either actual data or empty array
+      localStorage.setItem(
+        "searchResults",
+        JSON.stringify(Array.isArray(facilities) ? facilities : [])
+      );
+
       // localStorage.setItem("searchParams", JSON.stringify(searchValues));
 
       // Now, navigate to FacilityFinder page
@@ -118,7 +124,7 @@ const Overlay = () => {
       </Text>
       <div className="grid grid-cols-1 md:grid-cols-2 md:justify-items-center lg:flex lg:flex-row mx-[1rem] lg:mx-[0] justify-center items-center gap-[1rem] mt-[1rem]">
         <Input
-          className="mt-[-.3rem]"
+          className="mt-[-.2rem]"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Input your location"

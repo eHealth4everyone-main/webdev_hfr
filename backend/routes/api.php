@@ -64,8 +64,6 @@ Route::group(['middleware' => 'cors'], function () {
     // Route::get('/get-updates', 'Frontend\API\FrontendController@getUpdates');
 
 
-
-
     Route::post('facilitiesbyLga', [FrontendController::class, 'getFacilitesByLGA']);
     Route::post('googlemap', [FrontendController::class, 'getFacilitesGMap']);
 });

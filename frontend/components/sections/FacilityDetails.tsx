@@ -147,7 +147,7 @@ const FacilityDetails = () => {
       ? parsedImages[0] // Get the first image
       : "/detailsImageOne.svg"; // Default placeholder image
 
-  console.log({ imageUrl });
+  // console.log({ imageUrl });
 
   const openModal = (imageUrl: any) => {
     setSelectedImage(imageUrl);
@@ -553,8 +553,9 @@ const FacilityDetails = () => {
               Plans accepted
             </h3>
             <p className="text-sm">
-              Exclusive Provider Organization (EPO), HMO, Medi-Cal Managed Care,
-              Point-of-Service Plan (POS), Senior Advantage.
+              {/* Exclusive Provider Organization (EPO), HMO, Medi-Cal Managed Care,
+              Point-of-Service Plan (POS), Senior Advantage. */}
+              {(hospital as any)?.description || "N/A"}
             </p>
           </div>
         </div>
@@ -588,13 +589,38 @@ const HospitalDetails = ({
     });
   };
 
-  const shareLocation = () => {
-    const currentUrl = window.location.href; // Get the current page URL
+  // const shareLocation = () => {
+  //   const currentUrl = window.location.href; // Get the current page URL
 
-    navigator.clipboard.writeText(currentUrl).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000); // Reset after 2s
-    });
+  //   navigator.clipboard.writeText(currentUrl).then(() => {
+  //     setCopied(true);
+  //     setTimeout(() => setCopied(false), 2000); // Reset after 2s
+  //   });
+  // };
+
+  const shareLocation = async () => {
+    try {
+      const urlToShare = window.location.href; // Or you can specify any URL you want to share
+
+      if (navigator.share) {
+        // If Web Share API is available
+        await navigator.share({
+          title: "Check out this healthcare facility",
+          text: "I found this healthcare facility in your area, check it out!",
+          url: urlToShare,
+        });
+        console.log("Location shared successfully!");
+      } else {
+        // Fallback for browsers that don't support the Web Share API
+        // Open a simple modal or link to share on platforms like FB, WhatsApp, etc.
+        const fallbackUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(
+          urlToShare
+        )}`;
+        window.open(fallbackUrl, "_blank");
+      }
+    } catch (error) {
+      console.error("Error sharing location:", error);
+    }
   };
 
   const downloadFacilityPDF = (hospital: Facility) => {

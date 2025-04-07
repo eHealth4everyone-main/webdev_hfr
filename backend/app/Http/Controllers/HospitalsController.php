@@ -287,12 +287,27 @@ class HospitalsController extends Controller
             $close_date = null;
         }
 
+
+        $imagePaths = [];
+
+        // Check if there are files to upload
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $imagePaths[] = env('APP_URL') . "/storage/" . $image->store('hospitals', 'public');
+            }
+        }
+
+        \Log::info(json_encode($imagePaths));
+
+
         //update records in history with new changes
         $hosp = new HospitalHistory;
         $hosp = HospitalHistory::findOrFail($id);
         $state_id = $hosp['state_id'];
 
-        $hosp->fill($request->all());
+        // $hosp->fill($request->all());
+        $hosp->fill($request->except(['images']));
+
         $hosp->status_id = 8;
         $hosp->requested_by = Auth::user()->id;
         $hosp->requested_at = Carbon::now()->format('Y-m-d H:i:s');
@@ -317,6 +332,8 @@ class HospitalsController extends Controller
         $status->status_id = 8;
         $status->created_at = Carbon::now()->format('Y-m-d H:i:s');
 
+        $hosp->image_url = json_encode($imagePaths);
+
         //get services before update
         $services = DB::table('hs_hospital_services')
             ->select('service_id')
@@ -333,7 +350,6 @@ class HospitalsController extends Controller
         } else {
             $services_update = $request->services;
         }
-
 
 
         DB::beginTransaction();
@@ -531,9 +547,9 @@ class HospitalsController extends Controller
             ->where('license_status_id', 'like', '%' . $license_status_id . '%')
             ->Where('facility_name', 'like', '%' .  $facility_name . '%')
             ->where(DB::Raw("IFNULL(latitude, '')"), $cond, $value)
-            ->orderBy('state')
-            ->orderBy('lga')
-            ->orderBy('ward')
+            ->orderBy('state_id')
+            ->orderBy('lga_id')
+            ->orderBy('ward_id')
             ->orderBy('facility_name')
             ->paginate(15)
             ->appends($request->all());

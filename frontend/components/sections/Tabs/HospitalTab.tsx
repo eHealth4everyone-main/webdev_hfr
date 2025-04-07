@@ -41,11 +41,38 @@ const HospitalTab = () => {
   const [data, setData] = useState([]); // Store API response
   const [currentPage, setCurrentPage] = useState(1); // Track pagination
   const [totalPages, setTotalPages] = useState(1); // Store total pages
+  const [totalRecords, setTotalRecords] = useState(1); // Store total pages
 
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const [search, setSearch] = useState("");
-  const [entriesPerPage, setEntriesPerPage] = useState(10);
+  // const [entriesPerPage, setEntriesPerPage] = useState(25); // Entries per page state
+
+  const entryPerPage = [
+    // { id: "25", name: "25" },
+    { id: "50", name: "50" },
+    { id: "100", name: "100" },
+    { id: "150", name: "150" },
+    { id: "200", name: "200" },
+  ];
+
+  // const [entriesPerPage, setEntriesPerPage] = useState(
+  //   // parseInt(localStorage.getItem("entriesPerPage") || "10") // Handle `null` by defaulting to "10"
+  //   parseInt(localStorage.getItem("entriesPerPage") || entryPerPage[0].id)
+  // );
+
+  const [entriesPerPage, setEntriesPerPage] = useState<number>(() => {
+    return parseInt(entryPerPage[0].id); // Ensures it's a number
+  });
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedValue = localStorage.getItem("entriesPerPage");
+      if (storedValue) {
+        setEntriesPerPage(parseInt(storedValue));
+      }
+    }
+  }, []);
 
   const fetchFacilities = useCallback(async () => {
     setLoading(true);
@@ -66,21 +93,29 @@ const HospitalTab = () => {
           inpatient: selectedServiceType ? 1 : 0,
           // facility_name: search,
           page: currentPage,
-          // per_page: entriesPerPage, // Send number of entries per page
+          per_page: entriesPerPage,
         }
       );
 
       // console.log("response by adams", response.data.data.facilities);
 
-      setData(response.data?.data?.facilities?.data); // Laravel pagination response (data array)
-      setTotalPages(response.data?.data?.facilities?.last_page); // Set total pages from API
-      // console.log("response by adams", response.data.data.facilities.data);
+      // After fetching, update total records and total pages
+      const fetchedData = response.data?.data?.facilities?.data;
+      const totalRecords = response.data?.data?.facilities?.total;
+
+      // Set new data and calculate total pages based on entriesPerPage
+      setData(fetchedData); // Set fetched data
+      setTotalRecords(totalRecords); // Set total records from API
+      // setTotalPages(response.data?.data?.facilities?.last_page); // Set total pages from API
+
+      const calculatedTotalPages = Math.ceil(totalRecords / entriesPerPage); // Recalculate total pages based on entriesPerPage
+      setTotalPages(calculatedTotalPages); // Update total pages
+      // console.log("calculatedTotalPages by adams", calculatedTotalPages);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
       setLoading(false); // Ensure loading stops
     }
-    setLoading(false);
   }, [
     currentPage,
     selectedState,
@@ -92,6 +127,7 @@ const HospitalTab = () => {
     selectedRegistration,
     selectedLicense,
     selectedServiceType,
+    entriesPerPage,
   ]);
 
   const fetchFacilities2 = useCallback(async () => {
@@ -108,8 +144,21 @@ const HospitalTab = () => {
         }
       );
 
-      setData(response.data?.data?.facilities?.data);
-      setTotalPages(response.data?.data?.facilities?.last_page);
+      // setData(response.data?.data?.facilities?.data);
+      // setTotalPages(response.data?.data?.facilities?.last_page);
+
+      // After fetching, update total records and total pages
+      const fetchedData = response.data?.data?.facilities?.data;
+      const totalRecords = response.data?.data?.facilities?.total;
+
+      // Set new data and calculate total pages based on entriesPerPage
+      setData(fetchedData); // Set fetched data
+      setTotalRecords(totalRecords); // Set total records from API
+      // setTotalPages(response.data?.data?.facilities?.last_page); // Set total pages from API
+
+      const calculatedTotalPages = Math.ceil(totalRecords / entriesPerPage); // Recalculate total pages based on entriesPerPage
+      setTotalPages(calculatedTotalPages); // Update total pages
+      console.log("calculatedTotalPages by daniel", calculatedTotalPages);
     } catch (error) {
       setFetchError("Failed to fetch hospitals");
       console.error("Error fetching hospitals:", error);
@@ -408,10 +457,14 @@ const HospitalTab = () => {
 
   // Fetch paginated facilities when `currentPage` changes
   useEffect(() => {
-    if (currentPage) {
-      fetchFacilities();
-    }
-  }, [currentPage, fetchFacilities]); // Runs when `currentPage` changes
+    fetchFacilities();
+    return () => {
+      // Cleanup: clear localStorage after fetch if needed
+      localStorage.removeItem("entriesPerPage");
+    };
+    // if (currentPage) {
+    // }
+  }, [currentPage, fetchFacilities, entriesPerPage]); // Runs when `currentPage` changes
 
   const handleReset = useCallback(() => {
     setSelectedState("");
@@ -427,6 +480,13 @@ const HospitalTab = () => {
     setSelectedGeoCode("");
     setSelectedServiceType("");
     setSearch("");
+    // setEntriesPerPage(50); // Reset to default 50 entries per page
+    // setCurrentPage(1); // Reset to first page
+
+    const defaultValue = entryPerPage[0].id; // Default to the first entry (25)
+    setEntriesPerPage(parseInt(defaultValue, 10)); // Update state
+    localStorage.setItem("entriesPerPage", defaultValue); // Update localStorage
+    setCurrentPage(1); // Reset current page to 1 when entries per page change
   }, [
     // currentPage,
     setSelectedState,
@@ -442,7 +502,33 @@ const HospitalTab = () => {
     setSelectedGeoCode,
     setSelectedServiceType,
     setSearch,
+    // setEntriesPerPage,
+    // setCurrentPage,
   ]);
+
+  const handleSelectChange4444 = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedValue = parseInt(e.target.value, 10);
+    if (!isNaN(selectedValue)) {
+      console.log("Entries per page changed:", selectedValue);
+      setEntriesPerPage(selectedValue);
+      setCurrentPage(1); // Reset current page to 1 when changing entries per page
+      // fetchFacilities();
+    } else {
+      console.error("Invalid value selected:", e.target.value);
+    }
+  };
+
+  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = parseInt(e.target.value);
+    localStorage.setItem("entriesPerPage", String(value));
+    setEntriesPerPage(value);
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (page: number) => {
+    console.log("Page changed:", page);
+    setCurrentPage(page);
+  };
 
   return (
     <div>
@@ -669,8 +755,12 @@ const HospitalTab = () => {
         <SelectComponent
           className="w-full max-w-[300px] h-[44px] text-sm"
           placeholder="Entries Per Page"
-          value={String(entriesPerPage)} // Convert number to string
-          onChange={(e) => setEntriesPerPage(parseInt(e.target.value, 10))}
+          options={entryPerPage.map((item) => ({
+            value: item.id, // Use item ID
+            name: item.name, // Show item name
+          }))}
+          value={String(entriesPerPage)} // Convert number to string for select compatibility
+          onChange={handleSelectChange} // Correct conversion to number
         />
 
         {/* Reset Button */}
@@ -695,12 +785,14 @@ const HospitalTab = () => {
       <div className="w-full overflow-x-auto lg:overflow-x-scroll xl:overflow-x-hidden">
         <div className="min-w-[700px] lg:min-w-[900px]">
           <HospitalTable
+            key={`${entriesPerPage}-${currentPage}`} // force re-render
             data={data}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
             totalPages={totalPages}
-            fetchFacilities={fetchFacilities} // Pass function to child
-            // loading={loading}
+            totalRecords={totalRecords}
+            // fetchFacilities={fetchFacilities} // Pass function to child
+            entriesPerPage={entriesPerPage} // Pass entriesPerPage to child component
           />
         </div>
       </div>
