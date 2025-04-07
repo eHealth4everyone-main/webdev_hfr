@@ -1,8 +1,5 @@
 import { useEffect, useState } from "react";
-// import { IoMdArrowDown, IoMdArrowBack, IoArrowForward } from "react-icons/io";
 import { IoMdArrowDown, IoMdArrowBack, IoMdArrowForward } from "react-icons/io";
-// import DataTable from "react-data-table-component";
-// import DataTableExtensions from "react-data-table-component-extensions";
 import dynamic from "next/dynamic";
 import DetailsModal from "./DetailsModal";
 const DataTable = dynamic(() => import("react-data-table-component"), {
@@ -15,33 +12,25 @@ const DataTableExtensions = dynamic(
   { ssr: false }
 );
 
-// import DataTableExtensions from 'react-data-table-component-extensions';
 import "react-data-table-component-extensions/dist/index.css";
 
-// @ts-ignore
-// const DataTableExtensions = dynamic(
-//   () => Promise.resolve(require("react-data-table-component-extensions")),
-//   { ssr: false }
-// );
-
-// import DataTableExtensions, { DataTableExtensionsProps } from "react-data-table-component-extensions";
-
-// Unified Interface for Hospital Data
-
-// const HospitalTable = ({
-//   data,
-//   currentPage,
-//   setCurrentPage,
-//   totalPages,
-//   fetchFacilities,
-// }) => {
 const HospitalTable: React.FC<{
   data: any[];
   currentPage: number;
   setCurrentPage: (page: number) => void;
   totalPages: number;
-  fetchFacilities: () => void;
-}> = ({ data, currentPage, setCurrentPage, totalPages, fetchFacilities }) => {
+  totalRecords: number;
+  entriesPerPage: number;
+  // fetchFacilities: (page: number) => void; // Fetch facilities based on the page
+}> = ({
+  data,
+  currentPage,
+  setCurrentPage,
+  totalPages,
+  totalRecords,
+  entriesPerPage,
+  // fetchFacilities,
+}) => {
   const [loading, setLoading] = useState(true);
 
   const [showModal, setShowModal] = useState(false);
@@ -63,7 +52,18 @@ const HospitalTable: React.FC<{
     }
   }, [data]);
 
+  // console.log({
+  //   entriesPerPage,
+  //   type: typeof entriesPerPage,
+  // });
+
   const columns = [
+    // {
+    //   name: "#",
+    //   selector: (row: any, index: number) =>
+    //     (currentPage - 1) * entriesPerPage + (index + 1), // Calculate serial number
+    //   sortable: false, // No need to sort by serial number
+    // },
     {
       name: "State",
       selector: (row: any) => row.state_name,
@@ -124,14 +124,6 @@ const HospitalTable: React.FC<{
         </span>
       ),
     },
-    // {
-    //   name: "Details",
-    //   cell: () => (
-    //     <span className="text-[#5BBA62] text-sm underline cursor-pointer">
-    //       Details
-    //     </span>
-    //   ),
-    // },
 
     {
       name: "Details",
@@ -180,15 +172,13 @@ const HospitalTable: React.FC<{
     data,
   };
 
+  // Pagination calculations
+  // const totalRecords = Math.ceil(totalPages / 5); // Assuming 5 records per page
+
+  // console.log({ "adams lagos": entriesPerPage, currentPage, totalPages });
+
   return (
     <div className="mt-6">
-      {/* <DataTableExtensions
-        {...tableData}
-        export={false}
-        print={false}
-        filter={true}
-        filterPlaceholder="Search Facilities name"
-      > */}
       <DataTable
         highlightOnHover
         columns={columns}
@@ -197,21 +187,15 @@ const HospitalTable: React.FC<{
         data={data}
         pagination
         paginationServer
-        paginationTotalRows={totalPages * 15} // Laravel sends per_page: 10
-        paginationPerPage={15}
-        // paginationPerPage={10}
+        paginationTotalRows={totalRecords}
+        paginationPerPage={entriesPerPage}
         paginationComponentOptions={{
           noRowsPerPage: true,
         }}
+        paginationDefaultPage={currentPage}
         onChangePage={(page) => setCurrentPage(page)}
         progressPending={loading}
       />
-      {/* </DataTableExtensions> */}
-
-      {/* Modal */}
-      {/* {showModal && selectedRow && (
-        <DetailsModal row={selectedRow} onClose={closeModal} />
-      )} */}
       {showModal && selectedRow && (
         <DetailsModal row={selectedRow} onClose={closeModal} />
       )}

@@ -41,7 +41,7 @@ const Header = () => {
       <Flex
         direction={"row"}
         alignItems="center"
-        h={{ base: "70px", xl: "100px" }}
+        h={{ base: "70px", xl: "80px" }}
         justifyContent={"space-between"}
         px={{ base: "2rem", xl: "4%" }}
         background={"#fff"}

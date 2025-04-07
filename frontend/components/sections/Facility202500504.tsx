@@ -8,17 +8,17 @@ import Input from "../ui/Input";
 import SelectComponent from "../ui/SelectComponent";
 import { GreenButton, Text, WhiteButton } from "../ui/Typography";
 
+import { LoadScriptNext } from "@react-google-maps/api";
+
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import {
   LoadScript,
-  LoadScriptNext,
   GoogleMap,
   Marker,
   InfoWindow,
   DirectionsRenderer,
   DirectionsService,
 } from "@react-google-maps/api";
-
 import {
   MapPin,
   Search,
@@ -34,27 +34,8 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-// import {
-//   ChevronRightIcon,
-//   InformationCircleIcon,
-// } from "@heroicons/react/outline";
-
-// const actions = [
-//   {
-//     name: "Direction",
-//     icon: <ChevronRightIcon className="h-5 w-5 mr-2" />,
-//     onClick: (hospital) => handleGetDirections(hospital),
-//   },
-//   {
-//     name: "Details",
-//     icon: <InformationCircleIcon className="h-5 w-5 mr-2" />,
-//     onClick: (hospital) =>
-//       router.push(`/facilityfinder/details/${hospital.id}`),
-//   },
-// ];
-
 const libraries: "places"[] = ["places"];
-const itemsPerPage = 10;
+const itemsPerPage = 2;
 
 const defaultLocation = { lat: 9.058, lng: 7.489 }; // 📍 Abuja (Fallback)
 
@@ -170,29 +151,8 @@ function Facility() {
 
   const [search, setSearch] = useState("");
 
-  ////////////////////////////////////////////////////////////////////////////////////////////
-
-  const [userAddress, setUserAddress] = useState<string | null>(null);
-  const [googleMapsLoaded, setGoogleMapsLoaded] = useState(false);
-  // const [focusedHospital, setFocusedHospital] = useState(null);
-  const [focusedHospital, setFocusedHospital] = useState<Facility | null>(null);
-  const [showUserInfo, setShowUserInfo] = useState(true);
-
-  const [isGridView, setIsGridView] = useState(true); // State to track the layout
-  // const [viewType, setViewType] = useState<"list" | "grid">("list");
-  // const itemsPerPage = viewType === "list" ? 10 : 20;
-
-  const itemsPerPage = isGridView ? 10 : 20;
-  // Calculate total pages
-  const totalPages = Math.ceil(hospitals.length / itemsPerPage);
-
-  // Get hospitals for the current page
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentHospitals = hospitals.slice(indexOfFirstItem, indexOfLastItem);
-
-  ////////////////////////////////////////////////////////////////////////////////////////////
-
+  // const [directions, setDirections] = useState(null);
+  // const [directions, setDirections] = useState<null>(null);
   const [directions, setDirections] =
     useState<google.maps.DirectionsResult | null>(null);
 
@@ -322,13 +282,20 @@ function Facility() {
 
           // ✅ Only keep user location & selected hospital markers
           setSelectedHospital(hospital); // ✅ Set the selected hospital
-          setFocusedHospital(hospital); // ✅ Persist focus even if InfoWindow closes
         } else {
           console.error("Directions request failed:", status);
         }
       }
     );
   };
+
+  // Calculate total pages
+  const totalPages = Math.ceil(hospitals.length / itemsPerPage);
+
+  // Get hospitals for the current page
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentHospitals = hospitals.slice(indexOfFirstItem, indexOfLastItem);
 
   const fetchFacilities = useCallback(
     async (
@@ -458,48 +425,59 @@ function Facility() {
     }
   }, [hospitals]);
 
-  ////////////////////////////////////////////////////////////////////////////
   useEffect(() => {
-    const rawResults = localStorage.getItem("searchResults");
-    let storedResults: Facility[] = [];
+    // Retrieve search results from localStorage
+    const storedResults: Facility[] = JSON.parse(
+      localStorage.getItem("searchResults") || "[]"
+    );
 
-    try {
-      storedResults = rawResults ? JSON.parse(rawResults) : [];
-    } catch (error) {
-      console.error("Invalid JSON in localStorage. Resetting to empty array.");
-      storedResults = [];
-    }
+    if (storedResults.length > 0) {
+      // console.log("Using localStorage data for hospitals.");
 
-    // ✅ Handle all cases: valid data or empty array
-    const validFacilities: Facility[] = storedResults
-      .map(
-        (facility: any): Facility => ({
-          ...facility,
-          latitude:
-            facility.latitude && !isNaN(Number(facility.latitude))
-              ? Number(facility.latitude)
-              : null,
-          longitude:
-            facility.longitude && !isNaN(Number(facility.longitude))
-              ? Number(facility.longitude)
-              : null,
-        })
-      )
-      .filter(
-        (facility: Facility) =>
-          facility.latitude !== null && facility.longitude !== null
-      );
+      // Ensure latitude and longitude are valid numbers
+      const validFacilities: Facility[] = storedResults
+        .map(
+          (facility: any): Facility => ({
+            ...facility,
+            latitude:
+              facility.latitude && !isNaN(Number(facility.latitude))
+                ? Number(facility.latitude)
+                : null,
+            longitude:
+              facility.longitude && !isNaN(Number(facility.longitude))
+                ? Number(facility.longitude)
+                : null,
+          })
+        )
+        .filter(
+          (facility: Facility) =>
+            facility.latitude !== null && facility.longitude !== null
+        );
 
-    setHospitals(validFacilities);
-
-    // ✅ Only fetch if localStorage has *never* been set
-    if (!rawResults) {
-      console.log("No localStorage found. Fetching from API...");
+      setHospitals(validFacilities);
+      // localStorage.removeItem("searchResults"); // Uncomment if you want to clear storage
+    } else {
+      console.log("Fetching from API because localStorage is empty.");
       fetchFacilities();
     }
   }, [fetchFacilities]);
 
-  ///////////////////////////////////////////////////////////////////////
+  // const handleSearch = () => {
+  //   setLoading(true);
+
+  //   // Call fetchFacilities with selected values
+  //   fetchFacilities({
+  //     search,
+  //     facilityType: selectedFacilityType,
+  //     facilityLevel: selectedFacilityLevel,
+  //   });
+
+  //   setTimeout(() => {
+  //     setLoading(false);
+  //   }, 2000);
+
+  //   localStorage.removeItem("searchResults");
+  // };
 
   const handleSearch = async () => {
     setLoading(true);
@@ -513,9 +491,6 @@ function Facility() {
 
       // Optional delay (only if needed)
       await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // Reset pagination to first page after search
-      setCurrentPage(1);
     } catch (error) {
       console.error("Error fetching facilities:", error);
     } finally {
@@ -543,28 +518,6 @@ function Facility() {
       router.push = originalPush; // Restore original push function on cleanup
     };
   }, [router]);
-
-  // Wait for Google Maps API to load
-  useEffect(() => {
-    if (typeof window !== "undefined" && window.google && window.google.maps) {
-      setGoogleMapsLoaded(true);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (userLocation && googleMapsLoaded) {
-      const geocoder = new window.google.maps.Geocoder();
-
-      geocoder.geocode({ location: userLocation }, (results, status) => {
-        if (status === "OK" && results && results[0]) {
-          setUserAddress(results[0].formatted_address);
-        } else {
-          console.error("Geocoder failed: ", status);
-          setUserAddress("Current location");
-        }
-      });
-    }
-  }, [userLocation, googleMapsLoaded]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -632,7 +585,7 @@ function Facility() {
               </div>
             </div>
 
-            {/* <div className="flex justify-between items-center bg-green-50 p-4 rounded-lg">
+            <div className="flex justify-between items-center bg-green-50 p-4 rounded-lg">
               <p className="text-gray-700">
                 {hospitals.length} healthcare facilities found in your area
               </p>
@@ -644,42 +597,10 @@ function Facility() {
                   <LayoutDashboard size={20} />
                 </button>
               </div>
-            </div> */}
-
-            <div className="flex flex-col">
-              {/* Layout Toggle Buttons */}
-              <div className="flex justify-between items-center bg-green-50 p-4 rounded-lg">
-                <p className="text-gray-700">
-                  {hospitals.length} healthcare facilities found in your area
-                </p>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setIsGridView(true)}
-                    className={`p-2 rounded-lg transition-colors duration-200 ${
-                      isGridView
-                        ? "bg-gray-900 text-white"
-                        : "bg-white text-gray-900"
-                    }`}
-                  >
-                    <Menu size={20} />
-                  </button>
-
-                  <button
-                    onClick={() => setIsGridView(false)}
-                    className={`p-2 rounded-lg transition-colors duration-200 ${
-                      !isGridView
-                        ? "bg-gray-900 text-white"
-                        : "bg-white text-gray-900"
-                    }`}
-                  >
-                    <LayoutDashboard size={20} />
-                  </button>
-                </div>
-              </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* <div className="flex-1 overflow-y-auto max-h-screen px-4">
+              <div className="flex-1">
                 {currentHospitals.map((hospital) => {
                   const imageUrl =
                     Array.isArray(hospital.image_url) &&
@@ -690,6 +611,7 @@ function Facility() {
                   return (
                     <Card key={hospital.id} className="mb-4 p-8">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+                        {/* Image */}
                         <div className="w-full h-[250px] flex items-center">
                           <Image
                             src={imageUrl}
@@ -700,12 +622,13 @@ function Facility() {
                           />
                         </div>
 
+                        {/* Details */}
                         <div className="flex flex-col gap-4">
                           <h2 className="text-lg font-semibold">
                             {hospital.facility_name ?? "N/A"}
                           </h2>
                           <p className="text-sm text-gray-600">
-                            {hospital.physical_location ?? "N/A"}
+                            {hospital.address ?? "N/A"}
                           </p>
                           <p className="text-sm text-gray-600">
                             Contact info: {hospital.phone_number ?? "N/A"}
@@ -715,13 +638,36 @@ function Facility() {
                             POS, Senior Advantage
                           </p>
 
+                          {/* Buttons */}
                           <div className="grid grid-cols-1 md:flex md:space-x-4 gap-2 w-full">
+                            {/* <a
+                              href="#"
+                              className="text-green-600 font-semibold text-center w-full md:w-auto"
+                              onClick={() => handleGetDirections(hospital)}
+                            >
+                              View Direction
+                            </a> */}
+
                             <button
                               className="text-green-600 font-semibold text-center w-full md:w-auto"
                               onClick={() => handleGetDirections(hospital)}
                             >
                               View Direction
                             </button>
+                            {/* <a
+                              href="#"
+                              className="text-green-600 font-semibold text-center w-full md:w-auto"
+                              target="__blank"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                router.push(
+                                  `/facilityfinder/details/${hospital.id}`
+                                );
+                              }}
+                            >
+                              View Details
+                            </a> */}
+
                             <Link
                               href={`/facilityfinder/details/${hospital.id}`}
                               className="text-green-600 font-semibold text-center w-full md:w-auto"
@@ -735,6 +681,7 @@ function Facility() {
                   );
                 })}
 
+                {/* Pagination Controls */}
                 <div className="flex justify-center items-center gap-4 mt-6">
                   <button
                     onClick={() =>
@@ -768,301 +715,29 @@ function Facility() {
                     Next
                   </button>
                 </div>
-              </div> */}
-
-              {/* Hospitals Container */}
-              <div
-                className={`flex-1 overflow-y-auto max-h-screen px-4 ${
-                  !isGridView ? "space-y-4  " : "space-y-4"
-                }`}
-              >
-                <div className="flex-1">
-                  <div className="flex flex-col">
-                    <div className="flex justify-between items-center bg-gray-100 border border-gray-300 rounded-lg shadow-sm p-4 mb-4">
-                      <p className="text-gray-700">
-                        Click the{" "}
-                        <span className="font-semibold text-green-600">
-                          "View Direction"
-                        </span>{" "}
-                        button to see the facility's location on the map, or
-                        select{" "}
-                        <span className="font-semibold text-green-600">
-                          "View Details"
-                        </span>{" "}
-                        to learn more about the facility.
-                      </p>
-                    </div>
-                  </div>
-                  {!isGridView ? (
-                    // ✅ TABLE VIEW
-                    <div className="overflow-x-auto w-full">
-                      <table className="min-w-full bg-white border border-gray-300 rounded-lg shadow-sm text-sm">
-                        <thead className="bg-gray-100 text-gray-700">
-                          <tr>
-                            <th className="px-4 py-2 border-b text-left">
-                              Facility Name
-                            </th>
-                            <th className="px-4 py-2 border-b text-left">
-                              Actions
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody className="space-y-2">
-                          {currentHospitals.map((hospital) => {
-                            const imageUrl =
-                              Array.isArray(hospital.image_url) &&
-                              hospital.image_url.length > 0
-                                ? hospital.image_url[0]
-                                : "/gh1.svg";
-
-                            return (
-                              <tr
-                                key={hospital.id}
-                                className="border-t hover:bg-gray-50 transition-colors"
-                              >
-                                <td className="px-4 py-3 relative group cursor-pointer">
-                                  {hospital.facility_name ?? "N/A"}
-
-                                  {/* Tooltip */}
-                                  <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded-md px-3 py-1 shadow-lg z-10 whitespace-nowrap">
-                                    Click buttons to view map or facility
-                                    details
-                                  </div>
-                                </td>
-                                <td className="px-4 py-3 flex space-x-2">
-                                  <button
-                                    onClick={() =>
-                                      handleGetDirections(hospital)
-                                    }
-                                    className="flex items-center text-green-600 font-semibold px-4 py-2 border rounded hover:bg-green-100"
-                                  >
-                                    {/* Map Icon SVG */}
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      className="h-5 w-5 mr-2"
-                                      fill="none"
-                                      viewBox="0 0 24 24"
-                                      stroke="currentColor"
-                                    >
-                                      <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M12 11c.5304 0 1.0391-.2107 1.4142-.5858C13.7893 10.0391 14 9.5304 14 9s-.2107-1.0391-.5858-1.4142C13.0391 7.2107 12.5304 7 12 7s-1.0391.2107-1.4142.5858C10.2107 7.9609 10 8.4696 10 9s.2107 1.0391.5858 1.4142C10.9609 10.7893 11.4696 11 12 11z"
-                                      />
-                                      <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"
-                                      />
-                                    </svg>
-                                    Direction
-                                  </button>
-
-                                  <Link
-                                    href={`/facilityfinder/details/${hospital.id}`}
-                                    className="flex items-center text-green-600 font-semibold px-4 py-2 border rounded hover:bg-green-100"
-                                  >
-                                    {/* Info Icon SVG */}
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      className="h-5 w-5 mr-2"
-                                      fill="none"
-                                      viewBox="0 0 24 24"
-                                      stroke="currentColor"
-                                    >
-                                      <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M13 16h-1v-4h-1m1-4h.01M12 4.5C7.857 4.5 4.5 7.857 4.5 12S7.857 19.5 12 19.5 19.5 16.143 19.5 12 16.143 4.5 12 4.5z"
-                                      />
-                                    </svg>
-                                    Details
-                                  </Link>
-                                </td>
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </table>
-                    </div>
-                  ) : (
-                    // ✅ LIST CARD VIEW (your original design)
-                    <>
-                      {currentHospitals.map((hospital) => {
-                        const parsedImages = JSON.parse(
-                          (hospital as any)?.image_url || "[]"
-                        );
-
-                        const imageUrl =
-                          Array.isArray(parsedImages) && parsedImages.length > 0
-                            ? parsedImages[0] // Get the first image
-                            : "/gh1.svg"; //
-
-                        return (
-                          <Card key={hospital.id} className="mb-4">
-                            <div className="p-6 bg-gray-100 border border-gray-300 rounded-lg shadow-sm w-full">
-                              <div className="flex flex-col md:flex-row gap-4 items-start">
-                                {/* Image */}
-                                <div className="w-full md:w-[250px] h-[250px] flex items-center">
-                                  <Image
-                                    src={imageUrl}
-                                    width={250}
-                                    height={150}
-                                    alt={hospital.facility_name ?? "N/A"}
-                                    className="object-cover w-full h-full rounded-lg"
-                                  />
-                                </div>
-
-                                {/* Details */}
-                                <div className="flex flex-col gap-4 md:pl-4">
-                                  <h2 className="text-lg font-semibold relative group cursor-pointer">
-                                    {hospital.facility_name ?? "N/A"}
-                                    {/* Tooltip */}
-                                    <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded-md px-3 py-1 shadow-lg z-10 whitespace-nowrap">
-                                      Click buttons to view map or facility
-                                      details
-                                    </div>
-                                  </h2>
-                                  <p className="text-sm text-gray-600">
-                                    {hospital.physical_location ?? "N/A"}
-                                  </p>
-                                  <p className="text-sm text-gray-600">
-                                    Contact info:{" "}
-                                    {hospital.phone_number ?? "N/A"}
-                                  </p>
-                                  <p className="text-sm text-gray-600">
-                                    {/* Plans accepted: EPO, HMO, Medi-Cal Managed
-                                    Care, POS, Senior Advantage */}
-                                    {hospital.description ?? "N/A"}
-                                  </p>
-
-                                  <div className="w-full flex flex-wrap md:flex-nowrap gap-2">
-                                    <button
-                                      className="text-green-600 font-semibold text-center w-full md:w-auto"
-                                      onClick={() =>
-                                        handleGetDirections(hospital)
-                                      }
-                                    >
-                                      View Direction
-                                    </button>
-                                    <Link
-                                      href={`/facilityfinder/details/${hospital.id}`}
-                                      className="text-green-600 font-semibold text-center w-full md:w-auto"
-                                    >
-                                      View Details
-                                    </Link>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </Card>
-                        );
-                      })}
-                    </>
-                  )}
-
-                  {/* Pagination Controls */}
-                  <div className="flex justify-center items-center gap-4 mt-6">
-                    <button
-                      onClick={() =>
-                        setCurrentPage((prev) => Math.max(prev - 1, 1))
-                      }
-                      disabled={currentPage === 1}
-                      className={`px-4 py-2 border rounded ${
-                        currentPage === 1
-                          ? "opacity-50 cursor-not-allowed"
-                          : "hover:bg-gray-100"
-                      }`}
-                    >
-                      Previous
-                    </button>
-
-                    <span className="text-gray-600">
-                      Page {currentPage} of {totalPages}
-                    </span>
-
-                    <button
-                      onClick={() =>
-                        setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                      }
-                      disabled={currentPage === totalPages}
-                      className={`px-4 py-2 border rounded ${
-                        currentPage === totalPages
-                          ? "opacity-50 cursor-not-allowed"
-                          : "hover:bg-gray-100"
-                      }`}
-                    >
-                      Next
-                    </button>
-                  </div>
-                </div>
               </div>
 
-              <div className="h-[670px] rounded-lg overflow-hidden">
+              <div className="h-[600px] rounded-lg overflow-hidden">
                 <LoadScriptNext
                   googleMapsApiKey={
                     process.env.NEXT_PUBLIC_GOOGLE_MAP_API ?? ""
                   }
                   libraries={libraries}
-                  onLoad={() => setGoogleMapsLoaded(true)}
                 >
                   <GoogleMap
                     mapContainerClassName="w-full h-full"
                     center={center}
-                    // center={
-                    //   focusedHospital
-                    //     ? {
-                    //         lat: focusedHospital.latitude,
-                    //         lng: focusedHospital.longitude,
-                    //       }
-                    //     : center
-                    // }
                     // zoom={14}
                     zoom={selectedHospital ? 14 : 10} // Zoom in if showing one facility
                   >
-                    {/* Only render if Google Maps is fully loaded */}
-                    {googleMapsLoaded &&
-                      userLocation &&
+                    {userLocation &&
                       !isNaN(userLocation.lat) &&
                       !isNaN(userLocation.lng) && (
-                        <>
-                          <Marker
-                            position={userLocation}
-                            icon={{
-                              url:
-                                "data:image/svg+xml;charset=UTF-8," +
-                                encodeURIComponent(`
-                                  <svg xmlns="http://www.w3.org/2000/svg" width="80" height="40">
-                                    <rect x="0" y="0" width="80" height="30" rx="5" ry="5" fill="#2563EB"/>
-                                    <text x="40" y="20" font-size="14" fill="white" text-anchor="middle" font-weight="bold">You</text>
-                                  </svg>
-                                `),
-                              scaledSize: new window.google.maps.Size(80, 40),
-                            }}
-                            onClick={() => setShowUserInfo(true)} // 👈 Show card again on click
-                          />
-
-                          {showUserInfo && userAddress && (
-                            <InfoWindow
-                              position={userLocation}
-                              onCloseClick={() => setShowUserInfo(false)} // 👈 Close card
-                            >
-                              <div className="p-2 max-w-xs">
-                                <h3 className="font-bold mb-2">You</h3>
-                                <p className="text-sm text-gray-600 break-words">
-                                  {userAddress}
-                                </p>
-                              </div>
-                            </InfoWindow>
-                          )}
-                        </>
+                        <Marker position={userLocation} label="You" />
                       )}
 
                     {/* Show all hospitals if no specific facility is selected */}
-                    {!focusedHospital &&
+                    {!selectedHospital &&
                       hospitals.map((hospital) => (
                         <Marker
                           key={hospital.id}
@@ -1070,41 +745,23 @@ function Facility() {
                             lat: hospital.latitude,
                             lng: hospital.longitude,
                           }}
-                          onClick={() => {
-                            setSelectedHospital(hospital);
-                            setFocusedHospital(hospital); // 👈 This is important
-                          }}
+                          onClick={() => setSelectedHospital(hospital)}
                         />
                       ))}
 
                     {/* Show only the selected facility */}
-                    {/* {selectedHospital && (
+                    {selectedHospital && (
                       <Marker
                         position={{
                           lat: selectedHospital.latitude,
                           lng: selectedHospital.longitude,
                         }}
                       />
-                    )} */}
-
-                    {focusedHospital &&
-                      focusedHospital.latitude !== null &&
-                      focusedHospital.longitude !== null && (
-                        <Marker
-                          position={{
-                            lat: focusedHospital.latitude,
-                            lng: focusedHospital.longitude,
-                          }}
-                          onClick={() => setSelectedHospital(focusedHospital)}
-                        />
-                      )}
+                    )}
 
                     {/* Route Line */}
                     {directions && (
-                      <DirectionsRenderer
-                        directions={directions}
-                        options={{ suppressMarkers: true }}
-                      />
+                      <DirectionsRenderer directions={directions} />
                     )}
                     {/* 🏥 Facility InfoWindow */}
                     {selectedHospital && (
@@ -1120,7 +777,7 @@ function Facility() {
                             {selectedHospital.facility_name}
                           </h3>
                           <p className="text-sm mb-1">
-                            {selectedHospital.physical_location}
+                            {selectedHospital.address}
                           </p>
                           {selectedHospital.phone_number && (
                             <p className="text-sm text-blue-600">

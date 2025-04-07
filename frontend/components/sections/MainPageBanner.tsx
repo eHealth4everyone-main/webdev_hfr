@@ -35,15 +35,21 @@ const MainPageBanner = ({ items, index }: itemsProps) => {
 
   const titleSplit = title?.split(" ");
 
+  // const part1 =
+  //   titleSplit?.[0] && titleSplit?.[1] && titleSplit?.[3]
+  //     ? `${titleSplit[0]} ${titleSplit[1]} ${titleSplit[3]}`
+  //     : "";
   const part1 =
-    titleSplit?.[0] && titleSplit?.[1] && titleSplit?.[2]
-      ? `${titleSplit[0]} ${titleSplit[1]}${titleSplit[2]}`
+    titleSplit?.[0] && titleSplit?.[1]
+      ? `${titleSplit[0]} ${titleSplit[1]}`
       : "";
 
   const part2 = titleSplit?.[3] || "";
   const part3 = titleSplit?.[4] || "";
 
   const backImg = image_url ? image_url : "/bg-fac.png";
+
+  console.log({ part1, part2, part3 });
 
   return (
     <div
@@ -69,15 +75,17 @@ const MainPageBanner = ({ items, index }: itemsProps) => {
         >
           <div className=" flex flex-col md:justify-left items-left gap-[1.5rem]  w-[100%] ">
             <h1
-              className={`md:leading-[1.2] break-words leading-[1] font-[700]  w-[100%] text-[#fff] text-left  md:text-5xl text-4xl mt-[1rem] lg:mt-[0]`}
+              className={`md:leading-[1.2] break-words leading-[1] font-[500] w-[100%] text-[#fff] text-left md:text-6xl text-4xl `}
             >
               {part1}
             </h1>
+
             <h1
-              className={`md:leading-[5rem] break-words leading-[1] font-[700] w-[100%] text-[#fff] text-left md:text-6xl text-4xl `}
+              className={`md:leading-[1.2] break-words leading-[1] font-[500]  w-[100%] text-[#fff] text-left  md:text-6xl text-4xl mt-[1rem] lg:mt-[0]`}
             >
               {part2} <span className="text-[#5CB85C]">{part3}</span>
             </h1>
+
             <p className=" break-words  text-left  md:leading-[25px] text-[#fff] font-[400] w-[auto] lg:w-[650px]">
               {sub_title}
             </p>

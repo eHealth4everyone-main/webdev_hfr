@@ -27,7 +27,7 @@ const TabsData = [
   "Hospitals and Clinics",
   "Pharmaceuticals",
   "Laboratories",
-  "Radiologist/Imageries",
+  "Radiology/Imaging",
 ];
 
 const UserTabs = () => {
