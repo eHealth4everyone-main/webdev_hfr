@@ -56,7 +56,7 @@ const SelectComponent = ({
           value={value}
           multiple={isMulti}
         >
-          <option value="">{placeholder || "Select an option"}</option>
+          <option value="50">{placeholder || "Select an option"}</option>
           {options?.map((option) => (
             <option key={option.value} value={option.value}>
               {option.name}

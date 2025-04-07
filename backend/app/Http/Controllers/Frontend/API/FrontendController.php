@@ -275,6 +275,10 @@ class FrontendController extends Controller
             $hospitalIds = DB::table('hs_hospitals_history')->pluck('id')->toArray();
         }
 
+        // Get 'per_page' from the request, defaulting to 50 if not provided
+        $perPage = $request->input('per_page', 25); // Laravel 5 way to set default value for pagination
+
+
         $data['facilities'] = DB::table('hs_hospitals_history')
             ->leftJoin('ou_states', 'hs_hospitals_history.state_id', '=', 'ou_states.id')
             ->leftJoin('ou_lgas', 'hs_hospitals_history.lga_id', '=', 'ou_lgas.id')
@@ -327,7 +331,8 @@ class FrontendController extends Controller
             // ->orderBy('hs_hospitals_history.ward_id', 'desc')
             // ->orderBy('hs_hospitals_history.facility_name', 'desc')
             // ->paginate(10)
-            ->paginate(20)
+            // ->paginate(50)
+            ->paginate($perPage)
             ->appends($request->all());
 
 
