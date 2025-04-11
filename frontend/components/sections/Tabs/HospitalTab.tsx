@@ -100,25 +100,25 @@ const HospitalTab = () => {
     setLoading(true);
     setFetchError("");
 
-    // Log the parameters being sent to the backend
-    console.log({
-      state_id: selectedState,
-      lga_id: selectedLga,
-      ward_id: selectedWard,
-      facility_level_id: selectedFacilityLevel,
-      ownership_id: selectedownership,
-      ownership_type_id: selectedOwnershipCategory,
-      operational_status_id: selectedOperational,
-      registration_status_id: selectedRegistration,
-      license_status_id: selectedLicense,
-      outpatient: selectedServiceType ? 1 : 0,
-      inpatient: selectedServiceType ? 1 : 0,
-      geo_codes: selectedGeoCode,
-      service_category_id: selectedServiceCategory,
-      services: selectedService,
-      page: currentPage,
-      per_page: entriesPerPage,
-    });
+    // // Log the parameters being sent to the backend
+    // console.log({
+    //   state_id: selectedState,
+    //   lga_id: selectedLga,
+    //   ward_id: selectedWard,
+    //   facility_level_id: selectedFacilityLevel,
+    //   ownership_id: selectedownership,
+    //   ownership_type_id: selectedOwnershipCategory,
+    //   operational_status_id: selectedOperational,
+    //   registration_status_id: selectedRegistration,
+    //   license_status_id: selectedLicense,
+    //   outpatient: selectedServiceType ? 1 : 0,
+    //   inpatient: selectedServiceType ? 1 : 0,
+    //   geo_codes: selectedGeoCode,
+    //   service_category_id: selectedServiceCategory,
+    //   services: selectedService,
+    //   page: currentPage,
+    //   per_page: entriesPerPage,
+    // });
 
     try {
       const response = await axios.post(
@@ -145,7 +145,7 @@ const HospitalTab = () => {
         }
       );
 
-      console.log("response by adams", response.data.data.facilities);
+      // console.log("response by adams", response.data.data.facilities);
 
       // After fetching, update total records and total pages
       const fetchedData = response.data?.data?.facilities?.data;
