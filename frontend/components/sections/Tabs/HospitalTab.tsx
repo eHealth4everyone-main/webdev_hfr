@@ -63,15 +63,6 @@ const HospitalTab = () => {
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const [search, setSearch] = useState("");
-  // const [entriesPerPage, setEntriesPerPage] = useState(25); // Entries per page state
-
-  // const entryPerPage = [
-  //   // { id: "25", name: "25" },
-  //   { id: "50", name: "50" },
-  //   { id: "100", name: "100" },
-  //   { id: "150", name: "150" },
-  //   { id: "200", name: "200" },
-  // ];
 
   const entryPerPage = useMemo(
     () => [
@@ -727,23 +718,7 @@ const HospitalTab = () => {
           // placeholder="Select Coordinates"
         />
 
-        {/* Select Service Type */}
-        {/* <SelectComponent
-          className="w-full max-w-[350px]"
-          value={selectedServiceType} // Track selected value
-          onChange={(e) => {
-            setSelectedServiceType(e.target.value); // Update state
-          }}
-          options={[
-            { value: "0", name: "Select Service Type" },
-            { value: "1", name: "Out Patient" },
-            { value: "2", name: "In Patient" },
-          ]}
-          placeholder="Select Service Type"
-        /> */}
-
         {/* Select Service type */}
-
         <SelectComponent
           className="w-full max-w-[350px]"
           value={selectedServiceCategory}
@@ -776,27 +751,12 @@ const HospitalTab = () => {
 
       <div className="flex flex-wrap items-center justify-center gap-4 bg-[#D1D1D1] p-4 mt-4 w-full md:grid md:grid-cols-2 lg:flex lg:gap-6">
         {/* Facility Name Input */}
-        {/* <Input
-          ref={searchInputRef}
-          className="w-full max-w-[400px] h-[55px] text-sm"
-          placeholder="Facility Name"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        /> */}
-
-        {/* Facility Name Input */}
         <Input
           className="w-full max-w-[400px] h-[47px] text-sm"
           placeholder="Facility Name"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-
-        {/* Entries Per Page Dropdown */}
-        {/* <SelectComponent
-          className="w-full max-w-[300px] h-[44px] text-sm"
-          placeholder="Entries Per Page"
-        /> */}
 
         {/* Entries Per Page Dropdown */}
         <SelectComponent3

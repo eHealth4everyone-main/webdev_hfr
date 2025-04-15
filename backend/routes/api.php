@@ -51,7 +51,8 @@ Route::group(['middleware' => 'cors'], function () {
     Route::post('facilities-hospitals-search/{page?}', [FrontendController::class, 'searchHospitals']);
     Route::get('facilities-hospital/{facilityId}', [FrontendController::class, 'HospitalDetail']);
     Route::post('facilities-hospitals-search2/{page?}', [FrontendController::class, 'searchHospitals2']);
-    Route::post('facilities-hospitals-search3/{page?}', [FrontendController::class, 'searchHospitals3']);
+    Route::get('facilities-hospitals-search3', [FrontendController::class, 'searchHospitals3']);
+    // Route::get('facilities-hospitals-search3/{page?}', [FrontendController::class, 'searchHospitals3']);
     Route::post('facilities/pharmacies-list/{page?}', [FrontendController::class, 'searchPharmacy']);
     Route::post('facilities/lab-list/{page?}', [FrontendController::class, 'searchLab']);
     Route::post('facilities/imaging-list/{page?}', [FrontendController::class, 'searchImaging']);

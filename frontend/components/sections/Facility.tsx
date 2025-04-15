@@ -33,6 +33,7 @@ import axios from "axios";
 
 import { useRouter, usePathname } from "next/navigation";
 // import { useRouter } from "next/router";
+import { format } from "url";
 import Link from "next/link";
 
 const libraries: "places"[] = ["places"];
@@ -346,7 +347,7 @@ function Facility() {
     );
   };
 
-  const fetchFacilities = useCallback(
+  const fetchFacilitiesOLDPOST = useCallback(
     async (
       searchValues: {
         facilityLevel?: string;
@@ -359,6 +360,7 @@ function Facility() {
 
       try {
         const requestBody: any = {};
+        const params: any = {};
         if (searchValues.facilityLevel)
           requestBody.facility_level_id = searchValues.facilityLevel;
         if (searchValues.facilityType)
@@ -366,9 +368,13 @@ function Facility() {
         if (searchValues.search)
           requestBody.facility_name = searchValues.search;
 
-        const response = await axios.post(
+        // const response = await axios.get(
+        //   `${process.env.NEXT_PUBLIC_BACKEND_API}/facilities-hospitals-search3`,
+        //   requestBody
+        // );
+        const response = await axios.get(
           `${process.env.NEXT_PUBLIC_BACKEND_API}/facilities-hospitals-search3`,
-          requestBody
+          { params }
         );
 
         // const fetchedFacilities = response.data?.data?.facilities || [];
@@ -408,6 +414,81 @@ function Facility() {
 
         setHospitals(validFacilities);
         // setTotalPages(response.data?.data?.facilities?.last_page);
+        setSelectedHospital(null);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    []
+  );
+
+  const fetchFacilities = useCallback(
+    async (
+      searchValues: {
+        facilityLevel?: string;
+        facilityType?: string;
+        search?: string;
+      } = {}
+    ) => {
+      setLoading(true);
+      setFetchError("");
+
+      try {
+        const params: any = {};
+
+        // If there are search values, append them as query parameters
+        if (searchValues.facilityLevel) {
+          params.facility_level_id = searchValues.facilityLevel;
+        }
+        if (searchValues.facilityType) {
+          params.facility_type_id = searchValues.facilityType;
+        }
+        if (searchValues.search) {
+          params.facility_name = searchValues.search;
+        }
+
+        // Make GET request with query parameters
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_BACKEND_API}/facilities-hospitals-search3`,
+          { params }
+        );
+
+        // Process the response to extract the facilities
+        // Directly assign fetchedFacilities using optional chaining and nullish coalescing
+        let fetchedFacilities =
+          response.data?.data?.facilities?.data ??
+          response.data?.data?.facilities ??
+          [];
+
+        console.log(response.data?.data);
+
+        // Ensure latitude and longitude are numbers
+        const validFacilities: Facility[] = fetchedFacilities
+          .map(
+            (facility: any): Facility => ({
+              ...facility,
+              latitude:
+                facility.latitude && !isNaN(Number(facility.latitude))
+                  ? Number(facility.latitude)
+                  : null,
+              longitude:
+                facility.longitude && !isNaN(Number(facility.longitude))
+                  ? Number(facility.longitude)
+                  : null,
+            })
+          )
+          .filter(
+            (facility: Facility) =>
+              facility.latitude !== null && facility.longitude !== null
+          );
+
+        console.log("Valid Facilities:", validFacilities); // Debugging
+        console.log(validFacilities.length);
+
+        // Update state with valid facilities
+        setHospitals(validFacilities);
         setSelectedHospital(null);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -519,13 +600,22 @@ function Facility() {
 
   const handleSearch = async () => {
     setLoading(true);
-
+    const query = {
+      facilityLevel: selectedFacilityLevel || "",
+      facilityType: selectedFacilityType || "",
+      search: search || "",
+    };
     try {
-      await fetchFacilities({
-        search,
-        facilityType: selectedFacilityType,
-        facilityLevel: selectedFacilityLevel,
-      });
+      // 🟢 Update browser URL with query parameters
+      router.push(format({ pathname: "/facilityfinder", query }));
+
+      await fetchFacilities(query);
+
+      // await fetchFacilities({
+      //   search,
+      //   facilityType: selectedFacilityType,
+      //   facilityLevel: selectedFacilityLevel,
+      // });
 
       // Optional delay (only if needed)
       await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -596,6 +686,13 @@ function Facility() {
         search: parsed.search,
         facilityType: parsed.facilityType,
         facilityLevel: parsed.facilityLevel,
+      });
+    } else {
+      // If no stored search state, you can handle this as a fallback (e.g., fetching all records)
+      fetchFacilities({
+        search: "", // Or any default search term
+        facilityType: "", // Default facility type
+        facilityLevel: "", // Default facility level
       });
     }
   }, [fetchFacilities]);
