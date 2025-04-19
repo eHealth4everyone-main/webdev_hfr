@@ -133,6 +133,8 @@ function Facility() {
       // If user navigates away from /facilityfinder, clear storage
       if (!url.startsWith("/facilityfinder")) {
         localStorage.removeItem("facilitySearchState");
+        localStorage.removeItem("searchResults");
+        localStorage.removeItem("homePageSearchQuery");
         console.log("Storage cleared on route change to:", url);
       }
     };
@@ -141,6 +143,8 @@ function Facility() {
     window.addEventListener("beforeunload", () => {
       // Optional: Clear on page refresh if desired
       localStorage.removeItem("facilitySearchState");
+      localStorage.removeItem("searchResults");
+      localStorage.removeItem("homePageSearchQuery");
     });
 
     // @ts-ignore - router is NextRouter but no types for events here in App Router
@@ -558,6 +562,14 @@ function Facility() {
   ////////////////////////////////////////////////////////////////////////////
   useEffect(() => {
     const rawResults = localStorage.getItem("searchResults");
+    const searchQuery = localStorage.getItem("homePageSearchQuery");
+    const searchQueryResult = searchQuery ? JSON.parse(searchQuery) : {};
+
+    setSearch(searchQueryResult.search);
+    setSelectedFacilityType(searchQueryResult.facilityType || "");
+    setSelectedFacilityLevel(searchQueryResult.facilityLevel || "");
+    
+
     let storedResults: Facility[] = [];
 
     try {
@@ -611,12 +623,6 @@ function Facility() {
 
       await fetchFacilities(query);
 
-      // await fetchFacilities({
-      //   search,
-      //   facilityType: selectedFacilityType,
-      //   facilityLevel: selectedFacilityLevel,
-      // });
-
       // Optional delay (only if needed)
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
@@ -629,6 +635,7 @@ function Facility() {
     }
 
     localStorage.removeItem("searchResults");
+    localStorage.removeItem("homePageSearchQuery");
   };
 
   useEffect(() => {
@@ -637,6 +644,7 @@ function Facility() {
         "Navigation detected, clearing searchResults from localStorage."
       );
       localStorage.removeItem("searchResults");
+      localStorage.removeItem("homePageSearchQuery");
     };
 
     const originalPush = router.push;
@@ -678,6 +686,8 @@ function Facility() {
     if (storedSearch) {
       const parsed = JSON.parse(storedSearch);
 
+      console.log({ parsed });
+
       setSearch(parsed.search || "");
       setSelectedFacilityType(parsed.facilityType || "");
       setSelectedFacilityLevel(parsed.facilityLevel || "");
@@ -687,14 +697,15 @@ function Facility() {
         facilityType: parsed.facilityType,
         facilityLevel: parsed.facilityLevel,
       });
-    } else {
-      // If no stored search state, you can handle this as a fallback (e.g., fetching all records)
-      fetchFacilities({
-        search: "", // Or any default search term
-        facilityType: "", // Default facility type
-        facilityLevel: "", // Default facility level
-      });
     }
+    // else {
+    //   // If no stored search state, you can handle this as a fallback (e.g., fetching all records)
+    //   fetchFacilities({
+    //     search: "", // Or any default search term
+    //     facilityType: "", // Default facility type
+    //     facilityLevel: "", // Default facility level
+    //   });
+    // }
   }, [fetchFacilities]);
 
   return (

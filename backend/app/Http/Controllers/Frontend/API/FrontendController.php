@@ -1402,6 +1402,7 @@ class FrontendController extends Controller
 
         // Log the request parameters
         \Log::info('Search Hospitals Request Parameters:', $request->all());
+        \Log::info($request->facility_name);
         $query = DB::table('hs_hospitals_history')
             ->leftJoin('ou_states', 'hs_hospitals_history.state_id', '=', 'ou_states.id')
             ->leftJoin('ou_lgas', 'hs_hospitals_history.lga_id', '=', 'ou_lgas.id')
