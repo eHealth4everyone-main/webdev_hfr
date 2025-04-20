@@ -5,7 +5,7 @@ stages:
 # Build Frontend
 build_frontend:
   stage: build
-  image: node:18.20
+  image: node:22
   script:
     - cd frontend
     - yarn install
