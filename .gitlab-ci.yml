@@ -1,0 +1,37 @@
+stages:
+  - build
+  - deploy
+
+# Build Frontend
+build_frontend:
+  stage: build
+  image: node:16
+  script:
+    - cd frontend
+    - yarn install
+    - yarn build
+  artifacts:
+    paths:
+      - frontend/.next
+  only:
+    - branches  
+
+#
+deploy_application:
+  stage: deploy
+  script:
+    - ssh -o StrictHostKeyChecking=no -p $PORT $SSH_USER@$SSH_HOST "
+        cd $PROJECT_DIR && 
+        git pull origin main && 
+        cd $PROJECT_DIR/frontend && 
+        yarn install && 
+        yarn build && 
+        sudo systemctl restart nginx && 
+        cd $PROJECT_DIR/backend && 
+        php artisan config:clear && 
+        php artisan cache:clear && 
+        sudo systemctl restart php-fpm && 
+        sudo systemctl restart nginx
+      "
+  only:
+    - ci/cd 
