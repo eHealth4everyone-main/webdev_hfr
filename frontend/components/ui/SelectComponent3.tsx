@@ -1,7 +1,7 @@
 import { MdError } from "react-icons/md";
 import React from "react";
 
-const SelectComponent = ({
+const SelectComponent3 = ({
   label,
   // options,
   options = [], // Default empty array
@@ -56,7 +56,7 @@ const SelectComponent = ({
           value={value}
           multiple={isMulti}
         >
-          <option value="">{placeholder || "Select an option"}</option>
+          <option value="50">{placeholder || "Select an option"}</option>
           {options?.map((option) => (
             <option key={option.value} value={option.value}>
               {option.name}
@@ -75,4 +75,4 @@ const SelectComponent = ({
   );
 };
 
-export default SelectComponent;
+export default SelectComponent3;
