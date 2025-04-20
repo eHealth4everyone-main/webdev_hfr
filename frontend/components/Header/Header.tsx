@@ -36,6 +36,12 @@ const Header = () => {
   const isWhyPath = pathname === "/contact";
   const { isOpen, onToggle, onClose } = useDisclosure();
   const { push } = useRouter();
+  const router = useRouter();
+
+  const handleLogoClick = () => {
+    window.location.href = "/";
+  };
+
   return (
     <Box pos={"fixed"} zIndex={100} w={"full"}>
       <Flex
@@ -49,7 +55,8 @@ const Header = () => {
         boxShadow=" 0px 4px 9px 0px rgba(0, 0, 0, 0.10)"
       >
         <Link href="/">
-          <Logo onClick={() => push("/")} />
+          {/* <Logo onClick={() => push("/")} /> */}
+          <Logo onClick={handleLogoClick} />
         </Link>
 
         <Flex

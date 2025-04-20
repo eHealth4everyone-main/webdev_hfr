@@ -31,27 +31,10 @@ import {
 import Image from "next/image";
 import axios from "axios";
 
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
+// import { useRouter } from "next/router";
+import { format } from "url";
 import Link from "next/link";
-
-// import {
-//   ChevronRightIcon,
-//   InformationCircleIcon,
-// } from "@heroicons/react/outline";
-
-// const actions = [
-//   {
-//     name: "Direction",
-//     icon: <ChevronRightIcon className="h-5 w-5 mr-2" />,
-//     onClick: (hospital) => handleGetDirections(hospital),
-//   },
-//   {
-//     name: "Details",
-//     icon: <InformationCircleIcon className="h-5 w-5 mr-2" />,
-//     onClick: (hospital) =>
-//       router.push(`/facilityfinder/details/${hospital.id}`),
-//   },
-// ];
 
 const libraries: "places"[] = ["places"];
 const itemsPerPage = 10;
@@ -138,6 +121,40 @@ interface Facility {
 
 function Facility() {
   const router = useRouter();
+  const pathname = usePathname();
+  // const prevPath = useRef(pathname);
+  const prevPath = useRef<string | null>(null);
+
+  useEffect(() => {
+    // Only run on the /facilityfinder route
+    if (!pathname.startsWith("/facilityfinder")) return;
+
+    const handleRouteChange = (url: string) => {
+      // If user navigates away from /facilityfinder, clear storage
+      if (!url.startsWith("/facilityfinder")) {
+        localStorage.removeItem("facilitySearchState");
+        localStorage.removeItem("searchResults");
+        localStorage.removeItem("homePageSearchQuery");
+        console.log("Storage cleared on route change to:", url);
+      }
+    };
+
+    // Listen to route changes
+    window.addEventListener("beforeunload", () => {
+      // Optional: Clear on page refresh if desired
+      localStorage.removeItem("facilitySearchState");
+      localStorage.removeItem("searchResults");
+      localStorage.removeItem("homePageSearchQuery");
+    });
+
+    // @ts-ignore - router is NextRouter but no types for events here in App Router
+    router.events?.on("routeChangeStart", handleRouteChange);
+
+    return () => {
+      // @ts-ignore
+      router.events?.off("routeChangeStart", handleRouteChange);
+    };
+  }, [pathname, router]);
 
   const [map, setMap] = useState<google.maps.Map | null>(null);
 
@@ -147,6 +164,7 @@ function Facility() {
   const [hospitals, setHospitals] = useState<any[]>([]);
 
   const [selectedHospital, setSelectedHospital] = useState<any | null>(null);
+  const [showHospitalInfoCard, setShowHospitalInfoCard] = useState(false);
 
   const [center, setCenter] = useState({ lat: 9.0765, lng: 7.3986 }); // Abuja coordinates
   // const [center, setCenter] = useState({ lat: 6.5244, lng: 3.3792 }); // Default: Lagos
@@ -176,7 +194,8 @@ function Facility() {
   const [googleMapsLoaded, setGoogleMapsLoaded] = useState(false);
   // const [focusedHospital, setFocusedHospital] = useState(null);
   const [focusedHospital, setFocusedHospital] = useState<Facility | null>(null);
-  const [showUserInfo, setShowUserInfo] = useState(true);
+  const [showUserInfo, setShowUserInfo] = useState(false);
+  const [showInfoCardIcon, setShowInfoCardIcon] = useState(false);
 
   const [isGridView, setIsGridView] = useState(true); // State to track the layout
   // const [viewType, setViewType] = useState<"list" | "grid">("list");
@@ -323,6 +342,8 @@ function Facility() {
           // ✅ Only keep user location & selected hospital markers
           setSelectedHospital(hospital); // ✅ Set the selected hospital
           setFocusedHospital(hospital); // ✅ Persist focus even if InfoWindow closes
+          setShowUserInfo(false);
+          setShowHospitalInfoCard(false);
         } else {
           console.error("Directions request failed:", status);
         }
@@ -330,7 +351,7 @@ function Facility() {
     );
   };
 
-  const fetchFacilities = useCallback(
+  const fetchFacilitiesOLDPOST = useCallback(
     async (
       searchValues: {
         facilityLevel?: string;
@@ -343,6 +364,7 @@ function Facility() {
 
       try {
         const requestBody: any = {};
+        const params: any = {};
         if (searchValues.facilityLevel)
           requestBody.facility_level_id = searchValues.facilityLevel;
         if (searchValues.facilityType)
@@ -350,9 +372,13 @@ function Facility() {
         if (searchValues.search)
           requestBody.facility_name = searchValues.search;
 
-        const response = await axios.post(
+        // const response = await axios.get(
+        //   `${process.env.NEXT_PUBLIC_BACKEND_API}/facilities-hospitals-search3`,
+        //   requestBody
+        // );
+        const response = await axios.get(
           `${process.env.NEXT_PUBLIC_BACKEND_API}/facilities-hospitals-search3`,
-          requestBody
+          { params }
         );
 
         // const fetchedFacilities = response.data?.data?.facilities || [];
@@ -392,6 +418,81 @@ function Facility() {
 
         setHospitals(validFacilities);
         // setTotalPages(response.data?.data?.facilities?.last_page);
+        setSelectedHospital(null);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    []
+  );
+
+  const fetchFacilities = useCallback(
+    async (
+      searchValues: {
+        facilityLevel?: string;
+        facilityType?: string;
+        search?: string;
+      } = {}
+    ) => {
+      setLoading(true);
+      setFetchError("");
+
+      try {
+        const params: any = {};
+
+        // If there are search values, append them as query parameters
+        if (searchValues.facilityLevel) {
+          params.facility_level_id = searchValues.facilityLevel;
+        }
+        if (searchValues.facilityType) {
+          params.facility_type_id = searchValues.facilityType;
+        }
+        if (searchValues.search) {
+          params.facility_name = searchValues.search;
+        }
+
+        // Make GET request with query parameters
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_BACKEND_API}/facilities-hospitals-search3`,
+          { params }
+        );
+
+        // Process the response to extract the facilities
+        // Directly assign fetchedFacilities using optional chaining and nullish coalescing
+        let fetchedFacilities =
+          response.data?.data?.facilities?.data ??
+          response.data?.data?.facilities ??
+          [];
+
+        console.log(response.data?.data);
+
+        // Ensure latitude and longitude are numbers
+        const validFacilities: Facility[] = fetchedFacilities
+          .map(
+            (facility: any): Facility => ({
+              ...facility,
+              latitude:
+                facility.latitude && !isNaN(Number(facility.latitude))
+                  ? Number(facility.latitude)
+                  : null,
+              longitude:
+                facility.longitude && !isNaN(Number(facility.longitude))
+                  ? Number(facility.longitude)
+                  : null,
+            })
+          )
+          .filter(
+            (facility: Facility) =>
+              facility.latitude !== null && facility.longitude !== null
+          );
+
+        console.log("Valid Facilities:", validFacilities); // Debugging
+        console.log(validFacilities.length);
+
+        // Update state with valid facilities
+        setHospitals(validFacilities);
         setSelectedHospital(null);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -461,6 +562,14 @@ function Facility() {
   ////////////////////////////////////////////////////////////////////////////
   useEffect(() => {
     const rawResults = localStorage.getItem("searchResults");
+    const searchQuery = localStorage.getItem("homePageSearchQuery");
+    const searchQueryResult = searchQuery ? JSON.parse(searchQuery) : {};
+
+    setSearch(searchQueryResult.search);
+    setSelectedFacilityType(searchQueryResult.facilityType || "");
+    setSelectedFacilityLevel(searchQueryResult.facilityLevel || "");
+    
+
     let storedResults: Facility[] = [];
 
     try {
@@ -503,13 +612,16 @@ function Facility() {
 
   const handleSearch = async () => {
     setLoading(true);
-
+    const query = {
+      facilityLevel: selectedFacilityLevel || "",
+      facilityType: selectedFacilityType || "",
+      search: search || "",
+    };
     try {
-      await fetchFacilities({
-        search,
-        facilityType: selectedFacilityType,
-        facilityLevel: selectedFacilityLevel,
-      });
+      // 🟢 Update browser URL with query parameters
+      router.push(format({ pathname: "/facilityfinder", query }));
+
+      await fetchFacilities(query);
 
       // Optional delay (only if needed)
       await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -523,6 +635,7 @@ function Facility() {
     }
 
     localStorage.removeItem("searchResults");
+    localStorage.removeItem("homePageSearchQuery");
   };
 
   useEffect(() => {
@@ -531,6 +644,7 @@ function Facility() {
         "Navigation detected, clearing searchResults from localStorage."
       );
       localStorage.removeItem("searchResults");
+      localStorage.removeItem("homePageSearchQuery");
     };
 
     const originalPush = router.push;
@@ -565,6 +679,34 @@ function Facility() {
       });
     }
   }, [userLocation, googleMapsLoaded]);
+
+  useEffect(() => {
+    const storedSearch = localStorage.getItem("facilitySearchState");
+
+    if (storedSearch) {
+      const parsed = JSON.parse(storedSearch);
+
+      console.log({ parsed });
+
+      setSearch(parsed.search || "");
+      setSelectedFacilityType(parsed.facilityType || "");
+      setSelectedFacilityLevel(parsed.facilityLevel || "");
+
+      fetchFacilities({
+        search: parsed.search,
+        facilityType: parsed.facilityType,
+        facilityLevel: parsed.facilityLevel,
+      });
+    }
+    // else {
+    //   // If no stored search state, you can handle this as a fallback (e.g., fetching all records)
+    //   fetchFacilities({
+    //     search: "", // Or any default search term
+    //     facilityType: "", // Default facility type
+    //     facilityLevel: "", // Default facility level
+    //   });
+    // }
+  }, [fetchFacilities]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -632,20 +774,6 @@ function Facility() {
               </div>
             </div>
 
-            {/* <div className="flex justify-between items-center bg-green-50 p-4 rounded-lg">
-              <p className="text-gray-700">
-                {hospitals.length} healthcare facilities found in your area
-              </p>
-              <div className="flex gap-2">
-                <button className="p-2 bg-gray-900 text-white rounded-lg">
-                  <Menu size={20} />
-                </button>
-                <button className="p-2 bg-white text-gray-900 rounded-lg">
-                  <LayoutDashboard size={20} />
-                </button>
-              </div>
-            </div> */}
-
             <div className="flex flex-col">
               {/* Layout Toggle Buttons */}
               <div className="flex justify-between items-center bg-green-50 p-4 rounded-lg">
@@ -653,17 +781,6 @@ function Facility() {
                   {hospitals.length} healthcare facilities found in your area
                 </p>
                 <div className="flex gap-2">
-                  <button
-                    onClick={() => setIsGridView(true)}
-                    className={`p-2 rounded-lg transition-colors duration-200 ${
-                      isGridView
-                        ? "bg-gray-900 text-white"
-                        : "bg-white text-gray-900"
-                    }`}
-                  >
-                    <Menu size={20} />
-                  </button>
-
                   <button
                     onClick={() => setIsGridView(false)}
                     className={`p-2 rounded-lg transition-colors duration-200 ${
@@ -674,102 +791,22 @@ function Facility() {
                   >
                     <LayoutDashboard size={20} />
                   </button>
+
+                  <button
+                    onClick={() => setIsGridView(true)}
+                    className={`p-2 rounded-lg transition-colors duration-200 ${
+                      isGridView
+                        ? "bg-gray-900 text-white"
+                        : "bg-white text-gray-900"
+                    }`}
+                  >
+                    <Menu size={20} />
+                  </button>
                 </div>
               </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* <div className="flex-1 overflow-y-auto max-h-screen px-4">
-                {currentHospitals.map((hospital) => {
-                  const imageUrl =
-                    Array.isArray(hospital.image_url) &&
-                    hospital.image_url.length > 0
-                      ? hospital.image_url[0]
-                      : "/gh1.svg";
-
-                  return (
-                    <Card key={hospital.id} className="mb-4 p-8">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-                        <div className="w-full h-[250px] flex items-center">
-                          <Image
-                            src={imageUrl}
-                            width={250}
-                            height={150}
-                            alt={hospital.facility_name ?? "N/A"}
-                            className="object-cover w-full h-full rounded-lg"
-                          />
-                        </div>
-
-                        <div className="flex flex-col gap-4">
-                          <h2 className="text-lg font-semibold">
-                            {hospital.facility_name ?? "N/A"}
-                          </h2>
-                          <p className="text-sm text-gray-600">
-                            {hospital.physical_location ?? "N/A"}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            Contact info: {hospital.phone_number ?? "N/A"}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            Plans accepted: EPO, HMO, Medi-Cal Managed Care,
-                            POS, Senior Advantage
-                          </p>
-
-                          <div className="grid grid-cols-1 md:flex md:space-x-4 gap-2 w-full">
-                            <button
-                              className="text-green-600 font-semibold text-center w-full md:w-auto"
-                              onClick={() => handleGetDirections(hospital)}
-                            >
-                              View Direction
-                            </button>
-                            <Link
-                              href={`/facilityfinder/details/${hospital.id}`}
-                              className="text-green-600 font-semibold text-center w-full md:w-auto"
-                            >
-                              View Details
-                            </Link>
-                          </div>
-                        </div>
-                      </div>
-                    </Card>
-                  );
-                })}
-
-                <div className="flex justify-center items-center gap-4 mt-6">
-                  <button
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.max(prev - 1, 1))
-                    }
-                    disabled={currentPage === 1}
-                    className={`px-4 py-2 border rounded ${
-                      currentPage === 1
-                        ? "opacity-50 cursor-not-allowed"
-                        : "hover:bg-gray-100"
-                    }`}
-                  >
-                    Previous
-                  </button>
-
-                  <span className="text-gray-600">
-                    Page {currentPage} of {totalPages}
-                  </span>
-
-                  <button
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                    }
-                    disabled={currentPage === totalPages}
-                    className={`px-4 py-2 border rounded ${
-                      currentPage === totalPages
-                        ? "opacity-50 cursor-not-allowed"
-                        : "hover:bg-gray-100"
-                    }`}
-                  >
-                    Next
-                  </button>
-                </div>
-              </div> */}
-
               {/* Hospitals Container */}
               <div
                 className={`flex-1 overflow-y-auto max-h-screen px-4 ${
@@ -793,7 +830,7 @@ function Facility() {
                       </p>
                     </div>
                   </div>
-                  {!isGridView ? (
+                  {isGridView ? (
                     // ✅ TABLE VIEW
                     <div className="overflow-x-auto w-full">
                       <table className="min-w-full bg-white border border-gray-300 rounded-lg shadow-sm text-sm">
@@ -821,10 +858,16 @@ function Facility() {
                                 className="border-t hover:bg-gray-50 transition-colors"
                               >
                                 <td className="px-4 py-3 relative group cursor-pointer">
-                                  {hospital.facility_name ?? "N/A"}
-
+                                  <span className="font-semibold text-gray-900">
+                                    {hospital.facility_name ?? "N/A"}
+                                  </span>
+                                  <br />
+                                  <span className="text-sm text-gray-500">
+                                    {hospital.physical_location ?? "N/A"}
+                                  </span>
                                   {/* Tooltip */}
-                                  <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded-md px-3 py-1 shadow-lg z-10 whitespace-nowrap">
+                                  {/* Tooltip */}
+                                  <div className="absolute left-4 bottom-full mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded-md px-3 py-1 shadow-lg z-10 whitespace-nowrap">
                                     Click buttons to view map or facility
                                     details
                                   </div>
@@ -863,6 +906,17 @@ function Facility() {
                                   <Link
                                     href={`/facilityfinder/details/${hospital.id}`}
                                     className="flex items-center text-green-600 font-semibold px-4 py-2 border rounded hover:bg-green-100"
+                                    onClick={() => {
+                                      const searchState = {
+                                        search,
+                                        facilityType: selectedFacilityType,
+                                        facilityLevel: selectedFacilityLevel,
+                                      };
+                                      localStorage.setItem(
+                                        "facilitySearchState",
+                                        JSON.stringify(searchState)
+                                      );
+                                    }}
                                   >
                                     {/* Info Icon SVG */}
                                     <svg
@@ -921,7 +975,7 @@ function Facility() {
                                   <h2 className="text-lg font-semibold relative group cursor-pointer">
                                     {hospital.facility_name ?? "N/A"}
                                     {/* Tooltip */}
-                                    <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded-md px-3 py-1 shadow-lg z-10 whitespace-nowrap">
+                                    <div className="absolute left-4 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded-md px-3 py-1 shadow-lg z-10 whitespace-nowrap">
                                       Click buttons to view map or facility
                                       details
                                     </div>
@@ -1012,15 +1066,6 @@ function Facility() {
                   <GoogleMap
                     mapContainerClassName="w-full h-full"
                     center={center}
-                    // center={
-                    //   focusedHospital
-                    //     ? {
-                    //         lat: focusedHospital.latitude,
-                    //         lng: focusedHospital.longitude,
-                    //       }
-                    //     : center
-                    // }
-                    // zoom={14}
                     zoom={selectedHospital ? 14 : 10} // Zoom in if showing one facility
                   >
                     {/* Only render if Google Maps is fully loaded */}
@@ -1078,15 +1123,6 @@ function Facility() {
                       ))}
 
                     {/* Show only the selected facility */}
-                    {/* {selectedHospital && (
-                      <Marker
-                        position={{
-                          lat: selectedHospital.latitude,
-                          lng: selectedHospital.longitude,
-                        }}
-                      />
-                    )} */}
-
                     {focusedHospital &&
                       focusedHospital.latitude !== null &&
                       focusedHospital.longitude !== null && (
@@ -1095,7 +1131,11 @@ function Facility() {
                             lat: focusedHospital.latitude,
                             lng: focusedHospital.longitude,
                           }}
-                          onClick={() => setSelectedHospital(focusedHospital)}
+                          // onClick={() => setSelectedHospital(focusedHospital)}
+                          onClick={() => {
+                            setSelectedHospital(focusedHospital); // Set which hospital was clicked
+                            setShowHospitalInfoCard(true); // Don't show popup until user clicks button
+                          }}
                         />
                       )}
 
@@ -1107,7 +1147,7 @@ function Facility() {
                       />
                     )}
                     {/* 🏥 Facility InfoWindow */}
-                    {selectedHospital && (
+                    {selectedHospital && showHospitalInfoCard && (
                       <InfoWindow
                         position={{
                           lat: selectedHospital.latitude,

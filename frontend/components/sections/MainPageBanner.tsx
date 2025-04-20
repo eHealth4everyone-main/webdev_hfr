@@ -35,17 +35,18 @@ const MainPageBanner = ({ items, index }: itemsProps) => {
 
   const titleSplit = title?.split(" ");
 
-  // const part1 =
-  //   titleSplit?.[0] && titleSplit?.[1] && titleSplit?.[3]
-  //     ? `${titleSplit[0]} ${titleSplit[1]} ${titleSplit[3]}`
-  //     : "";
   const part1 =
     titleSplit?.[0] && titleSplit?.[1]
       ? `${titleSplit[0]} ${titleSplit[1]}`
       : "";
 
-  const part2 = titleSplit?.[3] || "";
-  const part3 = titleSplit?.[4] || "";
+  // const part1 =
+  //   titleSplit?.[0] && titleSplit?.[1]
+  //     ? `${titleSplit[0]} ${titleSplit[1]}`
+  //     : "";
+
+  const part2 = titleSplit?.[2] || "";
+  const part3 = titleSplit?.[3] || "";
 
   const backImg = image_url ? image_url : "/bg-fac.png";
 
