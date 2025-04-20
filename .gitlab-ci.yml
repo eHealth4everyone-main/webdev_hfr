@@ -5,7 +5,7 @@ stages:
 # Build Frontend
 build_frontend:
   stage: build
-  image: node:16
+  image: node:20
   script:
     - cd frontend
     - yarn install
@@ -19,6 +19,12 @@ build_frontend:
 #
 deploy_application:
   stage: deploy
+  before_script:
+    - mkdir -p ~/.ssh
+    - echo "$PRIVATE_KEY" > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - echo -e "Host $SSH_HOST\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+  
   script:
     - ssh -o StrictHostKeyChecking=no -p $PORT $SSH_USER@$SSH_HOST "
         cd $PROJECT_DIR && 
@@ -34,4 +40,4 @@ deploy_application:
         sudo systemctl restart nginx
       "
   only:
-    - ci/cd 
+    - ci/cd
