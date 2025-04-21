@@ -10,9 +10,13 @@ build_frontend:
     - cd frontend
     - yarn install
     - yarn build
-  artifacts:
-    paths:
-      - frontend/.next
+ # artifacts:
+ #   paths:
+ #     - frontend/.next
+  cache:
+  paths:
+    - frontend/node_modules/  # Cache node_modules for faster installs
+    - frontend/.next/ 
   only:
     - branches  
   except:
