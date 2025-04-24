@@ -632,7 +632,7 @@ const HospitalTab = () => {
             setSelectedState(selectedId);
             setSelectedLga("");
             setSelectedWard("");
-            setSearch("");
+            // setSearch("");
             fetchLgas(selectedId);
           }}
           options={states.map((state) => ({
@@ -650,7 +650,7 @@ const HospitalTab = () => {
             const lgaId = e.target.value;
             setSelectedLga(lgaId);
             setSelectedWard("");
-            setSearch("");
+            // setSearch("");
             fetchWards(lgaId); // Fetch Wards for selected LGA
           }}
           options={lgas.map((lga) => ({
@@ -667,7 +667,7 @@ const HospitalTab = () => {
           value={selectedWard}
           onChange={(e) => {
             setSelectedWard(e.target.value); // Store selected Ward
-            setSearch("");
+            // setSearch("");
           }}
           options={wards.map((ward) => ({
             value: ward.id, // Use Ward ID
@@ -683,7 +683,7 @@ const HospitalTab = () => {
           value={selectedFacilityLevel} // Track selected value
           onChange={(e) => {
             setSelectedFacilityLevel(e.target.value); // Update state
-            setSearch("");
+            // setSearch("");
           }}
           options={facilityLevels.map((level) => ({
             value: level.id, // Use level ID
@@ -705,7 +705,7 @@ const HospitalTab = () => {
             const ownershipId = e.target.value;
             setSelectedownership(ownershipId); // Update selected ownership
             setSelectedOwnershipCategory(""); // Clear ownership type selection when ownership is changed
-            setSearch("");
+            // setSearch("");
             ownershipCategory(ownershipId); // Fetch related ownership categories for the selected ownership
           }}
           options={ownerships.map((item) => ({
@@ -735,7 +735,7 @@ const HospitalTab = () => {
           value={selectedOperational} // Track selected value
           onChange={(e) => {
             setSelectedOperational(e.target.value); // Update state
-            setSearch("");
+            // setSearch("");
           }}
           options={operationals.map((items) => ({
             value: items.id, // Use items ID
@@ -750,7 +750,7 @@ const HospitalTab = () => {
           value={selectedRegistration} // Track selected value
           onChange={(e) => {
             setSelectedRegistration(e.target.value); // Update state
-            setSearch("");
+            // setSearch("");
           }}
           options={registrations.map((items) => ({
             value: items.id, // Use items ID
@@ -765,7 +765,7 @@ const HospitalTab = () => {
           value={selectedLicense} // Track selected value
           onChange={(e) => {
             setSelectedLicense(e.target.value); // Update state
-            setSearch("");
+            // setSearch("");
           }}
           options={licenses.map((items) => ({
             value: items.id, // Use items ID
@@ -780,7 +780,7 @@ const HospitalTab = () => {
           value={selectedGeoCode} // Track selected value
           onChange={(e) => {
             setSelectedGeoCode(e.target.value); // Update state
-            setSearch("");
+            // setSearch("");
           }}
           options={[
             // { value: "0", name: "Select Coordinates" },
@@ -798,7 +798,7 @@ const HospitalTab = () => {
             const serviceId = e.target.value; // Get the state ID
             setSelectedServiceCategory(serviceId);
             fetchService(serviceId);
-            setSearch("");
+            // setSearch("");
           }}
           options={serviceCategories.map((items) => ({
             value: items.id, // Use items ID
@@ -812,7 +812,7 @@ const HospitalTab = () => {
           value={selectedService}
           onChange={(e) => {
             setSelectedService(e.target.value);
-            setSearch("");
+            // setSearch("");
           }}
           options={services.map((item) => ({
             value: item.id, // Use item ID

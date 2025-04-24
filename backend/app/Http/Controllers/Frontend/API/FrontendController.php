@@ -331,13 +331,18 @@ class FrontendController extends Controller
                 $query->where('hs_hospitals_history.ownership_type_id', 'like', '%' . $ownership_type_id . '%');
             })
 
+            // ->when($request->search, function ($q, $search) {
+            //     $search = strtolower(trim($search));
+            //     return $q->where(function ($subQuery) use ($search) {
+            //         $subQuery->whereRaw('LOWER(ou_states.name) LIKE ?', ["%$search%"])
+            //             ->orWhereRaw('LOWER(ou_lgas.name) LIKE ?', ["%$search%"])
+            //             ->orWhereRaw('LOWER(ou_wards.name) LIKE ?', ["%$search%"]);
+            //     });
+            // })
+
             ->when($request->search, function ($q, $search) {
                 $search = strtolower(trim($search));
-                return $q->where(function ($subQuery) use ($search) {
-                    $subQuery->whereRaw('LOWER(ou_states.name) LIKE ?', ["%$search%"])
-                        ->orWhereRaw('LOWER(ou_lgas.name) LIKE ?', ["%$search%"])
-                        ->orWhereRaw('LOWER(ou_wards.name) LIKE ?', ["%$search%"]);
-                });
+                return $q->whereRaw('LOWER(hs_hospitals_history.facility_name) LIKE ?', ["%$search%"]);
             })
 
             ->where('hs_hospitals_history.facility_level_id', 'like', '%' . $facility_level_id . '%')
