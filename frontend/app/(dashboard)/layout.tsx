@@ -37,7 +37,7 @@ const topNavData = [
   },
   {
     icon: RiBuilding2Line,
-    text: "Facilities List",
+    text: "Facility List",
     navitem: "facilitieslist",
     link: "/facilitieslist",
   },
