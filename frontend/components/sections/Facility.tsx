@@ -7,6 +7,7 @@ import { IoCopy } from "react-icons/io5";
 import Input from "../ui/Input";
 import SelectComponent from "../ui/SelectComponent";
 import { GreenButton, Text, WhiteButton } from "../ui/Typography";
+import { FaInfoCircle, FaMapMarkerAlt, FaPhoneAlt } from "react-icons/fa";
 
 import React, {
   useState,
@@ -961,7 +962,7 @@ function Facility() {
     setSelectedWardId(e.target.value);
   };
 
-  const hospitalsWithCoordinates = useMemo(() => {
+  const hospitalsWithCoordinates222 = useMemo(() => {
     return hospitals.filter(
       (h) =>
         h.latitude !== null &&
@@ -970,6 +971,30 @@ function Facility() {
         !isNaN(h.longitude)
     );
   }, [hospitals]);
+
+  const hospitalsWithCoordinates = useMemo(() => {
+    return hospitals
+      .filter((h) => {
+        const matchState = selectedStateId
+          ? String(h.state_id) === selectedStateId
+          : true;
+        const matchLga = selectedLgaId
+          ? String(h.lga_id) === selectedLgaId
+          : true;
+        const matchWard = selectedWardId
+          ? String(h.ward_id) === selectedWardId
+          : true;
+
+        return matchState && matchLga && matchWard;
+      })
+      .filter(
+        (h) =>
+          h.latitude !== null &&
+          h.longitude !== null &&
+          !isNaN(h.latitude) &&
+          !isNaN(h.longitude)
+      );
+  }, [hospitals, selectedStateId, selectedLgaId, selectedWardId]);
 
   const mapRef = useRef<google.maps.Map | null>(null);
 
@@ -1072,7 +1097,7 @@ function Facility() {
               )}
 
               {/* 🏥 Ward */}
-              {showWardDropdown && (
+              {/* {showWardDropdown && (
                 <div className="lg:col-span-2">
                   <select
                     value={selectedWardId}
@@ -1087,7 +1112,7 @@ function Facility() {
                     ))}
                   </select>
                 </div>
-              )}
+              )} */}
 
               {/* 🏥 Facility Type */}
               <div className="lg:col-span-2">
@@ -1138,8 +1163,10 @@ function Facility() {
               {/* Layout Toggle Buttons */}
               <div className="flex justify-between items-center bg-green-50 p-4 rounded-lg">
                 <p className="text-gray-700">
-                  {filteredHospitals.length} healthcare facilities found in your
-                  area
+                  {filteredHospitals.length >= 2000
+                    ? filteredHospitals.length + "+"
+                    : filteredHospitals.length}{" "}
+                  healthcare facilities found in your area
                 </p>
                 <div className="flex gap-2">
                   <button
@@ -1224,7 +1251,10 @@ function Facility() {
                                   </span>
                                   <br />
                                   <span className="text-sm text-gray-500">
-                                    {hospital.physical_location ?? "N/A"}
+                                    {/* {hospital.physical_location ?? "N/A"} */}
+                                    {hospital.physical_location
+                                      ? `${hospital.physical_location} ${hospital.ward_name}, ${hospital.lga_name}, ${hospital.state_name}`
+                                      : `${hospital.ward_name}, ${hospital.lga_name}, ${hospital.state_name}`}
                                   </span>
                                   {/* Tooltip */}
                                   {/* Tooltip */}
@@ -1342,22 +1372,45 @@ function Facility() {
                                       details
                                     </div>
                                   </h2>
-                                  <p className="text-sm text-gray-600">
-                                    {hospital.physical_location ?? "N/A"}
+                                  {/* <p className="text-sm text-gray-600">
+                                    {hospital.physical_location ??
+                                      `${
+                                        (hospital.ward_name,
+                                        hospital.lga_name,
+                                        hospital.state_name)
+                                      }`}
+                                  </p> */}
+
+                                  <p className="text-sm flex items-center gap-2 text-gray-700">
+                                    <FaMapMarkerAlt className="text-red-500" />
+                                    {hospital.physical_location
+                                      ? `${hospital.physical_location} ${hospital.ward_name}, ${hospital.lga_name}, ${hospital.state_name}`
+                                      : `${hospital.ward_name}, ${hospital.lga_name}, ${hospital.state_name}`}
                                   </p>
-                                  <p className="text-sm text-gray-600">
-                                    Contact info:{" "}
-                                    {hospital.phone_number ?? "N/A"}
+
+                                  <p className="text-sm flex items-center gap-2 text-gray-700">
+                                    <FaPhoneAlt className="text-blue-500" />
+                                    {hospital.phone_number &&
+                                    hospital.phone_number !== "null" &&
+                                    hospital.phone_number.trim() !== ""
+                                      ? hospital.phone_number
+                                      : "N/A"}
                                   </p>
-                                  <p className="text-sm text-gray-600">
-                                    {/* Plans accepted: EPO, HMO, Medi-Cal Managed
-                                    Care, POS, Senior Advantage */}
+
+                                  {/* <p className="text-sm text-gray-600">
+                                    Plans accepted: EPO, HMO, Medi-Cal Managed
+                                    Care, POS, Senior Advantage
+                                    {hospital.description ?? "N/A"}
+                                  </p> */}
+
+                                  <p className="text-sm text-gray-600 flex items-center gap-2">
+                                    <FaInfoCircle className="text-blue-500" />
                                     {hospital.description ?? "N/A"}
                                   </p>
 
                                   <div className="w-full flex flex-wrap md:flex-nowrap gap-2">
                                     <button
-                                      className="text-green-600 font-semibold text-center w-full md:w-auto"
+                                      className="text-green-600 font-semibold text-center w-full md:w-auto text-sm"
                                       onClick={() =>
                                         handleGetDirections(hospital)
                                       }
@@ -1366,7 +1419,7 @@ function Facility() {
                                     </button>
                                     <Link
                                       href={`/facilityfinder/details/${hospital.id}`}
-                                      className="text-green-600 font-semibold text-center w-full md:w-auto"
+                                      className="text-green-600 font-semibold text-center w-full md:w-auto text-sm"
                                     >
                                       View Details
                                     </Link>
@@ -1425,13 +1478,6 @@ function Facility() {
                   libraries={libraries}
                   onLoad={() => setGoogleMapsLoaded(true)}
                 >
-                  {/* <GoogleMap
-                    mapContainerClassName="w-full h-full"
-                    center={center}
-                    onLoad={(map) => (mapRef.current = map)}
-                    zoom={selectedHospital ? 14 : 10} // Zoom in if showing one facility
-                  > */}
-
                   <GoogleMap
                     mapContainerClassName="w-full h-full"
                     center={center} // initial
