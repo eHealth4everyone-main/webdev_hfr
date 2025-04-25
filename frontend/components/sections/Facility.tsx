@@ -7,8 +7,15 @@ import { IoCopy } from "react-icons/io5";
 import Input from "../ui/Input";
 import SelectComponent from "../ui/SelectComponent";
 import { GreenButton, Text, WhiteButton } from "../ui/Typography";
+import { FaInfoCircle, FaMapMarkerAlt, FaPhoneAlt } from "react-icons/fa";
 
-import React, { useState, useRef, useCallback, useEffect } from "react";
+import React, {
+  useState,
+  useRef,
+  useCallback,
+  useEffect,
+  useMemo,
+} from "react";
 import {
   LoadScript,
   LoadScriptNext,
@@ -35,6 +42,7 @@ import { useRouter, usePathname } from "next/navigation";
 // import { useRouter } from "next/router";
 import { format } from "url";
 import Link from "next/link";
+import Swal from "sweetalert2";
 
 const libraries: "places"[] = ["places"];
 const itemsPerPage = 10;
@@ -57,6 +65,7 @@ interface Facility {
   ownership_name?: string;
   ownership_type_id?: string | null;
   facility_level_id?: number;
+  facility_type_id?: number;
   facility_level_name?: string;
   facility_level_option_id?: number | null;
   facility_level_options_category_id?: number | null;
@@ -203,13 +212,31 @@ function Facility() {
 
   const itemsPerPage = isGridView ? 10 : 20;
   // Calculate total pages
-  const totalPages = Math.ceil(hospitals.length / itemsPerPage);
+  // const totalPages = Math.ceil(hospitals.length / itemsPerPage);
 
   // Get hospitals for the current page
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentHospitals = hospitals.slice(indexOfFirstItem, indexOfLastItem);
 
+  const [selectedStateId, setSelectedStateId] = useState<string>("");
+  const [statesInResults, setStatesInResults] = useState<
+    { id: string; name: string }[]
+  >([]);
+
+  const [selectedLgaId, setSelectedLgaId] = useState<string>("");
+  const [lgasInResults, setLgasInResults] = useState<
+    { id: string; name: string }[]
+  >([]);
+
+  const [selectedWardId, setSelectedWardId] = useState<string>("");
+  const [wardsInResults, setWardsInResults] = useState<
+    { id: string; name: string }[]
+  >([]);
+
+  const [showFilters, setShowFilters] = useState(false);
+  const [showLgaDropdown, setShowLgaDropdown] = useState(false);
+  const [showWardDropdown, setShowWardDropdown] = useState(false);
   ////////////////////////////////////////////////////////////////////////////////////////////
 
   const [directions, setDirections] =
@@ -309,8 +336,24 @@ function Facility() {
       return;
     }
 
-    if (!hospital || !hospital.latitude || !hospital.longitude) {
-      console.error("Invalid hospital data:", hospital);
+    const hasValidCoordinates =
+      hospital &&
+      hospital.latitude !== null &&
+      hospital.longitude !== null &&
+      parseFloat(hospital.latitude) !== 0 &&
+      parseFloat(hospital.longitude) !== 0 &&
+      !isNaN(parseFloat(hospital.latitude)) &&
+      !isNaN(parseFloat(hospital.longitude));
+
+    // console.log({ hasValidCoordinates, hospital });
+
+    if (!hasValidCoordinates) {
+      Swal.fire({
+        icon: "warning",
+        title: "Location Unavailable",
+        text: "This facility does not have valid location coordinates and cannot be shown on the map.",
+        confirmButtonColor: "#2563EB", // Optional styling
+      });
       return;
     }
 
@@ -351,83 +394,6 @@ function Facility() {
     );
   };
 
-  const fetchFacilitiesOLDPOST = useCallback(
-    async (
-      searchValues: {
-        facilityLevel?: string;
-        facilityType?: string;
-        search?: string;
-      } = {}
-    ) => {
-      setLoading(true);
-      setFetchError("");
-
-      try {
-        const requestBody: any = {};
-        const params: any = {};
-        if (searchValues.facilityLevel)
-          requestBody.facility_level_id = searchValues.facilityLevel;
-        if (searchValues.facilityType)
-          requestBody.facility_type_id = searchValues.facilityType;
-        if (searchValues.search)
-          requestBody.facility_name = searchValues.search;
-
-        // const response = await axios.get(
-        //   `${process.env.NEXT_PUBLIC_BACKEND_API}/facilities-hospitals-search3`,
-        //   requestBody
-        // );
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_BACKEND_API}/facilities-hospitals-search3`,
-          { params }
-        );
-
-        // const fetchedFacilities = response.data?.data?.facilities || [];
-        let fetchedFacilities;
-
-        if (response.data?.data?.facilities.total) {
-          fetchedFacilities = response.data?.data?.facilities.data || [];
-        } else {
-          fetchedFacilities = response.data?.data?.facilities || [];
-        }
-
-        console.log(response.data?.data);
-
-        // Ensure latitude and longitude are numbers
-        const validFacilities: Facility[] = fetchedFacilities
-          .map(
-            (facility: any): Facility => ({
-              ...facility,
-              latitude:
-                facility.latitude && !isNaN(Number(facility.latitude))
-                  ? Number(facility.latitude)
-                  : null,
-              longitude:
-                facility.longitude && !isNaN(Number(facility.longitude))
-                  ? Number(facility.longitude)
-                  : null,
-            })
-          )
-          .filter(
-            (facility: Facility) =>
-              facility.latitude !== null && facility.longitude !== null
-          );
-
-        console.log("Valid Facilities:", validFacilities); // Debugging
-
-        console.log(validFacilities.length);
-
-        setHospitals(validFacilities);
-        // setTotalPages(response.data?.data?.facilities?.last_page);
-        setSelectedHospital(null);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    },
-    []
-  );
-
   const fetchFacilities = useCallback(
     async (
       searchValues: {
@@ -461,12 +427,17 @@ function Facility() {
 
         // Process the response to extract the facilities
         // Directly assign fetchedFacilities using optional chaining and nullish coalescing
-        let fetchedFacilities =
+        // let fetchedFacilities =
+        //   response.data?.data?.facilities?.data ??
+        //   response.data?.data?.facilities ??
+        //   [];
+
+        let fetchedFacilities: Facility[] =
           response.data?.data?.facilities?.data ??
           response.data?.data?.facilities ??
           [];
 
-        console.log(response.data?.data);
+        // console.log("checking raw", fetchedFacilities);
 
         // Ensure latitude and longitude are numbers
         const validFacilities: Facility[] = fetchedFacilities
@@ -488,12 +459,43 @@ function Facility() {
               facility.latitude !== null && facility.longitude !== null
           );
 
-        console.log("Valid Facilities:", validFacilities); // Debugging
-        console.log(validFacilities.length);
+        const defaultLat = 0; // or center of the country/map
+        const defaultLng = 0;
+
+        const mappedFacilities = fetchedFacilities.map((f) => ({
+          ...f,
+          latitude:
+            f.latitude && !isNaN(Number(f.latitude))
+              ? Number(f.latitude)
+              : userLocation?.lat ?? null,
+          longitude:
+            f.longitude && !isNaN(Number(f.longitude))
+              ? Number(f.longitude)
+              : userLocation?.lng ?? null,
+        }));
 
         // Update state with valid facilities
-        setHospitals(validFacilities);
+        // setHospitals(validFacilities);
+        setHospitals(mappedFacilities);
         setSelectedHospital(null);
+
+        // 🔥 Extract unique state_id and state_name
+        const uniqueStates = Array.from(
+          new Map(
+            // validFacilities
+            mappedFacilities
+              .filter(
+                (f) => f.state_id !== undefined && f.state_name !== undefined
+              )
+              .map((f) => [
+                f.state_id,
+                { id: String(f.state_id), name: String(f.state_name) },
+              ])
+          ).values()
+        );
+
+        // Save to state to populate dropdown
+        setStatesInResults(uniqueStates);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -502,6 +504,64 @@ function Facility() {
     },
     []
   );
+
+  const handleSearch = async () => {
+    setLoading(true);
+
+    // ✅ Clear previous map states BEFORE search
+    setDirections(null);
+    setSelectedHospital(null);
+    setFocusedHospital(null);
+    setShowHospitalInfoCard(false);
+
+    // ✅ Reset Facility Type & Level
+    setSelectedFacilityType("");
+    setSelectedFacilityLevel("");
+
+    // Clear the location filters as well
+    setSelectedStateId("");
+    setSelectedLgaId("");
+    setSelectedWardId("");
+    setShowLgaDropdown(false);
+    setShowWardDropdown(false);
+
+    const query = {
+      facilityLevel: selectedFacilityLevel || "",
+      facilityType: selectedFacilityType || "",
+      search: search || "",
+    };
+    try {
+      // 🟢 Update browser URL with query parameters
+      router.push(format({ pathname: "/facilityfinder", query }));
+
+      await fetchFacilities(query);
+
+      // 🔥 Filter after fetching and storing facilities
+
+      // Optional delay (only if needed)
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      // Reset pagination to first page after search
+      setCurrentPage(1);
+
+      // Show filters after data is ready
+      setShowFilters(true);
+
+      // // ✅ Clear filters for location
+      // setSelectedStateId("");
+      // setSelectedLgaId("");
+      // setSelectedWardId("");
+      // setShowLgaDropdown(false);
+      // setShowWardDropdown(false);
+    } catch (error) {
+      console.error("Error fetching facilities:", error);
+    } finally {
+      setLoading(false);
+    }
+
+    localStorage.removeItem("searchResults");
+    localStorage.removeItem("homePageSearchQuery");
+  };
 
   // Fetch data from the API
   const fetchFacilityTypes = useCallback(async () => {
@@ -568,7 +628,8 @@ function Facility() {
     setSearch(searchQueryResult.search);
     setSelectedFacilityType(searchQueryResult.facilityType || "");
     setSelectedFacilityLevel(searchQueryResult.facilityLevel || "");
-    
+
+    // console.log({ searchQueryResult });
 
     let storedResults: Facility[] = [];
 
@@ -599,7 +660,45 @@ function Facility() {
           facility.latitude !== null && facility.longitude !== null
       );
 
-    setHospitals(validFacilities);
+    const defaultLat = 0; // or center of the country/map
+    const defaultLng = 0;
+
+    const mappedFacilities = storedResults.map((f) => ({
+      ...f,
+      latitude:
+        f.latitude && !isNaN(Number(f.latitude))
+          ? Number(f.latitude)
+          : userLocation?.lat ?? null,
+      longitude:
+        f.longitude && !isNaN(Number(f.longitude))
+          ? Number(f.longitude)
+          : userLocation?.lng ?? null,
+    }));
+
+    // setHospitals(validFacilities);
+    setHospitals(mappedFacilities);
+
+    // 🔥 Extract unique state_id and state_name
+    const uniqueStates = Array.from(
+      new Map(
+        // validFacilities
+        mappedFacilities
+          .filter((f) => f.state_id !== undefined && f.state_name !== undefined)
+          .map((f) => [
+            f.state_id,
+            { id: String(f.state_id), name: String(f.state_name) },
+          ])
+      ).values()
+    );
+
+    // Save to state to populate dropdown
+    setStatesInResults(uniqueStates);
+
+    console.log({ uniqueStates });
+
+    if (uniqueStates && uniqueStates.length > 0) {
+      setShowFilters(true);
+    }
 
     // ✅ Only fetch if localStorage has *never* been set
     if (!rawResults) {
@@ -609,34 +708,6 @@ function Facility() {
   }, [fetchFacilities]);
 
   ///////////////////////////////////////////////////////////////////////
-
-  const handleSearch = async () => {
-    setLoading(true);
-    const query = {
-      facilityLevel: selectedFacilityLevel || "",
-      facilityType: selectedFacilityType || "",
-      search: search || "",
-    };
-    try {
-      // 🟢 Update browser URL with query parameters
-      router.push(format({ pathname: "/facilityfinder", query }));
-
-      await fetchFacilities(query);
-
-      // Optional delay (only if needed)
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // Reset pagination to first page after search
-      setCurrentPage(1);
-    } catch (error) {
-      console.error("Error fetching facilities:", error);
-    } finally {
-      setLoading(false);
-    }
-
-    localStorage.removeItem("searchResults");
-    localStorage.removeItem("homePageSearchQuery");
-  };
 
   useEffect(() => {
     const handleRouteChange = () => {
@@ -686,7 +757,7 @@ function Facility() {
     if (storedSearch) {
       const parsed = JSON.parse(storedSearch);
 
-      console.log({ parsed });
+      // console.log({ parsed });
 
       setSearch(parsed.search || "");
       setSelectedFacilityType(parsed.facilityType || "");
@@ -708,6 +779,261 @@ function Facility() {
     // }
   }, [fetchFacilities]);
 
+  const filteredHospitals = hospitals.filter((h) => {
+    const matchState = selectedStateId
+      ? String(h.state_id) === selectedStateId
+      : true;
+    const matchLga = selectedLgaId ? String(h.lga_id) === selectedLgaId : true;
+    const matchWard = selectedWardId
+      ? String(h.ward_id) === selectedWardId
+      : true;
+    return matchState && matchLga && matchWard;
+  });
+
+  useEffect(() => {
+    if (!selectedLgaId) {
+      setWardsInResults([]);
+      return;
+    }
+
+    const filteredWards = Array.from(
+      new Map(
+        hospitals
+          .filter((f) => String(f.lga_id) === selectedLgaId)
+          .map((f) => [f.ward_id, { id: String(f.ward_id), name: f.ward_name }])
+      ).values()
+    );
+
+    setWardsInResults(filteredWards);
+  }, [selectedLgaId, hospitals]);
+
+  // console.log({ filteredHospitals });
+
+  const totalPages = Math.ceil(filteredHospitals.length / itemsPerPage);
+
+  const paginatedHospitals = filteredHospitals.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filteredHospitals.length]);
+
+  useEffect(() => {
+    const fetchFilteredFacilities = async () => {
+      const query = {
+        facilityLevel: selectedFacilityLevel || "",
+        facilityType: selectedFacilityType || "",
+        search: search || "",
+      };
+
+      try {
+        // Optional: update URL if needed
+        router.push(format({ pathname: "/facilityfinder", query }));
+
+        await fetchFacilities(query); // Your existing fetching logic
+        setCurrentPage(1); // reset pagination
+      } catch (error) {
+        console.error("Error filtering facilities:", error);
+      }
+    };
+
+    // Trigger fetch only if any value is selected
+    if (selectedFacilityType || selectedFacilityLevel) {
+      fetchFilteredFacilities();
+    }
+  }, [selectedFacilityType, selectedFacilityLevel]);
+
+  // useEffect(() => {
+  //   // Reset Facility Level when Facility Type changes
+  //   console.log({ selectedFacilityType });
+
+  //   if (!selectedFacilityType) {
+  //     setSelectedFacilityLevel("");
+  //   }
+  // }, [selectedFacilityType]);
+
+  // On selecting a facility type
+  const handleFacilityTypeChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    // ✅ Clear previous map states BEFORE search
+    setDirections(null);
+    setSelectedHospital(null);
+    setFocusedHospital(null);
+    setShowHospitalInfoCard(false);
+
+    const selectedType = e.target.value;
+    setSelectedFacilityType(selectedType); // Update selected facility type
+
+    // Avoid making a fetch request if the selection didn't change
+    if (selectedType !== "" && selectedType === selectedFacilityType) {
+      return; // No need to fetch if the same value is selected
+    }
+
+    // Reset to all records if the default value is selected
+    if (selectedType === "") {
+      // Show all records or the filtered records by state
+      fetchFacilities({ search });
+      // setSelectedFacilityLevel("");
+    } else {
+      // Fetch facilities based on the selected facility type
+      fetchFacilities({ facilityType: selectedType });
+    }
+  };
+
+  const handleFacilityLevelChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    // ✅ Clear previous map states BEFORE search
+    setDirections(null);
+    setSelectedHospital(null);
+    setFocusedHospital(null);
+    setShowHospitalInfoCard(false);
+
+    const selectedLevel = e.target.value;
+    setSelectedFacilityLevel(selectedLevel); // Update selected facility type
+
+    // Avoid making a fetch request if the selection didn't change
+    if (selectedLevel !== "" && selectedLevel === selectedFacilityLevel) {
+      return; // No need to fetch if the same value is selected
+    }
+
+    // Reset to all records if the default value is selected
+    if (selectedLevel === "") {
+      // Show all records or the filtered records by state
+      fetchFacilities({ search });
+    } else {
+      // Fetch facilities based on the selected facility type
+      fetchFacilities({ facilityType: selectedLevel });
+    }
+  };
+
+  const handleStateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedState = e.target.value;
+    setSelectedStateId(selectedState);
+    setSelectedLgaId(""); // Reset LGA when state changes
+    setSelectedWardId(""); // Reset Ward when state changes
+    setShowLgaDropdown(!!selectedState); // Show LGA dropdown if a state is selected
+    setShowWardDropdown(false); // Hide ward dropdown initially
+
+    // ✅ Clear previous map states BEFORE search
+    setDirections(null);
+    setSelectedHospital(null);
+    setFocusedHospital(null);
+    setShowHospitalInfoCard(false);
+
+    // Update the LGA options based on the selected state
+    const filteredLgas = Array.from(
+      new Map(
+        hospitals
+          .filter(
+            (f) =>
+              String(f.state_id) === selectedState && f.lga_id !== undefined
+          )
+          .map((f) => [
+            f.lga_id,
+            {
+              id: String(f.lga_id),
+              name: String(f.lga_name),
+            },
+          ])
+      ).values()
+    );
+
+    setLgasInResults(filteredLgas);
+  };
+
+  const handleLgaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const lgaId = e.target.value;
+    // ✅ Clear previous map states BEFORE search
+    setDirections(null);
+    setSelectedHospital(null);
+    setFocusedHospital(null);
+    setShowHospitalInfoCard(false);
+
+    setSelectedLgaId(lgaId);
+    setSelectedWardId(""); // Reset Ward when LGA changes
+    setShowWardDropdown(!!lgaId); // Show ward dropdown if LGA is selected
+  };
+
+  const handleWardChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedWardId(e.target.value);
+  };
+
+  const hospitalsWithCoordinates222 = useMemo(() => {
+    return hospitals.filter(
+      (h) =>
+        h.latitude !== null &&
+        h.longitude !== null &&
+        !isNaN(h.latitude) &&
+        !isNaN(h.longitude)
+    );
+  }, [hospitals]);
+
+  const hospitalsWithCoordinates = useMemo(() => {
+    return hospitals
+      .filter((h) => {
+        const matchState = selectedStateId
+          ? String(h.state_id) === selectedStateId
+          : true;
+        const matchLga = selectedLgaId
+          ? String(h.lga_id) === selectedLgaId
+          : true;
+        const matchWard = selectedWardId
+          ? String(h.ward_id) === selectedWardId
+          : true;
+
+        return matchState && matchLga && matchWard;
+      })
+      .filter(
+        (h) =>
+          h.latitude !== null &&
+          h.longitude !== null &&
+          !isNaN(h.latitude) &&
+          !isNaN(h.longitude)
+      );
+  }, [hospitals, selectedStateId, selectedLgaId, selectedWardId]);
+
+  const mapRef = useRef<google.maps.Map | null>(null);
+
+  useEffect(() => {
+    if (
+      !googleMapsLoaded ||
+      !userLocation ||
+      !mapRef.current ||
+      hospitalsWithCoordinates.length === 0
+    )
+      return;
+
+    const bounds = new window.google.maps.LatLngBounds();
+
+    // ✅ Add user's location
+    bounds.extend(userLocation);
+
+    // ✅ Add all hospital locations
+    hospitalsWithCoordinates.forEach((hospital) => {
+      if (
+        typeof hospital.latitude === "number" &&
+        typeof hospital.longitude === "number"
+      ) {
+        bounds.extend({
+          lat: hospital.latitude,
+          lng: hospital.longitude,
+        });
+      }
+    });
+
+    // ✅ Fit bounds with padding
+    mapRef.current.fitBounds(bounds, {
+      top: 50,
+      bottom: 50,
+      left: 50,
+      right: 50,
+    });
+  }, [googleMapsLoaded, userLocation, hospitalsWithCoordinates]);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto p-4">
@@ -717,7 +1043,7 @@ function Facility() {
           </h1>
 
           <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-8 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-8 gap-4">
               {/* 🔍 Search Location */}
               <div className="relative lg:col-span-2">
                 <input
@@ -731,11 +1057,69 @@ function Facility() {
                 {/* <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" /> */}
               </div>
 
+              {showFilters && (
+                <>
+                  {/* 🏥 State */}
+                  <div className="lg:col-span-2">
+                    <select
+                      value={selectedStateId}
+                      onChange={handleStateChange}
+                      className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    >
+                      <option value="">Select State</option>
+                      {statesInResults.map((state) => (
+                        <option key={state.id} value={state.id}>
+                          {state.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </>
+              )}
+
+              {/* 🏥 Lga */}
+              {showLgaDropdown && (
+                <div className="lg:col-span-2">
+                  <select
+                    value={selectedLgaId}
+                    // onChange={(e) => setSelectedLgaId(e.target.value)}
+                    onChange={handleLgaChange}
+                    className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  >
+                    <option value="">Select LGA</option>
+                    {lgasInResults.map((lga) => (
+                      <option key={lga.id} value={lga.id}>
+                        {lga.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              {/* 🏥 Ward */}
+              {/* {showWardDropdown && (
+                <div className="lg:col-span-2">
+                  <select
+                    value={selectedWardId}
+                    onChange={handleWardChange}
+                    className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  >
+                    <option value="">Select Ward</option>
+                    {wardsInResults.map((ward) => (
+                      <option key={ward.id} value={ward.id}>
+                        {ward.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )} */}
+
               {/* 🏥 Facility Type */}
               <div className="lg:col-span-2">
                 <select
                   value={selectedFacilityType}
-                  onChange={(e) => setSelectedFacilityType(e.target.value)}
+                  // onChange={(e) => setSelectedFacilityType(e.target.value)}
+                  onChange={handleFacilityTypeChange} // Trigger fetch on change
                   className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 >
                   <option value="">Select Facility Type</option>
@@ -751,7 +1135,8 @@ function Facility() {
               <div className="lg:col-span-2">
                 <select
                   value={selectedFacilityLevel}
-                  onChange={(e) => setSelectedFacilityLevel(e.target.value)}
+                  // onChange={(e) => setSelectedFacilityLevel(e.target.value)}
+                  onChange={handleFacilityLevelChange}
                   className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 >
                   <option value="">Select Facility Level</option>
@@ -778,13 +1163,16 @@ function Facility() {
               {/* Layout Toggle Buttons */}
               <div className="flex justify-between items-center bg-green-50 p-4 rounded-lg">
                 <p className="text-gray-700">
-                  {hospitals.length} healthcare facilities found in your area
+                  {filteredHospitals.length >= 2000
+                    ? filteredHospitals.length + "+"
+                    : filteredHospitals.length}{" "}
+                  healthcare facilities found in your area
                 </p>
                 <div className="flex gap-2">
                   <button
-                    onClick={() => setIsGridView(false)}
+                    onClick={() => setIsGridView(true)}
                     className={`p-2 rounded-lg transition-colors duration-200 ${
-                      !isGridView
+                      isGridView
                         ? "bg-gray-900 text-white"
                         : "bg-white text-gray-900"
                     }`}
@@ -793,9 +1181,9 @@ function Facility() {
                   </button>
 
                   <button
-                    onClick={() => setIsGridView(true)}
+                    onClick={() => setIsGridView(false)}
                     className={`p-2 rounded-lg transition-colors duration-200 ${
-                      isGridView
+                      !isGridView
                         ? "bg-gray-900 text-white"
                         : "bg-white text-gray-900"
                     }`}
@@ -830,7 +1218,7 @@ function Facility() {
                       </p>
                     </div>
                   </div>
-                  {isGridView ? (
+                  {!isGridView ? (
                     // ✅ TABLE VIEW
                     <div className="overflow-x-auto w-full">
                       <table className="min-w-full bg-white border border-gray-300 rounded-lg shadow-sm text-sm">
@@ -845,7 +1233,7 @@ function Facility() {
                           </tr>
                         </thead>
                         <tbody className="space-y-2">
-                          {currentHospitals.map((hospital) => {
+                          {paginatedHospitals.map((hospital) => {
                             const imageUrl =
                               Array.isArray(hospital.image_url) &&
                               hospital.image_url.length > 0
@@ -863,7 +1251,10 @@ function Facility() {
                                   </span>
                                   <br />
                                   <span className="text-sm text-gray-500">
-                                    {hospital.physical_location ?? "N/A"}
+                                    {/* {hospital.physical_location ?? "N/A"} */}
+                                    {hospital.physical_location
+                                      ? `${hospital.physical_location} ${hospital.ward_name}, ${hospital.lga_name}, ${hospital.state_name}`
+                                      : `${hospital.ward_name}, ${hospital.lga_name}, ${hospital.state_name}`}
                                   </span>
                                   {/* Tooltip */}
                                   {/* Tooltip */}
@@ -945,7 +1336,8 @@ function Facility() {
                   ) : (
                     // ✅ LIST CARD VIEW (your original design)
                     <>
-                      {currentHospitals.map((hospital) => {
+                      {/* {currentHospitals.map((hospital) => { */}
+                      {paginatedHospitals.map((hospital) => {
                         const parsedImages = JSON.parse(
                           (hospital as any)?.image_url || "[]"
                         );
@@ -980,22 +1372,45 @@ function Facility() {
                                       details
                                     </div>
                                   </h2>
-                                  <p className="text-sm text-gray-600">
-                                    {hospital.physical_location ?? "N/A"}
+                                  {/* <p className="text-sm text-gray-600">
+                                    {hospital.physical_location ??
+                                      `${
+                                        (hospital.ward_name,
+                                        hospital.lga_name,
+                                        hospital.state_name)
+                                      }`}
+                                  </p> */}
+
+                                  <p className="text-sm flex items-center gap-2 text-gray-700">
+                                    <FaMapMarkerAlt className="text-red-500" />
+                                    {hospital.physical_location
+                                      ? `${hospital.physical_location} ${hospital.ward_name}, ${hospital.lga_name}, ${hospital.state_name}`
+                                      : `${hospital.ward_name}, ${hospital.lga_name}, ${hospital.state_name}`}
                                   </p>
-                                  <p className="text-sm text-gray-600">
-                                    Contact info:{" "}
-                                    {hospital.phone_number ?? "N/A"}
+
+                                  <p className="text-sm flex items-center gap-2 text-gray-700">
+                                    <FaPhoneAlt className="text-blue-500" />
+                                    {hospital.phone_number &&
+                                    hospital.phone_number !== "null" &&
+                                    hospital.phone_number.trim() !== ""
+                                      ? hospital.phone_number
+                                      : "N/A"}
                                   </p>
-                                  <p className="text-sm text-gray-600">
-                                    {/* Plans accepted: EPO, HMO, Medi-Cal Managed
-                                    Care, POS, Senior Advantage */}
+
+                                  {/* <p className="text-sm text-gray-600">
+                                    Plans accepted: EPO, HMO, Medi-Cal Managed
+                                    Care, POS, Senior Advantage
+                                    {hospital.description ?? "N/A"}
+                                  </p> */}
+
+                                  <p className="text-sm text-gray-600 flex items-center gap-2">
+                                    <FaInfoCircle className="text-blue-500" />
                                     {hospital.description ?? "N/A"}
                                   </p>
 
                                   <div className="w-full flex flex-wrap md:flex-nowrap gap-2">
                                     <button
-                                      className="text-green-600 font-semibold text-center w-full md:w-auto"
+                                      className="text-green-600 font-semibold text-center w-full md:w-auto text-sm"
                                       onClick={() =>
                                         handleGetDirections(hospital)
                                       }
@@ -1004,7 +1419,7 @@ function Facility() {
                                     </button>
                                     <Link
                                       href={`/facilityfinder/details/${hospital.id}`}
-                                      className="text-green-600 font-semibold text-center w-full md:w-auto"
+                                      className="text-green-600 font-semibold text-center w-full md:w-auto text-sm"
                                     >
                                       View Details
                                     </Link>
@@ -1065,8 +1480,11 @@ function Facility() {
                 >
                   <GoogleMap
                     mapContainerClassName="w-full h-full"
-                    center={center}
-                    zoom={selectedHospital ? 14 : 10} // Zoom in if showing one facility
+                    center={center} // initial
+                    zoom={selectedHospital ? 10 : 10} // fallback zoom
+                    onLoad={(map) => {
+                      mapRef.current = map;
+                    }}
                   >
                     {/* Only render if Google Maps is fully loaded */}
                     {googleMapsLoaded &&
@@ -1108,7 +1526,7 @@ function Facility() {
 
                     {/* Show all hospitals if no specific facility is selected */}
                     {!focusedHospital &&
-                      hospitals.map((hospital) => (
+                      hospitalsWithCoordinates.map((hospital) => (
                         <Marker
                           key={hospital.id}
                           position={{

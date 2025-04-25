@@ -268,11 +268,12 @@ const Overlay = () => {
         Search for Health Facilities Close To You
       </Text>
       <div className="grid grid-cols-1 md:grid-cols-2 md:justify-items-center lg:flex lg:flex-row mx-[1rem] lg:mx-[0] justify-center items-center gap-[1rem] mt-[1rem]">
-        <Input
-          className="mt-[-.2rem]"
+        <input
+          // className="mt-[-.2rem]"
+          className="w-full mt-[-0.2rem] p-3 border border-gray-300 rounded placeholder-gray-400"
+          placeholder="Facility Name"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Input your location"
         />
 
         <SelectComponent
