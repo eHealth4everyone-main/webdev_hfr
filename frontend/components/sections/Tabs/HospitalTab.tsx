@@ -14,6 +14,85 @@ const HospitalTable = dynamic(() => import("./HospitalTable"), { ssr: false });
 
 import axios from "axios";
 import SelectComponent3 from "@/components/ui/SelectComponent3";
+import SelectComponent4 from "@/components/ui/SelectComponent4";
+
+interface Facility {
+  id: number;
+  facility_name: string;
+  alt_facility_name?: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  state_id?: number;
+  state_name?: string;
+  lga_id?: number;
+  lga_name?: string;
+  ward_id?: number;
+  ward_name?: string;
+  ownership_id?: number;
+  ownership_name?: string;
+  ownership_type_id?: string | null;
+  facility_level_id?: number;
+  facility_level_name?: string;
+  facility_level_option_id?: number | null;
+  facility_level_options_category_id?: number | null;
+  license_status_id?: number;
+  license_status_name?: string;
+  registration_status_id?: number;
+  registration_status_name?: string;
+  operational_status_id?: number;
+  operational_status_name?: string;
+  phone_number?: string;
+  email_address?: string;
+  website?: string | null;
+  physical_location?: string | null;
+  postal_address?: string | null;
+  beds?: number | null;
+  doctors?: number | null;
+  nurses?: number | null;
+  midwifes?: number | null;
+  lab_scientists?: number | null;
+  lab_technicians?: number | null;
+  pharmacists?: number | null;
+  pharmacy_technicians?: number | null;
+  him_officers?: number | null;
+  env_health_officers?: number | null;
+  dental_technicians?: number | null;
+  dentist?: number | null;
+  attendants?: number | null;
+  community_health_officer?: number | null;
+  community_extension_workers?: number | null;
+  jun_community_extension_worker?: number | null;
+  inpatient?: string | null;
+  outpatient?: string | null;
+  ambulance_services?: string;
+  onsite_laboratory?: string | null;
+  onsite_imaging?: string | null;
+  onsite_pharmarcy?: string | null;
+  mortuary_services?: string | null;
+  operational_days?: string | null;
+  operational_hours?: string | null;
+  image_url?: string | null;
+  start_date?: string | null;
+  close_date?: string | null;
+  unique_id?: string;
+  registration_no?: string | null;
+  publish_note?: string | null;
+  published_at?: string | null;
+  published_by?: string | null;
+  request_note?: string | null;
+  requested_at?: string | null;
+  requested_by?: string | null;
+  validate_note?: string | null;
+  validated_at?: string | null;
+  validated_by?: string | null;
+  verify_note?: string | null;
+  verified_at?: string | null;
+  verified_by?: string | null;
+  status_id?: number;
+  created_at?: string;
+  updated_at?: string;
+  created_by?: string | null;
+}
 
 const HospitalTab = () => {
   const [states, setStates] = useState<any[]>([]); // Store states
@@ -55,10 +134,14 @@ const HospitalTab = () => {
 
   const [loading, setLoading] = useState<boolean>(true); // Loading state
 
-  const [data, setData] = useState([]); // Store API response
+  // const [data, setData] = useState([]); // Store API response
+  const [data, setData] = useState<Facility[]>([]);
   const [currentPage, setCurrentPage] = useState(1); // Track pagination
   const [totalPages, setTotalPages] = useState(1); // Store total pages
   const [totalRecords, setTotalRecords] = useState(1); // Store total pages
+
+  // const [allFacilities, setAllFacilities] = useState([]);
+  const [allFacilities, setAllFacilities] = useState<Facility[]>([]);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -91,26 +174,6 @@ const HospitalTab = () => {
     setLoading(true);
     setFetchError("");
 
-    // // Log the parameters being sent to the backend
-    // console.log({
-    //   state_id: selectedState,
-    //   lga_id: selectedLga,
-    //   ward_id: selectedWard,
-    //   facility_level_id: selectedFacilityLevel,
-    //   ownership_id: selectedownership,
-    //   ownership_type_id: selectedOwnershipCategory,
-    //   operational_status_id: selectedOperational,
-    //   registration_status_id: selectedRegistration,
-    //   license_status_id: selectedLicense,
-    //   outpatient: selectedServiceType ? 1 : 0,
-    //   inpatient: selectedServiceType ? 1 : 0,
-    //   geo_codes: selectedGeoCode,
-    //   service_category_id: selectedServiceCategory,
-    //   services: selectedService,
-    //   page: currentPage,
-    //   per_page: entriesPerPage,
-    // });
-
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BACKEND_API}/facilities-hospitals-search`,
@@ -124,8 +187,8 @@ const HospitalTab = () => {
           operational_status_id: selectedOperational,
           registration_status_id: selectedRegistration,
           license_status_id: selectedLicense,
-          outpatient: selectedServiceType ? 1 : 0,
-          inpatient: selectedServiceType ? 1 : 0,
+          // outpatient: selectedServiceType ? 1 : 0,
+          // inpatient: selectedServiceType ? 1 : 0,
           geo_codes: selectedGeoCode,
 
           service_category_id: selectedServiceCategory,
@@ -133,10 +196,11 @@ const HospitalTab = () => {
           // facility_name: search,
           page: currentPage,
           per_page: entriesPerPage,
+
+          // 👇 Add this:
+          search: search.trim() !== "" ? search.trim() : null,
         }
       );
-
-      // console.log("response by adams", response.data.data.facilities);
 
       // After fetching, update total records and total pages
       const fetchedData = response.data?.data?.facilities?.data;
@@ -144,12 +208,13 @@ const HospitalTab = () => {
 
       // Set new data and calculate total pages based on entriesPerPage
       setData(fetchedData); // Set fetched data
+      setAllFacilities(fetchedData);
       setTotalRecords(totalRecords); // Set total records from API
       // setTotalPages(response.data?.data?.facilities?.last_page); // Set total pages from API
 
       const calculatedTotalPages = Math.ceil(totalRecords / entriesPerPage); // Recalculate total pages based on entriesPerPage
       setTotalPages(calculatedTotalPages); // Update total pages
-      // console.log("calculatedTotalPages by adams", calculatedTotalPages);
+      console.log("fetchedData by adams", fetchedData);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -171,6 +236,7 @@ const HospitalTab = () => {
     selectedGeoCode,
     selectedServiceCategory,
     selectedService,
+    search,
   ]);
 
   const fetchFacilities2 = useCallback(async () => {
@@ -524,6 +590,7 @@ const HospitalTab = () => {
     setEntriesPerPage(parseInt(defaultValue, 10)); // Update state
     localStorage.setItem("entriesPerPage", defaultValue); // Update localStorage
     setCurrentPage(1); // Reset current page to 1 when entries per page change
+    // fetchFacilities();
   }, [
     // currentPage,
     setSelectedState,
@@ -550,10 +617,6 @@ const HospitalTab = () => {
     setCurrentPage(1);
   };
 
-  const handlePageChange = (page: number) => {
-    console.log("Page changed:", page);
-    setCurrentPage(page);
-  };
 
   return (
     <div>
@@ -569,13 +632,14 @@ const HospitalTab = () => {
             setSelectedState(selectedId);
             setSelectedLga("");
             setSelectedWard("");
+            // setSearch("");
             fetchLgas(selectedId);
           }}
           options={states.map((state) => ({
             value: state.id, // Ensure value is the ID
             name: state.name, // Display name
           }))}
-          placeholder="All State"
+          placeholder="Select State"
         />
 
         {/* lga Selection */}
@@ -586,6 +650,7 @@ const HospitalTab = () => {
             const lgaId = e.target.value;
             setSelectedLga(lgaId);
             setSelectedWard("");
+            // setSearch("");
             fetchWards(lgaId); // Fetch Wards for selected LGA
           }}
           options={lgas.map((lga) => ({
@@ -602,6 +667,7 @@ const HospitalTab = () => {
           value={selectedWard}
           onChange={(e) => {
             setSelectedWard(e.target.value); // Store selected Ward
+            // setSearch("");
           }}
           options={wards.map((ward) => ({
             value: ward.id, // Use Ward ID
@@ -617,6 +683,7 @@ const HospitalTab = () => {
           value={selectedFacilityLevel} // Track selected value
           onChange={(e) => {
             setSelectedFacilityLevel(e.target.value); // Update state
+            // setSearch("");
           }}
           options={facilityLevels.map((level) => ({
             value: level.id, // Use level ID
@@ -638,6 +705,7 @@ const HospitalTab = () => {
             const ownershipId = e.target.value;
             setSelectedownership(ownershipId); // Update selected ownership
             setSelectedOwnershipCategory(""); // Clear ownership type selection when ownership is changed
+            // setSearch("");
             ownershipCategory(ownershipId); // Fetch related ownership categories for the selected ownership
           }}
           options={ownerships.map((item) => ({
@@ -667,6 +735,7 @@ const HospitalTab = () => {
           value={selectedOperational} // Track selected value
           onChange={(e) => {
             setSelectedOperational(e.target.value); // Update state
+            // setSearch("");
           }}
           options={operationals.map((items) => ({
             value: items.id, // Use items ID
@@ -681,6 +750,7 @@ const HospitalTab = () => {
           value={selectedRegistration} // Track selected value
           onChange={(e) => {
             setSelectedRegistration(e.target.value); // Update state
+            // setSearch("");
           }}
           options={registrations.map((items) => ({
             value: items.id, // Use items ID
@@ -695,6 +765,7 @@ const HospitalTab = () => {
           value={selectedLicense} // Track selected value
           onChange={(e) => {
             setSelectedLicense(e.target.value); // Update state
+            // setSearch("");
           }}
           options={licenses.map((items) => ({
             value: items.id, // Use items ID
@@ -704,14 +775,15 @@ const HospitalTab = () => {
         />
 
         {/* Select Coordinates */}
-        <SelectComponent
+        <SelectComponent4
           className="w-full max-w-[350px]"
           value={selectedGeoCode} // Track selected value
           onChange={(e) => {
             setSelectedGeoCode(e.target.value); // Update state
+            // setSearch("");
           }}
           options={[
-            { value: "0", name: "Select Coordinates" },
+            // { value: "0", name: "Select Coordinates" },
             { value: "1", name: "With Coordinates" },
             { value: "2", name: "With No Coordinates" },
           ]}
@@ -726,6 +798,7 @@ const HospitalTab = () => {
             const serviceId = e.target.value; // Get the state ID
             setSelectedServiceCategory(serviceId);
             fetchService(serviceId);
+            // setSearch("");
           }}
           options={serviceCategories.map((items) => ({
             value: items.id, // Use items ID
@@ -739,6 +812,7 @@ const HospitalTab = () => {
           value={selectedService}
           onChange={(e) => {
             setSelectedService(e.target.value);
+            // setSearch("");
           }}
           options={services.map((item) => ({
             value: item.id, // Use item ID
@@ -779,7 +853,11 @@ const HospitalTab = () => {
         </button>
 
         <GreenButton
-          onClick={fetchFacilities2}
+          onClick={() => {
+            setCurrentPage(1); // Reset to first page before searching
+            fetchFacilities();
+          }}
+          // onClick={filterAndPaginateFacilities}
           className="bg-[#5BBA62] w-full max-w-[200px] h-[44px] flex items-center justify-center text-sm"
         >
           {loading ? "Loading..." : "Search"}
