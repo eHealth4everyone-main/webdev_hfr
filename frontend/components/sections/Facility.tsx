@@ -546,6 +546,13 @@ function Facility() {
 
       // Show filters after data is ready
       setShowFilters(true);
+
+      // // ✅ Clear filters for location
+      // setSelectedStateId("");
+      // setSelectedLgaId("");
+      // setSelectedWardId("");
+      // setShowLgaDropdown(false);
+      // setShowWardDropdown(false);
     } catch (error) {
       console.error("Error fetching facilities:", error);
     } finally {
