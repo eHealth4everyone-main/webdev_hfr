@@ -1,11 +1,6 @@
 "use client";
 
 import { Button, Card } from "@chakra-ui/react";
-import { CiSliderHorizontal } from "react-icons/ci";
-import { MdLocationPin } from "react-icons/md";
-import { IoCopy } from "react-icons/io5";
-import Input from "../ui/Input";
-import SelectComponent from "../ui/SelectComponent";
 import { GreenButton, Text, WhiteButton } from "../ui/Typography";
 import { FaInfoCircle, FaMapMarkerAlt, FaPhoneAlt } from "react-icons/fa";
 
@@ -131,8 +126,6 @@ interface Facility {
 function Facility() {
   const router = useRouter();
   const pathname = usePathname();
-  // const prevPath = useRef(pathname);
-  const prevPath = useRef<string | null>(null);
 
   useEffect(() => {
     // Only run on the /facilityfinder route
@@ -167,9 +160,6 @@ function Facility() {
 
   const [map, setMap] = useState<google.maps.Map | null>(null);
 
-  const [searchBox, setSearchBox] =
-    useState<google.maps.places.SearchBox | null>(null);
-
   const [hospitals, setHospitals] = useState<any[]>([]);
 
   const [selectedHospital, setSelectedHospital] = useState<any | null>(null);
@@ -193,8 +183,6 @@ function Facility() {
   const [selectedFacilityType, setSelectedFacilityType] = useState("");
 
   const [currentPage, setCurrentPage] = useState(1); // Track pagination
-  const [totalPages1, setTotalPages] = useState(1); // Store total pages
-
   const [search, setSearch] = useState("");
 
   ////////////////////////////////////////////////////////////////////////////////////////////
@@ -204,8 +192,6 @@ function Facility() {
   // const [focusedHospital, setFocusedHospital] = useState(null);
   const [focusedHospital, setFocusedHospital] = useState<Facility | null>(null);
   const [showUserInfo, setShowUserInfo] = useState(false);
-  const [showInfoCardIcon, setShowInfoCardIcon] = useState(false);
-
   const [isGridView, setIsGridView] = useState(true); // State to track the layout
   // const [viewType, setViewType] = useState<"list" | "grid">("list");
   // const itemsPerPage = viewType === "list" ? 10 : 20;
@@ -284,21 +270,47 @@ function Facility() {
   }, []);
 
   // 2️⃣ 🛰️ Continuously Track User’s Location (Watches for Changes)
+  // useEffect(() => {
+  //   const watchId = navigator.geolocation.watchPosition(
+  //     (position) => {
+  //       setUserLocation({
+  //         lat: position.coords.latitude,
+  //         lng: position.coords.longitude,
+  //       });
+  //       console.log("📍 Updated Location:", position.coords);
+  //     },
+  //     (error) => console.error("❌ Error tracking location:", error),
+  //     { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
+  //   );
+
+  //   return () => navigator.geolocation.clearWatch(watchId); // Cleanup
+  // }, []);
+
+  // UseEffect for location tracking
   useEffect(() => {
     const watchId = navigator.geolocation.watchPosition(
       (position) => {
-        setUserLocation({
+        const updatedLocation = {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
-        });
-        console.log("📍 Updated Location:", position.coords);
+        };
+
+        // Only update the user location if it's not the initial location
+        if (
+          !userLocation ||
+          (userLocation.lat !== updatedLocation.lat &&
+            userLocation.lng !== updatedLocation.lng)
+        ) {
+          setUserLocation(updatedLocation);
+          console.log("📍 Updated Location:", position.coords);
+        }
       },
       (error) => console.error("❌ Error tracking location:", error),
       { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
     );
 
     return () => navigator.geolocation.clearWatch(watchId); // Cleanup
-  }, []);
+  }, [userLocation]);
 
   // 3️⃣ 🗺️ Update Map & Get Directions When a Hospital is Selected
   useEffect(() => {
@@ -546,13 +558,6 @@ function Facility() {
 
       // Show filters after data is ready
       setShowFilters(true);
-
-      // // ✅ Clear filters for location
-      // setSelectedStateId("");
-      // setSelectedLgaId("");
-      // setSelectedWardId("");
-      // setShowLgaDropdown(false);
-      // setShowWardDropdown(false);
     } catch (error) {
       console.error("Error fetching facilities:", error);
     } finally {
@@ -659,10 +664,7 @@ function Facility() {
         (facility: Facility) =>
           facility.latitude !== null && facility.longitude !== null
       );
-
-    const defaultLat = 0; // or center of the country/map
-    const defaultLng = 0;
-
+      
     const mappedFacilities = storedResults.map((f) => ({
       ...f,
       latitude:
@@ -844,15 +846,6 @@ function Facility() {
       fetchFilteredFacilities();
     }
   }, [selectedFacilityType, selectedFacilityLevel]);
-
-  // useEffect(() => {
-  //   // Reset Facility Level when Facility Type changes
-  //   console.log({ selectedFacilityType });
-
-  //   if (!selectedFacilityType) {
-  //     setSelectedFacilityLevel("");
-  //   }
-  // }, [selectedFacilityType]);
 
   // On selecting a facility type
   const handleFacilityTypeChange = (
@@ -1480,7 +1473,15 @@ function Facility() {
                 >
                   <GoogleMap
                     mapContainerClassName="w-full h-full"
-                    center={center} // initial
+                    // center={center} // initial
+                    center={
+                      selectedHospital
+                        ? {
+                            lat: selectedHospital.latitude,
+                            lng: selectedHospital.longitude,
+                          }
+                        : userLocation || center
+                    } // Conditionally update center
                     zoom={selectedHospital ? 10 : 10} // fallback zoom
                     onLoad={(map) => {
                       mapRef.current = map;
