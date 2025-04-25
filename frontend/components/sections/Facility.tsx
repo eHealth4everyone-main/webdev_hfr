@@ -889,12 +889,12 @@ function Facility() {
     setSelectedFacilityLevel(selectedLevel); // Update selected facility type
 
     // Avoid making a fetch request if the selection didn't change
-    if (selectedLevel !== "" && selectedLevel === selectedFacilityLevel) {
+    if (selectedLevel != "" && selectedLevel == selectedFacilityLevel) {
       return; // No need to fetch if the same value is selected
     }
 
     // Reset to all records if the default value is selected
-    if (selectedLevel === "") {
+    if (selectedLevel == "") {
       // Show all records or the filtered records by state
       fetchFacilities({ search });
     } else {
