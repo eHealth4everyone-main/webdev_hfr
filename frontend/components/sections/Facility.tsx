@@ -868,6 +868,8 @@ function Facility() {
 
     // Reset to all records if the default value is selected
     if (selectedType === "") {
+      console.log({ selectedType });
+
       // Show all records or the filtered records by state
       fetchFacilities({ search });
       // setSelectedFacilityLevel("");
@@ -898,7 +900,9 @@ function Facility() {
     }
 
     // Reset to all records if the default value is selected
-    if (selectedLevel == "") {
+    if (selectedLevel === "") {
+      console.log({ selectedLevel });
+
       // Show all records or the filtered records by state
       fetchFacilities({ search });
     } else {
