@@ -122,7 +122,7 @@ const FacilityDetails = () => {
       );
 
       const data = response?.data?.data?.hospital;
-      // console.log("Fetched facility:", data);
+      console.log("Fetched facility:", data);
       setHospital(data);
     } catch (error) {
       console.error("Error fetching facility:", error);
@@ -193,7 +193,7 @@ const FacilityDetails = () => {
     });
   };
 
-  const downloadPDF = () => {
+  const downloadPDFold = () => {
     if (!pdfRef.current) return; // Prevent error
 
     // Hide buttons before taking the screenshot
@@ -211,6 +211,35 @@ const FacilityDetails = () => {
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
       pdf.addImage(imgData, "PNG", 20, 10, imgWidth, imgHeight); // 20mm padding from left
+      pdf.save(`${hospital?.facility_name || "facility"}_details.pdf`);
+
+      // Show buttons again after PDF is downloaded
+      setTimeout(() => {
+        document.querySelectorAll(".no-print").forEach((el) => {
+          (el as HTMLElement).style.visibility = "visible";
+        });
+      }, 100); // Small delay to ensure smooth restoration
+    });
+  };
+
+  const downloadPDF = () => {
+    if (!pdfRef.current) return; // Prevent error
+
+    // Hide buttons before taking the screenshot
+    document.querySelectorAll(".no-print").forEach((el) => {
+      (el as HTMLElement).style.visibility = "hidden";
+    });
+
+    fixColorsBeforeCapture(); // Fix colors before capturing
+    html2canvas(pdfRef.current, { scale: 2 }).then((canvas) => {
+      const imgData = canvas.toDataURL("image/jpeg");
+      // const pdf = new jsPDF("p", "mm", "a4");
+      const pdf = new jsPDF("l", "mm", "a4"); // "l" = Landscape mode
+      const pageWidth = pdf.internal.pageSize.getWidth(); // Get landscape width
+      const imgWidth = pageWidth - 40; // Reduce width to add padding (20mm left & right)
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      pdf.addImage(imgData, "JPEG", 20, 10, imgWidth, imgHeight); // 20mm padding from left
       pdf.save(`${hospital?.facility_name || "facility"}_details.pdf`);
 
       // Show buttons again after PDF is downloaded
@@ -472,7 +501,7 @@ const FacilityDetails = () => {
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
               <p>
                 <span className="font-semibold">Facility type:</span>{" "}
-                {(hospital as any)?.facility_type || "N/A"}
+                {(hospital as any)?.facility_type_name || "N/A"}
               </p>
               <p>
                 <span className="font-semibold">Ownership:</span>{" "}
@@ -522,26 +551,29 @@ const FacilityDetails = () => {
             <div className="grid grid-cols-3 md:grid-cols-6 gap-4 text-sm">
               <p>
                 <span className="font-semibold">No of Medical Doctors:</span>{" "}
+                <br />
                 {(hospital as any)?.doctors || "N/A"}
               </p>
               <p>
-                <span className="font-semibold">No of Beds:</span>{" "}
+                <span className="font-semibold">No of Beds:</span> <br />
                 {(hospital as any)?.beds || "N/A"}
               </p>
               <p>
-                <span className="font-semibold">No of Midwives:</span>{" "}
+                <span className="font-semibold">No of Midwives:</span> <br />
                 {(hospital as any)?.nurse_midwife || "N/A"}
               </p>
               <p>
-                <span className="font-semibold">No of Nurses:</span>{" "}
+                <span className="font-semibold">No of Nurses:</span> <br />
                 {(hospital as any)?.nurses || "N/A"}
               </p>
               <p>
                 <span className="font-semibold">No of Resident Doctors:</span>{" "}
+                <br />
                 {(hospital as any)?.doctors || "N/A"}
               </p>
               <p>
                 <span className="font-semibold">No of Health workers:</span>{" "}
+                <br />
                 {(hospital as any)?.community_health_officer || "N/A"}
               </p>
             </div>
@@ -657,7 +689,7 @@ const HospitalDetails = ({
         </p>
         <div className="flex items-center gap-2 mt-1">
           <h1 className="text-2xl font-bold">{hospital?.facility_name}</h1>
-          <span className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full">
+          <span className="text-xs bg-blue-100 text-blue-600 px-3 py-2 rounded-full">
             {/* Open 24hrs */}
             Open{" "}
             {hospital?.operational_hours !== undefined &&
@@ -668,7 +700,9 @@ const HospitalDetails = ({
         </div>
         <p className="text-gray-500 text-sm flex items-center gap-1 mt-1">
           {/* 2417 Central Ave, Alameda, CA, 94501 */}
-          {hospital?.physical_location ? hospital?.physical_location : "N/A"}
+          {hospital?.physical_location
+            ? hospital?.physical_location
+            : `${hospital?.ward_name}, ${hospital?.lga_name}, ${hospital?.state_name}`}
           <span className="text-gray-400">📍</span>
         </p>
       </div>
