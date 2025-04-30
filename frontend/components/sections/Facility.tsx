@@ -1024,7 +1024,6 @@ function Facility() {
       left: 50,
       right: 50,
     });
-
   };
 
   return (
@@ -1090,6 +1089,7 @@ function Facility() {
               )}
 
               {/* 🏥 Ward */}
+
               {/* {showWardDropdown && (
                 <div className="lg:col-span-2">
                   <select
