@@ -566,6 +566,9 @@ function Facility() {
 
     localStorage.removeItem("searchResults");
     localStorage.removeItem("homePageSearchQuery");
+
+    // ✅ Fit the map after facilities update
+    fitMapToHospitals();
   };
 
   // Fetch data from the API
@@ -664,7 +667,7 @@ function Facility() {
         (facility: Facility) =>
           facility.latitude !== null && facility.longitude !== null
       );
-      
+
     const mappedFacilities = storedResults.map((f) => ({
       ...f,
       latitude:
@@ -809,8 +812,6 @@ function Facility() {
     setWardsInResults(filteredWards);
   }, [selectedLgaId, hospitals]);
 
-  // console.log({ filteredHospitals });
-
   const totalPages = Math.ceil(filteredHospitals.length / itemsPerPage);
 
   const paginatedHospitals = filteredHospitals.slice(
@@ -874,6 +875,9 @@ function Facility() {
       // Fetch facilities based on the selected facility type
       fetchFacilities({ facilityType: selectedType });
     }
+
+    // ✅ Fit the map after facilities update
+    fitMapToHospitals();
   };
 
   const handleFacilityLevelChange = (
@@ -901,15 +905,18 @@ function Facility() {
       // Fetch facilities based on the selected facility type
       fetchFacilities({ facilityType: selectedLevel });
     }
+
+    // ✅ Fit the map after facilities update
+    fitMapToHospitals();
   };
 
   const handleStateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedState = e.target.value;
     setSelectedStateId(selectedState);
     setSelectedLgaId(""); // Reset LGA when state changes
-    setSelectedWardId(""); // Reset Ward when state changes
+    // setSelectedWardId(""); // Reset Ward when state changes
     setShowLgaDropdown(!!selectedState); // Show LGA dropdown if a state is selected
-    setShowWardDropdown(false); // Hide ward dropdown initially
+    // setShowWardDropdown(false); // Hide ward dropdown initially
 
     // ✅ Clear previous map states BEFORE search
     setDirections(null);
@@ -936,6 +943,9 @@ function Facility() {
     );
 
     setLgasInResults(filteredLgas);
+
+    // ✅ Fit the map after facilities update
+    fitMapToHospitals();
   };
 
   const handleLgaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -949,41 +959,34 @@ function Facility() {
     setSelectedLgaId(lgaId);
     setSelectedWardId(""); // Reset Ward when LGA changes
     setShowWardDropdown(!!lgaId); // Show ward dropdown if LGA is selected
+
+    // ✅ Fit the map after facilities update
+    fitMapToHospitals();
   };
 
   const handleWardChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedWardId(e.target.value);
   };
 
-  const hospitalsWithCoordinates222 = useMemo(() => {
-    return hospitals.filter(
-      (h) =>
-        h.latitude !== null &&
-        h.longitude !== null &&
-        !isNaN(h.latitude) &&
-        !isNaN(h.longitude)
-    );
-  }, [hospitals]);
-
   const hospitalsWithCoordinates = useMemo(() => {
     return hospitals
       .filter((h) => {
         const matchState = selectedStateId
-          ? String(h.state_id) === selectedStateId
+          ? String(h.state_id) == selectedStateId
           : true;
         const matchLga = selectedLgaId
-          ? String(h.lga_id) === selectedLgaId
+          ? String(h.lga_id) == selectedLgaId
           : true;
         const matchWard = selectedWardId
-          ? String(h.ward_id) === selectedWardId
+          ? String(h.ward_id) == selectedWardId
           : true;
 
         return matchState && matchLga && matchWard;
       })
       .filter(
         (h) =>
-          h.latitude !== null &&
-          h.longitude !== null &&
+          h.latitude != null &&
+          h.longitude != null &&
           !isNaN(h.latitude) &&
           !isNaN(h.longitude)
       );
@@ -991,7 +994,7 @@ function Facility() {
 
   const mapRef = useRef<google.maps.Map | null>(null);
 
-  useEffect(() => {
+  const fitMapToHospitals = () => {
     if (
       !googleMapsLoaded ||
       !userLocation ||
@@ -1001,11 +1004,8 @@ function Facility() {
       return;
 
     const bounds = new window.google.maps.LatLngBounds();
-
-    // ✅ Add user's location
     bounds.extend(userLocation);
 
-    // ✅ Add all hospital locations
     hospitalsWithCoordinates.forEach((hospital) => {
       if (
         typeof hospital.latitude === "number" &&
@@ -1018,14 +1018,14 @@ function Facility() {
       }
     });
 
-    // ✅ Fit bounds with padding
     mapRef.current.fitBounds(bounds, {
       top: 50,
       bottom: 50,
       left: 50,
       right: 50,
     });
-  }, [googleMapsLoaded, userLocation, hospitalsWithCoordinates]);
+
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
