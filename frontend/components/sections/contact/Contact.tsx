@@ -48,8 +48,6 @@ const ContactPage = () => {
         formData
       );
 
-      console.log("Adams", response);
-
       if (response.data.success) {
         Swal.fire("Success", response.data.success, "success");
         setFormData({ full_name: "", email: "", subject: "", message: "" });
@@ -75,7 +73,7 @@ const ContactPage = () => {
                   Federal Ministry of Health
                 </Text>
                 <Text className="mb-8">
-                  Department of Health Planning Research and Statistics.
+                  Department of Health Planning, Research and Statistics.
                 </Text>
 
                 <div className="flex items-start mb-5">

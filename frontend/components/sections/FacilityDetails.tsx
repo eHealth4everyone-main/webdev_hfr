@@ -149,37 +149,43 @@ const FacilityDetails = () => {
 
   // console.log({ imageUrl });
 
-  const openModal = (imageUrl: any) => {
-    setSelectedImage(imageUrl);
-    setModalIsOpen(true);
-  };
-
-  const closeModal = () => {
-    setModalIsOpen(false);
-  };
-
-  const openLightbox = (index: any) => {
+  const openLightboxOLD = (index: number) => {
+    console.log("Opening Lightbox with:", parsedImages[index]);
     setCurrentIndex(index);
     setMainSrc(parsedImages[index]); // ✅ Set the image source immediately
     setIsOpen(true);
   };
 
+  const openLightbox = (index: number) => {
+    if (!parsedImages[index]) return;
+
+    // If already open, close it first before re-opening
+    if (isOpen) {
+      setIsOpen(false);
+      setTimeout(() => {
+        setCurrentIndex(index);
+        setMainSrc(parsedImages[index]);
+        setIsOpen(true);
+      }, 100); // Short delay to allow unmounting
+    } else {
+      setCurrentIndex(index);
+      setMainSrc(parsedImages[index]);
+      setIsOpen(true);
+    }
+  };
+
   const closeLightbox = () => {
     setIsOpen(false);
-    setMainSrc("");
   };
 
   const nextImage = () => {
-    const nextIndex = (currentIndex + 1) % parsedImages.length;
-    setCurrentIndex(nextIndex);
-    setMainSrc(parsedImages[nextIndex]);
+    setCurrentIndex((currentIndex + 1) % parsedImages.length);
   };
 
   const prevImage = () => {
-    const prevIndex =
-      currentIndex === 0 ? parsedImages.length - 1 : currentIndex - 1;
-    setCurrentIndex(prevIndex);
-    setMainSrc(parsedImages[prevIndex]);
+    setCurrentIndex(
+      currentIndex === 0 ? parsedImages.length - 1 : currentIndex - 1
+    );
   };
 
   const pdfRef = useRef<HTMLDivElement>(null);
@@ -452,7 +458,7 @@ const FacilityDetails = () => {
             View direction
           </Text>
 
-          <div className="flex gap-[.5rem] gap-2">
+          {/* <div className="flex gap-[.5rem] gap-2">
             {parsedImages.slice(0, 2).map((img: any, index: any) => (
               <Image
                 key={index}
@@ -474,7 +480,7 @@ const FacilityDetails = () => {
               </div>
             )}
 
-            {isOpen && parsedImages.length > 0 && (
+            {isOpen && mainSrc && (
               <Lightbox
                 mainSrc={mainSrc}
                 nextSrc={parsedImages[(currentIndex + 1) % parsedImages.length]}
@@ -488,6 +494,47 @@ const FacilityDetails = () => {
                 onMovePrevRequest={prevImage}
                 onMoveNextRequest={nextImage}
                 reactModalStyle={{ overlay: { zIndex: 1050 } }} // Ensure it's above other elements
+              />
+            )}
+          </div> */}
+
+          <div className="flex gap-[.5rem] gap-2">
+            {parsedImages.slice(0, 2).map((img: any, index: number) => (
+              <img
+                key={index}
+                src={img}
+                width={95}
+                height={131}
+                alt={`Image ${index + 1}`}
+                className="cursor-pointer rounded-md object-cover"
+                onClick={() => openLightbox(index)}
+              />
+            ))}
+
+            {parsedImages.length > 3 && (
+              <div
+                className="w-[120px] h-[120px] flex items-center justify-center bg-black/50 text-white text-lg cursor-pointer rounded-md"
+                onClick={() => openLightbox(3)}
+              >
+                +{parsedImages.length - 3}
+              </div>
+            )}
+
+            {isOpen && parsedImages.length > 0 && (
+              <Lightbox
+                key={currentIndex}
+                mainSrc={parsedImages[currentIndex]}
+                nextSrc={parsedImages[(currentIndex + 1) % parsedImages.length]}
+                prevSrc={
+                  parsedImages[
+                    (currentIndex - 1 + parsedImages.length) %
+                      parsedImages.length
+                  ]
+                }
+                onCloseRequest={closeLightbox}
+                onMovePrevRequest={prevImage}
+                onMoveNextRequest={nextImage}
+                reactModalStyle={{ overlay: { zIndex: 1050 } }}
               />
             )}
           </div>
@@ -518,6 +565,10 @@ const FacilityDetails = () => {
               <p>
                 <span className="font-semibold">Unique ID:</span>{" "}
                 {(hospital as any)?.unique_id || "N/A"}
+              </p>
+              <p>
+                <span className="font-semibold">Facility Level:</span>{" "}
+                {(hospital as any)?.facility_level_name || "N/A"}
               </p>
             </div>
           </div>
@@ -695,7 +746,7 @@ const HospitalDetails = ({
             {hospital?.operational_hours !== undefined &&
             hospital?.operational_hours !== null
               ? `${hospital?.operational_hours} hrs`
-              : "24 hrs"}
+              : "N/A"}
           </span>
         </div>
         <p className="text-gray-500 text-sm flex items-center gap-1 mt-1">

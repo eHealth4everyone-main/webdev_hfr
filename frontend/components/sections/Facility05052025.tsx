@@ -1160,7 +1160,7 @@ function Facility() {
               {/* Layout Toggle Buttons */}
               <div className="flex justify-between items-center bg-green-50 p-4 rounded-lg">
                 <p className="text-gray-700">
-                  {filteredHospitals.length >= 1000
+                  {filteredHospitals.length >= 2000
                     ? filteredHospitals.length + "+"
                     : filteredHospitals.length}{" "}
                   healthcare facilities found in your area

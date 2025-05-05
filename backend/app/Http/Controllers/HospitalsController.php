@@ -26,7 +26,7 @@ class HospitalsController extends Controller
     public function index()
     {
         if (auth()->user()->hasPermissionTo('All LGAs')) {
-            $facilities = DB::table('hospital_details')
+            $facilities = DB::table('hs_hospitals_history')
                 ->where('state_id', 'like', '%' .  Auth::user()->state_id . '%')
                 ->orderBy('state_id')
                 ->orderBy('lga_id')
@@ -34,7 +34,7 @@ class HospitalsController extends Controller
                 ->orderBy('facility_name')
                 ->paginate(15);
         } else {
-            $facilities = DB::table('hospital_details')
+            $facilities = DB::table('hs_hospitals_history')
                 ->where('state_id', 'like', '%' .  Auth::user()->state_id . '%')
                 ->whereIn('lga_id', auth()->user()->getDirectPermissions()->pluck('id')->toArray())
                 ->orderBy('state_id')
@@ -44,6 +44,7 @@ class HospitalsController extends Controller
                 ->paginate(15);
         }
 
+        // dd($facilities);
         return view('hospitals.index', compact('facilities'));
     }
 

@@ -1468,14 +1468,14 @@ class FrontendController extends Controller
                 return $q->where(function ($subQuery) use ($facilityName) {
                     $subQuery->where('ou_states.name', 'like', '%' . $facilityName . '%')
                         ->orWhere('ou_lgas.name', 'like', '%' . $facilityName . '%')
-                        ->orWhere('ou_wards.name', 'like', '%' . $facilityName . '%');
-                    // ->orWhere('hs_hospitals_history.facility_name', 'like', '%' . $facilityName . '%');
+                        ->orWhere('ou_wards.name', 'like', '%' . $facilityName . '%')
+                        ->orWhere('hs_hospitals_history.facility_name', 'like', '%' . $facilityName . '%');
                 });
             });
 
 
 
-        $data['facilities'] = $query->paginate(2000);
+        $data['facilities'] = $query->paginate(1000);
 
 
         // Access the facilities data from the paginator

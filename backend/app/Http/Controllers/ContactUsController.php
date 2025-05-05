@@ -25,6 +25,6 @@ class ContactUsController extends Controller
         // Send mail to admin
         Mail::to(env("CONTACT_US_MAIL"))->send(new ContactMail($contact));
 
-        return response()->json(['success' => "Thanks " . $request->full_name . " for your message/feedback. We will get back to you!"], 200);
+        return response()->json(['success' => "Thanks " . $request->full_name . " for your message."], 200);
     }
 }

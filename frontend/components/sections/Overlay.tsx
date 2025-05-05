@@ -271,7 +271,7 @@ const Overlay = () => {
         <input
           // className="mt-[-.2rem]"
           className="w-full mt-[-0.2rem] p-3 border border-gray-300 rounded placeholder-gray-400"
-          placeholder="Enter location"
+          placeholder="Enter location / facility name"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
