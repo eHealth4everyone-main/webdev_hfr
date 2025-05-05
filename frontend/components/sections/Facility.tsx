@@ -1035,7 +1035,7 @@ function Facility() {
       <div className="container mx-auto p-4">
         <div className="bg-white rounded-lg shadow-sm p-6">
           <h1 className="text-lg font-medium text-gray-800 mb-6">
-            Search based on location / facility name
+            Search based on Location / Facility Name
           </h1>
 
           <div className="space-y-4">
@@ -1045,7 +1045,7 @@ function Facility() {
                 <input
                   ref={searchInputRef}
                   type="text"
-                  placeholder="Enter location / facility name"
+                  placeholder="Enter Location/Facility Name"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="w-full p-3 pr-10 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
@@ -1151,7 +1151,7 @@ function Facility() {
                   onClick={handleSearch}
                   className="w-full h-[44px] flex items-center justify-center text-sm"
                 >
-                  {loading ? "Loading..." : "Search Location"}
+                  {loading ? "Loading..." : "Search"}
                 </GreenButton>
               </div>
             </div>
@@ -1206,7 +1206,7 @@ function Facility() {
                         <span className="font-semibold text-green-600">
                           "Direction"
                         </span>{" "}
-                        button to see the facility's location on the map, or
+                        button to view the facility's location on the map, or
                         Click{" "}
                         <span className="font-semibold text-green-600">
                           "Details"
