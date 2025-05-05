@@ -568,7 +568,7 @@ function Facility() {
     localStorage.removeItem("homePageSearchQuery");
 
     // ✅ Fit the map after facilities update
-    fitMapToHospitals();
+    // fitMapToHospitals();
   };
 
   // Fetch data from the API
@@ -774,14 +774,6 @@ function Facility() {
         facilityLevel: parsed.facilityLevel,
       });
     }
-    // else {
-    //   // If no stored search state, you can handle this as a fallback (e.g., fetching all records)
-    //   fetchFacilities({
-    //     search: "", // Or any default search term
-    //     facilityType: "", // Default facility type
-    //     facilityLevel: "", // Default facility level
-    //   });
-    // }
   }, [fetchFacilities]);
 
   const filteredHospitals = hospitals.filter((h) => {
@@ -879,7 +871,7 @@ function Facility() {
     }
 
     // ✅ Fit the map after facilities update
-    fitMapToHospitals();
+    // fitMapToHospitals();
   };
 
   const handleFacilityLevelChange = (
@@ -911,7 +903,7 @@ function Facility() {
     }
 
     // ✅ Fit the map after facilities update
-    fitMapToHospitals();
+    // fitMapToHospitals();
   };
 
   const handleStateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -949,7 +941,7 @@ function Facility() {
     setLgasInResults(filteredLgas);
 
     // ✅ Fit the map after facilities update
-    fitMapToHospitals();
+    // fitMapToHospitals();
   };
 
   const handleLgaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -965,7 +957,7 @@ function Facility() {
     setShowWardDropdown(!!lgaId); // Show ward dropdown if LGA is selected
 
     // ✅ Fit the map after facilities update
-    fitMapToHospitals();
+    // fitMapToHospitals();
   };
 
   const handleWardChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -1029,6 +1021,10 @@ function Facility() {
       right: 50,
     });
   };
+
+  useEffect(() => {
+    fitMapToHospitals();
+  }, [hospitalsWithCoordinates]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -1530,7 +1526,7 @@ function Facility() {
                 </div>
               </div>
 
-              <div className="h-[670px] rounded-lg overflow-hidden">
+              <div className="h-[670px]  min-h-[300px] rounded-lg overflow-hidden">
                 <LoadScriptNext
                   googleMapsApiKey={
                     process.env.NEXT_PUBLIC_GOOGLE_MAP_API ?? ""
@@ -1549,9 +1545,37 @@ function Facility() {
                           }
                         : userLocation || center
                     } // Conditionally update center
-                    zoom={selectedHospital ? 10 : 10} // fallback zoom
+                    // zoom={selectedHospital ? 10 : 10} // fallback zoom
+                    zoom={selectedHospital ? 12 : 12}
+                    // onLoad={(map) => {
+                    //   mapRef.current = map;
+                    // }}
+
                     onLoad={(map) => {
                       mapRef.current = map;
+
+                      if (hospitalsWithCoordinates.length > 0) {
+                        const bounds = new window.google.maps.LatLngBounds();
+
+                        // Extend bounds for each hospital
+                        hospitalsWithCoordinates.forEach((hospital) => {
+                          bounds.extend({
+                            lat: hospital.latitude,
+                            lng: hospital.longitude,
+                          });
+                        });
+
+                        // Optionally include user location if you want
+                        if (
+                          userLocation &&
+                          !isNaN(userLocation.lat) &&
+                          !isNaN(userLocation.lng)
+                        ) {
+                          bounds.extend(userLocation);
+                        }
+
+                        map.fitBounds(bounds); // Adjust map to show all markers
+                      }
                     }}
                   >
                     {/* Only render if Google Maps is fully loaded */}
