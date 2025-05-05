@@ -184,7 +184,7 @@
                                         data-alt_facility_name="{{ $fac->alt_facility_name }}"
                                         data-state="{{ $fac->state_id }}" data-lga="{{ $fac->lga_id }}"
                                         data-ward="{{ $fac->ward_id }}" data-ownership="{{ $fac->ownership_id }}"
-                                        data-ownership_type="{{ $fac->ownership_type_id }}"
+                                        data-ownership_type="{{ $fac->ownership_type_id ? $fac->ownership_type_id : "" }}"
                                         data-facility_level="{{ $fac->facility_level_id }}"
                                         data-facility_level_option="{{ $fac->facility_level_option_id }}"
                                         data-physical_location="{{ $fac->physical_location }}"

@@ -56,7 +56,7 @@ const SelectComponent4 = ({
           value={value}
           multiple={isMulti}
         >
-          <option value="0">{placeholder || "Select Coordinates"}</option>
+          <option value="0">{placeholder || "Select Coordinate Status"}</option>
           {options?.map((option) => (
             <option key={option.value} value={option.value}>
               {option.name}

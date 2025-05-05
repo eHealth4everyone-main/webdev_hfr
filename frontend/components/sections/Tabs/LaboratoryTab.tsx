@@ -410,157 +410,190 @@ const LaboratoryTab = () => {
     setLoading(false);
   }, [search, entriesPerPage, currentPage]);
 
+  const [isOpen, setIsOpen] = useState(true); // Accordion open by default
+
   return (
     <div>
-      <Text className="text-2xl pt-5 pb-5">Laboratories</Text>
+      {/* <Text className="text-2xl pt-5 pb-5">Laboratories</Text> */}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4 w-full">
-        {/* State Selection */}
-        <SelectComponent
-          className="w-full max-w-[350px]"
-          value={selectedState}
-          onChange={(e) => {
-            const selectedId = e.target.value; // Get the state ID
-            setSelectedState(selectedId);
-            fetchLgas(selectedId);
-          }}
-          options={states.map((state) => ({
-            value: state.id, // Ensure value is the ID
-            name: state.name, // Display name
-          }))}
-          placeholder="All State"
-        />
+      <div className="border border-gray-300 rounded-lg shadow w-full mb-6">
+        {/* Accordion Header */}
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="flex items-center justify-between w-full px-4 py-3 bg-green-100 text-green-700 font-semibold rounded-t"
+        >
+          <span>
+            {" "}
+            <Text className="text-2xl pt-1 pb-1">Laboratories</Text>
+          </span>
+          <svg
+            className={`w-5 h-5 transition-transform duration-300 ${
+              isOpen ? "rotate-180" : ""
+            }`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 9l-7 7-7-7"
+            />
+          </svg>
+        </button>
+        {isOpen && (
+          <div className="p-4 border-t border-gray-200">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4 w-full">
+              {/* State Selection */}
+              <SelectComponent
+                className="w-full max-w-[350px]"
+                value={selectedState}
+                onChange={(e) => {
+                  const selectedId = e.target.value; // Get the state ID
+                  setSelectedState(selectedId);
+                  fetchLgas(selectedId);
+                }}
+                options={states.map((state) => ({
+                  value: state.id, // Ensure value is the ID
+                  name: state.name, // Display name
+                }))}
+                placeholder="All State"
+              />
 
-        {/* lga Selection */}
-        <SelectComponent
-          className="w-full max-w-[350px]"
-          value={selectedLga}
-          onChange={(e) => {
-            const lgaId = e.target.value;
-            setSelectedLga(lgaId);
-            fetchWards(lgaId); // Fetch Wards for selected LGA
-          }}
-          options={lgas.map((lga) => ({
-            value: lga.id, // Use LGA ID
-            name: lga.name, // Show LGA name
-          }))}
-          placeholder="Select LGA"
-          disabled={!selectedState} // Disable until State is selected
-        />
+              {/* lga Selection */}
+              <SelectComponent
+                className="w-full max-w-[350px]"
+                value={selectedLga}
+                onChange={(e) => {
+                  const lgaId = e.target.value;
+                  setSelectedLga(lgaId);
+                  fetchWards(lgaId); // Fetch Wards for selected LGA
+                }}
+                options={lgas.map((lga) => ({
+                  value: lga.id, // Use LGA ID
+                  name: lga.name, // Show LGA name
+                }))}
+                placeholder="Select LGA"
+                disabled={!selectedState} // Disable until State is selected
+              />
 
-        {/* ward Selection */}
-        <SelectComponent
-          className="w-full max-w-[350px]"
-          value={selectedWard}
-          onChange={(e) => {
-            setSelectedWard(e.target.value); // Store selected Ward
-          }}
-          options={wards.map((ward) => ({
-            value: ward.id, // Use Ward ID
-            name: ward.name, // Show Ward name
-          }))}
-          placeholder="Select Ward"
-          disabled={!selectedLga} // Disable until LGA is selected
-        />
+              {/* ward Selection */}
+              <SelectComponent
+                className="w-full max-w-[350px]"
+                value={selectedWard}
+                onChange={(e) => {
+                  setSelectedWard(e.target.value); // Store selected Ward
+                }}
+                options={wards.map((ward) => ({
+                  value: ward.id, // Use Ward ID
+                  name: ward.name, // Show Ward name
+                }))}
+                placeholder="Select Ward"
+                disabled={!selectedLga} // Disable until LGA is selected
+              />
 
-        {/* facility level Selection */}
-        <SelectComponent
-          className="w-full max-w-[350px]"
-          value={selectedFacilityLevel} // Track selected value
-          onChange={(e) => {
-            setSelectedFacilityLevel(e.target.value); // Update state
-          }}
-          options={facilityLevels.map((level) => ({
-            value: level.id, // Use level ID
-            name: level.name, // Show level name
-          }))}
-          placeholder="Select Facility Level"
-        />
+              {/* facility level Selection */}
+              <SelectComponent
+                className="w-full max-w-[350px]"
+                value={selectedFacilityLevel} // Track selected value
+                onChange={(e) => {
+                  setSelectedFacilityLevel(e.target.value); // Update state
+                }}
+                options={facilityLevels.map((level) => ({
+                  value: level.id, // Use level ID
+                  name: level.name, // Show level name
+                }))}
+                placeholder="Select Facility Level"
+              />
 
-        {/* ownership Selection */}
-        <SelectComponent
-          className="w-full max-w-[350px]"
-          value={selectedownership} // Track selected value
-          onChange={(e) => {
-            setSelectedownership(e.target.value); // Update state
-          }}
-          options={ownerships.map((items) => ({
-            value: items.id, // Use items ID
-            name: items.name, // Show items name
-          }))}
-          placeholder="Select Ownership"
-        />
+              {/* ownership Selection */}
+              <SelectComponent
+                className="w-full max-w-[350px]"
+                value={selectedownership} // Track selected value
+                onChange={(e) => {
+                  setSelectedownership(e.target.value); // Update state
+                }}
+                options={ownerships.map((items) => ({
+                  value: items.id, // Use items ID
+                  name: items.name, // Show items name
+                }))}
+                placeholder="Select Ownership"
+              />
 
-        {/* operational Selection */}
-        <SelectComponent
-          className="w-full max-w-[350px]"
-          value={selectedOperational} // Track selected value
-          onChange={(e) => {
-            setSelectedOperational(e.target.value); // Update state
-          }}
-          options={operationals.map((items) => ({
-            value: items.id, // Use items ID
-            name: items.status, // Show items name
-          }))}
-          placeholder="Select Operational"
-        />
+              {/* operational Selection */}
+              <SelectComponent
+                className="w-full max-w-[350px]"
+                value={selectedOperational} // Track selected value
+                onChange={(e) => {
+                  setSelectedOperational(e.target.value); // Update state
+                }}
+                options={operationals.map((items) => ({
+                  value: items.id, // Use items ID
+                  name: items.status, // Show items name
+                }))}
+                placeholder="Select Operational"
+              />
 
-        {/* Registration status Selection */}
-        <SelectComponent
-          className="w-full max-w-[350px]"
-          value={selectedRegistration} // Track selected value
-          onChange={(e) => {
-            setSelectedRegistration(e.target.value); // Update state
-          }}
-          options={registrations.map((items) => ({
-            value: items.id, // Use items ID
-            name: items.status, // Show items name
-          }))}
-          placeholder="Select Registration status"
-        />
+              {/* Registration status Selection */}
+              <SelectComponent
+                className="w-full max-w-[350px]"
+                value={selectedRegistration} // Track selected value
+                onChange={(e) => {
+                  setSelectedRegistration(e.target.value); // Update state
+                }}
+                options={registrations.map((items) => ({
+                  value: items.id, // Use items ID
+                  name: items.status, // Show items name
+                }))}
+                placeholder="Select Registration status"
+              />
 
-        {/* licenses */}
-        <SelectComponent
-          className="w-full max-w-[350px]"
-          value={selectedLicense} // Track selected value
-          onChange={(e) => {
-            setSelectedLicense(e.target.value); // Update state
-          }}
-          options={licenses.map((items) => ({
-            value: items.id, // Use items ID
-            name: items.status, // Show items name
-          }))}
-          placeholder="Select License status"
-        />
+              {/* licenses */}
+              <SelectComponent
+                className="w-full max-w-[350px]"
+                value={selectedLicense} // Track selected value
+                onChange={(e) => {
+                  setSelectedLicense(e.target.value); // Update state
+                }}
+                options={licenses.map((items) => ({
+                  value: items.id, // Use items ID
+                  name: items.status, // Show items name
+                }))}
+                placeholder="Select License status"
+              />
 
-        {/* licenses */}
-        <SelectComponent
-          className="w-full max-w-[350px]"
-          value={selectedAccreditation} // Track selected value
-          onChange={(e) => {
-            setSelectedAccreditation(e.target.value); // Update state
-          }}
-          options={accreditations.map((items) => ({
-            value: items.id, // Use items ID
-            name: items.status, // Show items name
-          }))}
-          placeholder="Select Accreditation status"
-        />
+              {/* licenses */}
+              <SelectComponent
+                className="w-full max-w-[350px]"
+                value={selectedAccreditation} // Track selected value
+                onChange={(e) => {
+                  setSelectedAccreditation(e.target.value); // Update state
+                }}
+                options={accreditations.map((items) => ({
+                  value: items.id, // Use items ID
+                  name: items.status, // Show items name
+                }))}
+                placeholder="Select Accreditation status"
+              />
 
-        {/* Select Coordinates */}
-        <SelectComponent
-          className="w-full max-w-[350px]"
-          value={selectedGeoCode} // Track selected value
-          onChange={(e) => {
-            setSelectedGeoCode(e.target.value); // Update state
-          }}
-          options={[
-            { value: "0", name: "Select Coordinates" },
-            { value: "1", name: "With Coordinates" },
-            { value: "2", name: "With No Coordinates" },
-          ]}
-          placeholder="Select Coordinates"
-        />
+              {/* Select Coordinates */}
+              <SelectComponent
+                className="w-full max-w-[350px]"
+                value={selectedGeoCode} // Track selected value
+                onChange={(e) => {
+                  setSelectedGeoCode(e.target.value); // Update state
+                }}
+                options={[
+                  { value: "0", name: "Select Coordinates" },
+                  { value: "1", name: "With Coordinates" },
+                  { value: "2", name: "With No Coordinates" },
+                ]}
+                placeholder="Select Coordinates"
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="flex flex-wrap items-center justify-center gap-4 bg-[#D1D1D1] p-4 mt-4 w-full md:grid md:grid-cols-2 lg:flex lg:gap-6">

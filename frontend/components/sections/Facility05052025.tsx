@@ -270,6 +270,23 @@ function Facility() {
     );
   }, []);
 
+  // 2️⃣ 🛰️ Continuously Track User’s Location (Watches for Changes)
+  // useEffect(() => {
+  //   const watchId = navigator.geolocation.watchPosition(
+  //     (position) => {
+  //       setUserLocation({
+  //         lat: position.coords.latitude,
+  //         lng: position.coords.longitude,
+  //       });
+  //       console.log("📍 Updated Location:", position.coords);
+  //     },
+  //     (error) => console.error("❌ Error tracking location:", error),
+  //     { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
+  //   );
+
+  //   return () => navigator.geolocation.clearWatch(watchId); // Cleanup
+  // }, []);
+
   // UseEffect for location tracking
   useEffect(() => {
     const watchId = navigator.geolocation.watchPosition(
@@ -689,7 +706,6 @@ function Facility() {
 
     if (uniqueStates && uniqueStates.length > 0) {
       setShowFilters(true);
-      setHasSearched(true); // ✅ Trigger the map fit after state selection
     }
 
     // ✅ Only fetch if localStorage has *never* been set
@@ -1545,6 +1561,7 @@ function Facility() {
                 >
                   <GoogleMap
                     mapContainerClassName="w-full h-full"
+                    // center={center} // initial
                     center={
                       selectedHospital
                         ? {
@@ -1552,14 +1569,20 @@ function Facility() {
                             lng: selectedHospital.longitude,
                           }
                         : userLocation || center
-                    }
+                    } // Conditionally update center
+                    // zoom={selectedHospital ? 10 : 10} // fallback zoom
                     zoom={selectedHospital ? 12 : 12}
+                    // onLoad={(map) => {
+                    //   mapRef.current = map;
+                    // }}
+
                     onLoad={(map) => {
                       mapRef.current = map;
 
                       if (hospitalsWithCoordinates.length > 0) {
                         const bounds = new window.google.maps.LatLngBounds();
 
+                        // Extend bounds for each hospital
                         hospitalsWithCoordinates.forEach((hospital) => {
                           bounds.extend({
                             lat: hospital.latitude,
@@ -1567,6 +1590,7 @@ function Facility() {
                           });
                         });
 
+                        // Optionally include user location if you want
                         if (
                           userLocation &&
                           !isNaN(userLocation.lat) &&
@@ -1575,33 +1599,11 @@ function Facility() {
                           bounds.extend(userLocation);
                         }
 
-                        map.fitBounds(bounds);
+                        map.fitBounds(bounds); // Adjust map to show all markers
                       }
                     }}
                   >
-                    {/* Only render pins after search or filters are applied */}
-                    {(hasSearched ||
-                      selectedStateId ||
-                      selectedLgaId ||
-                      selectedFacilityType ||
-                      selectedFacilityLevel) &&
-                      !focusedHospital &&
-                      hospitalsWithCoordinates.length > 0 &&
-                      hospitalsWithCoordinates.map((hospital) => (
-                        <Marker
-                          key={hospital.id}
-                          position={{
-                            lat: hospital.latitude,
-                            lng: hospital.longitude,
-                          }}
-                          onClick={() => {
-                            setSelectedHospital(hospital);
-                            setFocusedHospital(hospital);
-                          }}
-                        />
-                      ))}
-
-                    {/* Show user location marker */}
+                    {/* Only render if Google Maps is fully loaded */}
                     {googleMapsLoaded &&
                       userLocation &&
                       !isNaN(userLocation.lat) &&
@@ -1620,12 +1622,13 @@ function Facility() {
                                 `),
                               scaledSize: new window.google.maps.Size(80, 40),
                             }}
-                            onClick={() => setShowUserInfo(true)}
+                            onClick={() => setShowUserInfo(true)} // 👈 Show card again on click
                           />
+
                           {showUserInfo && userAddress && (
                             <InfoWindow
                               position={userLocation}
-                              onCloseClick={() => setShowUserInfo(false)}
+                              onCloseClick={() => setShowUserInfo(false)} // 👈 Close card
                             >
                               <div className="p-2 max-w-xs">
                                 <h3 className="font-bold mb-2">You</h3>
@@ -1637,6 +1640,22 @@ function Facility() {
                           )}
                         </>
                       )}
+
+                    {/* Show all hospitals if no specific facility is selected */}
+                    {!focusedHospital &&
+                      hospitalsWithCoordinates.map((hospital) => (
+                        <Marker
+                          key={hospital.id}
+                          position={{
+                            lat: hospital.latitude,
+                            lng: hospital.longitude,
+                          }}
+                          onClick={() => {
+                            setSelectedHospital(hospital);
+                            setFocusedHospital(hospital); // 👈 This is important
+                          }}
+                        />
+                      ))}
 
                     {/* Show only the selected facility */}
                     {focusedHospital &&
@@ -1654,6 +1673,7 @@ function Facility() {
                           }}
                         />
                       )}
+
                     {/* Route Line */}
                     {directions && (
                       <DirectionsRenderer
@@ -1661,8 +1681,7 @@ function Facility() {
                         options={{ suppressMarkers: true }}
                       />
                     )}
-
-                    {/* Facility InfoWindow */}
+                    {/* 🏥 Facility InfoWindow */}
                     {selectedHospital && showHospitalInfoCard && (
                       <InfoWindow
                         position={{
