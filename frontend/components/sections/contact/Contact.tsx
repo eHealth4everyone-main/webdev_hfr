@@ -5,9 +5,11 @@ import { Text } from "@/components/ui/Typography";
 // import ReCAPTCHA from "react-google-recaptcha";
 
 import dynamic from "next/dynamic";
-const ReCAPTCHA = dynamic(() => import("react-google-recaptcha"), {
-  ssr: false,
-});
+
+const ReCAPTCHA = dynamic(
+  () => import("react-google-recaptcha").then((mod) => mod.default),
+  { ssr: false }
+);
 
 import Swal from "sweetalert2";
 import axios from "axios";
