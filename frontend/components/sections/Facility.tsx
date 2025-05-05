@@ -689,6 +689,7 @@ function Facility() {
 
     if (uniqueStates && uniqueStates.length > 0) {
       setShowFilters(true);
+      setHasSearched(true); // ✅ Trigger the map fit after state selection
     }
 
     // ✅ Only fetch if localStorage has *never* been set
