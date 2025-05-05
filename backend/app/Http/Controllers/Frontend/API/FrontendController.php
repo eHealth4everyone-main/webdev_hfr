@@ -1475,7 +1475,7 @@ class FrontendController extends Controller
 
 
 
-        $data['facilities'] = $query->paginate(1000);
+        $data['facilities'] = $query->paginate(2000);
 
 
         // Access the facilities data from the paginator

@@ -223,6 +223,7 @@ function Facility() {
   const [showFilters, setShowFilters] = useState(false);
   const [showLgaDropdown, setShowLgaDropdown] = useState(false);
   const [showWardDropdown, setShowWardDropdown] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
   ////////////////////////////////////////////////////////////////////////////////////////////
 
   const [directions, setDirections] =
@@ -519,6 +520,7 @@ function Facility() {
 
   const handleSearch = async () => {
     setLoading(true);
+    setHasSearched(false); // reset before search
 
     // ✅ Clear previous map states BEFORE search
     setDirections(null);
@@ -562,13 +564,14 @@ function Facility() {
       console.error("Error fetching facilities:", error);
     } finally {
       setLoading(false);
+      setHasSearched(true); // ✅ allow map to fit after loading
     }
 
     localStorage.removeItem("searchResults");
     localStorage.removeItem("homePageSearchQuery");
 
     // ✅ Fit the map after facilities update
-    fitMapToHospitals();
+    // fitMapToHospitals();
   };
 
   // Fetch data from the API
@@ -774,14 +777,6 @@ function Facility() {
         facilityLevel: parsed.facilityLevel,
       });
     }
-    // else {
-    //   // If no stored search state, you can handle this as a fallback (e.g., fetching all records)
-    //   fetchFacilities({
-    //     search: "", // Or any default search term
-    //     facilityType: "", // Default facility type
-    //     facilityLevel: "", // Default facility level
-    //   });
-    // }
   }, [fetchFacilities]);
 
   const filteredHospitals = hospitals.filter((h) => {
@@ -878,8 +873,10 @@ function Facility() {
       fetchFacilities({ facilityType: selectedType });
     }
 
+    setHasSearched(true); // ✅ Trigger the map fit after state selection
+
     // ✅ Fit the map after facilities update
-    fitMapToHospitals();
+    // fitMapToHospitals();
   };
 
   const handleFacilityLevelChange = (
@@ -911,7 +908,7 @@ function Facility() {
     }
 
     // ✅ Fit the map after facilities update
-    fitMapToHospitals();
+    // fitMapToHospitals();
   };
 
   const handleStateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -948,8 +945,10 @@ function Facility() {
 
     setLgasInResults(filteredLgas);
 
+    setHasSearched(true); // ✅ Trigger the map fit after state selection
+
     // ✅ Fit the map after facilities update
-    fitMapToHospitals();
+    // fitMapToHospitals();
   };
 
   const handleLgaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -964,8 +963,10 @@ function Facility() {
     setSelectedWardId(""); // Reset Ward when LGA changes
     setShowWardDropdown(!!lgaId); // Show ward dropdown if LGA is selected
 
+    setHasSearched(true); // ✅ Trigger the map fit after state selection
+
     // ✅ Fit the map after facilities update
-    fitMapToHospitals();
+    // fitMapToHospitals();
   };
 
   const handleWardChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -1030,12 +1031,32 @@ function Facility() {
     });
   };
 
+  useEffect(() => {
+    if (
+      hospitalsWithCoordinates.length > 0 &&
+      (selectedStateId ||
+        selectedLgaId ||
+        selectedFacilityLevel ||
+        selectedFacilityType ||
+        hasSearched)
+    ) {
+      fitMapToHospitals();
+    }
+  }, [
+    selectedStateId,
+    selectedLgaId,
+    selectedFacilityType,
+    selectedFacilityLevel,
+    hospitalsWithCoordinates,
+    hasSearched,
+  ]);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto p-4">
         <div className="bg-white rounded-lg shadow-sm p-6">
           <h1 className="text-lg font-medium text-gray-800 mb-6">
-            Search based on location / facility name
+            Search based on Location / Facility Name
           </h1>
 
           <div className="space-y-4">
@@ -1045,7 +1066,7 @@ function Facility() {
                 <input
                   ref={searchInputRef}
                   type="text"
-                  placeholder="Enter location / facility name"
+                  placeholder="Enter Location/Facility Name"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="w-full p-3 pr-10 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
@@ -1151,7 +1172,7 @@ function Facility() {
                   onClick={handleSearch}
                   className="w-full h-[44px] flex items-center justify-center text-sm"
                 >
-                  {loading ? "Loading..." : "Search Location"}
+                  {loading ? "Loading..." : "Search"}
                 </GreenButton>
               </div>
             </div>
@@ -1160,7 +1181,7 @@ function Facility() {
               {/* Layout Toggle Buttons */}
               <div className="flex justify-between items-center bg-green-50 p-4 rounded-lg">
                 <p className="text-gray-700">
-                  {filteredHospitals.length >= 2000
+                  {filteredHospitals.length >= 1000
                     ? filteredHospitals.length + "+"
                     : filteredHospitals.length}{" "}
                   healthcare facilities found in your area
@@ -1206,7 +1227,7 @@ function Facility() {
                         <span className="font-semibold text-green-600">
                           "Direction"
                         </span>{" "}
-                        button to see the facility's location on the map, or
+                        button to view the facility's location on the map, or
                         Click{" "}
                         <span className="font-semibold text-green-600">
                           "Details"
@@ -1530,7 +1551,7 @@ function Facility() {
                 </div>
               </div>
 
-              <div className="h-[670px] rounded-lg overflow-hidden">
+              <div className="h-[670px]  min-h-[300px] rounded-lg overflow-hidden">
                 <LoadScriptNext
                   googleMapsApiKey={
                     process.env.NEXT_PUBLIC_GOOGLE_MAP_API ?? ""
@@ -1549,9 +1570,37 @@ function Facility() {
                           }
                         : userLocation || center
                     } // Conditionally update center
-                    zoom={selectedHospital ? 10 : 10} // fallback zoom
+                    // zoom={selectedHospital ? 10 : 10} // fallback zoom
+                    zoom={selectedHospital ? 12 : 12}
+                    // onLoad={(map) => {
+                    //   mapRef.current = map;
+                    // }}
+
                     onLoad={(map) => {
                       mapRef.current = map;
+
+                      if (hospitalsWithCoordinates.length > 0) {
+                        const bounds = new window.google.maps.LatLngBounds();
+
+                        // Extend bounds for each hospital
+                        hospitalsWithCoordinates.forEach((hospital) => {
+                          bounds.extend({
+                            lat: hospital.latitude,
+                            lng: hospital.longitude,
+                          });
+                        });
+
+                        // Optionally include user location if you want
+                        if (
+                          userLocation &&
+                          !isNaN(userLocation.lat) &&
+                          !isNaN(userLocation.lng)
+                        ) {
+                          bounds.extend(userLocation);
+                        }
+
+                        map.fitBounds(bounds); // Adjust map to show all markers
+                      }
                     }}
                   >
                     {/* Only render if Google Maps is fully loaded */}
