@@ -2,6 +2,7 @@
 import React, { ChangeEvent, FormEvent, useState } from "react";
 import { Mail, Phone, MapPin, Clock } from "lucide-react";
 import { Text } from "@/components/ui/Typography";
+import ReCAPTCHA from "react-google-recaptcha";
 
 import Swal from "sweetalert2";
 import axios from "axios";
@@ -15,10 +16,7 @@ const ContactPage = () => {
   });
 
   const [loading, setLoading] = useState(false);
-
-  // const handleChange = (e) => {
-  //   setFormData({ ...formData, [e.target.name]: e.target.value });
-  // };
+  const [captchaToken, setCaptchaToken] = useState(null);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -26,9 +24,23 @@ const ContactPage = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleCaptchaChange = (token: any) => {
+    setCaptchaToken(token);
+  };
+
   // const handleSubmit = async (e) => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!captchaToken) {
+      // alert("Please complete the reCAPTCHA.");
+      Swal.fire(
+        "Success",
+        "Please complete the reCAPTCHA to proceed.",
+        "success"
+      );
+      return;
+    }
 
     // Basic Frontend Validation
     if (
@@ -42,10 +54,12 @@ const ContactPage = () => {
 
     setLoading(true);
 
+    const data = { ...formData, captchaToken };
+
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BACKEND_API}/contact`,
-        formData
+        data
       );
 
       if (response.data.success) {
@@ -103,81 +117,16 @@ const ContactPage = () => {
                 </div>
               </div>
 
-              <div className="w-full mx-auto lg:w-[600px] p-16">
+              <div className="w-full mx-auto lg:w-[600px] p-12">
                 <h2 className="text-1xl font-bold mb-8">
                   Send Your Message/Feedback
                 </h2>
-                {/* <form className="space-y-6">
-                  <div>
-                    <label
-                      htmlFor="name"
-                      className="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                      Full Name
-                    </label>
-                    <input
-                      type="text"
-                      id="name"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-emerald-500 focus:border-emerald-500"
-                      placeholder="Enter fullname"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="email"
-                      className="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                      Email
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-emerald-500 focus:border-emerald-500"
-                      placeholder="Enter Email Address"
-                      required
-                    />
-                  </div>
 
-                  <div>
-                    <label
-                      htmlFor="email"
-                      className="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                      Subject
-                    </label>
-                    <input
-                      type="text"
-                      id="subject"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-emerald-500 focus:border-emerald-500"
-                      placeholder="Subject"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="message"
-                      className="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                      Message
-                    </label>
-                    <textarea
-                      id="message"
-                      rows={4}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-emerald-500 focus:border-emerald-500"
-                      required
-                      placeholder="Enter Your Message"
-                    ></textarea>
-                  </div>
-                  <button
-                    type="submit"
-                    className="bg-[#326F32] text-white px-6 py-3 rounded-md hover:bg-emerald-700 transition block mx-auto"
-                  >
-                    Send Message
-                  </button>
-                </form> */}
                 <form className="space-y-4" onSubmit={handleSubmit}>
+                  <div className="bg-yellow-100 text-yellow-800 border border-yellow-300 p-4 rounded-md mb-4 text-sm">
+                    All fields are required. Please fill out the form
+                    completely.
+                  </div>
                   <div>
                     <label
                       htmlFor="name"
@@ -242,9 +191,20 @@ const ContactPage = () => {
                       placeholder="Enter Your Message"
                     ></textarea>
                   </div>
+
+                  <div
+                    className=""
+                    style={{ transform: "scale(0.91)", transformOrigin: "0 0" }}
+                  >
+                    <ReCAPTCHA
+                      sitekey="6Lfjki4rAAAAACunZuwgvyq9j6QoOFOpTFnJDr3D"
+                      onChange={handleCaptchaChange}
+                    />
+                  </div>
+
                   <button
                     type="submit"
-                    className="bg-[#326F32] text-white px-6 py-3 rounded-md hover:bg-emerald-700 transition block mx-auto"
+                    className="bg-[#326F32] text-white px-6 py-3 rounded-md hover:bg-emerald-700 transition block w-full mx-auto"
                     disabled={loading}
                   >
                     {loading ? "Wait sending message..." : "Send Message"}
