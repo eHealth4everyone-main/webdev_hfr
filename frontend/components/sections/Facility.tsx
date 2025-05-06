@@ -224,6 +224,10 @@ function Facility() {
   const [showLgaDropdown, setShowLgaDropdown] = useState(false);
   const [showWardDropdown, setShowWardDropdown] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
+  const [isRestoringSearch, setIsRestoringSearch] = useState(true);
+  const [hasRestoredState, setHasRestoredState] = useState(false);
+
   ////////////////////////////////////////////////////////////////////////////////////////////
 
   const [directions, setDirections] =
@@ -402,6 +406,7 @@ function Facility() {
       setFetchError("");
 
       try {
+        ////////////////////////// new update by adams //////////////////////
         const params: any = {};
 
         // If there are search values, append them as query parameters
@@ -428,70 +433,77 @@ function Facility() {
         //   response.data?.data?.facilities ??
         //   [];
 
+        const cachedData = localStorage.getItem("cachedFacilities");
+        const parsedCachedData = cachedData ? JSON.parse(cachedData) : null;
+
         let fetchedFacilities: Facility[] =
           response.data?.data?.facilities?.data ??
           response.data?.data?.facilities ??
           [];
 
-        // console.log("checking raw", fetchedFacilities);
+        if (!searchValues.search && parsedCachedData) {
+          fetchedFacilities = parsedCachedData;
+        } else {
+          // console.log("checking raw", fetchedFacilities);
 
-        // Ensure latitude and longitude are numbers
-        const validFacilities: Facility[] = fetchedFacilities
-          .map(
-            (facility: any): Facility => ({
-              ...facility,
-              latitude:
-                facility.latitude && !isNaN(Number(facility.latitude))
-                  ? Number(facility.latitude)
-                  : null,
-              longitude:
-                facility.longitude && !isNaN(Number(facility.longitude))
-                  ? Number(facility.longitude)
-                  : null,
-            })
-          )
-          .filter(
-            (facility: Facility) =>
-              facility.latitude !== null && facility.longitude !== null
+          // Ensure latitude and longitude are numbers
+          const validFacilities: Facility[] = fetchedFacilities
+            .map(
+              (facility: any): Facility => ({
+                ...facility,
+                latitude:
+                  facility.latitude && !isNaN(Number(facility.latitude))
+                    ? Number(facility.latitude)
+                    : null,
+                longitude:
+                  facility.longitude && !isNaN(Number(facility.longitude))
+                    ? Number(facility.longitude)
+                    : null,
+              })
+            )
+            .filter(
+              (facility: Facility) =>
+                facility.latitude !== null && facility.longitude !== null
+            );
+
+          const defaultLat = 0; // or center of the country/map
+          const defaultLng = 0;
+
+          const mappedFacilities = fetchedFacilities.map((f) => ({
+            ...f,
+            latitude:
+              f.latitude && !isNaN(Number(f.latitude))
+                ? Number(f.latitude)
+                : userLocation?.lat ?? null,
+            longitude:
+              f.longitude && !isNaN(Number(f.longitude))
+                ? Number(f.longitude)
+                : userLocation?.lng ?? null,
+          }));
+
+          // Update state with valid facilities
+          // setHospitals(validFacilities);
+          setHospitals(mappedFacilities);
+          setSelectedHospital(null);
+
+          // 🔥 Extract unique state_id and state_name
+          const uniqueStates = Array.from(
+            new Map(
+              // validFacilities
+              mappedFacilities
+                .filter(
+                  (f) => f.state_id !== undefined && f.state_name !== undefined
+                )
+                .map((f) => [
+                  f.state_id,
+                  { id: String(f.state_id), name: String(f.state_name) },
+                ])
+            ).values()
           );
 
-        const defaultLat = 0; // or center of the country/map
-        const defaultLng = 0;
-
-        const mappedFacilities = fetchedFacilities.map((f) => ({
-          ...f,
-          latitude:
-            f.latitude && !isNaN(Number(f.latitude))
-              ? Number(f.latitude)
-              : userLocation?.lat ?? null,
-          longitude:
-            f.longitude && !isNaN(Number(f.longitude))
-              ? Number(f.longitude)
-              : userLocation?.lng ?? null,
-        }));
-
-        // Update state with valid facilities
-        // setHospitals(validFacilities);
-        setHospitals(mappedFacilities);
-        setSelectedHospital(null);
-
-        // 🔥 Extract unique state_id and state_name
-        const uniqueStates = Array.from(
-          new Map(
-            // validFacilities
-            mappedFacilities
-              .filter(
-                (f) => f.state_id !== undefined && f.state_name !== undefined
-              )
-              .map((f) => [
-                f.state_id,
-                { id: String(f.state_id), name: String(f.state_name) },
-              ])
-          ).values()
-        );
-
-        // Save to state to populate dropdown
-        setStatesInResults(uniqueStates);
+          // Save to state to populate dropdown
+          setStatesInResults(uniqueStates);
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -552,9 +564,6 @@ function Facility() {
 
     localStorage.removeItem("searchResults");
     localStorage.removeItem("homePageSearchQuery");
-
-    // ✅ Fit the map after facilities update
-    // fitMapToHospitals();
   };
 
   // Fetch data from the API
@@ -615,7 +624,10 @@ function Facility() {
 
   ////////////////////////////////////////////////////////////////////////////
   useEffect(() => {
+    // if (!hasRestoredState) return;
+
     const rawResults = localStorage.getItem("searchResults");
+    const rawResults2 = localStorage.getItem("facilitySearchState");
     const searchQuery = localStorage.getItem("homePageSearchQuery");
     const searchQueryResult = searchQuery ? JSON.parse(searchQuery) : {};
 
@@ -693,7 +705,7 @@ function Facility() {
     }
 
     // ✅ Only fetch if localStorage has *never* been set
-    if (!rawResults) {
+    if (!rawResults && !rawResults2) {
       console.log("No localStorage found. Fetching from API...");
       fetchFacilities();
     }
@@ -745,6 +757,7 @@ function Facility() {
 
   useEffect(() => {
     const storedSearch = localStorage.getItem("facilitySearchState");
+    const showFiltersFlag = localStorage.getItem("showFilters");
 
     if (storedSearch) {
       const parsed = JSON.parse(storedSearch);
@@ -754,13 +767,24 @@ function Facility() {
       setSearch(parsed.search || "");
       setSelectedFacilityType(parsed.facilityType || "");
       setSelectedFacilityLevel(parsed.facilityLevel || "");
+      setSelectedStateId(parsed.stateId || "");
+      setSelectedLgaId(parsed.lgaId || "");
+
+      if (showFiltersFlag === "true") {
+        setShowFilters(true);
+      }
 
       fetchFacilities({
         search: parsed.search,
         facilityType: parsed.facilityType,
         facilityLevel: parsed.facilityLevel,
       });
+      setHasSearched(true); // ✅ Trigger the map fit after state selection
+    } else {
+      setIsRestoringSearch(false); // No saved search, allow normal render
     }
+
+    setHasRestoredState(true);
   }, [fetchFacilities]);
 
   const filteredHospitals = hospitals.filter((h) => {
@@ -803,6 +827,7 @@ function Facility() {
   }, [filteredHospitals.length]);
 
   useEffect(() => {
+    if (!hasRestoredState) return;
     const fetchFilteredFacilities = async () => {
       const query = {
         facilityLevel: selectedFacilityLevel || "",
@@ -811,88 +836,65 @@ function Facility() {
       };
 
       try {
-        // Optional: update URL if needed
-        router.push(format({ pathname: "/facilityfinder", query }));
-
-        await fetchFacilities(query); // Your existing fetching logic
-        setCurrentPage(1); // reset pagination
+        await fetchFacilities(query);
+        setCurrentPage(1);
       } catch (error) {
         console.error("Error filtering facilities:", error);
       }
     };
 
-    // Trigger fetch only if any value is selected
     if (selectedFacilityType || selectedFacilityLevel) {
       fetchFilteredFacilities();
     }
-  }, [selectedFacilityType, selectedFacilityLevel]);
+  }, [selectedFacilityType, selectedFacilityLevel, hasRestoredState]);
 
   // On selecting a facility type
   const handleFacilityTypeChange = (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    // ✅ Clear previous map states BEFORE search
     setDirections(null);
     setSelectedHospital(null);
     setFocusedHospital(null);
     setShowHospitalInfoCard(false);
 
     const selectedType = e.target.value;
-    setSelectedFacilityType(selectedType); // Update selected facility type
+    setSelectedFacilityType(selectedType);
 
-    // Avoid making a fetch request if the selection didn't change
     if (selectedType !== "" && selectedType === selectedFacilityType) {
-      return; // No need to fetch if the same value is selected
+      return;
     }
 
-    // Reset to all records if the default value is selected
-    if (selectedType === "") {
-      console.log({ selectedType });
+    const query = {
+      search,
+      facilityType: selectedType,
+      facilityLevel: selectedFacilityLevel,
+    };
 
-      // Show all records or the filtered records by state
-      fetchFacilities({ search });
-      // setSelectedFacilityLevel("");
-    } else {
-      // Fetch facilities based on the selected facility type
-      fetchFacilities({ facilityType: selectedType });
-    }
-
-    setHasSearched(true); // ✅ Trigger the map fit after state selection
-
-    // ✅ Fit the map after facilities update
-    // fitMapToHospitals();
+    fetchFacilities(query);
   };
 
   const handleFacilityLevelChange = (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    // ✅ Clear previous map states BEFORE search
     setDirections(null);
     setSelectedHospital(null);
     setFocusedHospital(null);
     setShowHospitalInfoCard(false);
 
     const selectedLevel = e.target.value;
-    setSelectedFacilityLevel(selectedLevel); // Update selected facility type
+    setSelectedFacilityLevel(selectedLevel);
 
-    // Avoid making a fetch request if the selection didn't change
-    if (selectedLevel != "" && selectedLevel == selectedFacilityLevel) {
-      return; // No need to fetch if the same value is selected
+    if (selectedLevel !== "" && selectedLevel === selectedFacilityLevel) {
+      return;
     }
 
-    // Reset to all records if the default value is selected
-    if (selectedLevel === "") {
-      console.log({ selectedLevel });
+    const query = {
+      search,
+      facilityType: selectedFacilityType,
+      facilityLevel: selectedLevel,
+    };
 
-      // Show all records or the filtered records by state
-      fetchFacilities({ search });
-    } else {
-      // Fetch facilities based on the selected facility type
-      fetchFacilities({ facilityType: selectedLevel });
-    }
-
-    // ✅ Fit the map after facilities update
-    // fitMapToHospitals();
+    fetchFacilities(query);
   };
 
   const handleStateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -1165,10 +1167,18 @@ function Facility() {
               {/* Layout Toggle Buttons */}
               <div className="flex justify-between items-center bg-green-50 p-4 rounded-lg">
                 <p className="text-gray-700">
-                  {filteredHospitals.length >= 1000
+                  {loading
+                    ? "Loading..."
+                    : `${
+                        filteredHospitals.length >= 1000
+                          ? filteredHospitals.length + "+"
+                          : filteredHospitals.length
+                      } healthcare facilities found in your area`}
+
+                  {/* {filteredHospitals.length >= 1000
                     ? filteredHospitals.length + "+"
                     : filteredHospitals.length}{" "}
-                  healthcare facilities found in your area
+                  healthcare facilities found in your area */}
                 </p>
                 <div className="flex gap-2">
                   <button
@@ -1304,10 +1314,16 @@ function Facility() {
                                         search,
                                         facilityType: selectedFacilityType,
                                         facilityLevel: selectedFacilityLevel,
+                                        stateId: selectedStateId,
+                                        lgaId: selectedLgaId,
                                       };
                                       localStorage.setItem(
                                         "facilitySearchState",
                                         JSON.stringify(searchState)
+                                      );
+                                      localStorage.setItem(
+                                        "showFilters",
+                                        "true"
                                       );
                                     }}
                                   >
@@ -1354,10 +1370,10 @@ function Facility() {
                             <div className="p-6 bg-gray-100 border border-gray-300 rounded-lg shadow-sm w-full">
                               <div className="flex flex-col md:flex-row gap-4 items-start">
                                 {/* Image */}
-                                <div className="w-full md:w-[250px] h-[250px] flex items-center">
+                                <div className="w-full md:w-[200px] h-[250px] flex flex-shrink-0 items-center">
                                   <Image
                                     src={imageUrl}
-                                    width={250}
+                                    width={150}
                                     height={150}
                                     alt={hospital.facility_name ?? "N/A"}
                                     className="object-cover w-full h-full rounded-lg"
@@ -1365,7 +1381,8 @@ function Facility() {
                                 </div>
 
                                 {/* Details */}
-                                <div className="flex flex-col gap-4 md:pl-4">
+                                {/* <div className="flex flex-col gap-4 md:pl-4"> */}
+                                <div className="flex-1 flex flex-col gap-4">
                                   <h2 className="text-lg font-semibold relative group cursor-pointer">
                                     {hospital.facility_name ?? "N/A"}
                                     {/* Tooltip */}
@@ -1464,10 +1481,16 @@ function Facility() {
                                           search,
                                           facilityType: selectedFacilityType,
                                           facilityLevel: selectedFacilityLevel,
+                                          stateId: selectedStateId,
+                                          lgaId: selectedLgaId,
                                         };
                                         localStorage.setItem(
                                           "facilitySearchState",
                                           JSON.stringify(searchState)
+                                        );
+                                        localStorage.setItem(
+                                          "showFilters",
+                                          "true"
                                         );
                                       }}
                                     >
