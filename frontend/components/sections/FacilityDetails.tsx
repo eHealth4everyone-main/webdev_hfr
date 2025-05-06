@@ -149,13 +149,6 @@ const FacilityDetails = () => {
 
   // console.log({ imageUrl });
 
-  const openLightboxOLD = (index: number) => {
-    console.log("Opening Lightbox with:", parsedImages[index]);
-    setCurrentIndex(index);
-    setMainSrc(parsedImages[index]); // ✅ Set the image source immediately
-    setIsOpen(true);
-  };
-
   const openLightbox = (index: number) => {
     if (!parsedImages[index]) return;
 
@@ -199,35 +192,6 @@ const FacilityDetails = () => {
     });
   };
 
-  const downloadPDFold = () => {
-    if (!pdfRef.current) return; // Prevent error
-
-    // Hide buttons before taking the screenshot
-    document.querySelectorAll(".no-print").forEach((el) => {
-      (el as HTMLElement).style.visibility = "hidden";
-    });
-
-    fixColorsBeforeCapture(); // Fix colors before capturing
-    html2canvas(pdfRef.current, { scale: 2 }).then((canvas) => {
-      const imgData = canvas.toDataURL("image/png");
-      // const pdf = new jsPDF("p", "mm", "a4");
-      const pdf = new jsPDF("l", "mm", "a4"); // "l" = Landscape mode
-      const pageWidth = pdf.internal.pageSize.getWidth(); // Get landscape width
-      const imgWidth = pageWidth - 40; // Reduce width to add padding (20mm left & right)
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-      pdf.addImage(imgData, "PNG", 20, 10, imgWidth, imgHeight); // 20mm padding from left
-      pdf.save(`${hospital?.facility_name || "facility"}_details.pdf`);
-
-      // Show buttons again after PDF is downloaded
-      setTimeout(() => {
-        document.querySelectorAll(".no-print").forEach((el) => {
-          (el as HTMLElement).style.visibility = "visible";
-        });
-      }, 100); // Small delay to ensure smooth restoration
-    });
-  };
-
   const downloadPDF = () => {
     if (!pdfRef.current) return; // Prevent error
 
@@ -256,79 +220,6 @@ const FacilityDetails = () => {
       }, 100); // Small delay to ensure smooth restoration
     });
   };
-
-  // const handleViewDirections = (hospital: Facility | null) => {
-  //   if (!hospital?.id || !hospital.latitude || !hospital.longitude) {
-  //     Swal.fire({
-  //       icon: "warning",
-  //       title: "Invalid Facility",
-  //       text: "Facility location is missing or invalid.",
-  //       confirmButtonText: "Okay",
-  //     });
-  //     return;
-  //   }
-
-  //   if (!navigator.geolocation) {
-  //     Swal.fire({
-  //       icon: "error",
-  //       title: "Geolocation Not Supported",
-  //       text: "Your browser does not support geolocation. Please use a different browser or manually enter the location in Google Maps.",
-  //       confirmButtonText: "Okay",
-  //     });
-  //     return;
-  //   }
-
-  //   // Swal.fire({
-  //   //   title: "Getting your location...",
-  //   //   text: "Please wait while we fetch your location.",
-  //   //   allowOutsideClick: false,
-  //   //   didOpen: () => {
-  //   //     Swal.showLoading();
-  //   //   },
-  //   // });
-
-  //   navigator.geolocation.getCurrentPosition(
-  //     (position) => {
-  //       Swal.close(); // Close the loading alert
-
-  //       const userLat = position.coords.latitude;
-  //       const userLng = position.coords.longitude;
-  //       const facilityLat = hospital.latitude;
-  //       const facilityLng = hospital.longitude;
-
-  //       const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${userLat},${userLng}&destination=${facilityLat},${facilityLng}&travelmode=driving`;
-
-  //       window.open(googleMapsUrl, "_blank"); // Open in new tab
-  //     },
-  //     (error) => {
-  //       Swal.close(); // Close the loading alert
-
-  //       let errorMessage =
-  //         "An unknown error occurred while getting your location.";
-  //       if (error.code === error.PERMISSION_DENIED) {
-  //         errorMessage =
-  //           "You have denied location access. Please enable it in your browser settings to get directions.";
-  //       } else if (error.code === error.POSITION_UNAVAILABLE) {
-  //         errorMessage =
-  //           "Your location could not be determined. Please try again later.";
-  //       } else if (error.code === error.TIMEOUT) {
-  //         errorMessage = "Location request timed out. Please try again.";
-  //       }
-
-  //       Swal.fire({
-  //         icon: "error",
-  //         title: "Location Error",
-  //         text: errorMessage,
-  //         confirmButtonText: "Okay",
-  //       });
-  //     },
-  //     {
-  //       enableHighAccuracy: true,
-  //       timeout: 10000,
-  //       maximumAge: 0,
-  //     }
-  //   );
-  // };
 
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAP_API; // Replace with your actual API key
 
@@ -434,21 +325,6 @@ const FacilityDetails = () => {
       <div className="flex flex-col lg:flex-row gap-[2rem]">
         <div className="flex flex-col gap-[1rem]">
           <Image src={imageUrl} width={445} height={464} alt="img" />
-          {/* <Text
-            className="underline text-[#5BBA62] cursor-pointer text-center no-print"
-            onClick={() => {
-              if (hospital?.id) {
-                localStorage.setItem(
-                  "selectedFacilityId",
-                  hospital.id.toString()
-                );
-              }
-              router.push("/facilityfinder"); // Navigate without query parameters
-            }}
-          >
-            <MdLocationPin fontSize={24} color="#5BBA62" className="inline" />{" "}
-            View direction
-          </Text> */}
 
           <Text
             className="underline text-[#5BBA62] cursor-pointer text-center no-print"
@@ -457,46 +333,6 @@ const FacilityDetails = () => {
             <MdLocationPin fontSize={24} color="#5BBA62" className="inline" />{" "}
             View direction
           </Text>
-
-          {/* <div className="flex gap-[.5rem] gap-2">
-            {parsedImages.slice(0, 2).map((img: any, index: any) => (
-              <Image
-                key={index}
-                src={img}
-                width={95}
-                height={131}
-                alt={`Image ${index + 1}`}
-                className="cursor-pointer rounded-md object-cover"
-                onClick={() => openLightbox(index)}
-              />
-            ))}
-
-            {parsedImages.length > 3 && (
-              <div
-                className="w-[120px] h-[120px] flex items-center justify-center bg-black/50 text-white text-lg cursor-pointer rounded-md"
-                onClick={() => openLightbox(3)}
-              >
-                +{parsedImages.length - 3}
-              </div>
-            )}
-
-            {isOpen && mainSrc && (
-              <Lightbox
-                mainSrc={mainSrc}
-                nextSrc={parsedImages[(currentIndex + 1) % parsedImages.length]}
-                prevSrc={
-                  parsedImages[
-                    (currentIndex - 1 + parsedImages.length) %
-                      parsedImages.length
-                  ]
-                }
-                onCloseRequest={closeLightbox}
-                onMovePrevRequest={prevImage}
-                onMoveNextRequest={nextImage}
-                reactModalStyle={{ overlay: { zIndex: 1050 } }} // Ensure it's above other elements
-              />
-            )}
-          </div> */}
 
           <div className="flex gap-[.5rem] gap-2">
             {parsedImages.slice(0, 2).map((img: any, index: number) => (
@@ -658,29 +494,6 @@ const HospitalDetails = ({
 }) => {
   const [copied, setCopied] = useState(false);
 
-  const shareLocationOLD = () => {
-    if (!hospital?.latitude || !hospital?.longitude) {
-      alert("Location not available");
-      return;
-    }
-
-    const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${hospital.latitude},${hospital.longitude}`;
-
-    navigator.clipboard.writeText(googleMapsUrl).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000); // Reset after 2s
-    });
-  };
-
-  // const shareLocation = () => {
-  //   const currentUrl = window.location.href; // Get the current page URL
-
-  //   navigator.clipboard.writeText(currentUrl).then(() => {
-  //     setCopied(true);
-  //     setTimeout(() => setCopied(false), 2000); // Reset after 2s
-  //   });
-  // };
-
   const shareLocation = async () => {
     try {
       const urlToShare = window.location.href; // Or you can specify any URL you want to share
@@ -704,31 +517,6 @@ const HospitalDetails = ({
     } catch (error) {
       console.error("Error sharing location:", error);
     }
-  };
-
-  const downloadFacilityPDF = (hospital: Facility) => {
-    if (!hospital) return;
-
-    const doc = new jsPDF();
-    doc.setFontSize(16);
-    doc.text("Facility Details", 10, 10);
-    doc.setFontSize(12);
-
-    doc.text(`Name: ${hospital.facility_name}`, 10, 20);
-    doc.text(`Address: ${hospital.physical_location}`, 10, 30);
-    doc.text(`Latitude: ${hospital.latitude}`, 10, 40);
-    doc.text(`Longitude: ${hospital.longitude}`, 10, 50);
-    doc.text(
-      `Operational Hours: ${
-        hospital.operational_hours
-          ? hospital.operational_hours + " hrs"
-          : "24 hrs"
-      }`,
-      10,
-      60
-    );
-
-    doc.save(`${hospital.facility_name.replace(/\s+/g, "_")}_details.pdf`);
   };
 
   return (
