@@ -41,11 +41,7 @@ const ContactPage = () => {
 
     if (!captchaToken) {
       // alert("Please complete the reCAPTCHA.");
-      Swal.fire(
-        "Success",
-        "Please complete the reCAPTCHA to proceed.",
-        "success"
-      );
+      Swal.fire("Error", "Please complete the reCAPTCHA to proceed.", "error");
       return;
     }
 
