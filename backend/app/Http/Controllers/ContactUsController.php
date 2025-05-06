@@ -64,6 +64,7 @@ class ContactUsController extends Controller
 
         // Mail::to(env("CONTACT_US_MAIL"))->send(new ContactMail($contact));
 
-        return response()->json(['success' => "Thanks " . $request->full_name . " for your message."], 200);
+        // return response()->json(['success' => "Thanks " . $request->full_name . " for your message."], 200);
+        return response()->json(['success' => "Thanks " . ucwords(strtolower($request->full_name))  . " for your message."], 200);
     }
 }
