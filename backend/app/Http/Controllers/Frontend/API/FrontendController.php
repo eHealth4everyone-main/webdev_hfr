@@ -1441,6 +1441,7 @@ class FrontendController extends Controller
             ->leftJoin('ou_states', 'hs_hospitals_history.state_id', '=', 'ou_states.id')
             ->leftJoin('ou_lgas', 'hs_hospitals_history.lga_id', '=', 'ou_lgas.id')
             ->leftJoin('ou_wards', 'hs_hospitals_history.ward_id', '=', 'ou_wards.id')
+            ->leftJoin('lst_facility_types', 'hs_hospitals_history.facility_type_id', '=', 'lst_facility_types.id')
             ->leftJoin('lst_level_of_care', 'hs_hospitals_history.facility_level_id', '=', 'lst_level_of_care.id')
             ->leftJoin('lst_ownerships', 'hs_hospitals_history.ownership_id', '=', 'lst_ownerships.id')
             ->leftJoin('lst_oparational_status', 'hs_hospitals_history.operational_status_id', '=', 'lst_oparational_status.id')
@@ -1451,6 +1452,7 @@ class FrontendController extends Controller
                 'ou_states.name as state_name',
                 'ou_lgas.name as lga_name',
                 'ou_wards.name as ward_name',
+                'lst_facility_types.name as facility_type_name',
                 'lst_level_of_care.name as facility_level_name',
                 'lst_ownerships.name as ownership_name',
                 'lst_oparational_status.status as operational_status_name',
@@ -1465,6 +1467,7 @@ class FrontendController extends Controller
             })
 
             ->when($request->facility_name, function ($q, $facilityName) {
+                $facilityName = trim($facilityName); // 👈 Trim the input
                 return $q->where(function ($subQuery) use ($facilityName) {
                     $subQuery->where('ou_states.name', 'like', '%' . $facilityName . '%')
                         ->orWhere('ou_lgas.name', 'like', '%' . $facilityName . '%')
@@ -1493,7 +1496,7 @@ class FrontendController extends Controller
         }
 
         // Log the highest facility
-        \Log::info('Highest Facility:', (array)$highestFacility);
+        // \Log::info('Highest Facility:', (array)$highestFacility);
 
 
         return response()->json([

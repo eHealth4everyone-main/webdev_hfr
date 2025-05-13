@@ -537,7 +537,8 @@ function Facility() {
     const query = {
       facilityLevel: selectedFacilityLevel || "",
       facilityType: selectedFacilityType || "",
-      search: search || "",
+      // search: search || "",
+      search: (search || "").trim(),
     };
     try {
       // 🟢 Update browser URL with query parameters
@@ -758,6 +759,7 @@ function Facility() {
   useEffect(() => {
     const storedSearch = localStorage.getItem("facilitySearchState");
     const showFiltersFlag = localStorage.getItem("showFilters");
+    // const showFiltersFlagLGA = localStorage.getItem("showLgaDropdown");
 
     if (storedSearch) {
       const parsed = JSON.parse(storedSearch);
@@ -772,6 +774,7 @@ function Facility() {
 
       if (showFiltersFlag === "true") {
         setShowFilters(true);
+        setShowLgaDropdown(true);
       }
 
       fetchFacilities({
@@ -1325,6 +1328,10 @@ function Facility() {
                                         "showFilters",
                                         "true"
                                       );
+                                      // localStorage.setItem(
+                                      //   "showLgaDropdown",
+                                      //   "true"
+                                      // );
                                     }}
                                   >
                                     {/* Info Icon SVG */}
@@ -1366,11 +1373,15 @@ function Facility() {
                             : "/gh1.svg"; //
 
                         return (
-                          <Card key={hospital.id} className="mb-4">
+                          <Card
+                            key={hospital.id}
+                            className="mb-4 overflow-hidden"
+                          >
                             <div className="p-6 bg-gray-100 border border-gray-300 rounded-lg shadow-sm w-full">
                               <div className="flex flex-col md:flex-row gap-4 items-start">
                                 {/* Image */}
-                                <div className="w-full md:w-[200px] h-[250px] flex flex-shrink-0 items-center">
+                                {/* <div className="w-full md:w-[200px] h-[300px] flex flex-shrink-0 items-center"> */}
+                                <div className="w-full md:w-[200px] h-[200px] md:h-[300px] flex-shrink-0 overflow-hidden">
                                   <Image
                                     src={imageUrl}
                                     width={150}
@@ -1382,8 +1393,8 @@ function Facility() {
 
                                 {/* Details */}
                                 {/* <div className="flex flex-col gap-4 md:pl-4"> */}
-                                <div className="flex-1 flex flex-col gap-4">
-                                  <h2 className="text-lg font-semibold relative group cursor-pointer">
+                                <div className="flex-1 flex flex-col gap-4 min-w-0">
+                                  <h2 className="text-lg font-semibold relative group cursor-pointer break-words">
                                     {hospital.facility_name ?? "N/A"}
                                     {/* Tooltip */}
                                     <div className="absolute left-4 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded-md px-3 py-1 shadow-lg z-10 whitespace-nowrap">
@@ -1391,43 +1402,46 @@ function Facility() {
                                       details
                                     </div>
                                   </h2>
-                                  {/* <p className="text-sm text-gray-600">
-                                    {hospital.physical_location ??
-                                      `${
-                                        (hospital.ward_name,
-                                        hospital.lga_name,
-                                        hospital.state_name)
-                                      }`}
-                                  </p> */}
-
                                   <p className="text-sm flex items-center gap-2 text-gray-700">
-                                    <FaMapMarkerAlt className="text-red-500" />
                                     {hospital.physical_location
                                       ? `${hospital.physical_location} ${hospital.ward_name}, ${hospital.lga_name}, ${hospital.state_name}`
                                       : `${hospital.ward_name}, ${hospital.lga_name}, ${hospital.state_name}`}
                                   </p>
 
-                                  <p className="text-sm flex items-center gap-2 text-gray-700">
-                                    <FaPhoneAlt className="text-blue-500" />
-                                    {hospital.phone_number &&
-                                    hospital.phone_number !== "null" &&
-                                    hospital.phone_number.trim() !== ""
-                                      ? hospital.phone_number
-                                      : "N/A"}
+                                  <div className="grid grid-cols-2 gap-4 text-sm text-gray-600">
+                                    {/* Contact Info */}
+                                    <div>
+                                      <span className="block font-semibold">
+                                        Contact Info
+                                      </span>
+                                      {hospital.phone_number &&
+                                      hospital.phone_number !== "null" &&
+                                      hospital.phone_number.trim() !== ""
+                                        ? hospital.phone_number
+                                        : "N/A"}
+                                    </div>
+
+                                    {/* Facility Type */}
+                                    <div>
+                                      <span className="block font-semibold">
+                                        Facility Level
+                                      </span>
+                                      {hospital.facility_level_name &&
+                                      hospital.facility_level_name !== "null" &&
+                                      hospital.facility_level_name.trim() !== ""
+                                        ? hospital.facility_level_name
+                                        : "N/A"}
+                                    </div>
+                                  </div>
+
+                                  <p className="text-sm text-gray-600 break-words">
+                                    Plans accepted <br />
+                                    {hospital.description ?? "N/A"}
                                   </p>
 
-                                  {/* <p className="text-sm text-gray-600">
-                                    Plans accepted: EPO, HMO, Medi-Cal Managed
-                                    Care, POS, Senior Advantage
-                                    {hospital.description ?? "N/A"}
-                                  </p> */}
+                                  {/* <div className="w-full flex flex-wrap md:flex-nowrap gap-2 py-4"> */}
+                                  <div className="w-full flex flex-col sm:flex-row sm:items-center sm:justify-start gap-2 pt-4 flex-wrap">
 
-                                  <p className="text-sm text-gray-600 flex items-center gap-2">
-                                    <FaInfoCircle className="text-blue-500" />
-                                    {hospital.description ?? "N/A"}
-                                  </p>
-
-                                  <div className="w-full flex flex-wrap md:flex-nowrap gap-2 py-4">
                                     {/* <button
                                       className="text-green-600 font-semibold text-center w-full md:w-auto text-sm"
                                       onClick={() =>
