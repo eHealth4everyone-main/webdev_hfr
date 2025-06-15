@@ -15,117 +15,115 @@ class AdminHomeController extends Controller
         $this->middleware('auth');
     }
 
-    public function indexOLD(){
+    public function indexOLD()
+    {
         //national level dashabaord
-        if ( Auth::user()->state_id == 1){
+        if (Auth::user()->state_id == 1) {
             $analyticsData = Analytics::fetchTotalVisitorsAndPageViews(Period::days(30));
-      
+
             $dates = array();
             $visitors = array();
-            foreach ($analyticsData as $a){
-                    $dates[]=$a['date']->toDateString();
-                    $visitors[] = $a['visitors'];
+            foreach ($analyticsData as $a) {
+                $dates[] = $a['date']->toDateString();
+                $visitors[] = $a['visitors'];
             };
-     
+
             $num_downloads = DB::select("SELECT date_format(created_at,'%b %y') as name,month(created_at) mon,year(created_at) year, COUNT(id) y 
                     FROM downloads group by name,mon,year order by year,mon asc  limit 24");
-    
-           
+
+
             $facility_status = DB::table('facility_status_state_pivot')->get();
-    
+
             $completenes = DB::table('signature_domain_completenes')
-                    ->select(DB::raw('state as name, CAST(avg(score) as unsigned) as y'))
-                    ->groupBy('state')
-                    ->orderBy('y','Desc')
-                    ->get();
+                ->select(DB::raw('state as name, CAST(avg(score) as unsigned) as y'))
+                ->groupBy('state')
+                ->orderBy('y', 'Desc')
+                ->get();
 
-            return view("dashboard.federal",compact('num_downloads','facility_status','dates','visitors','completenes'));
+            return view("dashboard.federal", compact('num_downloads', 'facility_status', 'dates', 'visitors', 'completenes'));
+        } else { //state level dashboard
 
-        }
-        else{ //state level dashboard
-                       
             $facility_status = DB::table('facility_status_lga_pivot')
-                    ->where('state_id', 'like', '%' .  Auth::user()->state_id . '%')
-                    ->orderBy('lga')
-                    ->get();
-            
+                ->where('state_id', 'like', '%' .  Auth::user()->state_id . '%')
+                ->orderBy('lga')
+                ->get();
+
             $completenes_all = DB::table('signature_domain_completenes')
-                    ->select(DB::raw('state as name, CAST(avg(score) as unsigned) as y'))
-                    ->groupBy('state')
-                    ->orderBy('y','Desc')
-                    ->get();
+                ->select(DB::raw('state as name, CAST(avg(score) as unsigned) as y'))
+                ->groupBy('state')
+                ->orderBy('y', 'Desc')
+                ->get();
 
             $completenes = DB::table('signature_domain_completenes')
-                    ->select(DB::raw('lga as name, CAST(score as unsigned) as y'))
-                    ->where('state_id',Auth::user()->state_id)
-                    ->orderBy('y','Desc')
-                    ->get();
+                ->select(DB::raw('lga as name, CAST(score as unsigned) as y'))
+                ->where('state_id', Auth::user()->state_id)
+                ->orderBy('y', 'Desc')
+                ->get();
 
-            return view("dashboard.state",compact('facility_status','completenes','completenes_all'));
-
+            return view("dashboard.state", compact('facility_status', 'completenes', 'completenes_all'));
         }
-        
     }
 
-    public function index(){
+    public function index()
+    {
         //national level dashboard
-        if (Auth::user()->state_id == 1){
+        if (Auth::user()->state_id == 1) {
             // Remove or comment out the Google Analytics logic
             // $analyticsData = Analytics::fetchTotalVisitorsAndPageViews(Period::days(30));
-    
+
             // Alternatively, just make sure no Google Analytics data is passed
             $dates = [];
             $visitors = [];
-    
+
             $num_downloads = DB::select("SELECT date_format(created_at,'%b %y') as name,month(created_at) mon,year(created_at) year, COUNT(id) y 
                     FROM downloads group by name,mon,year order by year,mon asc limit 24");
-    
+
             $facility_status = DB::table('facility_status_state_pivot')->get();
-    
+
             $completenes = DB::table('signature_domain_completenes')
-                    ->select(DB::raw('state as name, CAST(avg(score) as unsigned) as y'))
-                    ->groupBy('state')
-                    ->orderBy('y','Desc')
-                    ->get();
-    
-            return view("dashboard.federal",compact('num_downloads','facility_status','dates','visitors','completenes'));
-    
-        }
-        else { //state level dashboard
+                ->select(DB::raw('state as name, CAST(avg(score) as unsigned) as y'))
+                ->groupBy('state')
+                ->orderBy('y', 'Desc')
+                ->get();
+
+            return view("dashboard.federal", compact('num_downloads', 'facility_status', 'dates', 'visitors', 'completenes'));
+        } else { //state level dashboard
             // state-level logic remains unchanged...
             $facility_status = DB::table('facility_status_lga_pivot')
-                    ->where('state_id', 'like', '%' .  Auth::user()->state_id . '%')
-                    ->orderBy('lga')
-                    ->get();
-    
+                ->where('state_id', 'like', '%' .  Auth::user()->state_id . '%')
+                ->orderBy('lga')
+                ->get();
+
             $completenes_all = DB::table('signature_domain_completenes')
-                    ->select(DB::raw('state as name, CAST(avg(score) as unsigned) as y'))
-                    ->groupBy('state')
-                    ->orderBy('y','Desc')
-                    ->get();
-    
+                ->select(DB::raw('state as name, CAST(avg(score) as unsigned) as y'))
+                ->groupBy('state')
+                ->orderBy('y', 'Desc')
+                ->get();
+
             $completenes = DB::table('signature_domain_completenes')
-                    ->select(DB::raw('lga as name, CAST(score as unsigned) as y'))
-                    ->where('state_id',Auth::user()->state_id)
-                    ->orderBy('y','Desc')
-                    ->get();
-    
-            return view("dashboard.state",compact('facility_status','completenes','completenes_all'));
+                ->select(DB::raw('lga as name, CAST(score as unsigned) as y'))
+                ->where('state_id', Auth::user()->state_id)
+                ->orderBy('y', 'Desc')
+                ->get();
+
+            return view("dashboard.state", compact('facility_status', 'completenes', 'completenes_all'));
         }
     }
-    
 
-    public function completeness(Request $request){
+
+    public function completeness(Request $request)
+    {
         $completenes = DB::table('signature_domain_completenes')
-                    ->select(DB::raw('lga as name, CAST(score as unsigned) as y'))
-                    ->where('state',$request->state)
-                    ->orderBy('y','desc')
-                    ->get();
+            ->select(DB::raw('lga as name, CAST(score as unsigned) as y'))
+            ->where('state', $request->state)
+            ->orderBy('y', 'desc')
+            ->get();
 
         return $completenes;
     }
 
-    public function facilityStatus(Request $request){
+    public function facilityStatus(Request $request)
+    {
         $facility_status = DB::table('facility_status_lga_pivot')
             ->where('state', $request->state)
             ->orderBy('lga')
@@ -133,6 +131,4 @@ class AdminHomeController extends Controller
 
         return $facility_status;
     }
-
-
 }

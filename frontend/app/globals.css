@@ -128,3 +128,11 @@ body {
   border-color: #5bba62 !important;
   box-shadow: 0 0 5px rgb(91, 186, 98, 0.5) !important;
 }
+
+.aspect-\[4\/3\] {
+  aspect-ratio: 4 / 3;
+}
+
+.aspect-\[16\/9\] {
+  aspect-ratio: 16 / 9;
+}

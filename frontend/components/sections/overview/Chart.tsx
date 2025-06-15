@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import {
   Chart as ChartJS,
@@ -26,7 +24,7 @@ ChartJS.register(
 );
 
 const Charts = () => {
-  const minutesMentoredData = {
+  const data = {
     labels: [
       "Aug 01",
       "Aug 05",
@@ -56,6 +54,7 @@ const Charts = () => {
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: "top" as const,
@@ -69,51 +68,51 @@ const Charts = () => {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full px-4  outline outline-1 outline-red-500">
+      {/* No padding here, handle in SectionContainer only */}
       <SectionContainer>
-        <div className="pt-6 bg-white">
-          <div className="flex  flex-col md:flex-row gap-3">
-            <div className="mb-10 w-full md:w-[600px] h-auto md:h-[450px] border shadow-lg rounded-lg">
-              <div className="flex justify-between items-start bg-[#E8F0E2] p-4">
-                <h2 className="text-sm font-semibold mb-4 text-wrap lg:text-nowrap">
-                  Percentage of Hospitals and Clinics by Level of Care
-                </h2>
-                <HiMiniBars4 fontSize={24} />
-              </div>
-              <div className="flex justify-center items-center mt-8">
-                <div style={{ width: "300px", height: "300px" }}>
-                  <Pie data={minutesMentoredData} options={options} />
-                </div>
-              </div>
-            </div>
-
-            <div className="mb-10 w-full md:w-[600px] h-auto md:h-[450px] border shadow-lg rounded-lg">
-              <div className="flex justify-between items-start bg-[#E8F0E2] p-4">
-                <h2 className="text-sm font-semibold mb-4 text-wrap lg:text-nowrap">
-                  Percentage of Hospitals and Clinics by Level of Care
-                </h2>
-                <HiMiniBars4 fontSize={24} />
-              </div>
-              <div className="flex justify-center items-center mt-8">
-                <div style={{ width: "300px", height: "300px" }}>
-                  <Pie data={minutesMentoredData} options={options} />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="mb-10 w-full md:w-[1200px] h-auto md:h-[450px] border shadow-lg rounded-lg">
-            <div className="flex justify-between items-start bg-[#E8F0E2] p-4">
-              <h2 className="text-sm font-semibold mb-4 text-wrap lg:text-nowrap">
+      <div className="flex flex-wrap justify-center gap-4  outline outline-1 outline-red-500">
+        {[1, 2].map((_, i) => (
+          <div
+            key={i}
+            className="
+            w-full
+            sm:w-[90%]
+            md:w-[47%]
+            max-w-full
+            border shadow-lg rounded-lg flex flex-col
+            aspect-[4/3] sm:aspect-[16/9]
+             outline outline-1 outline-red-500
+          "
+          >
+            <div className="flex justify-between items-center bg-[#E8F0E2] p-3 rounded-t-lg  outline outline-1 outline-red-500">
+              <h2 className="text-xs sm:text-sm font-semibold">
                 Percentage of Hospitals and Clinics by Level of Care
               </h2>
-              <HiMiniBars4 fontSize={24} />
+              <HiMiniBars4 fontSize={20} />
             </div>
-            <div className="flex justify-center items-center mt-8">
-              <div style={{ width: "500px", height: "500px" }}>
-                <Bar data={minutesMentoredData} options={options} />
-              </div>
+            <div className="relative flex-grow p-3 w-full h-full overflow-hidden  outline outline-1 outline-red-500">
+              <Pie
+                data={data}
+                options={{ ...options, maintainAspectRatio: false }}
+              />
             </div>
+          </div>
+        ))}
+      </div>
+      
+        <div className="w-full max-w-[900px] border shadow-lg rounded-lg flex flex-col mt-4 aspect-[16/9] mx-auto px-4">
+          <div className="flex justify-between items-center bg-[#E8F0E2] p-3 rounded-t-lg">
+            <h2 className="text-xs sm:text-sm font-semibold">
+              Percentage of Hospitals and Clinics by Level of Care
+            </h2>
+            <HiMiniBars4 fontSize={20} />
+          </div>
+          <div className="relative flex-grow p-3 w-full h-full">
+            <Bar
+              data={data}
+              options={{ ...options, maintainAspectRatio: false }}
+            />
           </div>
         </div>
       </SectionContainer>
