@@ -6,11 +6,10 @@ const SectionContainer = ({
   className?: string;
 }) => {
   return (
-    <div
-      className={`lg:mx-auto container flex flex-col gap-[3rem]  lg:gap-[3rem]  px-4 md:px-0 ${className}`}
-    >
+    <div className="max-w-[1280px] mx-auto px-4 sm:px-6 md:px-8  outline outline-1 outline-red-500">
       {children}
     </div>
   );
 };
+
 export default SectionContainer;

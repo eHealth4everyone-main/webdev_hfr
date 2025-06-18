@@ -45,8 +45,8 @@ const topNavData = [
 const bottomNavData = [
   {
     icon: LuArrowDownToLine,
-    text: "Data Downloads",
-    navitem: "Data Downloads",
+    text: "Data Request",
+    navitem: "Data Request",
     link: "/datadownloads",
   },
   {

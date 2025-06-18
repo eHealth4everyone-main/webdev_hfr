@@ -49,9 +49,7 @@ const ReportsTable: React.FC<ReportsTableProps> = ({ data, report }) => {
   };
 
   useEffect(() => {
-    // if (data.length > 0) {
-    //   setLoading(false); // Data is loaded
-    // }
+    console.log("ReportsTable received data:", data);
   }, [data]);
 
   const columns = [
@@ -98,8 +96,8 @@ const ReportsTable: React.FC<ReportsTableProps> = ({ data, report }) => {
               : row.facility_level_name === "Secondary"
               ? "bg-blue-500"
               : row.facility_level_name === "Tertiary"
-              ? "bg-red-500"
-              : "bg-gray-500"
+              ? "bg-gray-500"
+              : "bg-red-500"
           }`}
         >
           {row.facility_level_name}
@@ -114,10 +112,10 @@ const ReportsTable: React.FC<ReportsTableProps> = ({ data, report }) => {
         <span
           className={`px-2 py-1 rounded-sm text-white text-sm font- ${
             row.ownership_name === "Public"
-              ? "bg-green-600"
+              ? "bg-indigo-600"
               : row.ownership_name === "Private"
-              ? "bg-red-500"
-              : "bg-gray-500"
+              ? "bg-cyan-500"
+              : "bg-red-500"
           }`}
         >
           {row.ownership_name}
@@ -182,12 +180,18 @@ const ReportsTable: React.FC<ReportsTableProps> = ({ data, report }) => {
           striped
           data={data}
           pagination
-          paginationServer
+          // paginationServer
           paginationPerPage={15}
           paginationComponentOptions={{
             noRowsPerPage: true,
           }}
           responsive
+          noDataComponent={
+            <div className="text-gray-500 text-center py-6">
+              Please select a report to view data.
+            </div>
+          }
+          persistTableHead
         />
 
         {showModal && selectedRow && (
