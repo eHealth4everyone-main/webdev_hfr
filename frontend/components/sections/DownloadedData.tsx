@@ -1,14 +1,21 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { GreenButton, Text } from "../ui/Typography";
 import Input from "../ui/Input";
 import TextArea from "../ui/TextArea";
 
 import axios from "axios";
 import Swal from "sweetalert2";
+import { useRouter } from "next/navigation";
 
 // import ReCAPTCHA from "react-google-recaptcha";
+import dynamic from "next/dynamic";
+// Dynamically import ReCAPTCHA to avoid SSR issues
+const ReCAPTCHA = dynamic(
+  () => import("react-google-recaptcha").then((mod) => mod.default),
+  { ssr: false }
+);
 
 const DownloadedData = () => {
   const [formData, setFormData] = useState({
@@ -21,21 +28,7 @@ const DownloadedData = () => {
     purpose: "",
   });
 
-  // const handleRecaptchaChange = (value: string | null) => {
-  //   setFormData({ ...formData, "g-recaptcha-response": value });
-  // };
-
   const [loading, setLoading] = useState(false);
-
-  // Handle Input Change
-  // const handleChange = (
-  //   e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  // ) => {
-  //   setFormData({
-  //     ...formData,
-  //     [e.target.name]: e.target.value,
-  //   });
-  // };
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -45,22 +38,42 @@ const DownloadedData = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const router = useRouter();
+  // const [captchaToken, setCaptchaToken] = useState(null);
+  const recaptchaRef = useRef<any>(null);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+
+  const handleCaptchaChange = (token: any) => {
+    setCaptchaToken(token);
+  };
+
   // Handle Form Submission with correct typing
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
 
+    if (!captchaToken) {
+      // alert("Please complete the reCAPTCHA.");
+      Swal.fire("Error", "Please complete the reCAPTCHA to proceed.", "error");
+      setLoading(false);
+      return;
+    }
+
     try {
+      // Basic Frontend Validation
+      const data = { ...formData, captchaToken };
+
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BACKEND_API}/download-facilities`,
-        formData
+        data
       );
 
       if (response.data.success) {
         Swal.fire({
           icon: "success",
-          title: "Success!",
-          text: "Download request submitted successfully!",
+          title: "Request Submitted!",
+          // text: "Download request submitted successfully!",
+          text: "Your download request was received. Please check your email for the verification code to proceed.",
         });
 
         setFormData({
@@ -72,6 +85,12 @@ const DownloadedData = () => {
           country: "",
           purpose: "",
         });
+
+        // ✅ Reset reCAPTCHA
+        recaptchaRef.current?.reset();
+        setCaptchaToken(null);
+
+        // router.push(`/verify-download?email=${formData.email}`);
       } else {
         Swal.fire({
           icon: "error",
@@ -179,18 +198,23 @@ const DownloadedData = () => {
             onChange={handleChange}
           />
 
-          {/* <ReCAPTCHA
-            sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY as string}
-            onChange={handleRecaptchaChange}
-          /> */}
+          <div
+            className=""
+            style={{ transform: "scale(0.91)", transformOrigin: "0 0" }}
+          >
+            <ReCAPTCHA
+              sitekey="6Lfjki4rAAAAACunZuwgvyq9j6QoOFOpTFnJDr3D"
+              onChange={handleCaptchaChange}
+            />
+          </div>
 
           <div className="flex justify-end">
             <GreenButton
-              className="bg-[#5BBA62]"
+              className="bg-[#5BBA62] w-full"
               // type="submit"
               // disabled={loading}
             >
-              {loading ? "Submitting..." : "Submit request"}
+              {loading ? "Submitting..." : "Submit Request"}
             </GreenButton>
 
             {/* <button

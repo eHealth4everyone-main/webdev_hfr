@@ -5,10 +5,8 @@ import {
   Polygon,
   Marker,
 } from "@react-google-maps/api";
-// import nigeriaStatePolygon from "@/data/nigeria-states.json";
-// import nigeriaStatePolygon from "@/data/nigeriaStates";
 import nigeriaStatePolygon from "../../../public/data/nigeria-states.json";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 const polygonOptions = {
   fillColor: "#2D5F5D",
@@ -27,7 +25,6 @@ const center = {
   lng: 8.6753, // Nigeria's center longitude
 };
 
-// Restrict map to Nigeria's bounding box
 const bounds = {
   north: 14,
   south: 4,
@@ -35,9 +32,8 @@ const bounds = {
   east: 15.5,
 };
 
-// Function to style states
 const getPolygonOptions = (stateName: string) => ({
-  fillColor: stateName === "Kaduna" ? "#A6CE39" : "#4A7D8C", // Highlight Kaduna
+  fillColor: stateName === "Kaduna" ? "#A6CE39" : "#4A7D8C",
   fillOpacity: 0.7,
   strokeColor: "#ffffff",
   strokeWeight: 1.5,
@@ -69,37 +65,35 @@ const NigeriaMap: React.FC = () => {
           const stateName = state.properties.name;
 
           const stateCenter = {
-            lat: Array.isArray(state.geometry.coordinates[0][0])
-              ? (state.geometry.coordinates[0][0][1] as number)
-              : 0, // Default fallback
-            lng: Array.isArray(state.geometry.coordinates[0][0])
-              ? (state.geometry.coordinates[0][0][0] as number)
-              : 0, // Default fallback
+            lat:
+              Array.isArray(state.geometry.coordinates[0][0]) &&
+              typeof state.geometry.coordinates[0][0][1] === "number"
+                ? state.geometry.coordinates[0][0][1]
+                : 0,
+            lng:
+              Array.isArray(state.geometry.coordinates[0][0]) &&
+              typeof state.geometry.coordinates[0][0][0] === "number"
+                ? state.geometry.coordinates[0][0][0]
+                : 0,
           };
 
-          // const stateCenter = {
-          //   lat: state.geometry.coordinates[0][0][1],
-          //   lng: state.geometry.coordinates[0][0][0],
-          // };
+          const polygonPaths = state.geometry.coordinates.flatMap((polygon) =>
+            polygon.map((ring) =>
+              ring
+                .filter(
+                  (coord): coord is [number, number] =>
+                    Array.isArray(coord) &&
+                    coord.length === 2 &&
+                    typeof coord[0] === "number" &&
+                    typeof coord[1] === "number"
+                )
+                .map(([lng, lat]) => ({ lat, lng }))
+            )
+          );
 
           return (
             <div key={index}>
-              <Polygon
-                paths={state.geometry.coordinates.flatMap((polygon) =>
-                  polygon.map((ring) =>
-                    ring.map((coord) => {
-                      const [lng, lat] = coord as [number, number]; // Explicitly enforce the structure
-                      return { lat, lng };
-                    })
-                  )
-                )}
-                options={{
-                  fillColor: "#4A7D8C",
-                  fillOpacity: 0.7,
-                  strokeColor: "#ffffff",
-                  strokeWeight: 1.5,
-                }}
-              />
+              <Polygon paths={polygonPaths} options={getPolygonOptions(stateName)} />
 
               {mapsLoaded && (
                 <Marker
@@ -111,7 +105,7 @@ const NigeriaMap: React.FC = () => {
                   }}
                   icon={{
                     path: window.google.maps.SymbolPath.CIRCLE,
-                    scale: 0, // Hide default marker
+                    scale: 0,
                   }}
                 />
               )}
