@@ -69,13 +69,22 @@ const DownloadedData = () => {
       );
 
       if (response.data.success) {
+        console.log("Form submitted successfully:", response.data);
+        const token = response.data?.data?.token; // Assuming the token is returned in the response
+
+        // After the success message is shown
         Swal.fire({
+          toast: true,
+          position: "top-end",
           icon: "success",
           title: "Request Submitted!",
-          // text: "Download request submitted successfully!",
           text: "Your download request was received. Please check your email for the verification code to proceed.",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
         });
 
+        // Reset form fields
         setFormData({
           firstname: "",
           lastname: "",
@@ -89,6 +98,13 @@ const DownloadedData = () => {
         // ✅ Reset reCAPTCHA
         recaptchaRef.current?.reset();
         setCaptchaToken(null);
+
+        if (token) {
+          setTimeout(() => {
+            // window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/validate-token?token=${token}`;
+            window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/validate-token`;
+          }, 3000);
+        }
 
         // router.push(`/verify-download?email=${formData.email}`);
       } else {

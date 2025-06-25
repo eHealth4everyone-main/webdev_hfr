@@ -31,18 +31,25 @@ class ValidateDownloadController extends Controller
         $download = Download::where('token', $validated['token'])->first();
 
         if (!$download) {
-            return response()->json(['error' => 'Token not found.'], 400);
+            return response()->json([
+                'error' => 'Token not found.',
+                'redirect1' => env('FRONTEND_URL') . '/datadownloads',
+            ], 400);
         }
 
         if (now()->gt($download->token_expires_at)) {
-            return response()->json(['error' => 'Token has expired.'], 400);
+            return response()->json([
+                'error' => 'Token has expired.',
+                'redirect1' => env('FRONTEND_URL') . '/datadownloads',
+            ], 400);
         }
 
         // Success – return a redirect URL
         return response()->json([
             'message' => 'Verification successful!',
             // 'redirect' => env('FRONTEND_URL') . '/facilitieslist'
-            'redirect' => env('FRONTEND_URL') . '/facilitieslist?verified=true'
+            'redirect' => env('FRONTEND_URL') . '/facilitieslist?verified=true',
+
         ]);
     }
 }

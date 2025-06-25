@@ -13,7 +13,7 @@ const DataTableExtensions = dynamic(
 );
 
 import "react-data-table-component-extensions/dist/index.css";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const HospitalTable: React.FC<{
   data: any[];
@@ -39,6 +39,8 @@ const HospitalTable: React.FC<{
 
   const searchParams = useSearchParams();
   const [isVerified, setIsVerified] = useState(false);
+
+  const router = useRouter();
 
   const openModal = (row: any) => {
     setSelectedRow(row);
@@ -209,22 +211,6 @@ const HospitalTable: React.FC<{
     window.URL.revokeObjectURL(url);
   };
 
-  // useEffect(() => {
-  //   const verified = searchParams.get("verified");
-
-  //   if (verified === "true") {
-  //     localStorage.setItem("verified", "true");
-  //     setIsVerified(true);
-  //     window.history.replaceState({}, document.title, window.location.pathname);
-  //   } else {
-  //     // Fallback for refresh or direct access
-  //     const fromStorage = localStorage.getItem("verified");
-  //     if (fromStorage === "true") {
-  //       setIsVerified(true);
-  //     }
-  //   }
-  // }, [searchParams]);
-
   useEffect(() => {
     const verified = searchParams.get("verified");
 
@@ -244,10 +230,15 @@ const HospitalTable: React.FC<{
         const now = new Date();
         const savedTime = new Date(verifiedAt);
         const diffInMs = now.getTime() - savedTime.getTime();
-        const diffInHours = diffInMs / (1000 * 60 * 60);
-        // const diffInHours = diffInMs / (1000 * 60);
+        const diffInHours = diffInMs / (1000 * 60);
+        const thresholdMinutes = parseFloat(
+          process.env.NEXT_PUBLIC_VERIFICATION_EXPIRY_MINUTES || "15"
+        );
 
-        if (diffInHours < 24) {
+        // const diffInHours = diffInMs / (1000 * 60);
+        console.log({thresholdMinutes, diffInHours, verifiedAt, now, savedTime});
+
+        if (diffInHours < thresholdMinutes) {
           setIsVerified(true);
         } else {
           // Expired: clear it
@@ -284,7 +275,6 @@ const HospitalTable: React.FC<{
           <DetailsModal row={selectedRow} onClose={closeModal} />
         )}
       </div>
-
       <hr className="border-[#f1f1f1] mt-5" />
       {/* 
       <div className="flex justify-center pt-5 mb-4 text-center">
@@ -295,7 +285,7 @@ const HospitalTable: React.FC<{
           Download CSV
         </button>
       </div> */}
-      {isVerified && (
+      {/* {isVerified && (
         <div className="flex justify-center pt-5 mb-4 text-center">
           <button
             onClick={() => exportToCSV(data, "hospital_report")}
@@ -303,6 +293,26 @@ const HospitalTable: React.FC<{
             disabled={!isVerified}
           >
             Download CSV
+          </button>
+        </div>
+      )} */}
+
+      {isVerified ? (
+        <div className="flex justify-center pt-5 mb-4 text-center">
+          <button
+            onClick={() => exportToCSV(data, "hospital_report")}
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          >
+            Download CSV
+          </button>
+        </div>
+      ) : (
+        <div className="flex justify-center pt-5 mb-4 text-center">
+          <button
+            onClick={() => router.push("/datadownloads")}
+            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+          >
+            Go to Data Downloads Request
           </button>
         </div>
       )}
