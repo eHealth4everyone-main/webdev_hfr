@@ -36,20 +36,6 @@
                         </div>
                     @endif
 
-                    {{-- <form action="{{ route('verifyToken') }}" method="POST">
-                        @csrf
-
-                        <div class="form-group">
-                            <label for="token">Enter Token</label>
-                            <input type="text" name="token" id="token" value="{{ old('token') }}">
-                            @error('token')
-                                <div class="error">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <button type="submit" class="submit-btn">Submit</button>
-                    </form> --}}
-
                     <form id="tokenForm">
                         @csrf
                         <div class="form-group">
@@ -121,9 +107,13 @@
                                 icon: 'error',
                                 title: data.errors.token[0],
                                 showConfirmButton: false,
-                                timer: 3000,
+                                timer: 2000,
                                 timerProgressBar: true,
                             });
+
+                            setTimeout(() => {
+                                window.location.href = data.redirect1;
+                            }, 2000);
                         } else if (data.error) {
                             Swal.fire({
                                 toast: true,
@@ -131,9 +121,12 @@
                                 icon: 'error',
                                 title: data.error,
                                 showConfirmButton: false,
-                                timer: 3000,
+                                timer: 2000,
                                 timerProgressBar: true,
                             });
+                            setTimeout(() => {
+                                window.location.href = data.redirect1;
+                            }, 2000);
                         }
                     })
                     .catch(err => {
