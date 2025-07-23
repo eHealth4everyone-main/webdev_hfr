@@ -84,19 +84,26 @@ class ResourceController extends Controller
         return response()->download($file_path);
     }
 
+
     public function destroy(Request $request)
     {
-        $file_path = storage_path('app/public/resources/' . $request->filename);
+        // Extract the base filename only
+        $filename = basename($request->filename);
+        $docId = $request->doc_id;
 
-        if (!is_file($file_path)) {
-            session()->flash("alert-danger", "Document does not exist!");
-            return redirect()->route('resources');
+        $file_path = storage_path('app/public/resources/' . $filename);
+        \Log::info("File path: " . $file_path);
+
+        if (file_exists($file_path)) {
+            unlink($file_path);
+            \Log::info("File deleted with unlink(): " . $filename);
         } else {
-            Storage::delete('/public/resources/' . $request->filename);
-            Resource::destroy($request->doc_id);
-
-            session()->flash("alert-success", "Document deleted successfully!");
-            return redirect()->route('resources');
+            \Log::warning("File not found, skipping unlink(): " . $request->filename);
         }
+
+        Resource::destroy($docId);
+
+        session()->flash("alert-success", "Document deleted successfully!");
+        return redirect()->route('resources');
     }
 }
