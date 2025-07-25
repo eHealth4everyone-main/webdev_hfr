@@ -2,6 +2,7 @@
 import Footer, { RightReserved } from "@/components/layouts/Footer";
 import Header from "@/components/Header/Header";
 import { useEffect, useState } from "react";
+import Chatbot from "@/components/chatbot/Chatbot";
 
 export default function RootLayout({
   children,
@@ -25,6 +26,7 @@ export default function RootLayout({
 
       {children}
       <Footer />
+      <Chatbot />
       <RightReserved />
     </div>
   );
