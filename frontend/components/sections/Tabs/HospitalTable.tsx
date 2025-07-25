@@ -236,7 +236,13 @@ const HospitalTable: React.FC<{
         );
 
         // const diffInHours = diffInMs / (1000 * 60);
-        console.log({thresholdMinutes, diffInHours, verifiedAt, now, savedTime});
+        console.log({
+          thresholdMinutes,
+          diffInHours,
+          verifiedAt,
+          now,
+          savedTime,
+        });
 
         if (diffInHours < thresholdMinutes) {
           setIsVerified(true);
@@ -312,7 +318,7 @@ const HospitalTable: React.FC<{
             onClick={() => router.push("/datadownloads")}
             className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
           >
-            Go to Data Downloads Request
+            Download CSV
           </button>
         </div>
       )}
