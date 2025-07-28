@@ -54,21 +54,20 @@ const Chatbot = () => {
         <div className="z-50 fixed bottom-0 right-0 m-4 w-80 h-96">
             <ChatBotWidget
                 callApi={customApiCall}
-
                 onBotResponse={handleBotResponse}
                 handleNewMessage={handleNewMessage}
                 messages={messages}
                 primaryColor="#5bb85d"
                 inputMsgPlaceholder="Type your message..."
-                chatbotName="Health Facility Registry"
+                chatbotName="HFR Chatbot"
                 isTypingMessage="Typing..."
                 IncommingErrMsg="Oops! Something went wrong. Try again."
                 chatIcon={<Bot size={40} className="" />}
-                botIcon={<Bot size={20} className="text-center" />}
+                botIcon={<Bot size={30} className="text-center" />}
                 botFontStyle={{
                     fontFamily: "Arial",
-                    fontSize: "14px",
-                    color: "red",
+                    fontSize: "12px",
+                    color: "#2f4f4f",
                 }}
                 typingFontStyle={{
                     fontFamily: "Arial",
