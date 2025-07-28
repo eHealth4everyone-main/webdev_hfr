@@ -6,18 +6,12 @@ const Chatbot = () => {
     // Save all messages conversation
     // Example: [{'role': 'user', 'content': 'hello'}, {'role': 'assistant', 'content': 'Hello, how can I assist you today!'}, ...]
     const [messages, setMessages] = useState<any[]>([
-        {
-            role: "user",
-            content: "hello",
-        },
+
         {
             role: "assistant",
-            content: "hi!",
+            content: "Hi! Welcome to the Health Facility Chatbot. How can I assist you today?",
         },
-        {
-            role: "user",
-            content: "who are you",
-        },
+
     ]);
 
     const customApiCall = async (message: string): Promise<string> => {
@@ -39,7 +33,6 @@ const Chatbot = () => {
 
     const handleBotResponse = (response: string) => {
         // Handle the bot's response here
-        console.log("Bot Response:", response);
         setMessages((prevMessages) => [
             ...prevMessages,
             { role: "assistant", content: response },
@@ -62,7 +55,7 @@ const Chatbot = () => {
                 chatbotName="HFR Chatbot"
                 isTypingMessage="Typing..."
                 IncommingErrMsg="Oops! Something went wrong. Try again."
-                chatIcon={<Bot size={40} className="" />}
+                chatIcon={<Bot size={30} className="" />}
                 botIcon={<Bot size={30} className="text-center" />}
                 botFontStyle={{
                     fontFamily: "Arial",
