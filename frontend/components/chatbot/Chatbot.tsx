@@ -9,7 +9,7 @@ const Chatbot = () => {
 
         {
             role: "assistant",
-            content: "Hi! Welcome to the Health Facility Chatbot. How can I assist you today?",
+            content: "Hi! Welcome to the Health Facility Registry Chatbot. How can I assist you today?",
         },
 
     ]);
