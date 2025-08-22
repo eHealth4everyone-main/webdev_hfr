@@ -23,7 +23,7 @@ const Chatbot = () => {
             body: JSON.stringify({
                 question: message,
                 "overrideConfig": {
-                    "sessionId": "4672657373733"
+                    "sessionId": "4672657373735"
                 }
             }),
         });
