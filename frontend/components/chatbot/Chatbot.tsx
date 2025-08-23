@@ -9,7 +9,7 @@ const Chatbot = () => {
 
         {
             role: "assistant",
-            content: "Hi! Welcome to the Health Facility Chatbot. How can I assist you today?",
+            content: "Hi! Welcome to the Health Facility Registry Chatbot. How can I assist you today?",
         },
 
     ]);
@@ -23,7 +23,7 @@ const Chatbot = () => {
             body: JSON.stringify({
                 question: message,
                 "overrideConfig": {
-                    "sessionId": "4672657373733"
+                    "sessionId": "4672657373735"
                 }
             }),
         });
