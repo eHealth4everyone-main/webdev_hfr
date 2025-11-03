@@ -57,6 +57,7 @@ class HfrDhisController extends Controller
                 'json' => $data
             ]);
 
+            
 
             if ($response->getReasonPhrase() ==  'Created') {
                 $array = json_decode($response->getBody()->getContents(), true);
@@ -762,7 +763,9 @@ class HfrDhisController extends Controller
 
     public function logs()
     {
-        $logs = DB::table('dhis_log_details')->paginate(100);
+       // $logs = DB::table('dhis_log_details')->paginate(100);
+
+        $logs = DhisLog::all(); 
 
         return view('dhis.logs', compact("logs"));
     }
