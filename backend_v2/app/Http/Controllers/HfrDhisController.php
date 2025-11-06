@@ -13,6 +13,7 @@ use App\Models\DhisLookup;
 use Auth;
 use Carbon\Carbon;
 use App\Models\Hospital;
+use Illuminate\Support\Facades\Log;
 
 
 
@@ -57,17 +58,25 @@ class HfrDhisController extends Controller
                 'json' => $data
             ]);
 
-
+            
+           // Log::info('response from request'.$response->getBody());
+          //  Log::info('response phrase: '.$response->getReasonPhrase());
             if ($response->getReasonPhrase() ==  'Created') {
                 $array = json_decode($response->getBody()->getContents(), true);
 
+                Log::info('about to retrieve facility uid');
                 $facility_uid = $array['response']['uid'];
+                Log::info('facility_uid: '.$facility_uid);
 
                 //Assign Organisation unit - ownership
+                Log::info("about to assign ownership");
                 $ownership_status = $dhis->assignOwnership($request->ownership_id, $facility_uid);
+                  Log::info("successfully asign ownership");
 
                 //Assign Organisation unit - Level of Care
+                 Log::info("about to assign level of care");
                 $level_status = $dhis->assignLevelOfCare($request->facility_level_id, $facility_uid);
+                 Log::info("successfully assign level of care");
 
                 //Assign Organisation unit - Level of Care Options
                 if ($request->facility_level_option_id > 0) {
@@ -762,7 +771,9 @@ class HfrDhisController extends Controller
 
     public function logs()
     {
-        $logs = DB::table('dhis_log_details')->paginate(100);
+       // $logs = DB::table('dhis_log_details')->paginate(100);
+
+        $logs = DhisLog::all(); 
 
         return view('dhis.logs', compact("logs"));
     }
