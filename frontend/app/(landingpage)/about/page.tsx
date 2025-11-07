@@ -3,6 +3,16 @@ import Origin from "@/components/sections/about/Origin";
 import Process from "@/components/sections/about/Process";
 import Speech from "@/components/sections/about/Speech";
 import React from "react";
+import { createPageMetadata } from "@/app/lib/metadata";
+
+
+
+export const metadata = createPageMetadata(
+  "About",
+  "Learn more about the National Health Facility Registry and our mission to strengthen health data visibility.",
+  "NHFR, about NHFR, Nigeria health facility registry, healthcare data, health infrastructure, Ministry of Health, facility information",
+  "/about"
+);
 
 const About = () => {
   return (
