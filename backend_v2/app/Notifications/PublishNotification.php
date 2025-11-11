@@ -32,8 +32,9 @@ class PublishNotification extends Notification implements ShouldQueue
 
             return (new MailMessage)
                 ->subject($this->subject)
-                ->greeting('Hello,')
-                ->line($this->message);
+               ->view('vendor.notifications.facility_approval', [
+                'message' => $this->message,
+            ]);
         }
 
         if ($this->action =="reject"){
@@ -41,9 +42,10 @@ class PublishNotification extends Notification implements ShouldQueue
 
             return (new MailMessage)
                 ->subject('Facility Publication Rejected')
-                ->greeting('Hello,')
-                ->line($this->message)
-                ->action('Click Here to Login', $url);
+                ->view('vendor.notifications.facility_approval', [
+                'actionUrl' => $url,
+                'message' => $this->message,
+            ]);
         }
     }
 

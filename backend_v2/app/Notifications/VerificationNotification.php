@@ -33,9 +33,10 @@ class VerificationNotification extends Notification implements ShouldQueue
 
             return (new MailMessage)
             ->subject('Facility Validation Requested')
-            ->greeting('Hello,')
-            ->line($this->message)
-            ->action('Click Here to Login', $url);
+            ->view('vendor.notifications.facility_approval', [
+                'actionUrl' => $url,
+                'message' => $this->message,
+            ]);
         }
 
         if ($this->action =="reject"){
@@ -43,9 +44,10 @@ class VerificationNotification extends Notification implements ShouldQueue
 
             return (new MailMessage)
             ->subject('Facility Verification Rejected')
-            ->greeting('Hello,')
-            ->line($this->message)
-            ->action('Click Here to Login', $url);
+             ->view('vendor.notifications.facility_approval', [
+                'actionUrl' => $url,
+                'message' => $this->message,
+            ]);
         }
     
 

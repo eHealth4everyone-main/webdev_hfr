@@ -161,7 +161,7 @@ class HospitalsController extends Controller
             }
         }
 
-        \Log::info(json_encode($request->all()));
+        //Log::info(json_encode($request->all()));
 
 
         // dd($request->all());
