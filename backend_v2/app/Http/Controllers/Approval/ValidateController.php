@@ -33,10 +33,10 @@ class ValidateController extends Controller
                 ->join('lst_ownerships', 'hospital_details_history.ownership_id', '=', 'lst_ownerships.id')
                 ->join('lst_ownership_types', 'hospital_details_history.ownership_type_id', '=', 'lst_ownership_types.id')
                 ->join('lst_level_of_care', 'hospital_details_history.facility_level_id', '=', 'lst_level_of_care.id')
-                ->join('lst_level_of_care_options', 'hospital_details_history.facility_level_option_id', '=', 'lst_level_of_care_options.id')
+                ->leftjoin('lst_level_of_care_options', 'hospital_details_history.facility_level_option_id', '=', 'lst_level_of_care_options.id')
                 ->join('lst_oparational_status', 'hospital_details_history.operational_status_id', '=', 'lst_oparational_status.id')
-                ->join('lst_registration_status', 'hospital_details_history.registration_status_id', '=', 'lst_registration_status.id')
-                ->join('lst_license_status', 'hospital_details_history.license_status_id', '=', 'lst_license_status.id')
+                ->leftjoin('lst_registration_status', 'hospital_details_history.registration_status_id', '=', 'lst_registration_status.id')
+                ->leftjoin('lst_license_status', 'hospital_details_history.license_status_id', '=', 'lst_license_status.id')
 
                 ->select(
                     'hospital_details_history.*',
@@ -62,6 +62,8 @@ class ValidateController extends Controller
                 ->where('hospital_details_history.state_id', '=', Auth::user()->state_id)
                 ->whereIn('hospital_details_history.status_id', [2, 7, 9, 14, 16, 21])
                 ->get();
+
+                Log::info('Pending count using all lgas:', ['count' => $pending->count()]);
         } else {
 
             Log::info('User has limited permissions to view pending validations.');
@@ -76,10 +78,10 @@ class ValidateController extends Controller
                 ->join('lst_ownerships', 'hospital_details_history.ownership_id', '=', 'lst_ownerships.id')
                 ->join('lst_ownership_types', 'hospital_details_history.ownership_type_id', '=', 'lst_ownership_types.id')
                 ->join('lst_level_of_care', 'hospital_details_history.facility_level_id', '=', 'lst_level_of_care.id')
-                ->join('lst_level_of_care_options', 'hospital_details_history.facility_level_option_id', '=', 'lst_level_of_care_options.id')
+                ->leftjoin('lst_level_of_care_options', 'hospital_details_history.facility_level_option_id', '=', 'lst_level_of_care_options.id')
                 ->join('lst_oparational_status', 'hospital_details_history.operational_status_id', '=', 'lst_oparational_status.id')
-                ->join('lst_registration_status', 'hospital_details_history.registration_status_id', '=', 'lst_registration_status.id')
-                ->join('lst_license_status', 'hospital_details_history.license_status_id', '=', 'lst_license_status.id')
+                ->leftjoin('lst_registration_status', 'hospital_details_history.registration_status_id', '=', 'lst_registration_status.id')
+                ->leftjoin('lst_license_status', 'hospital_details_history.license_status_id', '=', 'lst_license_status.id')
 
                 ->select(
                     'hospital_details_history.*',
@@ -107,6 +109,8 @@ class ValidateController extends Controller
                 ->whereIn('hospital_details_history.status_id', [2, 7, 9, 14, 16, 21])
                 ->get();
         }
+
+        Log::info('Actual Pending count:', ['count' => $pending->count()]);
 
         return view('approvals.pending_validation', compact('pending'));
     }

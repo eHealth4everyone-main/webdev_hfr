@@ -28,10 +28,10 @@ class PublishController extends Controller
             ->join('lst_level_of_care', 'hospital_details_history.facility_level_id', '=', 'lst_level_of_care.id')
             ->join('lst_ownerships', 'hospital_details_history.ownership_id', '=', 'lst_ownerships.id')
             ->join('lst_ownership_types', 'hospital_details_history.ownership_type_id', '=', 'lst_ownership_types.id')
-            ->join('lst_level_of_care_options', 'hospital_details_history.facility_level_option_id', '=', 'lst_level_of_care_options.id')
+            ->leftjoin('lst_level_of_care_options', 'hospital_details_history.facility_level_option_id', '=', 'lst_level_of_care_options.id')
             ->join('lst_oparational_status', 'hospital_details_history.operational_status_id', '=', 'lst_oparational_status.id')
-            ->join('lst_registration_status', 'hospital_details_history.registration_status_id', '=', 'lst_registration_status.id')
-            ->join('lst_license_status', 'hospital_details_history.license_status_id', '=', 'lst_license_status.id')
+            ->leftjoin('lst_registration_status', 'hospital_details_history.registration_status_id', '=', 'lst_registration_status.id')
+            ->leftjoin('lst_license_status', 'hospital_details_history.license_status_id', '=', 'lst_license_status.id')
             ->join('users', 'hospital_details_history.requested_by', '=', 'users.id')
             ->select(
                 'hospital_details_history.*',
@@ -68,11 +68,11 @@ class PublishController extends Controller
                 ->join('lst_facility_types', 'hospital_details_history.facility_type_id', '=', 'lst_facility_types.id')
                 ->join('lst_level_of_care', 'hospital_details_history.facility_level_id', '=', 'lst_level_of_care.id')
                 ->join('lst_ownerships', 'hospital_details_history.ownership_id', '=', 'lst_ownerships.id')
-                ->join('lst_ownership_types', 'hospital_details_history.ownership_type_id', '=', 'lst_ownership_types.id')
-                ->join('lst_level_of_care_options', 'hospital_details_history.facility_level_option_id', '=', 'lst_level_of_care_options.id')
+                ->leftjoin('lst_ownership_types', 'hospital_details_history.ownership_type_id', '=', 'lst_ownership_types.id')
+                ->leftjoin('lst_level_of_care_options', 'hospital_details_history.facility_level_option_id', '=', 'lst_level_of_care_options.id')
                 ->join('lst_oparational_status', 'hospital_details_history.operational_status_id', '=', 'lst_oparational_status.id')
-                ->join('lst_registration_status', 'hospital_details_history.registration_status_id', '=', 'lst_registration_status.id')
-                ->join('lst_license_status', 'hospital_details_history.license_status_id', '=', 'lst_license_status.id')
+                ->leftjoin('lst_registration_status', 'hospital_details_history.registration_status_id', '=', 'lst_registration_status.id')
+                ->leftjoin('lst_license_status', 'hospital_details_history.license_status_id', '=', 'lst_license_status.id')
                 ->join('users', 'hospital_details_history.requested_by', '=', 'users.id')
                 ->select(
                     'hospital_details_history.*',
@@ -104,10 +104,10 @@ class PublishController extends Controller
                 ->join('lst_level_of_care', 'hospital_details_history.facility_level_id', '=', 'lst_level_of_care.id')
                 ->join('lst_ownerships', 'hospital_details_history.ownership_id', '=', 'lst_ownerships.id')
                 ->join('lst_ownership_types', 'hospital_details_history.ownership_type_id', '=', 'lst_ownership_types.id')
-                ->join('lst_level_of_care_options', 'hospital_details_history.facility_level_option_id', '=', 'lst_level_of_care_options.id')
+                ->leftjoin('lst_level_of_care_options', 'hospital_details_history.facility_level_option_id', '=', 'lst_level_of_care_options.id')
                 ->join('lst_oparational_status', 'hospital_details_history.operational_status_id', '=', 'lst_oparational_status.id')
-                ->join('lst_registration_status', 'hospital_details_history.registration_status_id', '=', 'lst_registration_status.id')
-                ->join('lst_license_status', 'hospital_details_history.license_status_id', '=', 'lst_license_status.id')
+                ->leftjoin('lst_registration_status', 'hospital_details_history.registration_status_id', '=', 'lst_registration_status.id')
+                ->leftjoin('lst_license_status', 'hospital_details_history.license_status_id', '=', 'lst_license_status.id')
                 ->join('users', 'hospital_details_history.requested_by', '=', 'users.id')
                 ->select(
                     'hospital_details_history.*',
@@ -140,10 +140,10 @@ class PublishController extends Controller
                 ->join('lst_level_of_care', 'hospital_details_history.facility_level_id', '=', 'lst_level_of_care.id')
                 ->join('lst_ownerships', 'hospital_details_history.ownership_id', '=', 'lst_ownerships.id')
                 ->join('lst_ownership_types', 'hospital_details_history.ownership_type_id', '=', 'lst_ownership_types.id')
-                ->join('lst_level_of_care_options', 'hospital_details_history.facility_level_option_id', '=', 'lst_level_of_care_options.id')
+                ->leftjoin('lst_level_of_care_options', 'hospital_details_history.facility_level_option_id', '=', 'lst_level_of_care_options.id')
                 ->join('lst_oparational_status', 'hospital_details_history.operational_status_id', '=', 'lst_oparational_status.id')
-                ->join('lst_registration_status', 'hospital_details_history.registration_status_id', '=', 'lst_registration_status.id')
-                ->join('lst_license_status', 'hospital_details_history.license_status_id', '=', 'lst_license_status.id')
+                ->leftjoin('lst_registration_status', 'hospital_details_history.registration_status_id', '=', 'lst_registration_status.id')
+                ->leftjoin('lst_license_status', 'hospital_details_history.license_status_id', '=', 'lst_license_status.id')
                 ->join('users', 'hospital_details_history.requested_by', '=', 'users.id')
                 ->select(
                     'hospital_details_history.*',
