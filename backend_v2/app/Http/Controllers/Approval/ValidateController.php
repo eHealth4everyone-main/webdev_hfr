@@ -14,8 +14,39 @@ use App\Models\audit;
 use App\Models\ApprovalNotifications;
 use Illuminate\Support\Facades\Log;
 
+
+/**
+ * @group Facility Approval Tracking - Facility Validation
+ *
+ * This controller handles all validation-related workflows for health facility approval.
+ * It allows authorized users to view pending validations, approve or reject facility requests,
+ * recall validations, and track validation actions.
+ *
+ * All actions are logged and tied to user permissions (State and LGA level).
+ */
 class ValidateController extends Controller
 {
+
+     /**
+     * Display all pending facility validation requests.
+     *
+     * Shows all facilities that require validation, filtered based on user permissions.
+     * - State-level users can see all requests in the state.
+     * - LGA-level users can only see requests for their assigned LGAs.
+     *
+     * @response scenario=success {
+     *   "view": "approvals.pending_validation",
+     *   "pending": [
+     *     {
+     *       "id": 123,
+     *       "facility_name": "General Hospital",
+     *       "state": "Lagos",
+     *       "lga": "Ikeja",
+     *       "requested_by": "John Doe"
+     *     }
+     *   ]
+     * }
+     */
     public function index()
     {
 
@@ -115,6 +146,29 @@ class ValidateController extends Controller
         return view('approvals.pending_validation', compact('pending'));
     }
 
+
+      /**
+     * Search pending validation requests.
+     *
+     * Filters facility validation records based on the status and search keyword.
+     * - Status 1: Pending
+     * - Status 2: Approved
+     * - Status 3: Rejected
+     *
+     * @bodyParam status integer required The filter type (1=pending, 2=approved, 3=rejected)
+     * @bodyParam action string Optional. A keyword to search by action description.
+     *
+     * @response scenario=success {
+     *   "view": "approvals.pending_validation",
+     *   "pending": [
+     *     {
+     *       "id": 456,
+     *       "facility_name": "Primary Health Center",
+     *       "status": "Pending Validation"
+     *     }
+     *   ]
+     * }
+     */
     public function search(Request $request)
     {
         if ($request->status == 1) {
@@ -156,6 +210,26 @@ class ValidateController extends Controller
         return view('approvals.pending_validation', compact('pending'));
     }
 
+
+     /**
+     * Validate (approve or reject) a facility request.
+     *
+     * Handles the validation process for a facility request based on the validator's action.
+     * - Approve: Marks the request as validated and notifies publishers.
+     * - Reject: Marks the request as rejected and notifies requesters.
+     *
+     * @bodyParam id integer required The facility ID to validate.
+     * @bodyParam action string required Either "approve" or "reject".
+     * @bodyParam requested_action string required The requested operation ("CREATE FACILITY", "UPDATE FACILITY", or "DELETE FACILITY").
+     * @bodyParam notes string Optional. Validation notes.
+     *
+     * @response 200 {
+     *   "message": "Facility Creation Validated"
+     * }
+     * @response 500 {
+     *   "error": "Database transaction failed."
+     * }
+     */
     public function store(Request $request)
     {
         if (!$this->isValidated($request->id)) {
@@ -259,6 +333,23 @@ class ValidateController extends Controller
     }
 
 
+
+     /**
+     * Recall a previously validated facility request.
+     *
+     * Allows validators to recall a facility request back to a pending state.
+     * Only possible for requests that have not yet been published.
+     *
+     * @bodyParam hosp_id integer required The facility ID to recall.
+     * @bodyParam action string required The original action ("CREATE FACILITY", "UPDATE FACILITY", "DELETE FACILITY").
+     *
+     * @response 200 {
+     *   "message": "Validation recalled successfully!"
+     * }
+     * @response 400 {
+     *   "message": "Cannot recall validated or published request!"
+     * }
+     */
     public function recall(Request $request)
     {
         if ($this->isValidated($request->hosp_id)) {

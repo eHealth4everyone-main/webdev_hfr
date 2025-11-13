@@ -9,9 +9,41 @@ use Auth;
 use App\Models\HospitalHistory;
 
 
+/**
+ * @group Facility Approval Tracking - Record Updates
+ *
+ * Endpoints that provide detailed audit comparison between the current and updated
+ * records of a health facility. This helps reviewers and approvers understand what
+ * changed in each facility record during the verification, validation, or publication stages.
+ */
 class UpdatedRecordsController extends Controller
 {
 
+
+     /**
+     * View differences between old and updated facility records.
+     *
+     * This endpoint retrieves the detailed audit trail and compares
+     * old versus new values for a given facility update request.
+     * 
+     * It shows changes to metadata such as ownership, location, level of care,
+     * and service availability. The view also displays the corresponding audit
+     * data and allows reviewers to approve or reject updates at different workflow stages.
+     *
+     *
+     * @urlParam id int required The ID of the facility history record being reviewed.
+     * @urlParam stage int required The stage of review:
+     *  - 1 → Verification stage
+     *  - 2 → Validation stage
+     *  - 3 → Publication stage
+     *
+     * @response 200 scenario=success View showing old and new facility data side by side.
+     * @response 404 scenario=not_found Facility record or audit not found.
+     * 
+     * @param int $id The facility history ID.
+     * @param string $stage The review stage (1, 2, or 3).
+     * @return \Illuminate\View\View
+     */
     public function updatedRecords($id, $stage)
     {
         $audit_id = DB::table('audits')

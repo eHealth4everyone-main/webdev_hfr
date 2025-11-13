@@ -14,8 +14,43 @@ use App\Models\audit;
 use App\Models\ApprovalNotifications;
 use Illuminate\Support\Facades\Log;
 
+
+/**
+ * @group Facility Approval Tracking - Facility Verification
+ *
+ * This controller handles all verification-related workflows for health facility approval.
+ * It allows authorized users to view pending verification requests, approve or reject facility requests,
+ * recall verifications, and track verification actions.
+ *
+ * All actions are logged and tied to user permissions (State and LGA level).
+ */
 class VerifyController extends Controller
 {
+
+     /**
+     * Display all pending verification requests.
+     *
+     *
+     * @response 200 {
+     *   "data": [
+     *     {
+     *       "id": 123,
+     *       "state": "Lagos",
+     *       "lga": "Ikeja",
+     *       "ward": "Ward 1",
+     *       "facility_type_name": "General Hospital",
+     *       "facility_level_name": "Secondary",
+     *       "ownership": "Government",
+     *       "requested_by_firstname": "John",
+     *       "requested_by_lastname": "Doe",
+     *       "requested_email": "john@example.com",
+     *       "requested_mobile": "08012345678",
+     *       "status_id": 1,
+     *       "updated_at": "2025-11-13 17:00:00"
+     *     }
+     *   ]
+     * }
+     */
     public function index()
     {
 
@@ -114,6 +149,34 @@ class VerifyController extends Controller
     }
 
 
+
+     /**
+     * Search verification requests by action and status.
+     *
+     *
+     * @bodyParam action string required The action keyword to search for. Example: "CREATE FACILITY"
+     * @bodyParam status integer required The verification status to filter by. Example: 1
+     *
+     * @response 200 {
+     *   "data": [
+     *     {
+     *       "id": 124,
+     *       "state": "Lagos",
+     *       "lga": "Ikeja",
+     *       "ward": "Ward 2",
+     *       "facility_type_name": "Primary Health Centre",
+     *       "facility_level_name": "Primary",
+     *       "ownership": "Private",
+     *       "requested_by_firstname": "Jane",
+     *       "requested_by_lastname": "Smith",
+     *       "requested_email": "jane@example.com",
+     *       "requested_mobile": "08087654321",
+     *       "status_id": 8,
+     *       "updated_at": "2025-11-13 16:30:00"
+     *     }
+     *   ]
+     * }
+     */
     public function search(Request $request)
     {
         // Log::debug('Search request received', [
@@ -283,6 +346,31 @@ class VerifyController extends Controller
         return view('approvals.pending_verify', compact('pending'));
     }
 
+
+     /**
+     * Approve or reject a verification request.
+     *
+     *
+     * @bodyParam id integer required The ID of the hospital request. Example: 123
+     * @bodyParam action string required The action to take: "approve" or "reject". Example: "approve"
+     * @bodyParam requested_action string required The type of request: "CREATE FACILITY", "UPDATE FACILITY", "DELETE FACILITY". Example: "CREATE FACILITY"
+     * @bodyParam notes string optional Notes for verification. Example: "Checked all details."
+     * @bodyParam validated_by integer optional The user ID of the validator.
+     * @bodyParam validated_at string optional The timestamp of validation. Format: Y-m-d H:i:s
+     * @bodyParam published_by integer optional The user ID of the publisher.
+     * @bodyParam published_at string optional The timestamp of publishing. Format: Y-m-d H:i:s
+     * @bodyParam publish_note string optional Notes for publishing.
+     *
+     * @response 200 {
+     *   "message": "Facility Creation Verified",
+     *   "hospital_id": 123,
+     *   "status_id": 2
+     * }
+     *
+     * @response 500 {
+     *   "error": "Exception message"
+     * }
+     */
     public function store(Request $request)
     {
 
@@ -384,6 +472,28 @@ class VerifyController extends Controller
         }
     }
 
+
+    /**
+     * Recall a previously verified request.
+     *
+     * @group Verification
+     *
+     * @bodyParam hosp_id integer required The ID of the hospital request to recall. Example: 123
+     * @bodyParam action string required The action type of the request: "CREATE FACILITY", "UPDATE FACILITY", "DELETE FACILITY". Example: "CREATE FACILITY"
+     * @bodyParam verified_by integer optional The user ID of the verifier.
+     * @bodyParam verified_at string optional The timestamp of verification. Format: Y-m-d H:i:s
+     * @bodyParam verified_note string optional Notes for recall.
+     *
+     * @response 200 {
+     *   "message": "Verification recalled successfully!",
+     *   "hospital_id": 123,
+     *   "status_id": 1
+     * }
+     *
+     * @response 400 {
+     *   "message": "Can not recall validated or published request!"
+     * }
+     */
     public function recall(Request $request)
     {
         if ($this->isVerified($request->hosp_id)) {

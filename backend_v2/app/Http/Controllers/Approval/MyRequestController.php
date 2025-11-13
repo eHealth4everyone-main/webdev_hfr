@@ -14,6 +14,20 @@ use App\Models\StatusTracking;
 use Carbon\Carbon;
 
 
+
+/**
+ * @group Facility Approval Tracking - My Requests
+ *
+ * This controller manages all facility requests created by the currently logged-in user.
+ * 
+ * It allows users to:
+ * - View pending, approved, or rejected facility requests.
+ * - Edit or delete requests before they are verified.
+ * - Resubmit rejected delete requests.
+ * 
+ * These endpoints are mainly used in the **facility approval workflow**.
+ */
+
 class MyRequestController extends Controller
 {
 
@@ -50,6 +64,13 @@ class MyRequestController extends Controller
     // }
 
 
+     /**
+     * Display all pending facility requests for the logged-in user.
+     *
+     * Fetches facility change or creation requests that are awaiting verification.
+     *
+     * @return \Illuminate\View\View
+     */
     public function myPendingRequest()
     {
         $myrequests = DB::select("SELECT * FROM hospital_details_history WHERE
@@ -59,6 +80,17 @@ class MyRequestController extends Controller
         return view('approvals.my_pending_requests', compact('myrequests'));
     }
 
+
+
+     /**
+     * Search and filter requests by status.
+     *
+     * Returns pending, rejected, or approved requests based on the provided `status` parameter.
+     *
+     * @param Request $request
+     * @bodyParam status integer The request type: 1=pending, 2=rejected, 3=approved.
+     * @return \Illuminate\View\View
+     */
     public function search(Request $request)
     {
         $userId = Auth::user()->id;
@@ -85,6 +117,15 @@ class MyRequestController extends Controller
     }
 
 
+
+     /**
+     * Show the edit form for a pending request.
+     *
+     * Allows the user to modify a facility record that has not yet been verified.
+     *
+     * @param int $id The ID of the hospital request to edit.
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     */
     public function editRequest($id)
     {
         if ($this->isNotVerified($id)) {
@@ -110,6 +151,15 @@ class MyRequestController extends Controller
         }
     }
 
+
+    /**
+     * Update a facility request.
+     *
+     * Handles updates to both pending and rejected facility requests.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
+     */
     public function updateRequest(Request $request)
     {
 
@@ -327,6 +377,15 @@ class MyRequestController extends Controller
     }
 
 
+
+     /**
+     * Delete a facility request.
+     *
+     * Deletes pending or rejected facility requests that have not yet been verified.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
+     */
     public function deleteRequest(Request $request)
     {
 
@@ -433,6 +492,15 @@ class MyRequestController extends Controller
         return redirect()->back();
     }
 
+
+    /**
+     * Resubmit a previously rejected delete request.
+     *
+     * Recreates the delete request after rejection with updated notes or reasons.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
+     */
     //resubmit delete request after rejection
     public function resubmit(Request $request)
     {
@@ -476,6 +544,15 @@ class MyRequestController extends Controller
         return redirect()->route('myrequest.pending');
     }
 
+
+     /**
+     * Check if a hospital request is still editable.
+     *
+     * A request is editable if it has not yet been verified or validated.
+     *
+     * @param int $id The hospital request ID.
+     * @return bool
+     */
     //method to check if the request has been verified or validated. if request has been verified
     //the requester must not be able to delete or update the request
     private function isNotVerified($id)

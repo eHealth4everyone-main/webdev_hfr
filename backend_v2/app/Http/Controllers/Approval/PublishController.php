@@ -16,8 +16,31 @@ use App\Models\audit;
 use App\Models\ApprovalNotifications;
 use App\Models\HfrDhis;
 
+
+
+/**
+ * @group Facility Approval Tracking - Publication
+ *
+ * Endpoints for managing the publication process of health facility data.
+ * 
+ * These endpoints handle reviewing, approving, rejecting, and finalizing
+ * facility publication requests, as well as syncing with DHIS2 where enabled.
+ *
+ * @subgroup Facility Publication Requests
+ * This subgroup contains endpoints that manage pending, approved, and rejected publication requests.
+ */
 class PublishController extends Controller
 {
+
+     /**
+     * Display the list of facilities pending publication.
+     *
+     * Retrieves all facilities whose publication requests are awaiting approval.
+     * 
+     * 
+     * @response 200 scenario=success View showing list of pending facilities ready for publication.
+     * @return \Illuminate\Http\Response
+     */
     public function index()
     {
         $pending = DB::table('hospital_details_history')
@@ -58,6 +81,23 @@ class PublishController extends Controller
         return view('approvals.pending_publish', compact('pending'));
     }
 
+
+      /**
+     * Search and filter facilities based on their publication status.
+     *
+     * Allows filtering by state, action type, and publication status:
+     *  - 1 → Pending publication
+     *  - 2 → Approved/published
+     *  - 3 → Rejected publication
+     * 
+     *
+     * @queryParam status int required The publication status ID (1=pending, 2=published, 3=rejected).
+     * @queryParam state_id int optional The ID of the state to filter by.
+     * @queryParam action string optional The action type (e.g. "approve", "reject").
+     * 
+     * @response 200 scenario=success View showing filtered list of facilities.
+     * @return \Illuminate\Http\Response
+     */
     public function search(Request $request)
     {
         if ($request->status == 1) {
@@ -173,6 +213,23 @@ class PublishController extends Controller
         return view('approvals.pending_publish', compact('pending'));
     }
 
+
+      /**
+     * Approve or reject a facility publication request.
+     *
+     * Publishes or rejects facility creation, update, or deletion requests.
+     * When integration is enabled, synchronizes facility data with DHIS2.
+     * 
+     *
+     * @bodyParam id int required The facility history ID being processed.
+     * @bodyParam action string required Either "approve" or "reject".
+     * @bodyParam requested_action string required The original request type ("CREATE FACILITY", "UPDATE FACILITY", "DELETE FACILITY").
+     * @bodyParam notes string optional Notes or comments for the approval or rejection.
+     *
+     * @response 200 scenario=success Facility publication processed successfully.
+     * @response 500 scenario=error Internal error during publication process.
+     * @return \Illuminate\Http\Response
+     */
     public function store(Request $request)
     {
         //check if the request is publised
@@ -381,6 +438,17 @@ class PublishController extends Controller
         }
     }
 
+
+    /**
+     * Check if a facility has already been published.
+     *
+     * Prevents re-processing of already published requests by checking
+     * the status ID in the facility’s history record.
+     * 
+     * 
+     * @param int $fac_id The facility ID.
+     * @return bool True if published, otherwise false.
+     */
     //this method check to see if the request is arleady published
     //before trying to publish
     public function isPublished($fac_id)
