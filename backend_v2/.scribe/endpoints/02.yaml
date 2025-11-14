@@ -1,31 +1,37 @@
-name: 'Facility Approval Tracking - Facility Verification'
+name: Authentication
 description: |-
 
-  This controller handles all verification-related workflows for health facility approval.
-  It allows authorized users to view pending verification requests, approve or reject facility requests,
-  recall verifications, and track verification actions.
+  Token-based Login Flow
 
-  All actions are logged and tied to user permissions (State and LGA level).
+  These endpoints handle the second step of a two-factor login flow.
+  After submitting username/password, the system sends a token to the user
+  and stores temporary login details in the session. The user must validate
+  the token here before being logged in.
 endpoints:
   -
     custom: []
     httpMethods:
       - GET
-    uri: admin/hospitals/approvals/verify
+    uri: login/token
     metadata:
       custom: []
-      groupName: 'Facility Approval Tracking - Facility Verification'
+      groupName: Authentication
       groupDescription: |-
 
-        This controller handles all verification-related workflows for health facility approval.
-        It allows authorized users to view pending verification requests, approve or reject facility requests,
-        recall verifications, and track verification actions.
+        Token-based Login Flow
 
-        All actions are logged and tied to user permissions (State and LGA level).
+        These endpoints handle the second step of a two-factor login flow.
+        After submitting username/password, the system sends a token to the user
+        and stores temporary login details in the session. The user must validate
+        the token here before being logged in.
       subgroup: ''
       subgroupDescription: ''
-      title: 'Display all pending verification requests.'
-      description: ''
+      title: 'Display the token verification page.'
+      description: |-
+        This endpoint shows the token entry screen to the user, but only if a
+        token has been generated and stored in the session during the login flow.
+
+        If no token exists in the current session, the user is redirected to `/`.
       authenticated: false
       deprecated: false
     headers:
@@ -41,30 +47,38 @@ endpoints:
     responses:
       -
         custom: []
-        status: 200
+        status: 302
         content: |-
-          {
-            "data": [
-              {
-                "id": 123,
-                "state": "Lagos",
-                "lga": "Ikeja",
-                "ward": "Ward 1",
-                "facility_type_name": "General Hospital",
-                "facility_level_name": "Secondary",
-                "ownership": "Government",
-                "requested_by_firstname": "John",
-                "requested_by_lastname": "Doe",
-                "requested_email": "john@example.com",
-                "requested_mobile": "08012345678",
-                "status_id": 1,
-                "updated_at": "2025-11-13 17:00:00"
-              }
-            ]
-          }
-        headers: []
-        description: ''
-    responseFields: []
+          <!DOCTYPE html>
+          <html>
+              <head>
+                  <meta charset="UTF-8" />
+                  <meta http-equiv="refresh" content="0;url='http://localhost'" />
+
+                  <title>Redirecting to http://localhost</title>
+              </head>
+              <body>
+                  Redirecting to <a href="http://localhost">http://localhost</a>.
+              </body>
+          </html>
+        headers:
+          cache-control: 'no-cache, private'
+          location: 'http://localhost'
+          content-type: 'text/html; charset=utf-8'
+          set-cookie: 'XSRF-TOKEN=eyJpdiI6InBJQTZsSVhvM2pSSUZMOGtuNnptNXc9PSIsInZhbHVlIjoiaXRxc3VpZmZPTk5YS2RUbE9QNktiZklHbG9GNWVzRFlEZldXQVJJVmRzODA0RTRMdkdQb3Jla3ZBQ2xyTnVRcXdjbWFzKzkxZnVMMlA1V21La09CcGRxaXFWRWltNkNUOG5QOFBqZWRYeW5qKzEzZUFWRlgyUk9sZVo2UG51V08iLCJtYWMiOiI5NWU5MjkzYTJlN2YzNmMxMzAyMmZjMDBiMWY5OGY5ZjEzZTlkZWUwYjAwM2E3Y2QwZDA5OTQzOWNhNDNhNDY3IiwidGFnIjoiIn0%3D; expires=Fri, 14 Nov 2025 13:57:18 GMT; Max-Age=7200; path=/; samesite=lax; laravel_session=eyJpdiI6Ik44cHh3SWdQd1JabmJoZUhiNkwvK3c9PSIsInZhbHVlIjoib09oK2FETm8vNCtHTGoxcGtGQTlXa1BNNEx4b3FNRkhaNTdiQ0JybFNQWXovS25pWHhFVnhzUVNUSlR0NHZPS1VUWHA2NkJtMUhwODR4VXVoOWZpcHNwenlxY0MxRDdqbzhXMGVreS9mNjgzVzJyL3FwZTBlUUI0WVRtV3NlaVMiLCJtYWMiOiI3NzgzODk0ZTQ1ODcyNDU4YmNiOGFjOWY0ZjI2OGNlMjkzMTQ1NTZkMjkxMzQyN2M0YmMwNWU5YmY3ZDc4MTE5IiwidGFnIjoiIn0%3D; expires=Fri, 14 Nov 2025 13:57:18 GMT; Max-Age=7200; path=/; httponly; samesite=lax'
+        description: null
+    responseFields:
+      view:
+        custom: []
+        name: view
+        description: 'The HTML of the token verification page.'
+        required: false
+        example: null
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
     auth: []
     controller: null
     method: null
@@ -73,21 +87,27 @@ endpoints:
     custom: []
     httpMethods:
       - POST
-    uri: admin/hospitals/approvals/verify
+    uri: login/token
     metadata:
       custom: []
-      groupName: 'Facility Approval Tracking - Facility Verification'
+      groupName: Authentication
       groupDescription: |-
 
-        This controller handles all verification-related workflows for health facility approval.
-        It allows authorized users to view pending verification requests, approve or reject facility requests,
-        recall verifications, and track verification actions.
+        Token-based Login Flow
 
-        All actions are logged and tied to user permissions (State and LGA level).
+        These endpoints handle the second step of a two-factor login flow.
+        After submitting username/password, the system sends a token to the user
+        and stores temporary login details in the session. The user must validate
+        the token here before being logged in.
       subgroup: ''
       subgroupDescription: ''
-      title: 'Approve or reject a verification request.'
-      description: ''
+      title: 'Verify the submitted token and complete login.'
+      description: |-
+        Validates the token submitted by the user against the token stored in the session.
+        If the token has expired, or does not match, the user is redirected back with an error.
+
+        Upon successful validation, the system logs the user in using the stored user ID
+        and clears the token session data, then redirects to `/administrator`.
       authenticated: false
       deprecated: false
     headers:
@@ -98,99 +118,11 @@ endpoints:
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
-      id:
+      token:
         custom: []
-        name: id
-        description: 'The ID of the hospital request.'
+        name: token
+        description: 'The token sent to the user.'
         required: true
-        example: 123
-        type: integer
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-      action:
-        custom: []
-        name: action
-        description: 'The action to take: "approve" or "reject".'
-        required: true
-        example: '"approve"'
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-      requested_action:
-        custom: []
-        name: requested_action
-        description: 'The type of request: "CREATE FACILITY", "UPDATE FACILITY", "DELETE FACILITY".'
-        required: true
-        example: '"CREATE FACILITY"'
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-      notes:
-        custom: []
-        name: notes
-        description: 'optional Notes for verification.'
-        required: false
-        example: '"Checked all details."'
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-      validated_by:
-        custom: []
-        name: validated_by
-        description: 'optional The user ID of the validator.'
-        required: false
-        example: 16
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      validated_at:
-        custom: []
-        name: validated_at
-        description: 'optional The timestamp of validation. Format: Y-m-d H:i:s'
-        required: false
-        example: architecto
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      published_by:
-        custom: []
-        name: published_by
-        description: 'optional The user ID of the publisher.'
-        required: false
-        example: 16
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      published_at:
-        custom: []
-        name: published_at
-        description: 'optional The timestamp of publishing. Format: Y-m-d H:i:s'
-        required: false
-        example: architecto
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      publish_note:
-        custom: []
-        name: publish_note
-        description: 'optional Notes for publishing.'
-        required: false
         example: architecto
         type: string
         enumValues: []
@@ -198,120 +130,24 @@ endpoints:
         nullable: false
         deprecated: false
     cleanBodyParameters:
-      id: 123
-      action: '"approve"'
-      requested_action: '"CREATE FACILITY"'
-      notes: '"Checked all details."'
-      validated_by: 16
-      validated_at: architecto
-      published_by: 16
-      published_at: architecto
-      publish_note: architecto
+      token: architecto
     fileParameters: []
     responses:
       -
         custom: []
-        status: 200
+        status: 302
         content: |-
           {
-            "message": "Facility Creation Verified",
-            "hospital_id": 123,
-            "status_id": 2
+            "redirect": "/administrator"
           }
         headers: []
         description: ''
       -
         custom: []
-        status: 500
+        status: 302
         content: |-
           {
-            "error": "Exception message"
-          }
-        headers: []
-        description: ''
-    responseFields: []
-    auth: []
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - GET
-    uri: admin/hospitals/approvals/verify/show
-    metadata:
-      custom: []
-      groupName: 'Facility Approval Tracking - Facility Verification'
-      groupDescription: |-
-
-        This controller handles all verification-related workflows for health facility approval.
-        It allows authorized users to view pending verification requests, approve or reject facility requests,
-        recall verifications, and track verification actions.
-
-        All actions are logged and tied to user permissions (State and LGA level).
-      subgroup: ''
-      subgroupDescription: ''
-      title: 'Search verification requests by action and status.'
-      description: ''
-      authenticated: false
-      deprecated: false
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters: []
-    cleanUrlParameters: []
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters:
-      action:
-        custom: []
-        name: action
-        description: 'The action keyword to search for.'
-        required: true
-        example: '"CREATE FACILITY"'
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-      status:
-        custom: []
-        name: status
-        description: 'The verification status to filter by.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-    cleanBodyParameters:
-      action: '"CREATE FACILITY"'
-      status: 1
-    fileParameters: []
-    responses:
-      -
-        custom: []
-        status: 200
-        content: |-
-          {
-            "data": [
-              {
-                "id": 124,
-                "state": "Lagos",
-                "lga": "Ikeja",
-                "ward": "Ward 2",
-                "facility_type_name": "Primary Health Centre",
-                "facility_level_name": "Primary",
-                "ownership": "Private",
-                "requested_by_firstname": "Jane",
-                "requested_by_lastname": "Smith",
-                "requested_email": "jane@example.com",
-                "requested_mobile": "08087654321",
-                "status_id": 8,
-                "updated_at": "2025-11-13 16:30:00"
-              }
-            ]
+            "error": "Invalid token or token expired"
           }
         headers: []
         description: ''

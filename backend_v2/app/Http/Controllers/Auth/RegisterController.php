@@ -10,16 +10,30 @@ use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Register Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles the registration of new users as well as their
-    | validation and creation. By default this controller uses a trait to
-    | provide this functionality without requiring any additional code.
-    |
-    */
+/**
+ * @group Authentication
+ *
+ * User Registration
+ *
+ * This endpoint allows users to create an account. The registration logic is
+ * handled by Laravel's built-in `RegistersUsers` trait.
+ *
+ * @unauthenticated
+ *
+ * @bodyParam name string required Full name of the user.
+ * @bodyParam email string required Unique email address.
+ * @bodyParam password string required Minimum 8 characters.
+ * @bodyParam password_confirmation string required Must match password.
+ *
+ * @response 201 {
+ *   "message": "Registration successful",
+ *   "user": {
+ *     "id": 1,
+ *     "name": "John Doe",
+ *     "email": "john@example.com"
+ *   }
+ * }
+ */
 
     use RegistersUsers;
 

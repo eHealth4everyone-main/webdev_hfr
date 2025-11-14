@@ -1,52 +1,38 @@
-name: 'Facility Approval Tracking'
+name: 'Facility Approval Tracking - Publication'
 description: |-
 
-  This controller manages the tracking and filtering of facility approval requests.
-  It provides endpoints for viewing pending, validated, and published facility changes.
+  Endpoints for managing the publication process of health facility data.
 
-  These endpoints are primarily used by administrators and state-level officers
-  to monitor the approval workflow of health facility data.
+  These endpoints handle reviewing, approving, rejecting, and finalizing
+  facility publication requests, as well as syncing with DHIS2 where enabled.
 endpoints:
   -
     custom: []
     httpMethods:
       - GET
-    uri: admin/hospitals/approvals/approval-tracking
+    uri: admin/hospitals/approvals/publish
     metadata:
       custom: []
-      groupName: 'Facility Approval Tracking'
+      groupName: 'Facility Approval Tracking - Publication'
       groupDescription: |-
 
-        This controller manages the tracking and filtering of facility approval requests.
-        It provides endpoints for viewing pending, validated, and published facility changes.
+        Endpoints for managing the publication process of health facility data.
 
-        These endpoints are primarily used by administrators and state-level officers
-        to monitor the approval workflow of health facility data.
-      subgroup: ''
+        These endpoints handle reviewing, approving, rejecting, and finalizing
+        facility publication requests, as well as syncing with DHIS2 where enabled.
+      subgroup: |-
+        Facility Publication Requests
+        This subgroup contains endpoints that manage pending, approved, and rejected publication requests.
       subgroupDescription: ''
-      title: 'Display all pending facility approval requests.'
-      description: |-
-        Retrieves a list of facilities currently awaiting verification or approval.
-        The results include facility details such as name, type, ownership, state, and status.
+      title: 'Display the list of facilities pending publication.'
+      description: 'Retrieves all facilities whose publication requests are awaiting approval.'
       authenticated: false
       deprecated: false
     headers:
       Content-Type: application/json
       Accept: application/json
-    urlParameters:
-      none:
-        custom: []
-        name: none
-        description: 'No parameters required.'
-        required: false
-        example: architecto
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      none: architecto
+    urlParameters: []
+    cleanUrlParameters: []
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters: []
@@ -56,24 +42,109 @@ endpoints:
       -
         custom: []
         status: 200
-        content: |-
-          {
-            "message": "15 pending verifications",
-            "data": [
-               {
-                  "facility_name": "General Hospital Kano",
-                  "state": "Kano",
-                  "lga": "Kumbotso",
-                  "ownership": "Public",
-                  "facility_level": "Secondary",
-                  "requested_by_firstname": "John",
-                  "requested_by_lastname": "Doe",
-                  "updated_at": "2025-11-12T10:00:00Z"
-               }
-            ]
-          }
+        content: 'View showing list of pending facilities ready for publication.'
         headers: []
-        description: ''
+        description: success
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: admin/hospitals/approvals/publish
+    metadata:
+      custom: []
+      groupName: 'Facility Approval Tracking - Publication'
+      groupDescription: |-
+
+        Endpoints for managing the publication process of health facility data.
+
+        These endpoints handle reviewing, approving, rejecting, and finalizing
+        facility publication requests, as well as syncing with DHIS2 where enabled.
+      subgroup: |-
+        Facility Publication Requests
+        This subgroup contains endpoints that manage pending, approved, and rejected publication requests.
+      subgroupDescription: ''
+      title: 'Approve or reject a facility publication request.'
+      description: |-
+        Publishes or rejects facility creation, update, or deletion requests.
+        When integration is enabled, synchronizes facility data with DHIS2.
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      id:
+        custom: []
+        name: id
+        description: 'The facility history ID being processed.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      action:
+        custom: []
+        name: action
+        description: 'Either "approve" or "reject".'
+        required: true
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      requested_action:
+        custom: []
+        name: requested_action
+        description: 'The original request type ("CREATE FACILITY", "UPDATE FACILITY", "DELETE FACILITY").'
+        required: true
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      notes:
+        custom: []
+        name: notes
+        description: 'optional Notes or comments for the approval or rejection.'
+        required: false
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      id: 16
+      action: architecto
+      requested_action: architecto
+      notes: architecto
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: 'Facility publication processed successfully.'
+        headers: []
+        description: success
+      -
+        custom: []
+        status: 500
+        content: 'Internal error during publication process.'
+        headers: []
+        description: error
     responseFields: []
     auth: []
     controller: null
@@ -83,23 +154,26 @@ endpoints:
     custom: []
     httpMethods:
       - GET
-    uri: admin/hospitals/approvals/approval-tracking/show
+    uri: admin/hospitals/approvals/publish/show
     metadata:
       custom: []
-      groupName: 'Facility Approval Tracking'
+      groupName: 'Facility Approval Tracking - Publication'
       groupDescription: |-
 
-        This controller manages the tracking and filtering of facility approval requests.
-        It provides endpoints for viewing pending, validated, and published facility changes.
+        Endpoints for managing the publication process of health facility data.
 
-        These endpoints are primarily used by administrators and state-level officers
-        to monitor the approval workflow of health facility data.
-      subgroup: ''
+        These endpoints handle reviewing, approving, rejecting, and finalizing
+        facility publication requests, as well as syncing with DHIS2 where enabled.
+      subgroup: |-
+        Facility Publication Requests
+        This subgroup contains endpoints that manage pending, approved, and rejected publication requests.
       subgroupDescription: ''
-      title: 'Search for facility approval requests by status, state, and action.'
+      title: 'Search and filter facilities based on their publication status.'
       description: |-
-        Filters facility approvals based on the `approval` type (verification, validation, or publication),
-        and optionally by state or approval action.
+        Allows filtering by state, action type, and publication status:
+         - 1 → Pending publication
+         - 2 → Approved/published
+         - 3 → Rejected publication
       authenticated: false
       deprecated: false
     headers:
@@ -108,14 +182,10 @@ endpoints:
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
-      approval:
+      status:
         custom: []
-        name: approval
-        description: |-
-          Indicates the approval stage:
-           - `1` = pending verifications
-           - `2` = pending validations
-           - any other value = pending publications
+        name: status
+        description: 'The publication status ID (1=pending, 2=published, 3=rejected).'
         required: true
         example: 16
         type: integer
@@ -126,7 +196,7 @@ endpoints:
       state_id:
         custom: []
         name: state_id
-        description: 'optional The ID of the state to filter results by.'
+        description: 'optional The ID of the state to filter by.'
         required: false
         example: 16
         type: integer
@@ -137,7 +207,7 @@ endpoints:
       action:
         custom: []
         name: action
-        description: "optional The type of action to filter by (e.g. 'create', 'update')."
+        description: 'optional The action type (e.g. "approve", "reject").'
         required: false
         example: architecto
         type: string
@@ -146,7 +216,7 @@ endpoints:
         nullable: false
         deprecated: false
     cleanQueryParameters:
-      approval: 16
+      status: 16
       state_id: 16
       action: architecto
     bodyParameters: []
@@ -156,24 +226,9 @@ endpoints:
       -
         custom: []
         status: 200
-        content: |-
-          {
-            "message": "8 pending validations",
-            "data": [
-               {
-                  "facility_name": "Maitama District Hospital",
-                  "state": "FCT",
-                  "lga": "Abuja Municipal",
-                  "ownership": "Private",
-                  "facility_level": "Tertiary",
-                  "requested_by_firstname": "Mary",
-                  "requested_by_lastname": "Smith",
-                  "updated_at": "2025-11-12T09:00:00Z"
-               }
-            ]
-          }
+        content: 'View showing filtered list of facilities.'
         headers: []
-        description: ''
+        description: success
     responseFields: []
     auth: []
     controller: null

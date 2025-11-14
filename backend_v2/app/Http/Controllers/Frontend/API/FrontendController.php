@@ -24,8 +24,36 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
+
+/**
+ * @group Public API (Frontend)
+ *
+ * Public-facing API endpoints for the website.
+ *
+ * These endpoints power the frontend app and provide public data such as
+ * sliders, process information, facility metadata, states, LGAs, wards,
+ * ownership categories, and other lookup lists.
+ */
 class FrontendController extends Controller
 {
+
+    /**
+     * Get homepage slider content.
+     *
+     * Returns all slider images/text used on the frontend homepage banner.
+     *
+     * @response 200 {
+     *   "success": true,
+     *   "data": [
+     *     {
+     *       "id": 1,
+     *       "title": "Welcome",
+     *       "status": "",
+     *       "image_url": "banner1.jpg"
+     *     }
+     *   ]
+     * }
+     */
     public function slider(): JsonResponse
     {
         $sliders = Slider::all();
@@ -35,6 +63,22 @@ class FrontendController extends Controller
         ], 200);
     }
 
+
+    /**
+     * Get process items.
+     *
+     * Returns the list of process steps displayed on the frontend process section.
+     *
+     * @response 200 {
+     *   "success": true,
+     *   "data": [
+     *     {
+     *       "id": 1,
+     *       "title": "Step 1"
+     *     }
+     *   ]
+     * }
+     */
     public function processItem(): JsonResponse
     {
         $processItems = ProcessItem::all();
@@ -45,6 +89,22 @@ class FrontendController extends Controller
     }
 
 
+
+     /**
+     * Get the origin section content.
+     *
+     * Returns the textual/visual content displayed under the “Origin” section
+     * of the website frontend.
+     *
+     * @response 200 {
+     *   "success": true,
+     *   "data": {
+     *     "id": 1,
+     *     "title": "Where it all started",
+     *     "content": "..."
+     *   }
+     * }
+     */
     public function origin(): JsonResponse
     {
         $origin = Origin::where('id', 1)->first();
@@ -55,6 +115,21 @@ class FrontendController extends Controller
     }
 
 
+    /**
+     * Get the process section content.
+     *
+     * Returns the main "Our Process" text or visual content shown on the
+     * frontend website.
+     *
+     * @response 200 {
+     *   "success": true,
+     *   "data": {
+     *     "id": 1,
+     *      "title": "...",
+     *     "content": "Process description..."
+     *   }
+     * }
+     */
     public function process(): JsonResponse
     {
         $process = Process::where('id', 1)->first();
@@ -65,6 +140,18 @@ class FrontendController extends Controller
     }
 
 
+    /**
+     * Get list of facility types.
+     *
+     * Returns all available facility types (e.g. Hospital, Clinic, Pharmacy).
+     *
+     * @response 200 {
+     *   "success": true,
+     *   "data": [
+     *     { "id": 1, "name": "Hospital", "created_at":"...","updated_at":"..." }
+     *   ]
+     * }
+     */
     public function facilityType(): JsonResponse
     {
         $results = DB::table('lst_facility_types')
@@ -77,6 +164,19 @@ class FrontendController extends Controller
         ], 200);
     }
 
+
+    /**
+     * Get list of facility levels.
+     *
+     * Returns the different levels of care (e.g. Primary, Secondary).
+     *
+     * @response 200 {
+     *   "success": true,
+     *   "data": [
+     *    { "id": 1, "name": "Primary" }
+     *   ]
+     * }
+     */
     public function facilityLevel(): JsonResponse
     {
         $results = DB::table('lst_level_of_care')
@@ -88,6 +188,19 @@ class FrontendController extends Controller
         ], 200);
     }
 
+
+     /**
+     * Get list of states.
+     *
+     * Returns all states available in the system.
+     *
+     * @response 200 {
+     *   "success": true,
+     *   "data": [
+     *     { "id": 1, "name": "Lagos"}
+     *   ]
+     * }
+     */
     public function states(): JsonResponse
     {
         $results =  DB::table('ou_states')
@@ -101,6 +214,21 @@ class FrontendController extends Controller
         ], 200);
     }
 
+
+      /**
+     * Get LGAs by State ID.
+     *
+     * Returns all Local Government Areas (LGAs) for a given state.
+     *
+     * @bodyParam state_id integer required The ID of the state.
+     *
+     * @response 200 {
+     *   "success": true,
+     *   "data": [
+     *     { "id": 101, "name": "Ikeja" }
+     *   ]
+     * }
+     */
     public function getLgaListByStateId(Request $request): JsonResponse
     {
         // \Log::info($request);
@@ -116,6 +244,21 @@ class FrontendController extends Controller
         ], 200);
     }
 
+
+     /**
+     * Get wards by LGA ID.
+     *
+     * Returns all wards under the specified LGA.
+     *
+     * @bodyParam lga_id integer required The ID of the LGA.
+     *
+     * @response 200 {
+     *   "success": true,
+     *   "data": [
+     *     { "id": 5001, "name": "Ward A" }
+     *   ]
+     * }
+     */
     public function getWardListByLGA(Request $request): JsonResponse
     {
         // \Log::info($request);
@@ -132,6 +275,19 @@ class FrontendController extends Controller
     }
 
 
+
+    /**
+     * Get facility ownership categories.
+     *
+     * Returns all ownership categories such as Public, Private, Mission, etc.
+     *
+     * @response 200 {
+     *   "success": true,
+     *   "data": [
+     *     { "id": 1, "name": "Public" }
+     *   ]
+     * }
+     */
     public function getOwnership(Request $request): JsonResponse
     {
         $results = DB::table('lst_ownerships')
@@ -144,6 +300,21 @@ class FrontendController extends Controller
         ], 200);
     }
 
+
+     /**
+     * Get ownership types by ownership category.
+     *
+     * Returns all ownership types based on the selected ownership category.
+     *
+     * @bodyParam ownership_id integer required The ID of the ownership category.
+     *
+     * @response 200 {
+     *   "success": true,
+     *   "data": [
+     *     { "id": 3, "type": "Private For-Profit" }
+     *   ]
+     * }
+     */
     public function getOwnershipType(Request $request): JsonResponse
     {
         $results =  DB::table('lst_ownership_types')
@@ -159,6 +330,20 @@ class FrontendController extends Controller
     }
 
 
+
+        /**
+     * Get operational statuses.
+     *
+     * Returns the list of operational statuses for facilities.
+     *
+     * @response 200 {
+     *   "success": true,
+     *   "data": [
+     *     { "id": 1, "status": "Operational" }
+     *   ]
+     * }
+     */
+
     public function getOperationalStatus(Request $request): JsonResponse
     {
         $results =  DB::table('lst_oparational_status')
@@ -171,6 +356,20 @@ class FrontendController extends Controller
             'data' => $results
         ], 200);
     }
+
+
+        /**
+     * Get registration statuses.
+     *
+     * Returns the possible registration statuses of facilities.
+     *
+     * @response 200 {
+     *   "success": true,
+     *   "data": [
+     *     { "id": 1, "status": "Registered" }
+     *   ]
+     * }
+     */
 
     public function getRegistrationStatus(Request $request): JsonResponse
     {
@@ -185,6 +384,20 @@ class FrontendController extends Controller
         ], 200);
     }
 
+
+    /**
+ * Get all license statuses
+ *
+ * Returns all items from lst_license_status
+ *
+ * @response 200 {
+ *   "success": true,
+ *   "data": [
+ *      {"id": 1, "status": "Active"},
+ *      {"id": 2, "status": "Expired"}
+ *   ]
+ * }
+ */
     public function getLicenseStatus(Request $request): JsonResponse
     {
         $results = DB::table('lst_license_status')
@@ -197,6 +410,20 @@ class FrontendController extends Controller
         ], 200);
     }
 
+
+    /**
+ * Get all hospital service categories
+ *
+ * Returns all items from lst_hosp_service_category
+ *
+ * @response 200 {
+ *   "success": true,
+ *   "data": [
+ *      {"id": 1, "name": "Outpatient"},
+ *      {"id": 2, "name": "Inpatient"}
+ *   ]
+ * }
+ */
     public function getServiceCategory(Request $request): JsonResponse
     {
         $results = DB::table('lst_hosp_service_category')
@@ -208,6 +435,20 @@ class FrontendController extends Controller
         ], 200);
     }
 
+
+    /**
+ * Get services by category
+ *
+ * @queryParam service_category_id int required The ID of the service category.
+ *
+ * @response 200 {
+ *   "success": true,
+ *   "data": [
+ *      {"id": 1, "name": "Cardiology"},
+ *      {"id": 2, "name": "Radiology"}
+ *   ]
+ * }
+ */
     public function getServicesByCategory(Request $request): JsonResponse
     {
         $results =  DB::table('lst_hosp_services')
@@ -223,6 +464,18 @@ class FrontendController extends Controller
     }
 
 
+/**
+ * Get all accreditation statuses
+ *
+ *
+ * @response 200 {
+ *   "success": true,
+ *   "data": [
+ *      {"id": 1, "status": "Accredited"},
+ *      {"id": 2, "status": "Pending"}
+ *   ]
+ * }
+ */
     function getAccreditationStatus()
     {
         $results = DB::table('lst_accreditation_status')
@@ -236,6 +489,29 @@ class FrontendController extends Controller
         ], 200);
     }
 
+
+/**
+ * Search hospitals with filters
+ *
+ * @bodyParam state_id int optional Filter by state ID.
+ * @bodyParam lga_id int optional Filter by LGA ID.
+ * @bodyParam ward_id int optional Filter by ward ID.
+ * @bodyParam facility_name string optional Search by facility name.
+ * @bodyParam geo_codes int optional Geo code filter.
+ * @bodyParam facility_level_id int optional Facility level filter.
+ * @bodyParam ownership_id int optional Ownership filter.
+ * @bodyParam ownership_type_id int optional Ownership type filter.
+ * @bodyParam operational_status_id int optional Operational status filter.
+ * @bodyParam registration_status_id int optional Registration status filter.
+ * @bodyParam license_status_id int optional License status filter.
+ * @bodyParam service_type int optional 1=Outpatient, 2=Inpatient.
+ * @bodyParam services array optional List of service IDs.
+ *
+ * @response 200 {
+ *   "success": true,
+ *   "data": { ...paginated hospital results... }
+ * }
+ */
     public function searchHospitals(Request $request)
     {
         \Log::info($request);
@@ -407,6 +683,22 @@ class FrontendController extends Controller
     }
 
 
+/**
+ * Get facilities by LGA with summary data
+ *
+ * @bodyParam state_code string required Short code of the state.
+ *
+ * @response 200 {
+ *   "success": true,
+ *   "data": {
+ *      "state": "Lagos",
+ *      "facilities": [...],
+ *      "by_ownership": [...],
+ *      "by_level": [...],
+ *      "geo_codes": [...]
+ *   }
+ * }
+ */
     public function getFacilitesByLGA(Request $request)
     {
         $total_facilities_lga = DB::select("SELECT l.map_code LGA_UID,count(h.id) value
@@ -452,6 +744,19 @@ class FrontendController extends Controller
     }
 
 
+/**
+ * Get facilities within an LGA for Google Maps
+ *
+ * @bodyParam lga_code string required Map code of the LGA.
+ *
+ * @response 200 {
+ *   "success": true,
+ *   "data": {
+ *      "lga_name": "Ikeja",
+ *      "facilities_list": [...]
+ *   }
+ * }
+ */
     public function getFacilitesGMap(Request $request)
     {
         //get lga id and name
@@ -484,6 +789,25 @@ class FrontendController extends Controller
     }
 
 
+
+/**
+ * Search pharmacies with filters
+ *
+ * @bodyParam state_id int optional Filter by state ID.
+ * @bodyParam lga_id int optional Filter by LGA ID.
+ * @bodyParam ward_id int optional Filter by ward ID.
+ * @bodyParam facility_name string optional Search by facility name.
+ * @bodyParam geo_codes int optional Geo code filter.
+ * @bodyParam ownership_id int optional Ownership filter.
+ * @bodyParam operational_status_id int optional Operational status filter.
+ * @bodyParam registration_status_id int optional Registration status filter.
+ * @bodyParam license_status_id int optional License status filter.
+ *
+ * @response 200 {
+ *   "success": true,
+ *   "data": { ...paginated pharmacy results... }
+ * }
+ */
     public function searchPharmacy(Request $request)
     {
         $state_id = $request->state_id;
@@ -588,6 +912,26 @@ class FrontendController extends Controller
     }
 
 
+/**
+ * Search laboratories with filters
+ *
+ * @bodyParam state_id int optional Filter by state ID.
+ * @bodyParam lga_id int optional Filter by LGA ID.
+ * @bodyParam ward_id int optional Filter by ward ID.
+ * @bodyParam facility_name string optional Search by facility name.
+ * @bodyParam facility_level_id int optional Filter by facility level.
+ * @bodyParam ownership_id int optional Ownership filter.
+ * @bodyParam operational_status_id int optional Operational status filter.
+ * @bodyParam registration_status_id int optional Registration status filter.
+ * @bodyParam license_status_id int optional License status filter.
+ * @bodyParam accreditation_status_id int optional Accreditation status filter.
+ * @bodyParam geo_codes int optional Geo code filter.
+ *
+ * @response 200 {
+ *   "success": true,
+ *   "data": { ...paginated lab results... }
+ * }
+ */
     public function searchLab(Request $request)
     {
         $state_id = $request->state_id;
@@ -706,6 +1050,37 @@ class FrontendController extends Controller
     }
 
 
+/**
+ * Search Imaging Facilities
+ *
+ *
+ * @bodyParam state_id int The ID of the state. Example: 1
+ * @bodyParam lga_id int The ID of the local government area. Example: 5
+ * @bodyParam ward_id int The ID of the ward. Example: 2
+ * @bodyParam facility_name string Facility name to search. Example: "General Hospital"
+ * @bodyParam ownership_id int Ownership type ID. Example: 1
+ * @bodyParam operational_status_id int Operational status ID. Example: 2
+ * @bodyParam registration_status_id int Registration status ID. Example: 1
+ * @bodyParam license_status_id int License status ID. Example: 1
+ * @bodyParam geo_codes int Geo code filter: 0, 1, 2. Example: 0
+ *
+ * @response 200 {
+ *   "success": true,
+ *   "data": {
+ *      "facilities": [...],
+ *      "state_id": 1,
+ *      "lga_id": 5,
+ *      "ward_id": 2,
+ *      "facility_name": "General Hospital",
+ *      "geo_codes": 0,
+ *      "ownership_id": 1,
+ *      "operational_status_id": 2,
+ *      "registration_status_id": 1,
+ *      "license_status_id": 1,
+ *      "searched": 1
+ *   }
+ * }
+ */
     public function searchImaging(Request $request)
     {
         $state_id = $request->state_id;
@@ -801,7 +1176,25 @@ class FrontendController extends Controller
     }
 
 
-
+/**
+ * Save Download User Records
+ *
+ *
+ * @bodyParam firstname string required User's first name. Example: "John"
+ * @bodyParam lastname string required User's last name. Example: "Doe"
+ * @bodyParam organisation string User's organisation. Example: "Health Org"
+ * @bodyParam country string required User's country. Example: "Nigeria"
+ * @bodyParam designation string required User's designation. Example: "Researcher"
+ * @bodyParam purpose string required Purpose of download. Example: "Research"
+ * @bodyParam email string required User's email. Example: "john@example.com"
+ * @bodyParam captchaToken string required Google reCAPTCHA token
+ *
+ * @response 201 {
+ *   "success": true,
+ *   "message": "Download request saved. Verification email sent.",
+ *   "data": { ... }
+ * }
+ */
     public function saveDownloadUserRecords(Request $request)
     {
         // Validate request input
@@ -921,6 +1314,16 @@ class FrontendController extends Controller
 
 
 
+    /**
+ * Resource Index
+ *
+ *
+ * @response 201 {
+ *   "success": true,
+ *   "message": "Download request saved. Verification email sent.",
+ *   "data": [...]
+ * }
+ */
     public function resource_index()
     {
         $resources = Resource::all();
@@ -1017,6 +1420,22 @@ class FrontendController extends Controller
     }
 
 
+
+/**
+ * Get Facility Updates (Improved)
+ *
+ *
+ * @bodyParam report int Report type. Example: 1
+ *
+ * @response 200 {
+ *   "success": true,
+ *   "message": "Report generated successfully.",
+ *   "data": {
+ *       "facilities": [...],
+ *       "report": "5 Facilities were created this Month"
+ *   }
+ * }
+ */
     public function getUpdates(Request $request)
     {
         $data = []; // Initialize $data to prevent "Undefined variable" error
@@ -1473,6 +1892,20 @@ class FrontendController extends Controller
         ], 200);
     }
 
+
+/**
+ * Search Hospitals (Latest Version)
+ *
+ *
+ * @bodyParam facility_level_id int Facility level. Example: 2
+ * @bodyParam facility_type_id int Facility type. Example: 3
+ * @bodyParam facility_name string Facility name search. Example: "General Hospital"
+ *
+ * @response 200 {
+ *   "success": true,
+ *   "data": { ... }
+ * }
+ */
     public function searchHospitals3(Request $request)
     {
 
@@ -1547,6 +1980,20 @@ class FrontendController extends Controller
         ], 200);
     }
 
+
+/**
+ * Get Hospital Detail
+ *
+ *
+ * @urlParam facilityId int Required ID of the facility. Example: 123
+ *
+ * @response 200 {
+ *   "success": true,
+ *   "data": {
+ *       "hospital": { ... }
+ *   }
+ * }
+ */
     public function HospitalDetail(Request $request, $facilityId)
     {
         // \Log::info($facilityId);

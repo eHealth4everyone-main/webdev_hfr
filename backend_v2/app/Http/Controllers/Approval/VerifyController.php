@@ -476,7 +476,6 @@ class VerifyController extends Controller
     /**
      * Recall a previously verified request.
      *
-     * @group Verification
      *
      * @bodyParam hosp_id integer required The ID of the hospital request to recall. Example: 123
      * @bodyParam action string required The action type of the request: "CREATE FACILITY", "UPDATE FACILITY", "DELETE FACILITY". Example: "CREATE FACILITY"
