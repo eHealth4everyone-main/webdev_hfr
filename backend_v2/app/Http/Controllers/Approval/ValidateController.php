@@ -169,7 +169,83 @@ class ValidateController extends Controller
      *   ]
      * }
      */
-    public function search(Request $request)
+
+public function search(Request $request)
+{
+    // Base query with all necessary joins
+    $baseQuery = DB::table('hospital_details_history')
+        ->join('ou_states', 'hospital_details_history.state_id', '=', 'ou_states.id')
+        ->join('ou_lgas', 'hospital_details_history.lga_id', '=', 'ou_lgas.id')
+        ->join('users', 'hospital_details_history.requested_by', '=', 'users.id')
+        ->join('ou_wards', 'hospital_details_history.ward_id', '=', 'ou_wards.id')
+        ->join('lst_facility_types', 'hospital_details_history.facility_type_id', '=', 'lst_facility_types.id')
+        ->join('lst_ownerships', 'hospital_details_history.ownership_id', '=', 'lst_ownerships.id')
+        ->join('lst_ownership_types', 'hospital_details_history.ownership_type_id', '=', 'lst_ownership_types.id')
+        ->join('lst_level_of_care', 'hospital_details_history.facility_level_id', '=', 'lst_level_of_care.id')
+        ->leftJoin('lst_level_of_care_options', 'hospital_details_history.facility_level_option_id', '=', 'lst_level_of_care_options.id')
+        ->join('lst_oparational_status', 'hospital_details_history.operational_status_id', '=', 'lst_oparational_status.id')
+        ->leftJoin('lst_registration_status', 'hospital_details_history.registration_status_id', '=', 'lst_registration_status.id')
+        ->leftJoin('lst_license_status', 'hospital_details_history.license_status_id', '=', 'lst_license_status.id')
+        ->select(
+            'hospital_details_history.*',
+            'ou_states.name as state',
+            'ou_lgas.name as lga',
+            'ou_wards.name as ward',
+            'lst_facility_types.name as facility_type_name',
+            'lst_level_of_care.name as facility_level_name',
+            'lst_ownerships.name as ownership',
+            'lst_ownership_types.type as ownership_type',
+            'lst_level_of_care.name as facility_level',
+            'lst_level_of_care_options.description as facility_level_option',
+            'lst_oparational_status.status as operation_status',
+            'lst_registration_status.status as registration_status',
+            'lst_license_status.status as license_status',
+            'users.lastname as requested_by_lastname',
+            'users.firstname as requested_by_firstname',
+            'users.email as requested_email',
+            'users.mobile as requested_mobile'
+        );
+
+    if ($request->status == 1) {
+        if (auth()->user()->hasAnyPermission(['lga_1000'])) {
+            $pending = (clone $baseQuery)
+                ->where('hospital_details_history.state_id', '=', Auth::user()->state_id)
+                ->where('hospital_details_history.action', 'like', '%' . $request->action . '%')
+                ->whereIn('hospital_details_history.status_id', [2, 7, 9, 14, 16, 21])
+                ->get();
+        } else {
+            $pending = (clone $baseQuery)
+                ->where('hospital_details_history.state_id', '=', Auth::user()->state_id)
+                ->where('hospital_details_history.action', 'like', '%' . $request->action . '%')
+                ->whereIn('hospital_details_history.lga_id', auth()->user()->getDirectPermissions()->pluck('id')->toArray())
+                ->whereIn('hospital_details_history.status_id', [2, 7, 9, 14, 16, 21])
+                ->get();
+        }
+    } elseif ($request->status == 2) {
+        $pending = (clone $baseQuery)
+            ->where('hospital_details_history.validated_by', '=', Auth::user()->id)
+            ->where('hospital_details_history.action', 'like', '%' . $request->action . '%')
+            ->whereIn('hospital_details_history.status_id', [4, 11, 18])
+            ->get();
+    } elseif ($request->status == 3) {
+        $pending = (clone $baseQuery)
+            ->where('hospital_details_history.validated_by', '=', Auth::user()->id)
+            ->where('hospital_details_history.action', 'like', '%' . $request->action . '%')
+            ->whereIn('hospital_details_history.status_id', [5, 12, 19])
+            ->get();
+    } else {
+        $pending = (clone $baseQuery)
+            ->where('hospital_details_history.validated_by', '=', Auth::user()->id)
+            ->where('hospital_details_history.action', 'like', '%' . $request->action . '%')
+            ->orderBy('hospital_details_history.updated_at', 'desc')
+            ->get();
+    }
+
+    $request->flash('request', $request);
+    return view('approvals.pending_validation', compact('pending'));
+}
+
+    public function searchOld(Request $request)
     {
         if ($request->status == 1) {
             if (auth()->user()->hasAnyPermission(['lga_1000'])) {
