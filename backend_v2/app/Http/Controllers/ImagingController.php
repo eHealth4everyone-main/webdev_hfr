@@ -8,6 +8,18 @@ use App\Models\HospitalHistory;
 use App\Models\Imaging;
 use Illuminate\Support\Facades\Log;
 
+
+/**
+ * @group Administration Imaging
+ *
+ * Endpoints for listing, creating, updating, deleting,
+ * viewing and searching imaging diagnostic facilities.
+ *
+ * Note:
+ * - Most endpoints return Blade views.
+ * - Some endpoints return HTML fragments.
+ * - JSON is returned only for exceptions and missing records.
+ */
 class ImagingController extends Controller
 {
 

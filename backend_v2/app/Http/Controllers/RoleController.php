@@ -9,9 +9,27 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\DB;
 use App\Models\HospitalHistory;
 
+
+/**
+  * Role Management Controller
+  * @group Administration - Roles
+  *
+  * Handles CRUD operations for roles and permission assignments.
+  *
+  * @authenticated
+  */
 class RoleController extends Controller
 {
 
+
+/**
+     * List Roles
+     *
+     * Displays a list of all roles with their permissions.
+     *
+     * @authenticated
+     * @response 200 view HTML
+     */
     public function index()
     {
         $roles = Role::get();
@@ -20,11 +38,34 @@ class RoleController extends Controller
         return view("roles.index", compact("roles", "permissions"));
     }
 
+
+/**
+     * Show Create Role Form
+     *
+     * Displays a form for creating a new role.
+     *
+     * @authenticated
+     * @response 200 view HTML
+     */
     public function create()
     {
         return view("roles.create");
     }
 
+
+
+/**
+     * Store Role
+     *
+     * Stores a new role in the system along with assigned permissions.
+     *
+     * @authenticated
+     * @bodyParam name string required Role name. Example: Admin
+     * @bodyParam description string required Role description. Example: Administrator role
+     * @bodyParam permissions array required Array of permission IDs to assign. Example: [1, 2, 3]
+     * @bodyParam roles_below array optional IDs of roles below this role. Example: [2, 4]
+     * @response 302 Redirect to roles.index with success message
+     */
     public function store(Request $request)
     {
         $request->validate([
@@ -81,6 +122,15 @@ class RoleController extends Controller
 
 
 
+/**
+     * Show Edit Role Form
+     *
+     * Displays a form for editing an existing role.
+     *
+     * @authenticated
+     * @urlParam id int required Role ID. Example: 1
+     * @response 200 view HTML
+     */
     public function edit($id)
     {
         $roles = Role::where('id', $id)->get();
@@ -100,6 +150,20 @@ class RoleController extends Controller
     }
 
 
+
+ /**
+     * Update Role
+     *
+     * Updates an existing role's information and permissions.
+     *
+     * @authenticated
+     * @bodyParam id int required Role ID. Example: 1
+     * @bodyParam name string required Role name. Example: Manager
+     * @bodyParam description string required Role description. Example: Manager role
+     * @bodyParam permissions array required Array of permission IDs. Example: [1, 2, 3]
+     * @bodyParam roles_below array optional IDs of roles below this role. Example: [2, 4]
+     * @response 302 Redirect to roles.index with success message
+     */
     public function update(Request $request)
     {
         $request->validate([

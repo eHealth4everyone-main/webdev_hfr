@@ -6,8 +6,79 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 
+
+/**
+ * @group Statistics
+ *
+ * APIs for accessing aggregated statistics and analytics about healthcare facilities.
+ * Provides summary counts, breakdowns by ownership, facility level, and geographic distribution.
+ * Data is cached for 30 minutes to improve performance. No authentication required.
+ */
 class SummaryTablesController extends Controller
 {
+
+
+      /**
+     * Display National Statistics Dashboard
+     *
+     * Shows comprehensive national-level statistics for all facility types (hospitals, laboratories, 
+     * pharmacies, imaging centers). Includes breakdowns by ownership, facility level, and state.
+     * Data is cached for 30 minutes for optimal performance.
+     * This endpoint is publicly accessible without authentication.
+     *
+     * @response 200 scenario="Success" {
+     *   "view": "public.statistics",
+     *   "total_num_fac": [450, 180, 280, 120],
+     *   "levels_by_state": [
+     *     {
+     *       "state": "FCT",
+     *       "primary": 25,
+     *       "secondary": 35,
+     *       "tertiary": 15,
+     *       "total": 75
+     *     },
+     *     {
+     *       "state": "Lagos",
+     *       "primary": 45,
+     *       "secondary": 55,
+     *       "tertiary": 25,
+     *       "total": 125
+     *     }
+     *   ],
+     *   "ownerships_by_state": [
+     *     {
+     *       "state": "FCT",
+     *       "public": 50,
+     *       "private": 20,
+     *       "faith_based": 5,
+     *       "total": 75
+     *     }
+     *   ],
+     *   "levels_ownership_by_state": [
+     *     {
+     *       "state": "FCT",
+     *       "public_primary": 15,
+     *       "public_secondary": 25,
+     *       "public_tertiary": 10,
+     *       "private_primary": 10,
+     *       "private_secondary": 10,
+     *       "private_tertiary": 5
+     *     }
+     *   ],
+     *   "lst_states": [
+     *     {"id": 1, "name": "Abia"},
+     *     {"id": 2, "name": "Adamawa"}
+     *   ],
+     *   "lst_facility_types": [
+     *     {"id": 1, "name": "Hospital"},
+     *     {"id": 2, "name": "Pharmacy"},
+     *     {"id": 3, "name": "Laboratory"},
+     *     {"id": 4, "name": "Imaging Center"}
+     *   ]
+     * }
+     *
+     * @apiResourceAdditional total_num_fac Array indexed as [0: hospitals, 1: laboratories, 2: pharmacies, 3: imaging centers]
+     */
     public function index(){      
        
         $results = DB::select("SELECT  
@@ -57,6 +128,187 @@ class SummaryTablesController extends Controller
     }
 
 
+
+    /**
+     * Get Filtered Statistics
+     *
+     * Retrieves facility statistics filtered by state and facility type.
+     * Returns different data structures based on facility type:
+     * - Hospitals & Laboratories: Include level and ownership breakdowns
+     * - Pharmacies & Imaging Centers: Include ownership breakdowns only
+     * 
+     * When state_id = 0 (all states), data is aggregated by state.
+     * When specific state is selected, data is broken down by LGA within that state.
+     * This endpoint is publicly accessible without authentication.
+     *
+     * @bodyParam state_id integer required State ID. Use 0 for national/all states aggregation. Example: 1
+     * @bodyParam facility_type_id integer required Facility type: 1 (Hospital), 2 (Pharmacy), 3 (Laboratory), 4 (Imaging Center). Example: 1
+     *
+     * @response 200 scenario="Hospitals - National View" {
+     *   "view": "public.statistics_filtered",
+     *   "total_num_fac": [450, 180, 280, 120],
+     *   "levels_by_lga": [
+     *     {
+     *       "state": "FCT",
+     *       "primary": 25,
+     *       "secondary": 35,
+     *       "tertiary": 15,
+     *       "total": 75
+     *     }
+     *   ],
+     *   "ownerships_by_lga": [
+     *     {
+     *       "state": "FCT",
+     *       "public": 50,
+     *       "private": 20,
+     *       "faith_based": 5,
+     *       "total": 75
+     *     }
+     *   ],
+     *   "levels_ownership_by_lga": [
+     *     {
+     *       "state": "FCT",
+     *       "public_primary": 15,
+     *       "public_secondary": 25,
+     *       "public_tertiary": 10,
+     *       "private_primary": 10,
+     *       "private_secondary": 10,
+     *       "private_tertiary": 5
+     *     }
+     *   ],
+     *   "facility_type_id": 1,
+     *   "state_id": 0
+     * }
+     *
+     * @response 200 scenario="Hospitals - Single State (LGA Breakdown)" {
+     *   "view": "public.statistics_filtered",
+     *   "total_num_fac": [75, 25, 35, 15],
+     *   "levels_by_lga": [
+     *     {
+     *       "lga": "Abuja Municipal",
+     *       "primary": 10,
+     *       "secondary": 15,
+     *       "tertiary": 8,
+     *       "total": 33
+     *     },
+     *     {
+     *       "lga": "Gwagwalada",
+     *       "primary": 15,
+     *       "secondary": 20,
+     *       "tertiary": 7,
+     *       "total": 42
+     *     }
+     *   ],
+     *   "ownerships_by_lga": [
+     *     {
+     *       "lga": "Abuja Municipal",
+     *       "public": 20,
+     *       "private": 10,
+     *       "faith_based": 3,
+     *       "total": 33
+     *     }
+     *   ],
+     *   "levels_ownership_by_lga": [
+     *     {
+     *       "lga": "Abuja Municipal",
+     *       "public_primary": 5,
+     *       "public_secondary": 10,
+     *       "public_tertiary": 5,
+     *       "private_primary": 5,
+     *       "private_secondary": 5,
+     *       "private_tertiary": 3
+     *     }
+     *   ],
+     *   "facility_type_id": 1,
+     *   "state_id": 1
+     * }
+     *
+     * @response 200 scenario="Pharmacies - National View" {
+     *   "view": "public.statistics_filtered2",
+     *   "total_num_fac": [450, 180, 280, 120],
+     *   "ownerships_by_lga": [
+     *     {
+     *       "state": "FCT",
+     *       "public": 15,
+     *       "private": 60,
+     *       "total": 75
+     *     },
+     *     {
+     *       "state": "Lagos",
+     *       "public": 25,
+     *       "private": 120,
+     *       "total": 145
+     *     }
+     *   ],
+     *   "facility_type_id": 2,
+     *   "state_id": 0
+     * }
+     *
+     * @response 200 scenario="Pharmacies - Single State (LGA Breakdown)" {
+     *   "view": "public.statistics_filtered2",
+     *   "total_num_fac": [75, 25, 35, 15],
+     *   "ownerships_by_lga": [
+     *     {
+     *       "lga": "Abuja Municipal",
+     *       "public": 5,
+     *       "private": 20,
+     *       "total": 25
+     *     },
+     *     {
+     *       "lga": "Gwagwalada",
+     *       "public": 10,
+     *       "private": 40,
+     *       "total": 50
+     *     }
+     *   ],
+     *   "facility_type_id": 2,
+     *   "state_id": 1
+     * }
+     *
+     * @response 200 scenario="Laboratories - National View" {
+     *   "view": "public.statistics_filtered",
+     *   "total_num_fac": [450, 180, 280, 120],
+     *   "levels_by_lga": [
+     *     {
+     *       "state": "FCT",
+     *       "basic": 15,
+     *       "intermediate": 8,
+     *       "advanced": 2,
+     *       "total": 25
+     *     }
+     *   ],
+     *   "ownerships_by_lga": [
+     *     {
+     *       "state": "FCT",
+     *       "public": 10,
+     *       "private": 15,
+     *       "total": 25
+     *     }
+     *   ],
+     *   "facility_type_id": 3,
+     *   "state_id": 0
+     * }
+     *
+     * @response 200 scenario="Imaging Centers - Single State" {
+     *   "view": "public.statistics_filtered2",
+     *   "total_num_fac": [75, 25, 35, 15],
+     *   "ownerships_by_lga": [
+     *     {
+     *       "lga": "Abuja Municipal",
+     *       "public": 3,
+     *       "private": 10,
+     *       "total": 13
+     *     }
+     *   ],
+     *   "facility_type_id": 4,
+     *   "state_id": 1
+     * }
+     *
+     * @apiResourceAdditional total_num_fac Array indexed as [0: hospitals, 1: laboratories, 2: pharmacies, 3: imaging centers]. Counts are filtered by selected state_id.
+     * @apiResourceAdditional levels_by_lga Only returned for hospitals (type 1) and laboratories (type 3). Variable name "lga" contains state name when state_id=0, or LGA name when specific state selected.
+     * @apiResourceAdditional ownerships_by_lga Returned for all facility types. Variable name "lga" contains state name when state_id=0, or LGA name when specific state selected.
+     * @apiResourceAdditional levels_ownership_by_lga Only returned for hospitals (type 1). Shows cross-tabulation of levels and ownership types.
+     */
     public function filter(Request $request){
         $state_id = $request->state_id;
         $facility_type_id = $request->facility_type_id;

@@ -10,6 +10,19 @@ use App\Models\Pharmacy;
 use App\Models\HospitalHistory;
 use Illuminate\Support\Facades\Log;
 
+
+
+/**
+ * @group Administration Pharmacy
+ *
+ * Endpoints for listing, creating, updating, viewing,
+ * and searching pharmacy facilities.
+ *
+ * Note:
+ * - Most endpoints return Blade views for the Web UI.
+ * - Some endpoints (e.g., show()) return HTML partials.
+ * - JSON is returned only for error responses.
+ */
 class PharmacyController extends Controller
 {
     public function indexold()
@@ -47,6 +60,20 @@ class PharmacyController extends Controller
         ));
     }
 
+
+     /**
+     * List Pharmacies
+     *
+     * Fetches a paginated list of pharmacies with joined metadata:
+     * - State  
+     * - LGA  
+     * - Ward  
+     * - Ownership  
+     *
+     * Returned in a Blade view for UI browsing.
+     *
+     * @response view pharmacy.index
+     */
     public function index()
     {
         $pharmacies = DB::table('pharmacy_details')
@@ -94,11 +121,39 @@ class PharmacyController extends Controller
     }
 
 
+ /**
+     * Show Create Pharmacy Form
+     *
+     * Displays a form for registering a new pharmacy.
+     *
+     * @response view pharmacy.create
+     */
     public function create()
     {
         return view('pharmacy.create');
     }
 
+
+ /**
+     * Create a Pharmacy Facility
+     *
+     * Validates and stores a new pharmacy record.
+     *
+     * @bodyParam facility_name string required The pharmacy name.
+     * @bodyParam state_id integer required The state ID.
+     * @bodyParam lga_id integer required The LGA ID.
+     * @bodyParam ward_id integer required The ward ID.
+     * @bodyParam ownership_id integer required Ownership ID.
+     * @bodyParam ownership_type_id integer required Ownership type ID.
+     * @bodyParam start_date date Example: 2024-01-01
+     * @bodyParam operational_days array[] Example: ["Mon", "Tue"]
+     *
+     * @response redirect 302 Redirects back with success message.
+     *
+     * @response 500 {
+     *   "error": "Database error message"
+     * }
+     */
     public function store(Request $request)
     {
         $request->validate([
@@ -155,6 +210,23 @@ class PharmacyController extends Controller
         return redirect()->back();
     }
 
+
+ /**
+     * Get Pharmacy Details
+     *
+     * Fetches and returns a detailed HTML partial view of a pharmacy.
+     *
+     * @urlParam id integer required The pharmacy ID.
+     *
+     * @response text/html
+     * <div class="pharmacy-details">
+     *    <!-- Rendered Blade partial -->
+     * </div>
+     *
+     * @response 404 {
+     *   "error": "Pharmacy not found"
+     * }
+     */
     public function show($id)
     {
         $pharmacy = DB::table('pharmacy_details')
@@ -187,12 +259,45 @@ class PharmacyController extends Controller
     }
 
 
+
+ /**
+     * Show Edit Pharmacy Form
+     *
+     * Displays the edit screen for a single pharmacy entry.
+     *
+     * @urlParam id integer required The ID of the pharmacy.
+     *
+     * @response view pharmacy.edit
+     */
     public function edit($id)
     {
         $pharmacy = Pharmacy::findorfail($id);
         return view('pharmacy.edit', compact("pharmacy"));
     }
 
+
+     /**
+     * Update a Pharmacy Facility
+     *
+     * Validates and updates a pharmacy record.
+     *
+     * @urlParam id integer required
+     *
+     * @bodyParam facility_name string required The updated pharmacy name.
+     * @bodyParam state_id integer required
+     * @bodyParam lga_id integer required
+     * @bodyParam ward_id integer required
+     * @bodyParam ownership_id integer required
+     * @bodyParam ownership_type_id integer required
+     * @bodyParam start_date date Example: 2024-01-01
+     * @bodyParam operational_days array[] Example: ["Mon","Tue"]
+     *
+     * @response redirect 302 Redirects back with success message.
+     *
+     * @response 500 {
+     *   "error": "Database error message"
+     * }
+     */
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -246,6 +351,16 @@ class PharmacyController extends Controller
         return redirect()->back();
     }
 
+
+  /**
+     * Delete Pharmacy
+     *
+     * Deletes a pharmacy facility.
+     *
+     * @bodyParam fac_id integer required The pharmacy ID to delete.
+     *
+     * @response redirect 302 Redirects back with a success message.
+     */
     public function destroy(Request $request)
     {
         Pharmacy::destroy($request->fac_id);
@@ -253,6 +368,31 @@ class PharmacyController extends Controller
         return back();
     }
 
+
+ /**
+     * Search Pharmacies
+     *
+     * Performs an advanced search with multiple filters:
+     * - State, LGA, Ward  
+     * - Facility name  
+     * - Geo-code completeness  
+     * - Ownership  
+     * - Operational status  
+     * - Registration status  
+     * - License status  
+     *
+     * Returns paginated results in UI view.
+     *
+     * @queryParam state_id integer Example: 25
+     * @queryParam lga_id integer Example: 108
+     * @queryParam ward_id integer Example: 0
+     * @queryParam facility_name string Example: "Pharm Care"
+     * @queryParam geo_codes integer 0=All, 1=Missing, 2=Present
+     * @queryParam ownership_id integer Example: 2
+     * @queryParam operational_status_id integer Example: 1
+     *
+     * @response view pharmacy.index
+     */
     public function search(Request $request)
     {
         $state_id = $request->state_id;

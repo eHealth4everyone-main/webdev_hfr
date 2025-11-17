@@ -10,19 +10,71 @@ use App\Models\User;
 use App\Mail\SendFeedback;
 use Illuminate\Support\Facades\Mail;
 
+
+/**
+ * @group Administration - Contact
+ *
+ * APIs for handling contact messages and feedback submissions.
+ *
+ * This controller allows users to submit messages via a public contact form
+ * and allows admins to view submitted messages. Emails are sent to admins
+ * with the feedback details.
+ */
 class ContactController extends Controller
 {
+
+    /**
+     * Display the public contact form.
+     *
+     *
+     * @return \Illuminate\View\View
+     */
     public function openContactForm()
     {
         return view('public.contact');
     }
 
+
+     /**
+     * List all contact messages (admin view).
+     *
+     *
+     * @queryParam page integer The page number for pagination. Example: 1
+     *
+     * @return \Illuminate\View\View
+     */
     public function index()
     {
         $message = Contactus::paginate(10);
         return view('messages.index', compact("message"));
     }
 
+
+
+     /**
+     * Store a new contact message and send email to admins.
+     *
+     *
+     * @bodyParam full_name string required Full name of the sender. Example: John Doe
+     * @bodyParam email string required Email address of the sender. Example: john@example.com
+     * @bodyParam subject string required Subject of the message. Example: Feedback
+     * @bodyParam message string required Message content. Example: I love your platform.
+     * @bodyParam g-recaptcha-response string required Google reCAPTCHA token.
+     *
+     * @response 200 {
+     *   "message": "Thanks John Doe for your message/feedback. We will get back to you!"
+     * }
+     *
+     * @response 422 {
+     *   "message": "The given data was invalid.",
+     *   "errors": {
+     *       "email": ["The email must be a valid email address."]
+     *   }
+     * }
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function store(Request $request)
     {
         $request->validate([

@@ -8,6 +8,17 @@ use App\Models\Laboratory;
 use App\Models\HospitalHistory;
 use Illuminate\Support\Facades\Log;
 
+
+/**
+ * @group Administration - Laboratory
+ *
+ * Endpoints for listing, creating, updating, viewing, and searching laboratory facilities.
+ *
+ * Note:
+ * - Most methods return Blade views for the web UI.
+ * - Some endpoints return an HTML partial (e.g., show()).
+ * - API consumers should treat the responses as HTML unless explicitly JSON.
+ */
 class LabController extends Controller
 {
 
@@ -47,6 +58,19 @@ class LabController extends Controller
         ));
     }
 
+
+      /**
+     * List Laboratories
+     *
+     * Fetches a paginated list of laboratory facilities with joined metadata:
+     * - State  
+     * - LGA  
+     * - Ward  
+     * - Ownership  
+     * - Level of Care  
+     *
+     * @response view laboratory.index
+     */
     public function index()
     {
         $labs = DB::table('laboratory_details')
@@ -98,12 +122,36 @@ class LabController extends Controller
     }
 
 
+
+     /**
+     * Show Create Laboratory Form
+     *
+     * Displays a form for creating a new laboratory facility.
+     *
+     * @response view laboratory.create
+     */
     public function create()
     {
         return view('laboratory.create');
     }
 
 
+
+/**
+     * Create a Laboratory Facility
+     *
+     * Validates and saves a new laboratory record.
+     *
+     * @bodyParam facility_name string required The facility name.
+     * @bodyParam state_id integer required The state ID.
+     * @bodyParam lga_id integer required The LGA ID.
+     * @bodyParam ward_id integer required The ward ID.
+     * @bodyParam facility_level_id integer required Level of care ID.
+     * @bodyParam ownership_id integer required Ownership ID.
+     * @bodyParam start_date date The starting operation date.
+     *
+     * @response redirect 302 Redirects to laboratory.index with success message.
+     */
     public function store(Request $request)
     {
         // Log::info('Laboratory Store Request Data: ', $request->all());
@@ -175,6 +223,22 @@ class LabController extends Controller
 
 
 
+
+ /**
+     * Get Laboratory Details
+     *
+     * Returns a detailed summary of a laboratory facility.
+     * The response is rendered as an HTML partial.
+     *
+     * @urlParam id integer required The laboratory ID.
+     *
+     * @response text/html
+     * <div class="lab-details">
+     *   <!-- Rendered Blade partial -->
+     * </div>
+     *
+     * @response 404 {"error": "Laboratory not found"}
+     */
     public function show($id)
     {
         // Log::info('Laboratory Show ID: ' . $id);
@@ -206,6 +270,16 @@ class LabController extends Controller
         return $html;
     }
 
+
+  /**
+     * Show Edit Laboratory Form
+     *
+     * Displays the edit screen for a laboratory record.
+     *
+     * @urlParam id integer required The laboratory ID.
+     *
+     * @response view laboratory.edit
+     */
     public function edit($id)
     {
         $labs = Laboratory::findorfail($id);
@@ -213,6 +287,20 @@ class LabController extends Controller
         return view('laboratory.edit', compact('labs'));
     }
 
+
+ /**
+     * Update a Laboratory Facility
+     *
+     * Validates and updates an existing laboratory record.
+     *
+     * @urlParam id integer required The laboratory ID.
+     *
+     * @bodyParam facility_name string required
+     * @bodyParam facility_level_id integer required
+     * @bodyParam ownership_id integer required
+     *
+     * @response redirect 302 Redirects to laboratory.index with success message.
+     */
     public function update(Request $request, $id)
     {
         $rules = [
@@ -279,6 +367,16 @@ class LabController extends Controller
         return redirect()->route('laboratory.index');
     }
 
+
+     /**
+     * Delete Laboratory Facility
+     *
+     * Deletes a laboratory from the system.
+     *
+     * @bodyParam fac_id integer required The facility ID.
+     *
+     * @response redirect 302 Redirects back with "deleted successfully" message.
+     */
     public function destroy(Request $request)
     {
         Laboratory::destroy($request->fac_id);
@@ -287,6 +385,29 @@ class LabController extends Controller
     }
 
 
+
+ /**
+     * Search Laboratories
+     *
+     * Performs an advanced search using multiple filters:
+     * - State, LGA, Ward  
+     * - Facility name  
+     * - Level of care  
+     * - Ownership  
+     * - Operational status  
+     * - Registration & license status  
+     * - Geo-code completeness  
+     *
+     * Returns paginated filtered results.
+     *
+     * @queryParam state_id integer Example: 25
+     * @queryParam lga_id integer Example: 7
+     * @queryParam ward_id integer Example: 0
+     * @queryParam facility_name string Example: "General Hospital"
+     * @queryParam geo_codes integer 0=All, 1=Missing, 2=Present
+     *
+     * @response view laboratory.index
+     */
     public function search(Request $request)
     {
         $state_id = $request->state_id;

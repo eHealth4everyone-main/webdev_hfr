@@ -1,37 +1,28 @@
-name: Authentication
+name: 'Public API (Frontend) - Facility Directory'
 description: |-
 
-  Token-based Login Flow
-
-  These endpoints handle the second step of a two-factor login flow.
-  After submitting username/password, the system sends a token to the user
-  and stores temporary login details in the session. The user must validate
-  the token here before being logged in.
+  Public-facing APIs for browsing and searching healthcare facilities including hospitals, 
+  pharmacies, laboratories, and imaging centers. No authentication required.
 endpoints:
   -
     custom: []
     httpMethods:
       - GET
-    uri: login/token
+    uri: facilities/hospitals-list
     metadata:
       custom: []
-      groupName: Authentication
+      groupName: 'Public API (Frontend) - Facility Directory'
       groupDescription: |-
 
-        Token-based Login Flow
-
-        These endpoints handle the second step of a two-factor login flow.
-        After submitting username/password, the system sends a token to the user
-        and stores temporary login details in the session. The user must validate
-        the token here before being logged in.
+        Public-facing APIs for browsing and searching healthcare facilities including hospitals, 
+        pharmacies, laboratories, and imaging centers. No authentication required.
       subgroup: ''
       subgroupDescription: ''
-      title: 'Display the token verification page.'
+      title: 'List All Hospitals'
       description: |-
-        This endpoint shows the token entry screen to the user, but only if a
-        token has been generated and stored in the session during the login flow.
-
-        If no token exists in the current session, the user is redirected to `/`.
+        Displays a paginated list (20 per page) of all registered hospitals.
+        Results are sorted by state, LGA, ward, and facility name.
+        This endpoint is publicly accessible without authentication.
       authenticated: false
       deprecated: false
     headers:
@@ -47,38 +38,52 @@ endpoints:
     responses:
       -
         custom: []
-        status: 302
+        status: 200
         content: |-
-          <!DOCTYPE html>
-          <html>
-              <head>
-                  <meta charset="UTF-8" />
-                  <meta http-equiv="refresh" content="0;url='http://localhost'" />
-
-                  <title>Redirecting to http://localhost</title>
-              </head>
-              <body>
-                  Redirecting to <a href="http://localhost">http://localhost</a>.
-              </body>
-          </html>
-        headers:
-          cache-control: 'no-cache, private'
-          location: 'http://localhost'
-          content-type: 'text/html; charset=utf-8'
-          set-cookie: 'XSRF-TOKEN=eyJpdiI6InBJQTZsSVhvM2pSSUZMOGtuNnptNXc9PSIsInZhbHVlIjoiaXRxc3VpZmZPTk5YS2RUbE9QNktiZklHbG9GNWVzRFlEZldXQVJJVmRzODA0RTRMdkdQb3Jla3ZBQ2xyTnVRcXdjbWFzKzkxZnVMMlA1V21La09CcGRxaXFWRWltNkNUOG5QOFBqZWRYeW5qKzEzZUFWRlgyUk9sZVo2UG51V08iLCJtYWMiOiI5NWU5MjkzYTJlN2YzNmMxMzAyMmZjMDBiMWY5OGY5ZjEzZTlkZWUwYjAwM2E3Y2QwZDA5OTQzOWNhNDNhNDY3IiwidGFnIjoiIn0%3D; expires=Fri, 14 Nov 2025 13:57:18 GMT; Max-Age=7200; path=/; samesite=lax; laravel_session=eyJpdiI6Ik44cHh3SWdQd1JabmJoZUhiNkwvK3c9PSIsInZhbHVlIjoib09oK2FETm8vNCtHTGoxcGtGQTlXa1BNNEx4b3FNRkhaNTdiQ0JybFNQWXovS25pWHhFVnhzUVNUSlR0NHZPS1VUWHA2NkJtMUhwODR4VXVoOWZpcHNwenlxY0MxRDdqbzhXMGVreS9mNjgzVzJyL3FwZTBlUUI0WVRtV3NlaVMiLCJtYWMiOiI3NzgzODk0ZTQ1ODcyNDU4YmNiOGFjOWY0ZjI2OGNlMjkzMTQ1NTZkMjkxMzQyN2M0YmMwNWU5YmY3ZDc4MTE5IiwidGFnIjoiIn0%3D; expires=Fri, 14 Nov 2025 13:57:18 GMT; Max-Age=7200; path=/; httponly; samesite=lax'
-        description: null
-    responseFields:
-      view:
-        custom: []
-        name: view
-        description: 'The HTML of the token verification page.'
-        required: false
-        example: null
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
+          {
+            "view": "public.list_hospitals",
+            "facilities": {
+              "current_page": 1,
+              "data": [
+                {
+                  "id": 1,
+                  "unique_id": "FCT-001",
+                  "facility_name": "General Hospital Abuja",
+                  "state_id": 1,
+                  "lga_id": 5,
+                  "ward_id": 12,
+                  "facility_level_id": 3,
+                  "ownership_id": 1,
+                  "operational_status_id": 1,
+                  "registration_status_id": 1,
+                  "license_status_id": 1,
+                  "latitude": "9.0765",
+                  "longitude": "7.3986",
+                  "created_at": "2024-01-15 10:00:00"
+                }
+              ],
+              "per_page": 20,
+              "total": 450
+            },
+            "data": {
+              "state_id": 1,
+              "lga_id": 1,
+              "ward_id": 0,
+              "facility_name": "",
+              "geo_codes": 0,
+              "facility_level_id": 0,
+              "ownership_id": 0,
+              "operational_status_id": 0,
+              "registration_status_id": 0,
+              "license_status_id": 0,
+              "service_type": 0,
+              "service_category_id": 0,
+              "searched": 0
+            }
+          }
+        headers: []
+        description: Success
+    responseFields: []
     auth: []
     controller: null
     method: null
@@ -86,28 +91,22 @@ endpoints:
   -
     custom: []
     httpMethods:
-      - POST
-    uri: login/token
+      - GET
+    uri: facilities/hospitals-search
     metadata:
       custom: []
-      groupName: Authentication
+      groupName: 'Public API (Frontend) - Facility Directory'
       groupDescription: |-
 
-        Token-based Login Flow
-
-        These endpoints handle the second step of a two-factor login flow.
-        After submitting username/password, the system sends a token to the user
-        and stores temporary login details in the session. The user must validate
-        the token here before being logged in.
+        Public-facing APIs for browsing and searching healthcare facilities including hospitals, 
+        pharmacies, laboratories, and imaging centers. No authentication required.
       subgroup: ''
       subgroupDescription: ''
-      title: 'Verify the submitted token and complete login.'
+      title: 'Search Hospitals with Filters'
       description: |-
-        Validates the token submitted by the user against the token stored in the session.
-        If the token has expired, or does not match, the user is redirected back with an error.
-
-        Upon successful validation, the system logs the user in using the stored user ID
-        and clears the token session data, then redirects to `/administrator`.
+        Advanced search for hospitals with multiple filter options including location,
+        facility attributes, services offered, and geographic coordinates availability.
+        Use 0 or empty values to skip specific filters.
       authenticated: false
       deprecated: false
     headers:
@@ -118,39 +117,1118 @@ endpoints:
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
-      token:
+      state_id:
         custom: []
-        name: token
-        description: 'The token sent to the user.'
+        name: state_id
+        description: 'State ID. Use 1 for all states.'
         required: true
-        example: architecto
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      lga_id:
+        custom: []
+        name: lga_id
+        description: 'LGA ID. Use 1 for all LGAs.'
+        required: true
+        example: 5
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      ward_id:
+        custom: []
+        name: ward_id
+        description: 'Ward ID. Use 0 to skip ward filter.'
+        required: false
+        example: 12
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      facility_name:
+        custom: []
+        name: facility_name
+        description: 'Facility name search term. Partial matching supported.'
+        required: false
+        example: 'General Hospital'
         type: string
         enumValues: []
-        exampleWasSpecified: false
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      geo_codes:
+        custom: []
+        name: geo_codes
+        description: 'Geographic coordinates filter: 0 (all), 1 (with coordinates), 2 (without coordinates).'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      facility_level_id:
+        custom: []
+        name: facility_level_id
+        description: 'Facility level/care level ID. Use 0 to skip.'
+        required: false
+        example: 3
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      ownership_id:
+        custom: []
+        name: ownership_id
+        description: 'Ownership type ID. Use 0 to skip.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      operational_status_id:
+        custom: []
+        name: operational_status_id
+        description: 'Operational status ID. Use 0 to skip.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      registration_status_id:
+        custom: []
+        name: registration_status_id
+        description: 'Registration status ID. Use 0 to skip.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      license_status_id:
+        custom: []
+        name: license_status_id
+        description: 'License status ID. Use 0 to skip.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      service_type:
+        custom: []
+        name: service_type
+        description: 'Service type filter: 0 (all), 1 (outpatient only), 2 (inpatient only).'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      service_category_id:
+        custom: []
+        name: service_category_id
+        description: 'Service category ID. Use 0 to skip.'
+        required: false
+        example: 0
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      services:
+        custom: []
+        name: services
+        description: 'Optional array of service IDs to filter facilities offering specific services.'
+        required: false
+        example:
+          - 1
+          - 5
+          - 8
+        type: 'string[]'
+        enumValues: []
+        exampleWasSpecified: true
         nullable: false
         deprecated: false
     cleanBodyParameters:
-      token: architecto
+      state_id: 1
+      lga_id: 5
+      ward_id: 12
+      facility_name: 'General Hospital'
+      geo_codes: 1
+      facility_level_id: 3
+      ownership_id: 1
+      operational_status_id: 1
+      registration_status_id: 1
+      license_status_id: 1
+      service_type: 1
+      service_category_id: 0
+      services:
+        - 1
+        - 5
+        - 8
     fileParameters: []
     responses:
       -
         custom: []
-        status: 302
+        status: 200
         content: |-
           {
-            "redirect": "/administrator"
+            "view": "public.list_hospitals",
+            "facilities": {
+              "current_page": 1,
+              "data": [
+                {
+                  "id": 1,
+                  "unique_id": "FCT-001",
+                  "facility_name": "General Hospital Abuja",
+                  "state_id": 1,
+                  "lga_id": 5,
+                  "ward_id": 12,
+                  "facility_level_id": 3,
+                  "ownership_id": 1,
+                  "operational_status_id": 1,
+                  "latitude": "9.0765",
+                  "longitude": "7.3986",
+                  "outpatient": "Yes",
+                  "inpatient": "Yes"
+                }
+              ],
+              "per_page": 20,
+              "total": 45
+            },
+            "data": {
+              "searched": 1
+            }
           }
         headers: []
-        description: ''
+        description: 'Filtered Results'
       -
         custom: []
-        status: 302
+        status: 200
         content: |-
           {
-            "error": "Invalid token or token expired"
+            "facilities": {
+              "data": [],
+              "total": 0
+            }
           }
         headers: []
-        description: ''
+        description: 'No Results'
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: facilities/pharmacies-list
+    metadata:
+      custom: []
+      groupName: 'Public API (Frontend) - Facility Directory'
+      groupDescription: |-
+
+        Public-facing APIs for browsing and searching healthcare facilities including hospitals, 
+        pharmacies, laboratories, and imaging centers. No authentication required.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'List All Pharmacies'
+      description: |-
+        Displays a paginated list (20 per page) of all registered pharmacies.
+        Results are sorted by state, LGA, and facility name.
+        This endpoint is publicly accessible without authentication.
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "view": "public.list_pharmacy",
+            "facilities": {
+              "current_page": 1,
+              "data": [
+                {
+                  "id": 1,
+                  "unique_id": "PH-FCT-001",
+                  "facility_name": "Alpha Pharmacy Abuja",
+                  "state": "FCT",
+                  "lga": "Abuja Municipal",
+                  "ward": "Garki",
+                  "ownership_id": 2,
+                  "operational_status_id": 1,
+                  "registration_status_id": 1,
+                  "license_status_id": 1,
+                  "latitude": "9.0765",
+                  "longitude": "7.3986"
+                }
+              ],
+              "per_page": 20,
+              "total": 280
+            }
+          }
+        headers: []
+        description: Success
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: facilities/pharmacies-search
+    metadata:
+      custom: []
+      groupName: 'Public API (Frontend) - Facility Directory'
+      groupDescription: |-
+
+        Public-facing APIs for browsing and searching healthcare facilities including hospitals, 
+        pharmacies, laboratories, and imaging centers. No authentication required.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Search Pharmacies with Filters'
+      description: |-
+        Advanced search for pharmacies with filters for location, ownership,
+        operational status, and geographic coordinates availability.
+        Use 0 or empty values to skip specific filters.
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      state_id:
+        custom: []
+        name: state_id
+        description: 'State ID. Use 1 for all states.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      lga_id:
+        custom: []
+        name: lga_id
+        description: 'LGA ID. Use 1 for all LGAs.'
+        required: true
+        example: 5
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      ward_id:
+        custom: []
+        name: ward_id
+        description: 'Ward ID. Use 0 to skip ward filter.'
+        required: false
+        example: 12
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      facility_name:
+        custom: []
+        name: facility_name
+        description: 'Pharmacy name search term. Partial matching supported.'
+        required: false
+        example: 'Alpha Pharmacy'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      geo_codes:
+        custom: []
+        name: geo_codes
+        description: 'Geographic coordinates filter: 0 (all), 1 (with coordinates), 2 (without coordinates).'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      ownership_id:
+        custom: []
+        name: ownership_id
+        description: 'Ownership type ID. Use 0 to skip.'
+        required: false
+        example: 2
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      operational_status_id:
+        custom: []
+        name: operational_status_id
+        description: 'Operational status ID. Use 0 to skip.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      registration_status_id:
+        custom: []
+        name: registration_status_id
+        description: 'Registration status ID. Use 0 to skip.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      license_status_id:
+        custom: []
+        name: license_status_id
+        description: 'License status ID. Use 0 to skip.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      state_id: 1
+      lga_id: 5
+      ward_id: 12
+      facility_name: 'Alpha Pharmacy'
+      geo_codes: 1
+      ownership_id: 2
+      operational_status_id: 1
+      registration_status_id: 1
+      license_status_id: 1
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "view": "public.list_pharmacy",
+            "facilities": {
+              "current_page": 1,
+              "data": [
+                {
+                  "id": 1,
+                  "facility_name": "Alpha Pharmacy Abuja",
+                  "state": "FCT",
+                  "lga": "Abuja Municipal",
+                  "ownership_id": 2,
+                  "operational_status_id": 1,
+                  "latitude": "9.0765",
+                  "longitude": "7.3986"
+                }
+              ],
+              "per_page": 20,
+              "total": 25
+            },
+            "data": {
+              "searched": 1
+            }
+          }
+        headers: []
+        description: 'Filtered Results'
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: facilities/laboratory-list
+    metadata:
+      custom: []
+      groupName: 'Public API (Frontend) - Facility Directory'
+      groupDescription: |-
+
+        Public-facing APIs for browsing and searching healthcare facilities including hospitals, 
+        pharmacies, laboratories, and imaging centers. No authentication required.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'List All Laboratories'
+      description: |-
+        Displays a paginated list (20 per page) of all registered medical laboratories.
+        Results are sorted by state, LGA, and facility name.
+        This endpoint is publicly accessible without authentication.
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "view": "public.list_labs",
+            "facilities": {
+              "current_page": 1,
+              "data": [
+                {
+                  "id": 1,
+                  "unique_id": "LAB-FCT-001",
+                  "facility_name": "Central Diagnostic Lab",
+                  "state": "FCT",
+                  "lga": "Abuja Municipal",
+                  "ward": "Garki",
+                  "facility_level_id": 2,
+                  "ownership_id": 2,
+                  "operational_status_id": 1,
+                  "registration_status_id": 1,
+                  "license_status_id": 1,
+                  "accreditation_status_id": 1,
+                  "latitude": "9.0765",
+                  "longitude": "7.3986"
+                }
+              ],
+              "per_page": 20,
+              "total": 180
+            }
+          }
+        headers: []
+        description: Success
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: facilities/laboratory-search
+    metadata:
+      custom: []
+      groupName: 'Public API (Frontend) - Facility Directory'
+      groupDescription: |-
+
+        Public-facing APIs for browsing and searching healthcare facilities including hospitals, 
+        pharmacies, laboratories, and imaging centers. No authentication required.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Search Laboratories with Filters'
+      description: |-
+        Advanced search for laboratories with filters for location, facility level,
+        ownership, operational status, and accreditation status.
+        Use 0 or empty values to skip specific filters.
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      state_id:
+        custom: []
+        name: state_id
+        description: 'State ID. Use 1 for all states.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      lga_id:
+        custom: []
+        name: lga_id
+        description: 'LGA ID. Use 1 for all LGAs.'
+        required: true
+        example: 5
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      ward_id:
+        custom: []
+        name: ward_id
+        description: 'Ward ID. Use 0 to skip ward filter.'
+        required: false
+        example: 12
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      facility_name:
+        custom: []
+        name: facility_name
+        description: 'Laboratory name search term. Partial matching supported.'
+        required: false
+        example: 'Central Diagnostic'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      geo_codes:
+        custom: []
+        name: geo_codes
+        description: 'Geographic coordinates filter: 0 (all), 1 (with coordinates), 2 (without coordinates).'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      facility_level_id:
+        custom: []
+        name: facility_level_id
+        description: 'Facility level ID. Use 0 to skip.'
+        required: false
+        example: 2
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      ownership_id:
+        custom: []
+        name: ownership_id
+        description: 'Ownership type ID. Use 0 to skip.'
+        required: false
+        example: 2
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      operational_status_id:
+        custom: []
+        name: operational_status_id
+        description: 'Operational status ID. Use 0 to skip.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      registration_status_id:
+        custom: []
+        name: registration_status_id
+        description: 'Registration status ID. Use 0 to skip.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      license_status_id:
+        custom: []
+        name: license_status_id
+        description: 'License status ID. Use 0 to skip.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      accreditation_status_id:
+        custom: []
+        name: accreditation_status_id
+        description: 'Accreditation status ID. Use 0 to skip.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      state_id: 1
+      lga_id: 5
+      ward_id: 12
+      facility_name: 'Central Diagnostic'
+      geo_codes: 1
+      facility_level_id: 2
+      ownership_id: 2
+      operational_status_id: 1
+      registration_status_id: 1
+      license_status_id: 1
+      accreditation_status_id: 1
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "view": "public.list_labs",
+            "facilities": {
+              "current_page": 1,
+              "data": [
+                {
+                  "id": 1,
+                  "facility_name": "Central Diagnostic Lab",
+                  "state": "FCT",
+                  "lga": "Abuja Municipal",
+                  "facility_level_id": 2,
+                  "ownership_id": 2,
+                  "operational_status_id": 1,
+                  "accreditation_status_id": 1,
+                  "latitude": "9.0765"
+                }
+              ],
+              "per_page": 20,
+              "total": 15
+            },
+            "data": {
+              "searched": 1
+            }
+          }
+        headers: []
+        description: 'Filtered Results'
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: facilities/imaging-list
+    metadata:
+      custom: []
+      groupName: 'Public API (Frontend) - Facility Directory'
+      groupDescription: |-
+
+        Public-facing APIs for browsing and searching healthcare facilities including hospitals, 
+        pharmacies, laboratories, and imaging centers. No authentication required.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'List All Imaging Centers'
+      description: |-
+        Displays a paginated list (20 per page) of all registered imaging/radiology centers.
+        Results are sorted by state, LGA, and facility name.
+        This endpoint is publicly accessible without authentication.
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "view": "public.list_imaging",
+            "facilities": {
+              "current_page": 1,
+              "data": [
+                {
+                  "id": 1,
+                  "unique_id": "IMG-FCT-001",
+                  "facility_name": "Premier Imaging Center",
+                  "state": "FCT",
+                  "lga": "Abuja Municipal",
+                  "ward": "Garki",
+                  "ownership_id": 2,
+                  "operational_status_id": 1,
+                  "registration_status_id": 1,
+                  "license_status_id": 1,
+                  "latitude": "9.0765",
+                  "longitude": "7.3986"
+                }
+              ],
+              "per_page": 20,
+              "total": 120
+            }
+          }
+        headers: []
+        description: Success
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: facilities/imaging-search
+    metadata:
+      custom: []
+      groupName: 'Public API (Frontend) - Facility Directory'
+      groupDescription: |-
+
+        Public-facing APIs for browsing and searching healthcare facilities including hospitals, 
+        pharmacies, laboratories, and imaging centers. No authentication required.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Search Imaging Centers with Filters'
+      description: |-
+        Advanced search for imaging/radiology centers with filters for location,
+        ownership, operational status, and geographic coordinates availability.
+        Use 0 or empty values to skip specific filters.
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      state_id:
+        custom: []
+        name: state_id
+        description: 'State ID. Use 1 for all states.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      lga_id:
+        custom: []
+        name: lga_id
+        description: 'LGA ID. Use 1 for all LGAs.'
+        required: true
+        example: 5
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      ward_id:
+        custom: []
+        name: ward_id
+        description: 'Ward ID. Use 0 to skip ward filter.'
+        required: false
+        example: 12
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      facility_name:
+        custom: []
+        name: facility_name
+        description: 'Imaging center name search term. Partial matching supported.'
+        required: false
+        example: 'Premier Imaging'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      geo_codes:
+        custom: []
+        name: geo_codes
+        description: 'Geographic coordinates filter: 0 (all), 1 (with coordinates), 2 (without coordinates).'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      ownership_id:
+        custom: []
+        name: ownership_id
+        description: 'Ownership type ID. Use 0 to skip.'
+        required: false
+        example: 2
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      operational_status_id:
+        custom: []
+        name: operational_status_id
+        description: 'Operational status ID. Use 0 to skip.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      registration_status_id:
+        custom: []
+        name: registration_status_id
+        description: 'Registration status ID. Use 0 to skip.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      license_status_id:
+        custom: []
+        name: license_status_id
+        description: 'License status ID. Use 0 to skip.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      state_id: 1
+      lga_id: 5
+      ward_id: 12
+      facility_name: 'Premier Imaging'
+      geo_codes: 1
+      ownership_id: 2
+      operational_status_id: 1
+      registration_status_id: 1
+      license_status_id: 1
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "view": "public.list_imaging",
+            "facilities": {
+              "current_page": 1,
+              "data": [
+                {
+                  "id": 1,
+                  "facility_name": "Premier Imaging Center",
+                  "state": "FCT",
+                  "lga": "Abuja Municipal",
+                  "ownership_id": 2,
+                  "operational_status_id": 1,
+                  "latitude": "9.0765",
+                  "longitude": "7.3986"
+                }
+              ],
+              "per_page": 20,
+              "total": 8
+            },
+            "data": {
+              "searched": 1
+            }
+          }
+        headers: []
+        description: 'Filtered Results'
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: facilities/latest-updates/view
+    metadata:
+      custom: []
+      groupName: 'Public API (Frontend) - Facility Directory'
+      groupDescription: |-
+
+        Public-facing APIs for browsing and searching healthcare facilities including hospitals, 
+        pharmacies, laboratories, and imaging centers. No authentication required.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get Facility Updates Report'
+      description: |-
+        Retrieves facilities that were created or updated within predefined time periods.
+        Useful for tracking recent changes to the facility registry.
+        This endpoint is publicly accessible without authentication.
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters:
+      report:
+        custom: []
+        name: report
+        description: |-
+          Report type:
+          - 1: Facilities created this month
+          - 2: Facilities created last month
+          - 3: Facilities created in last 3 months
+          - 4: Facilities updated this month
+          - 5: Facilities updated last month
+          - 6: Facilities updated in last 3 months
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanQueryParameters:
+      report: 1
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "view": "public.facilities_updates",
+            "facilities": [
+              {
+                "id": 123,
+                "unique_id": "FCT-123",
+                "facility_name": "New Hospital Abuja",
+                "state": "FCT",
+                "lga": "Abuja Municipal",
+                "ward": "Garki",
+                "created_at": "2025-11-10 10:00:00",
+                "updated_at": "2025-11-10 10:00:00"
+              }
+            ],
+            "report": "15 Facilities were created this Month"
+          }
+        headers: []
+        description: 'New Facilities This Month'
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "facilities": [
+              {
+                "id": 45,
+                "facility_name": "General Hospital Abuja",
+                "updated_at": "2025-10-25 14:30:00"
+              }
+            ],
+            "report": "28 Facilities were updated in the last Month"
+          }
+        headers: []
+        description: 'Updated Facilities Last Month'
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "facilities": [],
+            "report": "0 Facilities were created this Month"
+          }
+        headers: []
+        description: 'No Facilities Found'
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: facilities/latest-updates
+    metadata:
+      custom: []
+      groupName: 'Public API (Frontend) - Facility Directory'
+      groupDescription: |-
+
+        Public-facing APIs for browsing and searching healthcare facilities including hospitals, 
+        pharmacies, laboratories, and imaging centers. No authentication required.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Display Facility Updates Selection Page'
+      description: |-
+        Shows the initial page for viewing facility updates/changes reports.
+        User can select from predefined time periods to view new or updated facilities.
+        This endpoint is publicly accessible without authentication.
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "view": "public.facilities_updates",
+            "facilities": "none"
+          }
+        headers: []
+        description: Success
     responseFields: []
     auth: []
     controller: null

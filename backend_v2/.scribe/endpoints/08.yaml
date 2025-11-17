@@ -1,68 +1,44 @@
-name: 'Facility Approval Tracking - Record Updates'
+name: Authentication
 description: |-
 
-  Endpoints that provide detailed audit comparison between the current and updated
-  records of a health facility. This helps reviewers and approvers understand what
-  changed in each facility record during the verification, validation, or publication stages.
+  Token-based Login Flow
+
+  These endpoints handle the second step of a two-factor login flow.
+  After submitting username/password, the system sends a token to the user
+  and stores temporary login details in the session. The user must validate
+  the token here before being logged in.
 endpoints:
   -
     custom: []
     httpMethods:
       - GET
-    uri: 'admin/hospitals/approvals/updated/{id}/{stage}'
+    uri: login/token
     metadata:
       custom: []
-      groupName: 'Facility Approval Tracking - Record Updates'
+      groupName: Authentication
       groupDescription: |-
 
-        Endpoints that provide detailed audit comparison between the current and updated
-        records of a health facility. This helps reviewers and approvers understand what
-        changed in each facility record during the verification, validation, or publication stages.
+        Token-based Login Flow
+
+        These endpoints handle the second step of a two-factor login flow.
+        After submitting username/password, the system sends a token to the user
+        and stores temporary login details in the session. The user must validate
+        the token here before being logged in.
       subgroup: ''
       subgroupDescription: ''
-      title: 'View differences between old and updated facility records.'
+      title: 'Display the token verification page.'
       description: |-
-        This endpoint retrieves the detailed audit trail and compares
-        old versus new values for a given facility update request.
+        This endpoint shows the token entry screen to the user, but only if a
+        token has been generated and stored in the session during the login flow.
 
-        It shows changes to metadata such as ownership, location, level of care,
-        and service availability. The view also displays the corresponding audit
-        data and allows reviewers to approve or reject updates at different workflow stages.
+        If no token exists in the current session, the user is redirected to `/`.
       authenticated: false
       deprecated: false
     headers:
       Content-Type: application/json
       Accept: application/json
-    urlParameters:
-      id:
-        custom: []
-        name: id
-        description: 'The ID of the facility history record being reviewed.'
-        required: true
-        example: 16
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      stage:
-        custom: []
-        name: stage
-        description: |-
-          The stage of review:
-           - 1 → Verification stage
-           - 2 → Validation stage
-           - 3 → Publication stage
-        required: true
-        example: 16
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      id: 16
-      stage: 16
+    urlParameters: []
+    cleanUrlParameters: []
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters: []
@@ -71,16 +47,110 @@ endpoints:
     responses:
       -
         custom: []
-        status: 200
-        content: 'View showing old and new facility data side by side.'
-        headers: []
-        description: success
+        status: 302
+        content: |-
+          <!DOCTYPE html>
+          <html>
+              <head>
+                  <meta charset="UTF-8" />
+                  <meta http-equiv="refresh" content="0;url='http://localhost'" />
+
+                  <title>Redirecting to http://localhost</title>
+              </head>
+              <body>
+                  Redirecting to <a href="http://localhost">http://localhost</a>.
+              </body>
+          </html>
+        headers:
+          cache-control: 'no-cache, private'
+          location: 'http://localhost'
+          content-type: 'text/html; charset=utf-8'
+          set-cookie: 'XSRF-TOKEN=eyJpdiI6IldIcUdLdHlBbWxjQ0V5amE0bWwyVkE9PSIsInZhbHVlIjoiaUVBSEROeWJzVmRIVlBXN3hmcUxPWllTQU1WZXZiejJmZGlQYjBhUXVoNDAwTnJQSzJhMXJmVlVOcFIwS0tUU3hqQWF5eUR2emFzZmRXM1V4TjJFV2hEMlZLaFJad2UyRXIrVVFuQ212UnVFdTZHdWs5K090Rk9xZXhad2t0STIiLCJtYWMiOiIxYTRmZjdjNzFmNzM2MjE4OTYzYmVjNDEwY2ZhMTBiOWVhM2Q4Yzc2Y2IwY2NiMWUyZmFlZGFmNDNkMGM3OTdlIiwidGFnIjoiIn0%3D; expires=Sat, 15 Nov 2025 17:09:44 GMT; Max-Age=7200; path=/; samesite=lax; laravel_session=eyJpdiI6Ill5WGRxblV1OEtPWFhWNnNMdDRpMmc9PSIsInZhbHVlIjoiREJ6aXl1cDRrcDloV3plOE5KeE9EMUdnS01rRGRSaUJmMkx2YUtpQlVhZTNiSDlHeDlPQm9XZnAremxGTUFpTVZma1daTTNSbW9yODltdlRpWDI5Wi93V0l3K1g5SEsvR3V6d0pnUk93MWc1MlMxZHBOZGhaaUdrUjdIL0M0bFMiLCJtYWMiOiJhODU2MDNhMjkxNGQ3ODRjZmQwMzgzYjQ3ODUzMTliOTVhNGViYmE3OGU5YWU3MzNkOGQ3NzhmMjE5NjM1NjU0IiwidGFnIjoiIn0%3D; expires=Sat, 15 Nov 2025 17:09:44 GMT; Max-Age=7200; path=/; httponly; samesite=lax'
+        description: null
+    responseFields:
+      view:
+        custom: []
+        name: view
+        description: 'The HTML of the token verification page.'
+        required: false
+        example: null
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: login/token
+    metadata:
+      custom: []
+      groupName: Authentication
+      groupDescription: |-
+
+        Token-based Login Flow
+
+        These endpoints handle the second step of a two-factor login flow.
+        After submitting username/password, the system sends a token to the user
+        and stores temporary login details in the session. The user must validate
+        the token here before being logged in.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Verify the submitted token and complete login.'
+      description: |-
+        Validates the token submitted by the user against the token stored in the session.
+        If the token has expired, or does not match, the user is redirected back with an error.
+
+        Upon successful validation, the system logs the user in using the stored user ID
+        and clears the token session data, then redirects to `/administrator`.
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      token:
+        custom: []
+        name: token
+        description: 'The token sent to the user.'
+        required: true
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      token: architecto
+    fileParameters: []
+    responses:
       -
         custom: []
-        status: 404
-        content: 'Facility record or audit not found.'
+        status: 302
+        content: |-
+          {
+            "redirect": "/administrator"
+          }
         headers: []
-        description: not_found
+        description: ''
+      -
+        custom: []
+        status: 302
+        content: |-
+          {
+            "error": "Invalid token or token expired"
+          }
+        headers: []
+        description: ''
     responseFields: []
     auth: []
     controller: null

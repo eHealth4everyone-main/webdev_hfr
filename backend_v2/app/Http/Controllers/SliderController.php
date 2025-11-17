@@ -7,6 +7,14 @@ use App\Http\Controllers\Controller;
 use App\Models\Website\API\Slider;
 use Illuminate\Support\Facades\Storage;
 
+
+/**
+ * @group Public API (Frontend) - Slider
+ *
+ * Some endpoints for slider
+ *
+ * These endpoints powers crud for slider component
+ */
 class SliderController extends Controller
 {
     /**

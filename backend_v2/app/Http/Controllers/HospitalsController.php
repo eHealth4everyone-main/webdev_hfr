@@ -15,6 +15,16 @@ use Auth;
 use App\Models\ApprovalNotifications;
 use App\Models\HospitalHistory;
 
+
+/**
+ * HospitalsController
+ *
+ * @group Administration - Hospitals
+ * 
+ * APIs for managing hospitals (create, read, update, delete, search, export)
+ * 
+ * @authenticated
+ */
 class HospitalsController extends Controller
 {
 

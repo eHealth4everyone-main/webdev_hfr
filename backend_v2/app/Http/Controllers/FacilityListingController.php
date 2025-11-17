@@ -6,9 +6,66 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
+
+/**
+ * @group Public API (Frontend) - Facility Directory
+ *
+ * Public-facing APIs for browsing and searching healthcare facilities including hospitals, 
+ * pharmacies, laboratories, and imaging centers. No authentication required.
+ */
 class FacilityListingController extends Controller
 {
 
+
+        /**
+     * List All Hospitals
+     *
+     * Displays a paginated list (20 per page) of all registered hospitals.
+     * Results are sorted by state, LGA, ward, and facility name.
+     * This endpoint is publicly accessible without authentication.
+     *
+     * @response 200 scenario="Success" {
+     *   "view": "public.list_hospitals",
+     *   "facilities": {
+     *     "current_page": 1,
+     *     "data": [
+     *       {
+     *         "id": 1,
+     *         "unique_id": "FCT-001",
+     *         "facility_name": "General Hospital Abuja",
+     *         "state_id": 1,
+     *         "lga_id": 5,
+     *         "ward_id": 12,
+     *         "facility_level_id": 3,
+     *         "ownership_id": 1,
+     *         "operational_status_id": 1,
+     *         "registration_status_id": 1,
+     *         "license_status_id": 1,
+     *         "latitude": "9.0765",
+     *         "longitude": "7.3986",
+     *         "created_at": "2024-01-15 10:00:00"
+     *       }
+     *     ],
+     *     "per_page": 20,
+     *     "total": 450
+     *   },
+     *   "data": {
+     *     "state_id": 1,
+     *     "lga_id": 1,
+     *     "ward_id": 0,
+     *     "facility_name": "",
+     *     "geo_codes": 0,
+     *     "facility_level_id": 0,
+     *     "ownership_id": 0,
+     *     "operational_status_id": 0,
+     *     "registration_status_id": 0,
+     *     "license_status_id": 0,
+     *     "service_type": 0,
+     *     "service_category_id": 0,
+     *     "searched": 0
+     *   }
+     * }
+     */
     public function getHospitals()
     {
 
@@ -37,6 +94,65 @@ class FacilityListingController extends Controller
         return view('public.list_hospitals', compact('facilities', 'data'));
     }
 
+
+
+    /**
+     * Search Hospitals with Filters
+     *
+     * Advanced search for hospitals with multiple filter options including location, 
+     * facility attributes, services offered, and geographic coordinates availability.
+     * Use 0 or empty values to skip specific filters.
+     *
+     * @bodyParam state_id integer required State ID. Use 1 for all states. Example: 1
+     * @bodyParam lga_id integer required LGA ID. Use 1 for all LGAs. Example: 5
+     * @bodyParam ward_id integer Ward ID. Use 0 to skip ward filter. Example: 12
+     * @bodyParam facility_name string Facility name search term. Partial matching supported. Example: General Hospital
+     * @bodyParam geo_codes integer Geographic coordinates filter: 0 (all), 1 (with coordinates), 2 (without coordinates). Example: 1
+     * @bodyParam facility_level_id integer Facility level/care level ID. Use 0 to skip. Example: 3
+     * @bodyParam ownership_id integer Ownership type ID. Use 0 to skip. Example: 1
+     * @bodyParam operational_status_id integer Operational status ID. Use 0 to skip. Example: 1
+     * @bodyParam registration_status_id integer Registration status ID. Use 0 to skip. Example: 1
+     * @bodyParam license_status_id integer License status ID. Use 0 to skip. Example: 1
+     * @bodyParam service_type integer Service type filter: 0 (all), 1 (outpatient only), 2 (inpatient only). Example: 1
+     * @bodyParam service_category_id integer Service category ID. Use 0 to skip. Example: 0
+     * @bodyParam services array Optional array of service IDs to filter facilities offering specific services. Example: [1, 5, 8]
+     *
+     * @response 200 scenario="Filtered Results" {
+     *   "view": "public.list_hospitals",
+     *   "facilities": {
+     *     "current_page": 1,
+     *     "data": [
+     *       {
+     *         "id": 1,
+     *         "unique_id": "FCT-001",
+     *         "facility_name": "General Hospital Abuja",
+     *         "state_id": 1,
+     *         "lga_id": 5,
+     *         "ward_id": 12,
+     *         "facility_level_id": 3,
+     *         "ownership_id": 1,
+     *         "operational_status_id": 1,
+     *         "latitude": "9.0765",
+     *         "longitude": "7.3986",
+     *         "outpatient": "Yes",
+     *         "inpatient": "Yes"
+     *       }
+     *     ],
+     *     "per_page": 20,
+     *     "total": 45
+     *   },
+     *   "data": {
+     *     "searched": 1
+     *   }
+     * }
+     *
+     * @response 200 scenario="No Results" {
+     *   "facilities": {
+     *     "data": [],
+     *     "total": 0
+     *   }
+     * }
+     */
     public function searchHospitals(Request $request)
     {
         // dd($request->all());
@@ -149,6 +265,40 @@ class FacilityListingController extends Controller
     }
 
 
+
+
+    /**
+     * List All Pharmacies
+     *
+     * Displays a paginated list (20 per page) of all registered pharmacies.
+     * Results are sorted by state, LGA, and facility name.
+     * This endpoint is publicly accessible without authentication.
+     *
+     * @response 200 scenario="Success" {
+     *   "view": "public.list_pharmacy",
+     *   "facilities": {
+     *     "current_page": 1,
+     *     "data": [
+     *       {
+     *         "id": 1,
+     *         "unique_id": "PH-FCT-001",
+     *         "facility_name": "Alpha Pharmacy Abuja",
+     *         "state": "FCT",
+     *         "lga": "Abuja Municipal",
+     *         "ward": "Garki",
+     *         "ownership_id": 2,
+     *         "operational_status_id": 1,
+     *         "registration_status_id": 1,
+     *         "license_status_id": 1,
+     *         "latitude": "9.0765",
+     *         "longitude": "7.3986"
+     *       }
+     *     ],
+     *     "per_page": 20,
+     *     "total": 280
+     *   }
+     * }
+     */
     public function getPharmacy()
     {
 
@@ -173,6 +323,49 @@ class FacilityListingController extends Controller
         return view('public.list_pharmacy', compact('facilities', 'data'));
     }
 
+
+
+     /**
+     * Search Pharmacies with Filters
+     *
+     * Advanced search for pharmacies with filters for location, ownership, 
+     * operational status, and geographic coordinates availability.
+     * Use 0 or empty values to skip specific filters.
+     *
+     * @bodyParam state_id integer required State ID. Use 1 for all states. Example: 1
+     * @bodyParam lga_id integer required LGA ID. Use 1 for all LGAs. Example: 5
+     * @bodyParam ward_id integer Ward ID. Use 0 to skip ward filter. Example: 12
+     * @bodyParam facility_name string Pharmacy name search term. Partial matching supported. Example: Alpha Pharmacy
+     * @bodyParam geo_codes integer Geographic coordinates filter: 0 (all), 1 (with coordinates), 2 (without coordinates). Example: 1
+     * @bodyParam ownership_id integer Ownership type ID. Use 0 to skip. Example: 2
+     * @bodyParam operational_status_id integer Operational status ID. Use 0 to skip. Example: 1
+     * @bodyParam registration_status_id integer Registration status ID. Use 0 to skip. Example: 1
+     * @bodyParam license_status_id integer License status ID. Use 0 to skip. Example: 1
+     *
+     * @response 200 scenario="Filtered Results" {
+     *   "view": "public.list_pharmacy",
+     *   "facilities": {
+     *     "current_page": 1,
+     *     "data": [
+     *       {
+     *         "id": 1,
+     *         "facility_name": "Alpha Pharmacy Abuja",
+     *         "state": "FCT",
+     *         "lga": "Abuja Municipal",
+     *         "ownership_id": 2,
+     *         "operational_status_id": 1,
+     *         "latitude": "9.0765",
+     *         "longitude": "7.3986"
+     *       }
+     *     ],
+     *     "per_page": 20,
+     *     "total": 25
+     *   },
+     *   "data": {
+     *     "searched": 1
+     *   }
+     * }
+     */
     public function searchPharmacy(Request $request)
     {
         $state_id = $request->state_id;
@@ -249,6 +442,42 @@ class FacilityListingController extends Controller
         return view('public.list_pharmacy', compact('facilities', 'data'));
     }
 
+
+
+    /**
+     * List All Laboratories
+     *
+     * Displays a paginated list (20 per page) of all registered medical laboratories.
+     * Results are sorted by state, LGA, and facility name.
+     * This endpoint is publicly accessible without authentication.
+     *
+     * @response 200 scenario="Success" {
+     *   "view": "public.list_labs",
+     *   "facilities": {
+     *     "current_page": 1,
+     *     "data": [
+     *       {
+     *         "id": 1,
+     *         "unique_id": "LAB-FCT-001",
+     *         "facility_name": "Central Diagnostic Lab",
+     *         "state": "FCT",
+     *         "lga": "Abuja Municipal",
+     *         "ward": "Garki",
+     *         "facility_level_id": 2,
+     *         "ownership_id": 2,
+     *         "operational_status_id": 1,
+     *         "registration_status_id": 1,
+     *         "license_status_id": 1,
+     *         "accreditation_status_id": 1,
+     *         "latitude": "9.0765",
+     *         "longitude": "7.3986"
+     *       }
+     *     ],
+     *     "per_page": 20,
+     *     "total": 180
+     *   }
+     * }
+     */
     public function getLab()
     {
 
@@ -275,6 +504,52 @@ class FacilityListingController extends Controller
         return view('public.list_labs', compact('facilities', 'data'));
     }
 
+
+
+ /**
+     * Search Laboratories with Filters
+     *
+     * Advanced search for laboratories with filters for location, facility level, 
+     * ownership, operational status, and accreditation status.
+     * Use 0 or empty values to skip specific filters.
+     *
+     * @bodyParam state_id integer required State ID. Use 1 for all states. Example: 1
+     * @bodyParam lga_id integer required LGA ID. Use 1 for all LGAs. Example: 5
+     * @bodyParam ward_id integer Ward ID. Use 0 to skip ward filter. Example: 12
+     * @bodyParam facility_name string Laboratory name search term. Partial matching supported. Example: Central Diagnostic
+     * @bodyParam geo_codes integer Geographic coordinates filter: 0 (all), 1 (with coordinates), 2 (without coordinates). Example: 1
+     * @bodyParam facility_level_id integer Facility level ID. Use 0 to skip. Example: 2
+     * @bodyParam ownership_id integer Ownership type ID. Use 0 to skip. Example: 2
+     * @bodyParam operational_status_id integer Operational status ID. Use 0 to skip. Example: 1
+     * @bodyParam registration_status_id integer Registration status ID. Use 0 to skip. Example: 1
+     * @bodyParam license_status_id integer License status ID. Use 0 to skip. Example: 1
+     * @bodyParam accreditation_status_id integer Accreditation status ID. Use 0 to skip. Example: 1
+     *
+     * @response 200 scenario="Filtered Results" {
+     *   "view": "public.list_labs",
+     *   "facilities": {
+     *     "current_page": 1,
+     *     "data": [
+     *       {
+     *         "id": 1,
+     *         "facility_name": "Central Diagnostic Lab",
+     *         "state": "FCT",
+     *         "lga": "Abuja Municipal",
+     *         "facility_level_id": 2,
+     *         "ownership_id": 2,
+     *         "operational_status_id": 1,
+     *         "accreditation_status_id": 1,
+     *         "latitude": "9.0765"
+     *       }
+     *     ],
+     *     "per_page": 20,
+     *     "total": 15
+     *   },
+     *   "data": {
+     *     "searched": 1
+     *   }
+     * }
+     */
     public function searchLab(Request $request)
     {
         $state_id = $request->state_id;
@@ -361,6 +636,39 @@ class FacilityListingController extends Controller
     }
 
 
+
+      /**
+     * List All Imaging Centers
+     *
+     * Displays a paginated list (20 per page) of all registered imaging/radiology centers.
+     * Results are sorted by state, LGA, and facility name.
+     * This endpoint is publicly accessible without authentication.
+     *
+     * @response 200 scenario="Success" {
+     *   "view": "public.list_imaging",
+     *   "facilities": {
+     *     "current_page": 1,
+     *     "data": [
+     *       {
+     *         "id": 1,
+     *         "unique_id": "IMG-FCT-001",
+     *         "facility_name": "Premier Imaging Center",
+     *         "state": "FCT",
+     *         "lga": "Abuja Municipal",
+     *         "ward": "Garki",
+     *         "ownership_id": 2,
+     *         "operational_status_id": 1,
+     *         "registration_status_id": 1,
+     *         "license_status_id": 1,
+     *         "latitude": "9.0765",
+     *         "longitude": "7.3986"
+     *       }
+     *     ],
+     *     "per_page": 20,
+     *     "total": 120
+     *   }
+     * }
+     */
     public function getImaging()
     {
 
@@ -385,6 +693,49 @@ class FacilityListingController extends Controller
         return view('public.list_imaging', compact('facilities', 'data'));
     }
 
+
+
+    /**
+     * Search Imaging Centers with Filters
+     *
+     * Advanced search for imaging/radiology centers with filters for location, 
+     * ownership, operational status, and geographic coordinates availability.
+     * Use 0 or empty values to skip specific filters.
+     *
+     * @bodyParam state_id integer required State ID. Use 1 for all states. Example: 1
+     * @bodyParam lga_id integer required LGA ID. Use 1 for all LGAs. Example: 5
+     * @bodyParam ward_id integer Ward ID. Use 0 to skip ward filter. Example: 12
+     * @bodyParam facility_name string Imaging center name search term. Partial matching supported. Example: Premier Imaging
+     * @bodyParam geo_codes integer Geographic coordinates filter: 0 (all), 1 (with coordinates), 2 (without coordinates). Example: 1
+     * @bodyParam ownership_id integer Ownership type ID. Use 0 to skip. Example: 2
+     * @bodyParam operational_status_id integer Operational status ID. Use 0 to skip. Example: 1
+     * @bodyParam registration_status_id integer Registration status ID. Use 0 to skip. Example: 1
+     * @bodyParam license_status_id integer License status ID. Use 0 to skip. Example: 1
+     *
+     * @response 200 scenario="Filtered Results" {
+     *   "view": "public.list_imaging",
+     *   "facilities": {
+     *     "current_page": 1,
+     *     "data": [
+     *       {
+     *         "id": 1,
+     *         "facility_name": "Premier Imaging Center",
+     *         "state": "FCT",
+     *         "lga": "Abuja Municipal",
+     *         "ownership_id": 2,
+     *         "operational_status_id": 1,
+     *         "latitude": "9.0765",
+     *         "longitude": "7.3986"
+     *       }
+     *     ],
+     *     "per_page": 20,
+     *     "total": 8
+     *   },
+     *   "data": {
+     *     "searched": 1
+     *   }
+     * }
+     */
     public function searchImaging(Request $request)
     {
         $state_id = $request->state_id;
@@ -462,6 +813,58 @@ class FacilityListingController extends Controller
     }
 
 
+
+ 
+
+        /**
+     * Get Facility Updates Report
+     *
+     * Retrieves facilities that were created or updated within predefined time periods.
+     * Useful for tracking recent changes to the facility registry.
+     * This endpoint is publicly accessible without authentication.
+     *
+     * @queryParam report integer required Report type:
+     * - 1: Facilities created this month
+     * - 2: Facilities created last month
+     * - 3: Facilities created in last 3 months
+     * - 4: Facilities updated this month
+     * - 5: Facilities updated last month
+     * - 6: Facilities updated in last 3 months
+     * Example: 1
+     *
+     * @response 200 scenario="New Facilities This Month" {
+     *   "view": "public.facilities_updates",
+     *   "facilities": [
+     *     {
+     *       "id": 123,
+     *       "unique_id": "FCT-123",
+     *       "facility_name": "New Hospital Abuja",
+     *       "state": "FCT",
+     *       "lga": "Abuja Municipal",
+     *       "ward": "Garki",
+     *       "created_at": "2025-11-10 10:00:00",
+     *       "updated_at": "2025-11-10 10:00:00"
+     *     }
+     *   ],
+     *   "report": "15 Facilities were created this Month"
+     * }
+     *
+     * @response 200 scenario="Updated Facilities Last Month" {
+     *   "facilities": [
+     *     {
+     *       "id": 45,
+     *       "facility_name": "General Hospital Abuja",
+     *       "updated_at": "2025-10-25 14:30:00"
+     *     }
+     *   ],
+     *   "report": "28 Facilities were updated in the last Month"
+     * }
+     *
+     * @response 200 scenario="No Facilities Found" {
+     *   "facilities": [],
+     *   "report": "0 Facilities were created this Month"
+     * }
+     */
     public function getUpdates(Request $request)
     {
 
@@ -542,6 +945,20 @@ class FacilityListingController extends Controller
         return view('public.facilities_updates', compact('facilities', 'report'));
     }
 
+
+
+   /**
+     * Display Facility Updates Selection Page
+     *
+     * Shows the initial page for viewing facility updates/changes reports.
+     * User can select from predefined time periods to view new or updated facilities.
+     * This endpoint is publicly accessible without authentication.
+     *
+     * @response 200 scenario="Success" {
+     *   "view": "public.facilities_updates",
+     *   "facilities": "none"
+     * }
+     */
     public function updates()
     {
         $facilities = "none";

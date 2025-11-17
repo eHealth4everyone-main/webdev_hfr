@@ -8,9 +8,22 @@ use Illuminate\Support\Facades\DB;
 
 
 
+/**
+ * @group Administration - Ward Management
+ *
+ * APIs for managing Wards. Includes listing, creating, updating, deleting, and searching wards.
+ */
 class WardController extends Controller
 {
 
+
+     /**
+     * List all wards with pagination.
+     *
+     * @response 200 View with paginated wards
+     *
+     * @return \Illuminate\View\View
+     */
     public function index()
     {
         // $wards = DB::table('ou_wards')
@@ -36,6 +49,18 @@ class WardController extends Controller
 
 
 
+     /**
+     * Add a new ward.
+     *
+     * @bodyParam name string required Name of the ward. Example: Lagos Central
+     * @bodyParam lga_id integer required ID of the LGA the ward belongs to. Example: 1
+     * @bodyParam state_id integer optional ID of the state. Example: 1
+     *
+     * @response 302 Redirect back with success message
+     * @response 422 Validation error if required fields are missing or invalid
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function store(Request $request)
     {
         $request->validate([
@@ -56,6 +81,20 @@ class WardController extends Controller
         return back();
     }
 
+
+    /**
+     * Update an existing ward.
+     *
+     * @bodyParam id1 integer required ID of the ward to update. Example: 1
+     * @bodyParam name1 string required Updated name of the ward. Example: Lagos Central
+     * @bodyParam lga_id1 integer required Updated LGA ID. Example: 1
+     * @bodyParam state_id1 integer optional Updated state ID. Example: 1
+     *
+     * @response 302 Redirect back with success message
+     * @response 422 Validation error if required fields are missing or invalid
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function update(Request $request)
     {
         $request->validate([
@@ -73,6 +112,16 @@ class WardController extends Controller
         return back();
     }
 
+
+     /**
+     * Delete a ward.
+     *
+     * @bodyParam ward_id integer required ID of the ward to delete. Example: 1
+     *
+     * @response 302 Redirect back with success message
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function destroy(Request $request)
     {
         Ward::destroy($request->ward_id);
@@ -80,6 +129,18 @@ class WardController extends Controller
         return back();
     }
 
+
+     /**
+     * Search wards by state, LGA, and ward name.
+     *
+     * @bodyParam state integer optional Filter by state ID. Example: 1
+     * @bodyParam lga integer optional Filter by LGA ID. Example: 1
+     * @bodyParam ward_name string optional Filter by ward name. Example: Lagos Central
+     *
+     * @response 200 View with paginated search results
+     *
+     * @return \Illuminate\View\View
+     */
     public function search(Request $request)
     {
         // $wards = DB::table('wards')
