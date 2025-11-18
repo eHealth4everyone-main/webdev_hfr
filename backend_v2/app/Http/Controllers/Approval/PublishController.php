@@ -166,7 +166,7 @@ class PublishController extends Controller
                     'users.email as requested_email',
                     'users.mobile as requested_mobile'
                 )
-                ->where('hospital_details_history.published_id', '=', Auth::user()->id)
+                ->where('hospital_details_history.published_by', '=', Auth::user()->id)
                 ->where('hospital_details_history.state_id', 'like', '%' .  $request->state_id . '%')
                 ->where('hospital_details_history.action', 'like', '%' .  $request->action . '%')
                 ->whereIn('hospital_details_history.status_id', [6, 13, 20])
@@ -202,7 +202,7 @@ class PublishController extends Controller
                     'users.email as requested_email',
                     'users.mobile as requested_mobile'
                 )
-                ->where('hospital_details_history.published_id', '=', Auth::user()->id)
+                ->where('hospital_details_history.published_by', '=', Auth::user()->id)
                 ->where('hospital_details_history.state_id', 'like', '%' .  $request->state_id . '%')
                 ->where('hospital_details_history.action', 'like', '%' .  $request->action . '%')
                 ->whereIn('hospital_details_history.status_id', [7, 14, 21])
