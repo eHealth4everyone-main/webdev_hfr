@@ -491,6 +491,7 @@ class HospitalsController extends Controller
         $hosp = HospitalHistory::findOrFail($request->facility_id);
         $state_id = $hosp['state_id'];
         $hosp->status_id = '15';
+        $hosp->action = 'DELETE FACILITY';
         $hosp->requested_at = Carbon::now()->format('Y-m-d H:i:s');
         $hosp->requested_by = Auth::user()->id;
         $hosp->request_note = $request->reason;
