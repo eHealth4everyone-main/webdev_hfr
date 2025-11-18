@@ -73,7 +73,7 @@ class ResourceController extends Controller
     {
         $request->validate([
             'filename' => 'required|string|max:90',
-            'resourcefile' => 'mimes:doc,pdf,xls,xlsx,docx|required|max:1999',
+            'resourcefile' => 'mimes:doc,pdf,xls,xlsx,docx|required|max:30720',
         ]);
 
         // Handle file uploads
