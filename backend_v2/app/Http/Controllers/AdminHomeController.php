@@ -8,6 +8,15 @@ use Analytics;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Analytics\Period;
 
+
+/**
+  * Admin Home Controller
+  * @group Administration
+  *
+  * Handles the dashboard views and related data for federal (national) and state-level users.
+  *
+  * @authenticated
+  */
 class AdminHomeController extends Controller
 {
     public function __construct()
@@ -116,6 +125,19 @@ class AdminHomeController extends Controller
     }
 
 
+
+ /**
+     * LGA Completeness Scores
+     *
+     * Returns completeness scores for all LGAs in a given state.
+     *
+     * @authenticated
+     * @bodyParam state string required Name of the state. Example: Lagos
+     * @response 200 [
+     *   {"name": "Ikeja", "y": 85},
+     *   {"name": "Surulere", "y": 78}
+     * ]
+     */
     public function completeness(Request $request)
     {
         $completenes = DB::table('signature_domain_completenes')
@@ -127,6 +149,19 @@ class AdminHomeController extends Controller
         return $completenes;
     }
 
+
+ /**
+     * LGA Facility Status
+     *
+     * Returns facility status for all LGAs in a given state.
+     *
+     * @authenticated
+     * @bodyParam state string required Name of the state. Example: Lagos
+     * @response 200 [
+     *   {"lga": "Ikeja", "status": "Active"},
+     *   {"lga": "Surulere", "status": "Inactive"}
+     * ]
+     */
     public function facilityStatus(Request $request)
     {
         $facility_status = DB::table('facility_status_lga_pivot')

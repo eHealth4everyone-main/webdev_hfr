@@ -15,6 +15,16 @@ use Auth;
 use App\Models\ApprovalNotifications;
 use App\Models\HospitalHistory;
 
+
+/**
+ * HospitalsController
+ *
+ * @group Administration - Hospitals
+ * 
+ * APIs for managing hospitals (create, read, update, delete, search, export)
+ * 
+ * @authenticated
+ */
 class HospitalsController extends Controller
 {
 
@@ -481,6 +491,7 @@ class HospitalsController extends Controller
         $hosp = HospitalHistory::findOrFail($request->facility_id);
         $state_id = $hosp['state_id'];
         $hosp->status_id = '15';
+        $hosp->action = 'DELETE FACILITY';
         $hosp->requested_at = Carbon::now()->format('Y-m-d H:i:s');
         $hosp->requested_by = Auth::user()->id;
         $hosp->request_note = $request->reason;

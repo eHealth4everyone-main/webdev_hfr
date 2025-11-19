@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\VerifiesEmails;
 class VerificationController extends Controller
 {
     /*
+    * @group Authentication
     |--------------------------------------------------------------------------
     | Email Verification Controller
     |--------------------------------------------------------------------------

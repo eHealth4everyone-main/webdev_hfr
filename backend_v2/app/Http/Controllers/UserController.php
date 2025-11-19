@@ -16,10 +16,29 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Models\Permission;
 
+
+/**
+ * User Management Controller
+ *
+ * @group Administration - Users
+ *
+ * Handles CRUD operations, profile management, password changes, and permission assignments for users.
+ *
+ * @authenticated
+ */
 class UserController extends Controller
 {
     use HasRoles;
 
+
+       /**
+     * List Users
+     *
+     * Returns a paginated list of users filtered by the authenticated user's state.
+     *
+     * @authenticated
+     * @response 200 view HTML
+     */
     public function index()
     {
         $users = User::where('state_id', 'like', '%' . Auth::user()->state_id . '%')
@@ -31,6 +50,25 @@ class UserController extends Controller
         return view('users.index', compact("users"));
     }
 
+
+
+   /**
+     * Store User
+     *
+     * Creates a new user, assigns a role, and sends email notification.
+     *
+     * @authenticated
+     * @bodyParam firstname string required First name of the user. Example: John
+     * @bodyParam lastname string required Last name of the user. Example: Doe
+     * @bodyParam email string required User email. Example: john@example.com
+     * @bodyParam mobile string optional Mobile number. Example: 08012345678
+     * @bodyParam state_id int required State ID. Example: 1
+     * @bodyParam lga_id array required Array of LGA IDs. Example: [5,6]
+     * @bodyParam role array required Array of role IDs. Example: [2]
+     * @bodyParam job string optional Job title. Example: Data Officer
+     * @bodyParam organisation string optional Organisation name. Example: Ministry of Health
+     * @response 302 Redirect back with success message
+     */
     public function store(Request $request)
     {
         $data = $request->all();
@@ -77,6 +115,17 @@ class UserController extends Controller
         return back();
     }
 
+
+ /**
+     * Send Email to User
+     *
+     * Sends email notification to a new user.
+     *
+     * @param string $name User's first name
+     * @param string $password User's password
+     * @param string $email User's email
+     * @return bool
+     */
     public function sendEmailtoUser($name, $password, $email)
     {
         try {
@@ -88,6 +137,25 @@ class UserController extends Controller
         return true;
     }
 
+
+
+ /**
+     * Update User
+     *
+     * Updates user information, role, and LGA permissions.
+     *
+     * @authenticated
+     * @bodyParam UserID int required ID of the user. Example: 1
+     * @bodyParam firstname1 string required First name. Example: John
+     * @bodyParam lastname1 string required Last name. Example: Doe
+     * @bodyParam role1 array required Role IDs. Example: [2]
+     * @bodyParam state_id1 int required State ID. Example: 1
+     * @bodyParam lga_id1 array required Array of LGA IDs. Example: [5,6]
+     * @bodyParam job1 string optional Job title. Example: Data Officer
+     * @bodyParam organisation1 string optional Organisation. Example: Ministry of Health
+     * @bodyParam mobile1 string optional Mobile number. Example: 08012345678
+     * @response 302 Redirect back with success message
+     */
     public function update(Request $request)
     {
         $request->validate([
@@ -134,6 +202,20 @@ class UserController extends Controller
         return back();
     }
 
+
+
+  /**
+     * Search Users
+     *
+     * Searches users by name, role, state, and status.
+     *
+     * @authenticated
+     * @bodyParam role_id int required Role ID filter. Example: 0
+     * @bodyParam state string optional State filter. Example: Lagos
+     * @bodyParam status string optional Status filter. Example: 1
+     * @bodyParam name string optional Name filter. Example: John
+     * @response 200 view HTML
+     */
     public function search(Request $request)
     {
         if ($request->role_id == 0) {
@@ -159,6 +241,17 @@ class UserController extends Controller
         return view('users.index', compact("users"));
     }
 
+
+ /**
+     * Block or Activate User
+     *
+     * Toggles user's active status.
+     *
+     * @authenticated
+     * @bodyParam userid int required User ID. Example: 1
+     * @bodyParam status int required Current status. Example: 1
+     * @response 302 Redirect back with success message
+     */
     public function block(Request $request)
     {
 
@@ -182,6 +275,16 @@ class UserController extends Controller
         }
     }
 
+
+/**
+     * Delete User
+     *
+     * Deletes a user.
+     *
+     * @authenticated
+     * @bodyParam user int required User ID. Example: 1
+     * @response 302 Redirect back with success message
+     */
     public function delete(Request $request)
     {
         User::destroy($request->user);
@@ -189,6 +292,15 @@ class UserController extends Controller
         return back();
     }
 
+
+    /**
+     * Show Profile
+     *
+     * Displays the authenticated user's profile.
+     *
+     * @authenticated
+     * @response 200 view HTML
+     */
     public function profile()
     {
         $users = Auth::user();
@@ -197,6 +309,20 @@ class UserController extends Controller
     }
 
 
+
+  /**
+     * Update Profile
+     *
+     * Updates the authenticated user's profile.
+     *
+     * @authenticated
+     * @bodyParam firstname string required First name. Example: John
+     * @bodyParam lastname string required Last name. Example: Doe
+     * @bodyParam mobile string optional Mobile number. Example: 08012345678
+     * @bodyParam job string optional Job title. Example: Data Officer
+     * @bodyParam organisation string optional Organisation. Example: Ministry of Health
+     * @response 302 Redirect back with success message
+     */
     public function updateProfile(Request $request)
     {
         //dd($request->all());
@@ -223,6 +349,18 @@ class UserController extends Controller
     }
 
 
+
+ /**
+     * Change Password
+     *
+     * Changes the authenticated user's password.
+     *
+     * @authenticated
+     * @bodyParam current_password string required Current password
+     * @bodyParam new_password string required New password
+     * @bodyParam new_password_confirmation string required Confirm new password
+     * @response 302 Redirect back with success message
+     */
     public function changePassword(Request $request)
     {
 
@@ -275,6 +413,16 @@ class UserController extends Controller
     }
 
 
+
+  /**
+     * Get Role ID
+     *
+     * Returns the ID of a role given its name.
+     *
+     * @authenticated
+     * @bodyParam role string required Role name. Example: Admin
+     * @response 200 int Role ID
+     */
     public function getRoleID(Request $request)
     {
         $data = DB::table('roles')

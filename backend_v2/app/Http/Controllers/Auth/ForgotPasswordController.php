@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
 class ForgotPasswordController extends Controller
 {
     /*
+     * @group Authentication
     |--------------------------------------------------------------------------
     | Password Reset Controller
     |--------------------------------------------------------------------------

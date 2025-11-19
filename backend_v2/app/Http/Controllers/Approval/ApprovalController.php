@@ -6,8 +6,44 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 
+
+/**
+ * @group Facility Approval Tracking
+ *
+ * This controller manages the tracking and filtering of facility approval requests.
+ * It provides endpoints for viewing pending, validated, and published facility changes.
+ *
+ * These endpoints are primarily used by administrators and state-level officers
+ * to monitor the approval workflow of health facility data.
+ */
+
 class ApprovalController extends Controller
 {
+     /**
+     * Display all pending facility approval requests.
+     *
+     * Retrieves a list of facilities currently awaiting verification or approval.
+     * The results include facility details such as name, type, ownership, state, and status.
+     *
+     * @urlParam none No parameters required.
+     * @response 200 {
+     *   "message": "15 pending verifications",
+     *   "data": [
+     *      {
+     *         "facility_name": "General Hospital Kano",
+     *         "state": "Kano",
+     *         "lga": "Kumbotso",
+     *         "ownership": "Public",
+     *         "facility_level": "Secondary",
+     *         "requested_by_firstname": "John",
+     *         "requested_by_lastname": "Doe",
+     *         "updated_at": "2025-11-12T10:00:00Z"
+     *      }
+     *   ]
+     * }
+     *
+     * @return \Illuminate\View\View
+     */
     public function tracking(Request $request)
     {
         $pending = DB::table('hospital_details_history')
@@ -49,6 +85,39 @@ class ApprovalController extends Controller
         return view('approvals.approval_tracking', compact('pending', 'message'));
     }
 
+
+     /**
+     * Search for facility approval requests by status, state, and action.
+     *
+     * Filters facility approvals based on the `approval` type (verification, validation, or publication),
+     * and optionally by state or approval action.
+     *
+     *
+     * @queryParam approval integer required Indicates the approval stage:
+     *  - `1` = pending verifications  
+     *  - `2` = pending validations  
+     *  - any other value = pending publications
+     * @queryParam state_id integer optional The ID of the state to filter results by.
+     * @queryParam action string optional The type of action to filter by (e.g. 'create', 'update').
+     *
+     * @response 200 {
+     *   "message": "8 pending validations",
+     *   "data": [
+     *      {
+     *         "facility_name": "Maitama District Hospital",
+     *         "state": "FCT",
+     *         "lga": "Abuja Municipal",
+     *         "ownership": "Private",
+     *         "facility_level": "Tertiary",
+     *         "requested_by_firstname": "Mary",
+     *         "requested_by_lastname": "Smith",
+     *         "updated_at": "2025-11-12T09:00:00Z"
+     *      }
+     *   ]
+     * }
+     *
+     * @return \Illuminate\View\View
+     */
     public function tracking_search(Request $request)
     {
         if ($request->approval == 1) {

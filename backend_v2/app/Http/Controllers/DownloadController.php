@@ -12,8 +12,24 @@ use App\Models\Download;
 use Notification;
 use App\Notifications\SendDownloadVerificationCode;
 
+
+/**
+ * @group Administration - Downloads
+ *
+ * APIs for handling facility downloads and user registration for downloading datasets.
+ *
+ * This controller manages public registration, token verification, dataset filtering, exporting, 
+ * and admin download requests.
+ */
 class DownloadController extends Controller
 {
+
+    /**
+     * Display the filtered facilities list for download (requires verified token).
+     *
+     *
+     * @return \Illuminate\View\View
+     */
     public function index(Request $request)
     {
         if (!$request->session()->has('token_verified')) {
@@ -38,6 +54,28 @@ class DownloadController extends Controller
     }
 
 
+
+    /**
+     * Export facilities dataset to Excel based on filter criteria.
+     *
+     *
+     * @bodyParam lga_id integer Filter by LGA ID. Example: 1
+     * @bodyParam ward_id integer Filter by ward ID. Example: 1
+     * @bodyParam facility_name string Filter by facility name. Example: My Facility
+     * @bodyParam geo_codes integer Geo code filter (0,1,2). Example: 0
+     * @bodyParam facility_type_id integer Facility type filter. Example: 1
+     * @bodyParam facility_level_id integer Facility level filter. Example: 2
+     * @bodyParam ownership_id integer Ownership filter. Example: 3
+     * @bodyParam operational_status_id integer Operational status filter. Example: 1
+     * @bodyParam registration_status_id integer Registration status filter. Example: 1
+     * @bodyParam license_status_id integer License status filter. Example: 1
+     * @bodyParam service_type integer Service type (1=Outpatient, 2=Inpatient). Example: 1
+     *
+     * @response 200 File download (Excel)
+     * @response 302 Redirect if no records found
+     *
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\RedirectResponse
+     */
     public function export(Request $request)
     {
         $lga_id = $request->lga_id;
@@ -154,6 +192,12 @@ class DownloadController extends Controller
     }
 
 
+     /**
+     * Display registration form for users to access downloads.
+     *
+     *
+     * @return \Illuminate\View\View
+     */
     public function openRegistrationForm(Request $request)
     {
         if ($request->session()->has('token_verified')) {
@@ -163,6 +207,25 @@ class DownloadController extends Controller
         return view('public.download_registration');
     }
 
+
+    /**
+     * Store registration details and send verification token via email.
+     *
+     *
+     * @bodyParam firstname string required First name of the user. Example: John
+     * @bodyParam lastname string required Last name of the user. Example: Doe
+     * @bodyParam organisation string Organization name. Example: My Org
+     * @bodyParam country string required Country name. Example: Nigeria
+     * @bodyParam designation string required User designation. Example: Data Officer
+     * @bodyParam purpose string required Purpose for downloading data. Example: Research
+     * @bodyParam email string required Email address. Example: john@example.com
+     * @bodyParam g-recaptcha-response string required Google reCAPTCHA token.
+     *
+     * @response 302 Redirect to token verification page
+     * @response 422 Validation errors
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function store(Request $request)
     {
         $request->validate([
@@ -194,6 +257,13 @@ class DownloadController extends Controller
         return redirect()->route('openRegistrationForm');
     }
 
+
+     /**
+     * Display token verification form for download access.
+     *
+     *
+     * @return \Illuminate\View\View
+     */
     public function getValidationForm(Request $request)
     {
         if (!$request->session()->has('download_verify')) {
@@ -220,6 +290,18 @@ class DownloadController extends Controller
         return true;
     }
 
+
+     /**
+     * Validate the token entered by the user to grant download access.
+     *
+     *
+     * @bodyParam token integer required Verification token sent to email. Example: 12345678
+     *
+     * @response 302 Redirect to facilities list if token is valid
+     * @response 302 Back to token form if invalid
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
     //validate the token if valid  show download page
     public function validateToken(Request $request)
     {
@@ -254,6 +336,13 @@ class DownloadController extends Controller
 
 
 
+
+     /**
+     * Admin: List all download requests.
+     *
+     *
+     * @return \Illuminate\View\View
+     */
     //for admin module
     public function DownloadRequests()
     {

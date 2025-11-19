@@ -14,8 +14,39 @@ use App\Models\audit;
 use App\Models\ApprovalNotifications;
 use Illuminate\Support\Facades\Log;
 
+
+/**
+ * @group Facility Approval Tracking - Facility Validation
+ *
+ * This controller handles all validation-related workflows for health facility approval.
+ * It allows authorized users to view pending validations, approve or reject facility requests,
+ * recall validations, and track validation actions.
+ *
+ * All actions are logged and tied to user permissions (State and LGA level).
+ */
 class ValidateController extends Controller
 {
+
+     /**
+     * Display all pending facility validation requests.
+     *
+     * Shows all facilities that require validation, filtered based on user permissions.
+     * - State-level users can see all requests in the state.
+     * - LGA-level users can only see requests for their assigned LGAs.
+     *
+     * @response scenario=success {
+     *   "view": "approvals.pending_validation",
+     *   "pending": [
+     *     {
+     *       "id": 123,
+     *       "facility_name": "General Hospital",
+     *       "state": "Lagos",
+     *       "lga": "Ikeja",
+     *       "requested_by": "John Doe"
+     *     }
+     *   ]
+     * }
+     */
     public function index()
     {
 
@@ -115,7 +146,106 @@ class ValidateController extends Controller
         return view('approvals.pending_validation', compact('pending'));
     }
 
-    public function search(Request $request)
+
+      /**
+     * Search pending validation requests.
+     *
+     * Filters facility validation records based on the status and search keyword.
+     * - Status 1: Pending
+     * - Status 2: Approved
+     * - Status 3: Rejected
+     *
+     * @bodyParam status integer required The filter type (1=pending, 2=approved, 3=rejected)
+     * @bodyParam action string Optional. A keyword to search by action description.
+     *
+     * @response scenario=success {
+     *   "view": "approvals.pending_validation",
+     *   "pending": [
+     *     {
+     *       "id": 456,
+     *       "facility_name": "Primary Health Center",
+     *       "status": "Pending Validation"
+     *     }
+     *   ]
+     * }
+     */
+
+public function search(Request $request)
+{
+    // Base query with all necessary joins
+    $baseQuery = DB::table('hospital_details_history')
+        ->join('ou_states', 'hospital_details_history.state_id', '=', 'ou_states.id')
+        ->join('ou_lgas', 'hospital_details_history.lga_id', '=', 'ou_lgas.id')
+        ->join('users', 'hospital_details_history.requested_by', '=', 'users.id')
+        ->join('ou_wards', 'hospital_details_history.ward_id', '=', 'ou_wards.id')
+        ->join('lst_facility_types', 'hospital_details_history.facility_type_id', '=', 'lst_facility_types.id')
+        ->join('lst_ownerships', 'hospital_details_history.ownership_id', '=', 'lst_ownerships.id')
+        ->join('lst_ownership_types', 'hospital_details_history.ownership_type_id', '=', 'lst_ownership_types.id')
+        ->join('lst_level_of_care', 'hospital_details_history.facility_level_id', '=', 'lst_level_of_care.id')
+        ->leftJoin('lst_level_of_care_options', 'hospital_details_history.facility_level_option_id', '=', 'lst_level_of_care_options.id')
+        ->join('lst_oparational_status', 'hospital_details_history.operational_status_id', '=', 'lst_oparational_status.id')
+        ->leftJoin('lst_registration_status', 'hospital_details_history.registration_status_id', '=', 'lst_registration_status.id')
+        ->leftJoin('lst_license_status', 'hospital_details_history.license_status_id', '=', 'lst_license_status.id')
+        ->select(
+            'hospital_details_history.*',
+            'ou_states.name as state',
+            'ou_lgas.name as lga',
+            'ou_wards.name as ward',
+            'lst_facility_types.name as facility_type_name',
+            'lst_level_of_care.name as facility_level_name',
+            'lst_ownerships.name as ownership',
+            'lst_ownership_types.type as ownership_type',
+            'lst_level_of_care.name as facility_level',
+            'lst_level_of_care_options.description as facility_level_option',
+            'lst_oparational_status.status as operation_status',
+            'lst_registration_status.status as registration_status',
+            'lst_license_status.status as license_status',
+            'users.lastname as requested_by_lastname',
+            'users.firstname as requested_by_firstname',
+            'users.email as requested_email',
+            'users.mobile as requested_mobile'
+        );
+
+    if ($request->status == 1) {
+        if (auth()->user()->hasAnyPermission(['lga_1000'])) {
+            $pending = (clone $baseQuery)
+                ->where('hospital_details_history.state_id', '=', Auth::user()->state_id)
+                ->where('hospital_details_history.action', 'like', '%' . $request->action . '%')
+                ->whereIn('hospital_details_history.status_id', [2, 7, 9, 14, 16, 21])
+                ->get();
+        } else {
+            $pending = (clone $baseQuery)
+                ->where('hospital_details_history.state_id', '=', Auth::user()->state_id)
+                ->where('hospital_details_history.action', 'like', '%' . $request->action . '%')
+                ->whereIn('hospital_details_history.lga_id', auth()->user()->getDirectPermissions()->pluck('id')->toArray())
+                ->whereIn('hospital_details_history.status_id', [2, 7, 9, 14, 16, 21])
+                ->get();
+        }
+    } elseif ($request->status == 2) {
+        $pending = (clone $baseQuery)
+            ->where('hospital_details_history.validated_by', '=', Auth::user()->id)
+            ->where('hospital_details_history.action', 'like', '%' . $request->action . '%')
+            ->whereIn('hospital_details_history.status_id', [4, 11, 18])
+            ->get();
+    } elseif ($request->status == 3) {
+        $pending = (clone $baseQuery)
+            ->where('hospital_details_history.validated_by', '=', Auth::user()->id)
+            ->where('hospital_details_history.action', 'like', '%' . $request->action . '%')
+            ->whereIn('hospital_details_history.status_id', [5, 12, 19])
+            ->get();
+    } else {
+        $pending = (clone $baseQuery)
+            ->where('hospital_details_history.validated_by', '=', Auth::user()->id)
+            ->where('hospital_details_history.action', 'like', '%' . $request->action . '%')
+            ->orderBy('hospital_details_history.updated_at', 'desc')
+            ->get();
+    }
+
+    $request->flash('request', $request);
+    return view('approvals.pending_validation', compact('pending'));
+}
+
+    public function searchOld(Request $request)
     {
         if ($request->status == 1) {
             if (auth()->user()->hasAnyPermission(['lga_1000'])) {
@@ -156,6 +286,26 @@ class ValidateController extends Controller
         return view('approvals.pending_validation', compact('pending'));
     }
 
+
+     /**
+     * Validate (approve or reject) a facility request.
+     *
+     * Handles the validation process for a facility request based on the validator's action.
+     * - Approve: Marks the request as validated and notifies publishers.
+     * - Reject: Marks the request as rejected and notifies requesters.
+     *
+     * @bodyParam id integer required The facility ID to validate.
+     * @bodyParam action string required Either "approve" or "reject".
+     * @bodyParam requested_action string required The requested operation ("CREATE FACILITY", "UPDATE FACILITY", or "DELETE FACILITY").
+     * @bodyParam notes string Optional. Validation notes.
+     *
+     * @response 200 {
+     *   "message": "Facility Creation Validated"
+     * }
+     * @response 500 {
+     *   "error": "Database transaction failed."
+     * }
+     */
     public function store(Request $request)
     {
         if (!$this->isValidated($request->id)) {
@@ -259,6 +409,23 @@ class ValidateController extends Controller
     }
 
 
+
+     /**
+     * Recall a previously validated facility request.
+     *
+     * Allows validators to recall a facility request back to a pending state.
+     * Only possible for requests that have not yet been published.
+     *
+     * @bodyParam hosp_id integer required The facility ID to recall.
+     * @bodyParam action string required The original action ("CREATE FACILITY", "UPDATE FACILITY", "DELETE FACILITY").
+     *
+     * @response 200 {
+     *   "message": "Validation recalled successfully!"
+     * }
+     * @response 400 {
+     *   "message": "Cannot recall validated or published request!"
+     * }
+     */
     public function recall(Request $request)
     {
         if ($this->isValidated($request->hosp_id)) {

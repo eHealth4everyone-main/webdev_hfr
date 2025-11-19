@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\ConfirmsPasswords;
 class ConfirmPasswordController extends Controller
 {
     /*
+    * @group Authentication
     |--------------------------------------------------------------------------
     | Confirm Password Controller
     |--------------------------------------------------------------------------

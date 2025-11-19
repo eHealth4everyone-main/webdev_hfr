@@ -25,11 +25,20 @@ class DeleteRequest extends Notification implements ShouldQueue
     {
         $url = url('admin/hospitals/approvals/verify');
 
-        return (new MailMessage)
+     /*    return (new MailMessage)
         ->subject('Facility Verification Request')
         ->greeting('Hello,')
         ->line('Facility deletion have been requested. Please login to the system to review and verify the request.')
-        ->action('Click Here to Login', $url);
+        ->action('Click Here to Login', $url); */
+
+            return (new MailMessage)
+            ->subject('Facility Delete Verification Request')
+            ->view('vendor.notifications.facility_delete_request', [
+                'actionUrl' => $url,
+                'message' => 'Facility deletion have been requested. Please login to the system to review and verify the request.',
+            ]);
+
+
     }
  
 }
