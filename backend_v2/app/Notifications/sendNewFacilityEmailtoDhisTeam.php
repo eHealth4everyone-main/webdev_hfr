@@ -27,18 +27,20 @@ class sendNewFacilityEmailtoDhisTeam extends Notification implements ShouldQueue
         return ['mail'];
     }
 
-    public function toMail($notifiable)
-    {
-        $url = url('admin/hfr-dhis-exchange/logs');
+ public function toMail($notifiable)
+{
+    $actionUrl = url('admin/hfr-dhis-exchange/logs');
 
-        return (new MailMessage)
-            ->subject('New Facility Created')
-            ->greeting('Hello,')
-            ->line('New facility ('. $this->name .') have been created in DHIS2. The facility is located in '.$this->state. ' state, '.$this->lga. ' LGA, and '.$this->ward. ' ward.')
-            ->line('Please check exchange logs in HFR for more details.')
-            ->action('View Logs', $url)
-            ->line('Kindly take appropriate actions at your end!');
-    }
+    return (new MailMessage)
+        ->subject('New Facility Created')
+        ->view('vendor.notifications.new_facility_created', [
+            'name' => $this->name,
+            'state' => $this->state,
+            'lga' => $this->lga,
+            'ward' => $this->ward,
+            'actionUrl' => $actionUrl
+        ]);
+}
 
  
 }

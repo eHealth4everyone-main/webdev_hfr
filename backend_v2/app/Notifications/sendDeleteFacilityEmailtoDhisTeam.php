@@ -27,12 +27,16 @@ class sendDeleteFacilityEmailtoDhisTeam extends Notification implements ShouldQu
     }
 
     public function toMail($notifiable)
-    {
-        return (new MailMessage)
-            ->subject('Facility Deleted')
-            ->greeting('Hello,')
-            ->line('Facility ('. $this->name .') have been deleted in DHIS2. The facility was in '.$this->state. ' state, '.$this->lga. ' LGA, and '.$this->ward. ' ward.');
-    }
+{
+    return (new MailMessage)
+        ->subject('Facility Deleted')
+        ->view('vendor.notifications.facility_deleted', [
+            'name' => $this->name,
+            'state' => $this->state,
+            'lga' => $this->lga,
+            'ward' => $this->ward
+        ]);
+}
 
  
 }

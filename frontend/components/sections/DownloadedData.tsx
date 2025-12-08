@@ -219,7 +219,7 @@ const DownloadedData = () => {
             style={{ transform: "scale(0.91)", transformOrigin: "0 0" }}
           >
             <ReCAPTCHA
-              sitekey="6Lfjki4rAAAAACunZuwgvyq9j6QoOFOpTFnJDr3D"
+              sitekey="6LepSyIsAAAAAAyBL7ZaShYGj4vFxk3X-i7gJYc9"
               onChange={handleCaptchaChange}
             />
           </div>
