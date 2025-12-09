@@ -1,11 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
-import Chart from "@/components/sections/overview/Chart";
-import OverviewMap from "@/components/sections/overview/OverviewMap";
-import Table from "@/components/sections/overview/Table";
-import SelectComponent from "@/components/ui/SelectComponent";
-import { GreenButton, Heading, WhiteButton } from "@/components/ui/Typography";
+import React from "react";
 import { useEffect } from "react";
 
 export default function OverviewClient() {
@@ -15,43 +10,61 @@ export default function OverviewClient() {
 
     const vizElement = divElement.getElementsByTagName("object")[0];
 
-    // Responsive sizing
-    if (divElement.offsetWidth > 800) {
-      vizElement.style.width = "1350px";
-      vizElement.style.height = "677px";
-    } else if (divElement.offsetWidth > 500) {
-      vizElement.style.width = "1350px";
-      vizElement.style.height = "677px";
-    } else {
+    const updateSize = () => {
+      const containerWidth = divElement.offsetWidth;
+      
+      // Set width to 100% of container
       vizElement.style.width = "100%";
-      vizElement.style.height = "1727px";
-    }
+      
+      // Calculate height based on aspect ratio (16:9 or adjust as needed)
+      // Or use a fixed minimum height
+      const calculatedHeight = Math.max(600, containerWidth * 0.6); // 60% aspect ratio
+      vizElement.style.height = `${calculatedHeight}px`;
+    };
+
+    // Initial size
+    updateSize();
 
     // Load Tableau JS API dynamically
     const scriptElement = document.createElement("script");
     scriptElement.src = "https://public.tableau.com/javascripts/api/viz_v1.js";
-    vizElement.parentNode.insertBefore(scriptElement, vizElement);
+    if (vizElement.parentNode) {
+      vizElement.parentNode.insertBefore(scriptElement, vizElement);
+    }
+
+    // Update on window resize with debounce
+    let resizeTimer: NodeJS.Timeout;
+    const handleResize = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(updateSize, 250);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      clearTimeout(resizeTimer);
+    };
   }, []);
 
   return (
-    <div className="w-full mt-20 px-4">
-      {/* Tableau Embed */}
+    <div className="w-full mt-20 px-4 max-w-[1600px] mx-auto">
+      {/* Added max-width and center alignment */}
       <div
-        className="tableauPlaceholder"
+        className="tableauPlaceholder w-full"
         id="viz1765138662074"
         style={{ position: "relative" }}
       >
         <noscript>
           <a href="#">
             <img
-              alt="Nigeria’s Healthcare Facility Ownership Landscape"
+              alt="Nigeria's Healthcare Facility Ownership Landscape"
               src="https://public.tableau.com/static/images/He/HealthFacilityRegistryDashboardNew/NigeriasHealthcareFacilityOwnershipDashboar/1_rss.png"
-              style={{ border: "none" }}
+              style={{ border: "none", width: "100%" }}
             />
           </a>
         </noscript>
 
-        <object className="tableauViz" style={{ display: "none" }}>
+        <object className="tableauViz w-full" style={{ display: "none" }}>
           <param name="host_url" value="https%3A%2F%2Fpublic.tableau.com%2F" />
           <param name="embed_code_version" value="3" />
           <param name="site_root" value="" />
