@@ -26,13 +26,17 @@ class sendCloseFacilityEmailtoDhisTeam extends Notification implements ShouldQue
         return ['mail'];
     }
 
-    public function toMail($notifiable)
-    {
-        return (new MailMessage)
-            ->subject('Facility Closed')
-            ->greeting('Hello,')
-            ->line('Facility ('. $this->name .') have been deleted in HFR and closed in DHIS2 as it has reported before. The facility is in '.$this->state. ' state, '.$this->lga. ' LGA, and '.$this->ward. ' ward.');
-    }
+  public function toMail($notifiable)
+{
+    return (new MailMessage)
+        ->subject('Facility Closed')
+        ->view('vendor.notifications.facility_closed', [
+            'name'  => $this->name,
+            'state' => $this->state,
+            'lga'   => $this->lga,
+            'ward'  => $this->ward
+        ]);
+}
 
  
 }
