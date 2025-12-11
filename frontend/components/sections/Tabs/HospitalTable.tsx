@@ -22,6 +22,7 @@ const HospitalTable: React.FC<{
   totalPages: number;
   totalRecords: number;
   entriesPerPage: number;
+  onDownloadAll?: () => Promise<any[]>;
   // fetchFacilities: (page: number) => void; // Fetch facilities based on the page
 }> = ({
   data,
@@ -30,7 +31,7 @@ const HospitalTable: React.FC<{
   totalPages,
   totalRecords,
   entriesPerPage,
-  // fetchFacilities,
+  onDownloadAll
 }) => {
   const [loading, setLoading] = useState(true);
 
@@ -185,7 +186,7 @@ const HospitalTable: React.FC<{
 
   // console.log({ "adams lagos": entriesPerPage, currentPage, totalPages });
 
-  const exportToCSV = (data: any[], filename: string) => {
+  /* const exportToCSV = (data: any[], filename: string) => {
     if (!data.length) return;
 
     const csvRows = [];
@@ -209,8 +210,55 @@ const HospitalTable: React.FC<{
     link.click();
 
     window.URL.revokeObjectURL(url);
-  };
+  }; */
 
+  //new export
+  const exportToCSV = async (filename: string) => {
+    if (!onDownloadAll) return;
+    
+    try {
+      // Show loading state on button
+      const downloadBtn = document.getElementById("download-btn");
+      if (downloadBtn) downloadBtn.innerText = "Downloading...";
+
+      const allData = await onDownloadAll();
+      
+      if (!allData.length) {
+        alert("No data to download");
+        if (downloadBtn) downloadBtn.innerText = "Download CSV";
+        return;
+      }
+
+      const csvRows = [];
+      const headers = Object.keys(allData[0]);
+      csvRows.push(headers.join(","));
+
+      for (const row of allData) {
+        const values = headers.map((header) => 
+          JSON.stringify(row[header] ?? "")
+        );
+        csvRows.push(values.join(","));
+      }
+
+      const csvData = new Blob([csvRows.join("\n")], { type: "text/csv" });
+      const url = window.URL.createObjectURL(csvData);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${filename}.csv`;
+      link.click();
+
+      window.URL.revokeObjectURL(url);
+      
+      // Reset button text
+      if (downloadBtn) downloadBtn.innerText = "Download CSV";
+    } catch (error) {
+      console.error("Download error:", error);
+      alert("Failed to download data");
+      const downloadBtn = document.getElementById("download-btn");
+      if (downloadBtn) downloadBtn.innerText = "Download CSV";
+    }
+  };
   useEffect(() => {
     const verified = searchParams.get("verified");
 
@@ -306,7 +354,8 @@ const HospitalTable: React.FC<{
       {isVerified ? (
         <div className="flex justify-center pt-5 mb-4 text-center">
           <button
-            onClick={() => exportToCSV(data, "hospital_report")}
+           id="download-btn"
+            onClick={() => exportToCSV("hospital_report")}
             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
           >
             Download CSV

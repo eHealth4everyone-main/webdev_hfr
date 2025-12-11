@@ -502,6 +502,37 @@ const HospitalTab = () => {
     }
   }, []);
 
+  // for dynamic download
+const handleDownloadAll = async () => {
+  try {
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_BACKEND_API}/facilities-hospitals-search`,
+      {
+        state_id: selectedState,
+        lga_id: selectedLga,
+        ward_id: selectedWard,
+        facility_level_id: selectedFacilityLevel,
+        ownership_id: selectedownership,
+        ownership_type_id: selectedOwnershipCategory,
+        operational_status_id: selectedOperational,
+        registration_status_id: selectedRegistration,
+        license_status_id: selectedLicense,
+        geo_codes: selectedGeoCode,
+        service_category_id: selectedServiceCategory,
+        services: selectedService,
+        search: search.trim() !== "" ? search.trim() : null,
+        per_page: 999999, // Get all records
+        page: 1,
+      }
+    );
+
+    return response.data?.data?.facilities?.data || [];
+  } catch (error) {
+    console.error("Error fetching all data:", error);
+    return [];
+  }
+};
+
   const fetchService = useCallback(async (serviceId: string) => {
     try {
       setService([]); // Reset LGAs
@@ -910,6 +941,7 @@ const HospitalTab = () => {
             totalRecords={totalRecords}
             // fetchFacilities={fetchFacilities} // Pass function to child
             entriesPerPage={entriesPerPage} // Pass entriesPerPage to child component
+            onDownloadAll={handleDownloadAll}
           />
         </div>
       </div>
