@@ -92,8 +92,10 @@
                             <td>
                                 @if ($user->state_id == 1)
                                     All States
-                                @else
+                                @elseif($user->state)
                                     {{ $user->state->name }}
+                                @else
+                                    No State Assigned
                                 @endif
                             </td>
                             <td>
@@ -122,7 +124,7 @@
                                         data-job="{{ $user->job_title }}" data-org="{{ $user->organisation }}"
                                         data-mobile="{{ $user->mobile }}"
                                         data-lga_id="{{ implode(', ', $user->getDirectPermissions()->pluck('name')->toArray()) }}"
-                                        data-state_id = "{{ $user->state_id == 1 ? 'All States' : $user->state->name }}"
+                                        data-state_id = "{{ $user->state_id == 1 ? 'All States' : ($user->state ? $user->state->name : 'No State Assigned') }}"
                                         type="button" data-toggle="modal" data-target="#showUser">Details</button>
                                 </a>
 

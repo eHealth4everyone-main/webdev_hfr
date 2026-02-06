@@ -60,7 +60,7 @@
 
                     @foreach ($lgas as $lga)
                         <tr>
-                            <td>{{ $lga->state->name }}</td>
+                            <td>{{ $lga->state ? $lga->state->name : 'No State Assigned' }}</td>
                             <td>{{ $lga->name }}</td>
                             <td>{{ $lga->lga_code }}</td>
                             <td>

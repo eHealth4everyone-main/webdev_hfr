@@ -225,9 +225,13 @@ const Overlay = () => {
 
     try {
       // Fetch the facilities from the backend
-      const response = await axios.get(
+      const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BACKEND_API}/facilities-hospitals-search3`,
-        { params }
+        {
+          facility_level_id: searchValues.facilityLevel,
+          facility_type_id: searchValues.facilityType,
+          facility_name: searchValues.search,
+        }
       );
 
       const facilities = response.data?.data?.facilities?.data || [];

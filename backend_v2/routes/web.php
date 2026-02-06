@@ -30,6 +30,7 @@ use App\Http\Controllers\SliderController;
 use App\Http\Controllers\AboutUsController;
 use App\Http\Controllers\AuditTrail;
 use App\Http\Controllers\ValidateDownloadController;
+use App\Http\Controllers\CertificateController;
 
 // use Illuminate\Support\Facades\Auth;
 
@@ -201,7 +202,7 @@ Route::middleware(["auth"])->group(function () {
     Route::put('process', [AboutUsController::class, 'updateProcess'])->name('process.update');
 
 
-    // Route::get('process-item',AboutUsController::class,'index'])->name('process-item.index');
+    // Route::get('process-item',AboutUsController::class,'index')->name('process-item.index');
     Route::put('process-item', [AboutUsController::class, 'update'])->name('process-item.update');
     Route::post('process-item', [AboutUsController::class, 'store'])->name('process-item.store');
     Route::delete('process-item-delete/{id}', [AboutUsController::class, 'destroy'])->name('process-item.destroy');
@@ -220,3 +221,9 @@ Auth::routes();
 
 
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+
+// Certificate management routes
+Route::post('/facilities/{id}/certificate/issue', [CertificateController::class, 'issue'])->name('certificate.issue');
+Route::put('/facilities/{id}/certificate/update', [CertificateController::class, 'update'])->name('certificate.update');
+Route::delete('/facilities/{id}/certificate/revoke', [CertificateController::class, 'revoke'])->name('certificate.revoke');

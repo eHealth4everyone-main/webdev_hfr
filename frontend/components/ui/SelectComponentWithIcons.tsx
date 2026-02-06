@@ -48,6 +48,7 @@ const SelectComponentWithIcons: React.FC<SelectComponentWithIconsProps> = ({
         <select
           className={`select select-bordered w-full pl-10 rounded-[4px] focus:outline-none ${inputBorderColor}`}
           name={name}
+          id={name ? `${name}-select` : undefined}
           defaultValue={defaultValue}
           type={type}
           onChange={onChange}

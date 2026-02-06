@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 //         return $request->user();
 // });
 
-// Route::group(['middleware' => 'cors'], function () {
+Route::group(['middleware' => 'cors'], function () {
 
 Route::get('slider', [FrontendController::class, 'slider']);
 
@@ -53,7 +53,7 @@ Route::post('services-by-category', [FrontendController::class, 'getServicesByCa
 Route::post('facilities-hospitals-search/{page?}', [FrontendController::class, 'searchHospitals']);
 Route::get('facilities-hospital/{facilityId}', [FrontendController::class, 'HospitalDetail']);
 Route::post('facilities-hospitals-search2/{page?}', [FrontendController::class, 'searchHospitals2']);
-Route::get('facilities-hospitals-search3', [FrontendController::class, 'searchHospitals3']);
+Route::post('facilities-hospitals-search3', [FrontendController::class, 'searchHospitals3']);
 // Route::get('facilities-hospitals-search3/{page?}', [FrontendController::class, 'searchHospitals3']);
 Route::post('facilities/pharmacies-list/{page?}', [FrontendController::class, 'searchPharmacy']);
 Route::post('facilities/lab-list/{page?}', [FrontendController::class, 'searchLab']);
@@ -71,4 +71,4 @@ Route::get('facilities-latest-updates', [FrontendController::class, 'getUpdates'
 
 Route::post('facilitiesbyLga', [FrontendController::class, 'getFacilitesByLGA']);
 Route::post('googlemap', [FrontendController::class, 'getFacilitesGMap']);
-// });
+});

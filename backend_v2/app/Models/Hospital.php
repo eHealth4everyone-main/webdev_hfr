@@ -53,4 +53,27 @@ class Hospital extends Model implements Auditable
 
         return $id;
     }
+
+    /**
+     * Determine facility level based on services and staff
+     */
+    public function determineFacilityLevel(): string
+    {
+        // Example logic: adjust as needed
+        $services = $this->services ?? [];
+        $staffCount = (
+            ($this->doctors ?? 0) +
+            ($this->nurses ?? 0) +
+            ($this->pharmacists ?? 0) +
+            ($this->lab_scientists ?? 0)
+        );
+
+        if (in_array('Emergency', $services) && $staffCount > 20) {
+            return 'Tertiary';
+        } elseif ($staffCount > 10) {
+            return 'Secondary';
+        } else {
+            return 'Primary';
+        }
+    }
 }

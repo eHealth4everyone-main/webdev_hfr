@@ -197,6 +197,9 @@ class HospitalsController extends Controller
         $hosp->operational_days = $hosp->arrayValuesTostring($request->operational_days);
 
 
+        // Determine facility level automatically
+        $hosp->facility_level = $hosp->determineFacilityLevel();
+
         DB::beginTransaction();
         try {
             $hosp->save();

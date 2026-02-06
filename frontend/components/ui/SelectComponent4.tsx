@@ -52,6 +52,7 @@ const SelectComponent4 = ({
         <select
           className="select select-bordered w-full rounded-[4px] focus:outline-none"
           name={name}
+          id={name ? `${name}-select` : undefined}
           onChange={onChange}
           value={value}
           multiple={isMulti}

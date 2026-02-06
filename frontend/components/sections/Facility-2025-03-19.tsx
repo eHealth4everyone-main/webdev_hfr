@@ -451,6 +451,17 @@ function Facility() {
     setLoading(false);
   };
 
+  // Live update facility level as hospital data changes
+  useEffect(() => {
+    if (selectedHospital) {
+      setSelectedFacilityLevel(
+        selectedHospital.facility_level || selectedHospital.facility_level_name || "Auto-calculated"
+      );
+    } else {
+      setSelectedFacilityLevel("");
+    }
+  }, [selectedHospital, hospitals]);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto p-4">
@@ -490,20 +501,15 @@ function Facility() {
                 </select>
               </div>
 
-              {/* 📊 Facility Level */}
+              {/* 📊 Facility Level (Read-only) */}
               <div className="lg:col-span-2">
-                <select
-                  value={selectedFacilityLevel}
-                  onChange={(e) => setSelectedFacilityLevel(e.target.value)}
-                  className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                >
-                  <option value="">Select Facility Level</option>
-                  {facilityLevels?.map((level) => (
-                    <option key={level.id} value={level.id}>
-                      {level.name}
-                    </option>
-                  ))}
-                </select>
+                <input
+                  type="text"
+                  value={selectedFacilityLevel || "Auto-calculated"}
+                  disabled
+                  className="w-full p-3 border border-gray-200 rounded-lg bg-gray-100 text-green-700 font-semibold focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  aria-label="Facility Level"
+                />
               </div>
 
               {/* 🔍 Search Button */}
@@ -568,6 +574,11 @@ function Facility() {
                           <p className="text-sm text-gray-600">
                             Plans accepted: EPO, HMO, Medi-Cal Managed Care,
                             POS, Senior Advantage
+                          </p>
+
+                          {/* Facility Level Display */}
+                          <p className="text-sm text-green-700 font-semibold">
+                            Facility Level: {hospital.facility_level ?? hospital.facility_level_name ?? "N/A"}
                           </p>
 
                           {/* Buttons */}

@@ -93,7 +93,7 @@
         //facility status chart
         $('#fac_status_table').hide();
         var data = @json($facility_status);
-        var state = data[0]['state'];
+        var state = (data.length > 0 && data[0] && data[0]['state']) ? data[0]['state'] : 'Unknown State';
 
         Highcharts.chart('facility_status', {
             chart: {

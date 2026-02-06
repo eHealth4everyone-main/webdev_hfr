@@ -95,6 +95,11 @@ interface Facility {
   created_at?: string;
   updated_at?: string;
   created_by?: string | null;
+  // Certificate fields
+  certificate_number?: string;
+  issue_date?: string;
+  expiry_date?: string;
+  is_certified?: boolean;
 }
 
 const FacilityDetails = () => {
@@ -336,7 +341,7 @@ const FacilityDetails = () => {
 
           <div className="flex gap-[.5rem] gap-2">
             {parsedImages.slice(0, 2).map((img: any, index: number) => (
-              <img
+              <Image
                 key={index}
                 src={img}
                 width={95}
@@ -408,6 +413,34 @@ const FacilityDetails = () => {
               </p>
             </div>
           </div>
+          {/* Certificate Management Section */}
+          <div className="mb-4 border-t pt-4">
+            <h3 className="text-green-600 font-semibold mb-2">Certificate Management</h3>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+              <p>
+                <span className="font-semibold">Certificate Number:</span>{" "}
+                {hospital?.certificate_number || "N/A"}
+              </p>
+              <p>
+                <span className="font-semibold">Issue Date:</span>{" "}
+                {hospital?.issue_date || "N/A"}
+              </p>
+              <p>
+                <span className="font-semibold">Expiry Date:</span>{" "}
+                {hospital?.expiry_date || "N/A"}
+              </p>
+              <p>
+                <span className="font-semibold">Certified:</span>{" "}
+                {hospital?.is_certified ? "Yes" : "No"}
+              </p>
+            </div>
+            {/* Actions: Issue/Revoke/Update certificate (UI only, backend integration needed) */}
+            <div className="mt-2 flex gap-2">
+              <button className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Issue Certificate</button>
+              <button className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Update Certificate</button>
+              <button className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Revoke Certificate</button>
+            </div>
+          </div>
 
           {/* Location Details */}
           <div className="mb-4 border-t pt-4">
@@ -476,6 +509,12 @@ const FacilityDetails = () => {
               Point-of-Service Plan (POS), Senior Advantage. */}
               {(hospital as any)?.description || "N/A"}
             </p>
+          </div>
+
+          {/* Facility Level Display */}
+          <div className="mt-2">
+            <span className="text-green-700 font-semibold">Facility Level: </span>
+            <span className="text-green-900">{hospital?.facility_level_name || "Auto-calculated"}</span>
           </div>
         </div>
       </div>

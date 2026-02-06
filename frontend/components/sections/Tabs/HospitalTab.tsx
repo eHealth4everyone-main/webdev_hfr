@@ -687,6 +687,7 @@ const handleDownloadAll = async () => {
               <SelectComponent
                 className="w-full max-w-[350px]"
                 value={selectedState}
+                name="state"
                 onChange={(e) => {
                   const selectedId = e.target.value; // Get the state ID
                   setSelectedState(selectedId);
@@ -706,6 +707,7 @@ const handleDownloadAll = async () => {
               <SelectComponent
                 className="w-full max-w-[350px]"
                 value={selectedLga}
+                name="lga"
                 onChange={(e) => {
                   const lgaId = e.target.value;
                   setSelectedLga(lgaId);
@@ -725,6 +727,7 @@ const handleDownloadAll = async () => {
               <SelectComponent
                 className="w-full max-w-[350px]"
                 value={selectedWard}
+                name="ward"
                 onChange={(e) => {
                   setSelectedWard(e.target.value); // Store selected Ward
                   // setSearch("");
@@ -741,6 +744,7 @@ const handleDownloadAll = async () => {
               <SelectComponent
                 className="w-full max-w-[350px]"
                 value={selectedFacilityLevel} // Track selected value
+                name="facilityLevel"
                 onChange={(e) => {
                   setSelectedFacilityLevel(e.target.value); // Update state
                   // setSearch("");
@@ -756,11 +760,7 @@ const handleDownloadAll = async () => {
               <SelectComponent
                 className="w-full max-w-[350px]"
                 value={selectedownership} // Track selected value
-                // onChange={(e) => {
-                //   const ownershipId = e.target.value;
-                //   setSelectedownership(ownershipId);
-                //   ownershipCategory(ownershipId); // Fetch Wards for selected LGA
-                // }}
+                name="ownership"
                 onChange={(e) => {
                   const ownershipId = e.target.value;
                   setSelectedownership(ownershipId); // Update selected ownership
@@ -780,6 +780,7 @@ const handleDownloadAll = async () => {
                 <SelectComponent
                   className="w-full max-w-[350px]"
                   value={selectedOwnershipCategory}
+                  name="ownershipType"
                   onChange={(e) => setSelectedOwnershipCategory(e.target.value)}
                   options={ownershipCategories.map((item) => ({
                     value: item.id, // Map `id` to `value`
@@ -793,6 +794,7 @@ const handleDownloadAll = async () => {
               <SelectComponent
                 className="w-full max-w-[350px]"
                 value={selectedOperational} // Track selected value
+                name="operational"
                 onChange={(e) => {
                   setSelectedOperational(e.target.value); // Update state
                   // setSearch("");
@@ -808,6 +810,7 @@ const handleDownloadAll = async () => {
               <SelectComponent
                 className="w-full max-w-[350px]"
                 value={selectedRegistration} // Track selected value
+                name="registrationStatus"
                 onChange={(e) => {
                   setSelectedRegistration(e.target.value); // Update state
                   // setSearch("");
@@ -823,6 +826,7 @@ const handleDownloadAll = async () => {
               <SelectComponent
                 className="w-full max-w-[350px]"
                 value={selectedLicense} // Track selected value
+                name="licenseStatus"
                 onChange={(e) => {
                   setSelectedLicense(e.target.value); // Update state
                   // setSearch("");
@@ -838,6 +842,7 @@ const handleDownloadAll = async () => {
               <SelectComponent4
                 className="w-full max-w-[350px]"
                 value={selectedGeoCode} // Track selected value
+                name="geoCode"
                 onChange={(e) => {
                   setSelectedGeoCode(e.target.value); // Update state
                   // setSearch("");
@@ -854,6 +859,7 @@ const handleDownloadAll = async () => {
               <SelectComponent
                 className="w-full max-w-[350px]"
                 value={selectedServiceCategory}
+                name="serviceCategory"
                 onChange={(e) => {
                   const serviceId = e.target.value; // Get the state ID
                   setSelectedServiceCategory(serviceId);
@@ -870,6 +876,7 @@ const handleDownloadAll = async () => {
               <SelectComponent
                 className="w-full max-w-[350px]"
                 value={selectedService}
+                name="service"
                 onChange={(e) => {
                   setSelectedService(e.target.value);
                   // setSearch("");

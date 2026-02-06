@@ -107,11 +107,10 @@
                         <div class="col-md-7">
                             @if (Auth::user()->state_id == 1 )
                                 <input  type="text" class="form-control"  value="All States" disabled>
-                            @else                            
-                           
-                                <input  type="text" class="form-control"  value="{{ auth()->user()->state->name }}" disabled>                                                
-                            
-                            
+                            @elseif(auth()->user()->state)
+                                <input  type="text" class="form-control"  value="{{ auth()->user()->state->name }}" disabled>
+                            @else
+                                <input  type="text" class="form-control"  value="No State Assigned" disabled>
                             @endif
                         </div>
                     </div> 

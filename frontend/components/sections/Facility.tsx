@@ -206,9 +206,7 @@ function Facility() {
   const currentHospitals = hospitals.slice(indexOfFirstItem, indexOfLastItem);
 
   const [selectedStateId, setSelectedStateId] = useState<string>("");
-  const [statesInResults, setStatesInResults] = useState<
-    { id: string; name: string }[]
-  >([]);
+  const [statesList, setStatesList] = useState<{ id: string; name: string }[]>([]);
 
   const [selectedLgaId, setSelectedLgaId] = useState<string>("");
   const [lgasInResults, setLgasInResults] = useState<
@@ -420,10 +418,14 @@ function Facility() {
           params.facility_name = searchValues.search;
         }
 
-        // Make GET request with query parameters
-        const response = await axios.get(
+        // Make POST request with body parameters
+        const response = await axios.post(
           `${process.env.NEXT_PUBLIC_BACKEND_API}/facilities-hospitals-search3`,
-          { params }
+          {
+            facility_level_id: searchValues.facilityLevel,
+            facility_type_id: searchValues.facilityType,
+            facility_name: searchValues.search,
+          }
         );
 
         // Process the response to extract the facilities
@@ -611,6 +613,19 @@ function Facility() {
   useEffect(() => {
     fetchFacilityTypes();
     fetchFacilityLevels();
+    // Fetch all states for dropdown
+    const fetchStates = async () => {
+      try {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_API}/states`);
+        const data = response?.data?.data;
+        if (data && Array.isArray(data)) {
+          setStatesList(data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch states.", error);
+      }
+    };
+    fetchStates();
   }, [fetchFacilityTypes, fetchFacilityLevels]);
 
   // Set the Map Center to the First Search Result
@@ -696,7 +711,7 @@ function Facility() {
     );
 
     // Save to state to populate dropdown
-    setStatesInResults(uniqueStates);
+    setStatesList(uniqueStates);
 
     console.log({ uniqueStates });
 
@@ -1073,7 +1088,7 @@ function Facility() {
                       className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     >
                       <option value="">Select State</option>
-                      {statesInResults.map((state) => (
+                      {statesList.map((state) => (
                         <option key={state.id} value={state.id}>
                           {state.name}
                         </option>
