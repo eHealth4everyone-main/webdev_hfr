@@ -413,3 +413,66 @@ npm run type-check
 ## 📌 8. Contact
 
 For issues or questions, contact the team at **your-email@example.com**.
+
+---
+
+# NHFR New Features (2026)
+
+> **Note:** When you upload to GitHub, changes will not merge with another branch unless a pull request is created and approved by the repository maintainers. Always follow the contribution guidelines below.
+
+## 🚀 Newly Implemented Features
+
+- **Facility Finder:**
+  - Search hospitals by state, type, and level using a new API endpoint (`/api/facilities-hospitals-search3`).
+  - Improved dropdowns and filtering logic in the frontend.
+
+- **API Improvements:**
+  - Added RESTful endpoints for hospitals, states, and facility types.
+  - Enhanced error handling and consistent JSON responses.
+
+- **Database Migrations:**
+  - Created and migrated missing tables: `hs_hospitals`, `ou_lgas`, `ou_wards`, `ou_states`, `hospital_details`, `facility_status_lga_pivot`.
+  - All migrations are now up-to-date and tested.
+
+- **Google Maps Integration:**
+  - Interactive facility location display using Google Maps.
+  - Ensure your `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` is set in `.env.local`.
+
+- **Testing:**
+  - Backend tests pass (`php artisan test`).
+  - Manual testing for frontend features (no automated test script yet).
+
+---
+
+## 📦 Dependencies
+
+### Backend (Laravel)
+- PHP >= 8.1
+- Composer
+- MySQL
+- Laravel 9
+- ext-json
+- ext-mbstring
+- ext-pdo
+- ext-curl
+
+### Frontend (Next.js)
+- Node.js >= 18
+- npm or yarn
+- next
+- react
+- react-dom
+- tailwindcss
+- @chakra-ui/react
+- axios
+- @reduxjs/toolkit
+- google-maps-react (or similar)
+
+---
+
+## 🛠 Contribution Guidelines (for GitHub)
+
+1. **Create a new branch** before making changes.
+2. **Use clear commit messages.**
+3. **Test before pushing changes.**
+4. **List any new dependencies added in your PR.**
