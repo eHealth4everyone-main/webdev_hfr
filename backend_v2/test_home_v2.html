@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+
+        <meta name="csrf-token" content="BLg9O2QlibZWecpDVrkC560LwHtSGjD1SWes00A2">
+
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Nigeria Health Facility Registry</title>
+        <link rel="stylesheet" href="http://localhost:8585/auth/styles/login.styles.css" />
+    </head>
+
+    <body>
+        <div class="container">
+            <div class="wrapper">
+                <div class="sidebar">
+                    <img src="http://localhost:8585/auth/SideBar.svg" alt="Reset Password Illustration" />
+                </div>
+
+                <div class="form-container">
+                    <div>
+                        <a href="">
+                            <img src="http://localhost:8585/auth/new-logo.svg" alt="Logo" class="logo" />
+                        </a>
+                    </div>
+
+                    <h1 class="heading">Nigeria Health Facility Registry (HFR)</h1>
+                    <p class="subtitle">Login to Access your Dashboard</p>
+
+                    
+                    <form class="form" method="POST" action="http://localhost:8585/login" aria-label="Login">
+                        <input type="hidden" name="_token" value="BLg9O2QlibZWecpDVrkC560LwHtSGjD1SWes00A2">                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input id="email" type="email" class="form-control" name="email"
+                                value="" placeholder="E-mail" autofocus>
+
+                                                    </div>
+
+                        <div class="form-group">
+                            <label for="new-password">Password</label>
+                            <input id="password" type="password" class="form-control" name="password"
+                                placeholder="Password">
+
+                                                    </div>
+
+                        <a class="forgot-password" href="http://localhost:8585/password/reset">
+                            Forgot Password
+                        </a>
+
+                        <div>
+                            <button type="submit" class="submit-btn">Login</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+        
+        
+        
+
+
+    </body>
+
+</html>

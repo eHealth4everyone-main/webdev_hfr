@@ -1,0 +1,2 @@
+﻿View	Create View	character_set_client	collation_connection
+ou_states	CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `hfrng`.`ou_states` AS select `hfrng`.`tbl_state`.`state_id` AS `id`,`hfrng`.`tbl_state`.`state_id` AS `short_code`,`hfrng`.`tbl_state`.`state` AS `name` from `hfrng`.`tbl_state`	utf8	utf8_general_ci

@@ -1,0 +1,2 @@
+﻿View	Create View	character_set_client	collation_connection
+ou_lgas	CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `hfrng`.`ou_lgas` AS select `hfrng`.`tbl_lga`.`lga_id` AS `id`,`hfrng`.`tbl_lga`.`lga_id` AS `map_code`,`hfrng`.`tbl_lga`.`state_id` AS `state_id`,`hfrng`.`tbl_lga`.`lga` AS `name` from `hfrng`.`tbl_lga`	utf8	utf8_general_ci

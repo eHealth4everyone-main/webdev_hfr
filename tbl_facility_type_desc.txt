@@ -1,0 +1,3 @@
+Field	Type	Null	Key	Default	Extra
+facility_type	varchar(255)	NO	PRI	NULL	
+description	varchar(255)	YES		NULL	
