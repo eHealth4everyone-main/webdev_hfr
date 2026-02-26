@@ -15,6 +15,8 @@ use App\Models\HospitalServiceHistory;
 use App\Models\audit;
 use App\Models\ApprovalNotifications;
 use App\Models\HfrDhis;
+use App\Services\CertificateService;
+
 
 
 
@@ -230,7 +232,8 @@ class PublishController extends Controller
      * @response 500 scenario=error Internal error during publication process.
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, CertificateService $certificateService)
+
     {
         //check if the request is publised
         if (!$this->isPublished($request->id)) {
@@ -324,6 +327,10 @@ class PublishController extends Controller
                     $hosp_main->operational_days =  $hosp_history->operational_days;
                     $hosp_main->save();
                     //copy ends
+
+                    // Issue Certificate
+                    $certificateService->issueCertificate($hosp_main->id, Auth::user()->id);
+
 
                     //get new hospital services
                     $services = DB::select("SELECT service_id FROM hs_hospital_services_history WHERE hospital_id = " . $request->id . "");

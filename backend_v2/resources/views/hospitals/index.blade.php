@@ -264,6 +264,9 @@
                                         </button>
                                     </a>
                                 @endif
+                                <a href="{{ route('hospitals.certificate', $fac->id) }}" target="_blank">
+                                    <button class="btn btn-info btn-sm" type="button">Cert</button>
+                                </a>
 
                             </td>
                         </tr>

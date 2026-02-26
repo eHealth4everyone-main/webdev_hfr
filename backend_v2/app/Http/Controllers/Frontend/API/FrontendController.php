@@ -2009,6 +2009,8 @@ class FrontendController extends Controller
             ->leftJoin('lst_oparational_status', 'hs_hospitals_history.operational_status_id', '=', 'lst_oparational_status.id')
             ->leftJoin('lst_registration_status', 'hs_hospitals_history.registration_status_id', '=', 'lst_registration_status.id')
             ->leftJoin('lst_license_status', 'hs_hospitals_history.license_status_id', '=', 'lst_license_status.id')
+            ->leftJoin('hs_facility_certificates', 'hs_hospitals_history.id', '=', 'hs_facility_certificates.hospital_id')
+
             ->select(
                 'hs_hospitals_history.*',
                 'ou_states.name as state_name',
@@ -2019,7 +2021,12 @@ class FrontendController extends Controller
                 'lst_ownerships.name as ownership_name',
                 'lst_oparational_status.status as operational_status_name',
                 'lst_registration_status.status as registration_status_name',
-                'lst_license_status.status as license_status_name'
+                'lst_license_status.status as license_status_name',
+                'hs_facility_certificates.certificate_no',
+                'hs_facility_certificates.issue_date as cert_issue_date',
+                'hs_facility_certificates.expiry_date as cert_expiry_date',
+                'hs_facility_certificates.status as cert_status'
+
             )
 
             ->where('hs_hospitals_history.id', $facilityId)
@@ -2032,4 +2039,30 @@ class FrontendController extends Controller
             'data' => $data
         ], 200);
     }
+
+    /**
+     * Get Certificate by Facility ID
+     *
+     * @urlParam facilityId int Required ID of the facility.
+     */
+    public function getCertificate(Request $request, $facilityId)
+    {
+        $cert = DB::table('hs_facility_certificates')
+            ->where('hospital_id', $facilityId)
+            ->where('status', 'valid')
+            ->first();
+
+        if (!$cert) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Certificate not found or invalid'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $cert
+        ], 200);
+    }
 }
+

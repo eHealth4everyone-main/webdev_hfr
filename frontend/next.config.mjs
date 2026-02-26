@@ -21,7 +21,7 @@ const nextConfig = {
       {
         protocol: "http",
         hostname: "127.0.0.1",
-        port: "8001",
+        port: "8080",
         pathname: "/**", // Allow all images from your local API
       },
       {

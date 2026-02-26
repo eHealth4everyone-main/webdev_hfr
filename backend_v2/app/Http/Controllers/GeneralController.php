@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 
+use App\Services\FacilityLevelService;
+
+
 /**
  * @Administration - General
  *
@@ -17,6 +20,27 @@ use Illuminate\Support\Facades\DB;
  */
 class GeneralController extends Controller
 {
+
+    /**
+     * Suggest the facility level based on input data.
+     *
+     * @param Request $request
+     * @param FacilityLevelService $levelService
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function suggestFacilityLevel(Request $request, FacilityLevelService $levelService)
+    {
+        $levelId = $levelService->determineLevel($request->all());
+
+        $levelName = DB::table('lst_level_of_care')
+            ->where('id', $levelId)
+            ->value('name');
+
+        return response()->json([
+            'level_id' => $levelId,
+            'level_name' => $levelName
+        ]);
+    }
 
      /**
      * Get LGAs by State

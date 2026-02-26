@@ -160,7 +160,7 @@
                                 <div class="col-sm-6">
                                     <div class="form-group {{ $errors->has('facility_level_id') ? 'has-error' : '' }}">
                                         <label class="col-sm-4 control-label">Hospital/ Clinic Level:<font color="red">
-                                                *</font> </label></label>
+                                                *</font> <br><small id="suggested_level_txt" style="color: blue; cursor: pointer;" onclick="applySuggestedLevel()">Suggest Level</small></label></label>
                                         <div class="col-sm-8">
                                             <select class="form-control select2" id="facility_level_id"
                                                 name="facility_level_id" style="width: 100%;">
@@ -1291,5 +1291,49 @@
             $('#close_date').prop('required', false);
             $('#close_date_div').hide();
         }
+
+        /* Auto-determine Level logic */
+        var suggestedLevelId = null;
+
+        function suggestLevel() {
+            var beds = $('#beds').val();
+            var doctors = $('#doctors').val();
+            var onsite_imaging = $('input[name="onsite_imaging"]').is(':checked') ? 'Yes' : 'No';
+            var onsite_laboratory = $('input[name="onsite_laboratory"]').is(':checked') ? 'Yes' : 'No';
+            var mortuary_services = $('input[name="mortuary_services"]').is(':checked') ? 'Yes' : 'No';
+            var ambulance_services = $('input[name="ambulance_services"]').is(':checked') ? 'Yes' : 'No';
+            var _token = $('input[name="_token"]').val();
+
+            $.ajax({
+                url: "{{ route('suggestFacilityLevel') }}",
+                method: "POST",
+                data: {
+                    beds: beds,
+                    doctors: doctors,
+                    onsite_imaging: onsite_imaging,
+                    onsite_laboratory: onsite_laboratory,
+                    mortuary_services: mortuary_services,
+                    ambulance_services: ambulance_services,
+                    _token: _token
+                },
+                success: function(response) {
+                    suggestedLevelId = response.level_id;
+                    $('#suggested_level_txt').html('Suggest: ' + response.level_name);
+                    $('#suggested_level_txt').css('color', 'green');
+                }
+            });
+        }
+
+        function applySuggestedLevel() {
+            if (suggestedLevelId) {
+                $('#facility_level_id').val(suggestedLevelId).change();
+            } else {
+                suggestLevel();
+            }
+        }
+
+        // Attach listeners
+        $('#beds, #doctors').on('change keyup', suggestLevel);
+        $('input[name="onsite_imaging"], input[name="onsite_laboratory"], input[name="mortuary_services"], input[name="ambulance_services"]').on('ifChanged', suggestLevel);
     </script>
 @endpush

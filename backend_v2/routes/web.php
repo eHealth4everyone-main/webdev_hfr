@@ -85,6 +85,7 @@ Route::middleware(["auth"])->group(function () {
         Route::post('admin/hospitals/delete', [HospitalsController::class, 'InitiateDelete'])->name('hospitals.InitiateDelete');
         Route::post('admin/hospitals/export', [HospitalsController::class, 'export'])->name('hospitals.export');
 
+        Route::get('admin/hospitals/certificate/{id}', [HospitalsController::class, 'showCertificate'])->name('hospitals.certificate');
         Route::resource('admin/hospitals', HospitalsController::class)->except(['show', 'destroy']);
 
         Route::post('admin/hospitals/admin-update', [HospitalsController::class, 'adminUpdate'])->name('hospitals.adminupdate');
@@ -124,6 +125,7 @@ Route::middleware(["auth"])->group(function () {
         Route::post('admin/facilities/ownership', [GeneralController::class, 'getOwnershipType'])->name('getOwnershipType');
         Route::post('admin/facilities/facility-level-option', [GeneralController::class, 'getFacilityLevelOption'])->name('getFacilityLevelOption');
         Route::post('admin/facilities/facilitys-pecialized-option', [GeneralController::class, 'getSpecializedOptions'])->name('getSpecializedOptions');
+        Route::post('admin/facilities/suggest-level', [GeneralController::class, 'suggestFacilityLevel'])->name('suggestFacilityLevel');
 
         //laboratory
         Route::get('admin/laboratory/search', [LabController::class, 'search'])->name('laboratory.search');

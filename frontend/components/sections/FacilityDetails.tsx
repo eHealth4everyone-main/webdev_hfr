@@ -18,6 +18,8 @@ import "swiper/css/navigation";
 import Lightbox from "react-image-lightbox";
 import "react-image-lightbox/style.css"; // Import the lightbox styles
 import Swal from "sweetalert2";
+import Certificate from "./Certificate";
+
 
 interface Facility {
   id: number;
@@ -63,8 +65,8 @@ interface Facility {
   dentist?: number | null;
   attendants?: number | null;
   community_health_officer?: number | null;
-  community_extension_workers?: number | null;
-  jun_community_extension_worker?: number | null;
+  community_health_extension_worker?: number | null;
+  jun_community_health_extension_worker?: number | null;
   inpatient?: string | null;
   outpatient?: string | null;
   ambulance_services?: string;
@@ -95,7 +97,12 @@ interface Facility {
   created_at?: string;
   updated_at?: string;
   created_by?: string | null;
+  certificate_no?: string | null;
+  cert_issue_date?: string | null;
+  cert_expiry_date?: string | null;
+  cert_status?: string | null;
 }
+
 
 const FacilityDetails = () => {
   const router = useRouter();
@@ -103,17 +110,14 @@ const FacilityDetails = () => {
   const searchParams = useSearchParams();
   const id = searchParams?.get("id"); // Get the hospital ID from URL
 
-  // const [hospital, setHospital] = useState(null);
   const [hospital, setHospital] = useState<Facility | null>(null);
 
   const [fetchError, setFetchError] = useState<string>(""); // State for error messages
 
-  const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
-
   const [isOpen, setIsOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [mainSrc, setMainSrc] = useState("");
+  const [showCertificate, setShowCertificate] = useState(false);
+
 
   const getAFacility = useCallback(async (facilityId: string) => {
     try {
@@ -133,13 +137,11 @@ const FacilityDetails = () => {
   useEffect(() => {
     const pathArray = window.location.pathname.split("/"); // Split URL by "/"
     const id = pathArray[pathArray.length - 1]; // Get the last part of the URL
-    // console.log("Extracted ID:", id);
     if (id) {
       getAFacility(id);
     }
-  }, [id, getAFacility]); // Add getAFacility as a dependency
+  }, [id, getAFacility]);
 
-  // const parsedImages = JSON.parse(hospital?.image_url || "[]"); // Default to an empty array
   const parsedImages = JSON.parse((hospital as any)?.image_url || "[]");
 
   const imageUrl =
@@ -147,22 +149,17 @@ const FacilityDetails = () => {
       ? parsedImages[0] // Get the first image
       : "/detailsImageOne.svg"; // Default placeholder image
 
-  // console.log({ imageUrl });
-
   const openLightbox = (index: number) => {
     if (!parsedImages[index]) return;
 
-    // If already open, close it first before re-opening
     if (isOpen) {
       setIsOpen(false);
       setTimeout(() => {
         setCurrentIndex(index);
-        setMainSrc(parsedImages[index]);
         setIsOpen(true);
-      }, 100); // Short delay to allow unmounting
+      }, 100);
     } else {
       setCurrentIndex(index);
-      setMainSrc(parsedImages[index]);
       setIsOpen(true);
     }
   };
@@ -203,7 +200,6 @@ const FacilityDetails = () => {
     fixColorsBeforeCapture(); // Fix colors before capturing
     html2canvas(pdfRef.current, { scale: 2 }).then((canvas) => {
       const imgData = canvas.toDataURL("image/jpeg");
-      // const pdf = new jsPDF("p", "mm", "a4");
       const pdf = new jsPDF("l", "mm", "a4"); // "l" = Landscape mode
       const pageWidth = pdf.internal.pageSize.getWidth(); // Get landscape width
       const imgWidth = pageWidth - 40; // Reduce width to add padding (20mm left & right)
@@ -217,11 +213,11 @@ const FacilityDetails = () => {
         document.querySelectorAll(".no-print").forEach((el) => {
           (el as HTMLElement).style.visibility = "visible";
         });
-      }, 100); // Small delay to ensure smooth restoration
+      }, 100);
     });
   };
 
-  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAP_API; // Replace with your actual API key
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAP_API;
 
   const getAccurateLocation = async () => {
     try {
@@ -260,7 +256,6 @@ const FacilityDetails = () => {
       didOpen: () => Swal.showLoading(),
     });
 
-    // First, try navigator.geolocation
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -276,8 +271,6 @@ const FacilityDetails = () => {
         },
         async (error) => {
           console.warn("Geolocation Error:", error);
-
-          // If browser geolocation fails, use Google Geolocation API
           const location = await getAccurateLocation();
           Swal.close();
 
@@ -300,7 +293,6 @@ const FacilityDetails = () => {
         }
       );
     } else {
-      // If geolocation is not supported, use Google API directly
       const location = await getAccurateLocation();
       Swal.close();
 
@@ -324,7 +316,7 @@ const FacilityDetails = () => {
 
       <div className="flex flex-col lg:flex-row gap-[2rem]">
         <div className="flex flex-col gap-[1rem]">
-          <Image src={imageUrl} width={445} height={464} alt="img" />
+          <Image src={imageUrl} width={445} height={464} alt="img" className="rounded-xl object-cover" />
 
           <Text
             className="underline text-[#5BBA62] cursor-pointer text-center no-print"
@@ -335,7 +327,7 @@ const FacilityDetails = () => {
           </Text>
 
           <div className="flex gap-[.5rem] gap-2">
-            {parsedImages.slice(0, 2).map((img: any, index: number) => (
+            {parsedImages.slice(0, 3).map((img: any, index: number) => (
               <img
                 key={index}
                 src={img}
@@ -349,7 +341,7 @@ const FacilityDetails = () => {
 
             {parsedImages.length > 3 && (
               <div
-                className="w-[120px] h-[120px] flex items-center justify-center bg-black/50 text-white text-lg cursor-pointer rounded-md"
+                className="w-[95px] h-[131px] flex items-center justify-center bg-black/50 text-white text-lg cursor-pointer rounded-md"
                 onClick={() => openLightbox(3)}
               >
                 +{parsedImages.length - 3}
@@ -358,13 +350,12 @@ const FacilityDetails = () => {
 
             {isOpen && parsedImages.length > 0 && (
               <Lightbox
-                key={currentIndex}
                 mainSrc={parsedImages[currentIndex]}
                 nextSrc={parsedImages[(currentIndex + 1) % parsedImages.length]}
                 prevSrc={
                   parsedImages[
-                    (currentIndex - 1 + parsedImages.length) %
-                      parsedImages.length
+                  (currentIndex - 1 + parsedImages.length) %
+                  parsedImages.length
                   ]
                 }
                 onCloseRequest={closeLightbox}
@@ -375,108 +366,67 @@ const FacilityDetails = () => {
             )}
           </div>
         </div>
-        <div className="border rounded-xl shadow-sm p-6 bg-white">
-          {/* General Information */}
-          <div className="mb-4">
-            <h3 className="text-green-600 font-semibold mb-2">
-              General Information
-            </h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
-              <p>
-                <span className="font-semibold">Facility type:</span>{" "}
-                {(hospital as any)?.facility_type_name || "N/A"}
-              </p>
-              <p>
-                <span className="font-semibold">Ownership:</span>{" "}
-                {(hospital as any)?.ownership_name || "N/A"}
-              </p>
-              <p>
-                <span className="font-semibold">Certificate of Standard:</span>{" "}
-                Yes
-              </p>
-              <p>
-                <span className="font-semibold">Contact info:</span>{" "}
-                {(hospital as any)?.phone_number || "N/A"}
-              </p>
-              <p>
-                <span className="font-semibold">Unique ID:</span>{" "}
-                {(hospital as any)?.unique_id || "N/A"}
-              </p>
-              <p>
-                <span className="font-semibold">Facility Level:</span>{" "}
-                {(hospital as any)?.facility_level_name || "N/A"}
-              </p>
+
+        <div className="flex-1 space-y-6">
+          <div className="border rounded-xl shadow-sm p-6 bg-white">
+            <div className="mb-4">
+              <h3 className="text-green-600 font-semibold mb-2">General Information</h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+                <p><span className="font-semibold text-gray-500">Facility type:</span> {(hospital as any)?.facility_type_name || "N/A"}</p>
+                <p><span className="font-semibold text-gray-500">Ownership:</span> {(hospital as any)?.ownership_name || "N/A"}</p>
+                <p><span className="font-semibold text-gray-500">Certificate of Standard:</span> {hospital?.certificate_no ? "Yes" : "No"}</p>
+                <p><span className="font-semibold text-gray-500">Contact info:</span> {(hospital as any)?.phone_number || "N/A"}</p>
+                <p><span className="font-semibold text-gray-500">Unique ID:</span> {hospital?.unique_id || "N/A"}</p>
+                <p><span className="font-semibold text-gray-500">Facility Level:</span> {hospital?.facility_level_name || "N/A"}</p>
+                {hospital?.certificate_no && (
+                  <p><span className="font-semibold text-gray-500">Cert No:</span> {hospital.certificate_no}</p>
+                )}
+              </div>
+            </div>
+
+            <div className="mb-4 border-t pt-4">
+              <h3 className="text-green-600 font-semibold mb-2">Location details</h3>
+              <div className="grid grid-cols-3 gap-4 text-sm">
+                <p><span className="font-semibold text-gray-500">State:</span> {hospital?.state_name || "N/A"}</p>
+                <p><span className="font-semibold text-gray-500">LGA:</span> {hospital?.lga_name || "N/A"}</p>
+                <p><span className="font-semibold text-gray-500">Ward:</span> {hospital?.ward_name || "N/A"}</p>
+              </div>
+            </div>
+
+            <div className="mb-4 border-t pt-4">
+              <h3 className="text-green-600 font-semibold mb-2">Facility Capacity info</h3>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+                <p><span className="font-semibold text-gray-500">Med Doctors:</span> {hospital?.doctors || 0}</p>
+                <p><span className="font-semibold text-gray-500">Beds:</span> {hospital?.beds || 0}</p>
+                <p><span className="font-semibold text-gray-500">Nurses:</span> {hospital?.nurses || 0}</p>
+                <p><span className="font-semibold text-gray-500">Midwives:</span> {hospital?.midwifes || 0}</p>
+              </div>
             </div>
           </div>
 
-          {/* Location Details */}
-          <div className="mb-4 border-t pt-4">
-            <h3 className="text-green-600 font-semibold mb-2">
-              Location details
-            </h3>
-            <div className="grid grid-cols-3 gap-4 text-sm">
-              <p>
-                <span className="font-semibold">State:</span>{" "}
-                {(hospital as any)?.state_name || "N/A"}
-              </p>
-              <p>
-                <span className="font-semibold">LGA:</span>{" "}
-                {(hospital as any)?.lga_name || "N/A"}
-              </p>
-              <p>
-                <span className="font-semibold">Ward:</span>{" "}
-                {(hospital as any)?.ward_name || "N/A"}
-              </p>
-            </div>
-          </div>
+          {hospital?.certificate_no && (
+            <div className="mt-8 flex flex-col items-center gap-4">
+              <button
+                onClick={() => setShowCertificate(!showCertificate)}
+                className="px-8 py-3 bg-green-700 text-white rounded-full font-bold hover:bg-green-800 transition-all shadow-lg no-print hover:scale-105"
+              >
+                {showCertificate ? "Hide Certificate" : "View Official Certificate of Standards"}
+              </button>
 
-          {/* Facility Capacity Info */}
-          <div className="mb-4 border-t pt-4">
-            <h3 className="text-green-600 font-semibold mb-2">
-              Facility Capacity info
-            </h3>
-            <div className="grid grid-cols-3 md:grid-cols-6 gap-4 text-sm">
-              <p>
-                <span className="font-semibold">No of Medical Doctors:</span>{" "}
-                <br />
-                {(hospital as any)?.doctors || "N/A"}
-              </p>
-              <p>
-                <span className="font-semibold">No of Beds:</span> <br />
-                {(hospital as any)?.beds || "N/A"}
-              </p>
-              <p>
-                <span className="font-semibold">No of Midwives:</span> <br />
-                {(hospital as any)?.nurse_midwife || "N/A"}
-              </p>
-              <p>
-                <span className="font-semibold">No of Nurses:</span> <br />
-                {(hospital as any)?.nurses || "N/A"}
-              </p>
-              <p>
-                <span className="font-semibold">No of Resident Doctors:</span>{" "}
-                <br />
-                {(hospital as any)?.doctors || "N/A"}
-              </p>
-              <p>
-                <span className="font-semibold">No of Health workers:</span>{" "}
-                <br />
-                {(hospital as any)?.community_health_officer || "N/A"}
-              </p>
+              {showCertificate && (
+                <div className="w-full flex justify-center py-12 bg-gray-100 rounded-2xl shadow-inner animate-in fade-in zoom-in duration-300">
+                  <Certificate
+                    facilityName={hospital.facility_name}
+                    certificateNo={hospital.certificate_no}
+                    issueDate={hospital.cert_issue_date || ""}
+                    expiryDate={hospital.cert_expiry_date || ""}
+                    facilityLevel={hospital.facility_level_name || ""}
+                    location={`${hospital.lga_name || ""}, ${hospital.state_name || ""}`}
+                  />
+                </div>
+              )}
             </div>
-          </div>
-
-          {/* Plans Accepted */}
-          <div className="border-t pt-4">
-            <h3 className="text-green-600 font-semibold mb-2">
-              Plans accepted
-            </h3>
-            <p className="text-sm">
-              {/* Exclusive Provider Organization (EPO), HMO, Medi-Cal Managed Care,
-              Point-of-Service Plan (POS), Senior Advantage. */}
-              {(hospital as any)?.description || "N/A"}
-            </p>
-          </div>
+          )}
         </div>
       </div>
     </div>
@@ -496,67 +446,49 @@ const HospitalDetails = ({
 
   const shareLocation = async () => {
     try {
-      const urlToShare = window.location.href; // Or you can specify any URL you want to share
-
+      const urlToShare = window.location.href;
       if (navigator.share) {
-        // If Web Share API is available
         await navigator.share({
-          title: "Check out this healthcare facility",
-          text: "I found this healthcare facility in your area, check it out!",
+          title: `Check out ${hospital?.facility_name}`,
+          text: "View details of this healthcare facility on HFR.",
           url: urlToShare,
         });
-        console.log("Location shared successfully!");
       } else {
-        // Fallback for browsers that don't support the Web Share API
-        // Open a simple modal or link to share on platforms like FB, WhatsApp, etc.
-        const fallbackUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(
-          urlToShare
-        )}`;
+        const fallbackUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(urlToShare)}`;
         window.open(fallbackUrl, "_blank");
       }
     } catch (error) {
-      console.error("Error sharing location:", error);
+      console.error("Error sharing:", error);
     }
   };
 
   return (
-    <div className="flex flex-col md:flex-row items-center justify-between p-4 border-b bg-white">
-      <div>
-        <p className="text-sm text-gray-500">
-          <span className="font-semibold">Hospital Finder</span> / Hospital
-          details
+    <div className="flex flex-col md:flex-row items-center justify-between p-6 border rounded-xl bg-white shadow-sm mb-6">
+      <div className="mb-4 md:mb-0">
+        <p className="text-xs text-green-600 font-bold uppercase tracking-widest mb-1">
+          Healthcare Facility Registry
         </p>
-        <div className="flex items-center gap-2 mt-1">
-          <h1 className="text-2xl font-bold">{hospital?.facility_name}</h1>
-          <span className="text-xs bg-blue-100 text-blue-600 px-3 py-2 rounded-full">
-            {/* Open 24hrs */}
-            Open{" "}
-            {hospital?.operational_hours !== undefined &&
-            hospital?.operational_hours !== null
-              ? `${hospital?.operational_hours} hrs`
-              : "N/A"}
+        <div className="flex items-center gap-3">
+          <h1 className="text-3xl font-black text-gray-900">{hospital?.facility_name}</h1>
+          <span className="text-xs font-bold bg-green-100 text-green-700 px-4 py-1.5 rounded-full border border-green-200">
+            {hospital?.operational_hours ? `${hospital.operational_hours} HRS` : "N/A"}
           </span>
         </div>
-        <p className="text-gray-500 text-sm flex items-center gap-1 mt-1">
-          {/* 2417 Central Ave, Alameda, CA, 94501 */}
-          {hospital?.physical_location
-            ? hospital?.physical_location
-            : `${hospital?.ward_name}, ${hospital?.lga_name}, ${hospital?.state_name}`}
-          <span className="text-gray-400">📍</span>
+        <p className="text-gray-500 text-sm flex items-center gap-1 mt-2 font-medium">
+          <MdLocationPin className="text-green-600" size={18} />
+          {hospital?.physical_location || `${hospital?.ward_name}, ${hospital?.lga_name}, ${hospital?.state_name}`}
         </p>
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex gap-3">
         <button
-          className="flex no-print items-center gap-2 px-4 py-2 border rounded-lg text-gray-600 hover:bg-gray-100"
+          className="flex no-print items-center gap-2 px-6 py-2.5 border-2 border-gray-100 rounded-full font-bold text-gray-600 hover:bg-gray-50 transition-all"
           onClick={shareLocation}
         >
-          {/* <HiShare /> Share */}
           <HiShare /> {copied ? "Copied!" : "Share"}
         </button>
         <button
-          className="flex no-print items-center gap-2 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800"
-          // onClick={() => downloadFacilityPDF(hospital)}
+          className="flex no-print items-center gap-2 px-8 py-2.5 bg-black text-white rounded-full font-bold hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl"
           onClick={downloadPDF}
         >
           <HiDownload /> Download

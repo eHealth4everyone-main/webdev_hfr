@@ -426,6 +426,9 @@ function Facility() {
           { params }
         );
 
+        console.log("fetchFacilities Params:", params);
+        console.log("fetchFacilities Response:", response.data);
+
         // Process the response to extract the facilities
         // Directly assign fetchedFacilities using optional chaining and nullish coalescing
         // let fetchedFacilities =
@@ -440,6 +443,8 @@ function Facility() {
           response.data?.data?.facilities?.data ??
           response.data?.data?.facilities ??
           [];
+
+        console.log("fetchedFacilities count:", fetchedFacilities.length);
 
         if (!searchValues.search && parsedCachedData) {
           fetchedFacilities = parsedCachedData;
@@ -575,12 +580,15 @@ function Facility() {
       );
 
       const data = response?.data?.data;
-      // console.log("fetchFacilityTypes data", data);
+      console.log("fetchFacilityTypes data:", data);
 
       if (data && Array.isArray(data)) {
         setFacilityTypes(data);
+      } else {
+        console.warn("fetchFacilityTypes: Data is not an array or empty", data);
       }
     } catch (error) {
+      console.error("fetchFacilityTypes Error:", error);
       setFetchError("Failed to fetch facility types.");
     } finally {
       setLoading(false);
@@ -594,15 +602,16 @@ function Facility() {
       );
 
       const data = response?.data?.data; // Axios automatically parses JSON
-      // console.log("data", data);
+      console.log("fetchFacilityLevels data:", data);
 
       if (data && Array.isArray(data)) {
         setFacilityLevel(data); // Set the options from the fetched data
+      } else {
+        console.warn("fetchFacilityLevels: Data is not an array or empty", data);
       }
-
-      // console.log("fetchFacilityLevels data", data);
     } catch (error) {
-      setFetchError("Failed to fetch facility types.");
+      console.error("fetchFacilityLevels Error:", error);
+      setFetchError("Failed to fetch facility levels.");
     } finally {
       setLoading(false);
     }
@@ -1049,6 +1058,11 @@ function Facility() {
           </h1>
 
           <div className="space-y-4">
+            {fetchError && (
+              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+                <span className="block sm:inline">{fetchError}</span>
+              </div>
+            )}
             <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-8 gap-4">
               {/* 🔍 Search Location */}
               <div className="relative lg:col-span-2">
@@ -1172,11 +1186,10 @@ function Facility() {
                 <p className="text-gray-700">
                   {loading
                     ? "Loading..."
-                    : `${
-                        filteredHospitals.length >= 1000
-                          ? filteredHospitals.length + "+"
-                          : filteredHospitals.length
-                      } healthcare facilities found in your area`}
+                    : `${filteredHospitals.length >= 1000
+                      ? filteredHospitals.length + "+"
+                      : filteredHospitals.length
+                    } healthcare facilities found in your area`}
 
                   {/* {filteredHospitals.length >= 1000
                     ? filteredHospitals.length + "+"
@@ -1186,22 +1199,20 @@ function Facility() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => setIsGridView(true)}
-                    className={`p-2 rounded-lg transition-colors duration-200 ${
-                      isGridView
-                        ? "bg-gray-900 text-white"
-                        : "bg-white text-gray-900"
-                    }`}
+                    className={`p-2 rounded-lg transition-colors duration-200 ${isGridView
+                      ? "bg-gray-900 text-white"
+                      : "bg-white text-gray-900"
+                      }`}
                   >
                     <LayoutDashboard size={20} />
                   </button>
 
                   <button
                     onClick={() => setIsGridView(false)}
-                    className={`p-2 rounded-lg transition-colors duration-200 ${
-                      !isGridView
-                        ? "bg-gray-900 text-white"
-                        : "bg-white text-gray-900"
-                    }`}
+                    className={`p-2 rounded-lg transition-colors duration-200 ${!isGridView
+                      ? "bg-gray-900 text-white"
+                      : "bg-white text-gray-900"
+                      }`}
                   >
                     <Menu size={20} />
                   </button>
@@ -1212,9 +1223,8 @@ function Facility() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Hospitals Container */}
               <div
-                className={`flex-1 overflow-y-auto max-h-screen px-4 ${
-                  !isGridView ? "space-y-4  " : "space-y-4"
-                }`}
+                className={`flex-1 overflow-y-auto max-h-screen px-4 ${!isGridView ? "space-y-4  " : "space-y-4"
+                  }`}
               >
                 <div className="flex-1">
                   <div className="flex flex-col">
@@ -1251,7 +1261,7 @@ function Facility() {
                           {paginatedHospitals.map((hospital) => {
                             const imageUrl =
                               Array.isArray(hospital.image_url) &&
-                              hospital.image_url.length > 0
+                                hospital.image_url.length > 0
                                 ? hospital.image_url[0]
                                 : "/gh1.svg";
 
@@ -1415,8 +1425,8 @@ function Facility() {
                                         Contact Info
                                       </span>
                                       {hospital.phone_number &&
-                                      hospital.phone_number !== "null" &&
-                                      hospital.phone_number.trim() !== ""
+                                        hospital.phone_number !== "null" &&
+                                        hospital.phone_number.trim() !== ""
                                         ? hospital.phone_number
                                         : "N/A"}
                                     </div>
@@ -1427,8 +1437,8 @@ function Facility() {
                                         Facility Level
                                       </span>
                                       {hospital.facility_level_name &&
-                                      hospital.facility_level_name !== "null" &&
-                                      hospital.facility_level_name.trim() !== ""
+                                        hospital.facility_level_name !== "null" &&
+                                        hospital.facility_level_name.trim() !== ""
                                         ? hospital.facility_level_name
                                         : "N/A"}
                                     </div>
@@ -1542,11 +1552,10 @@ function Facility() {
                         setCurrentPage((prev) => Math.max(prev - 1, 1))
                       }
                       disabled={currentPage === 1}
-                      className={`px-4 py-2 border rounded ${
-                        currentPage === 1
-                          ? "opacity-50 cursor-not-allowed"
-                          : "hover:bg-gray-100"
-                      }`}
+                      className={`px-4 py-2 border rounded ${currentPage === 1
+                        ? "opacity-50 cursor-not-allowed"
+                        : "hover:bg-gray-100"
+                        }`}
                     >
                       Previous
                     </button>
@@ -1560,11 +1569,10 @@ function Facility() {
                         setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                       }
                       disabled={currentPage === totalPages}
-                      className={`px-4 py-2 border rounded ${
-                        currentPage === totalPages
-                          ? "opacity-50 cursor-not-allowed"
-                          : "hover:bg-gray-100"
-                      }`}
+                      className={`px-4 py-2 border rounded ${currentPage === totalPages
+                        ? "opacity-50 cursor-not-allowed"
+                        : "hover:bg-gray-100"
+                        }`}
                     >
                       Next
                     </button>
@@ -1585,9 +1593,9 @@ function Facility() {
                     center={
                       selectedHospital
                         ? {
-                            lat: selectedHospital.latitude,
-                            lng: selectedHospital.longitude,
-                          }
+                          lat: selectedHospital.latitude,
+                          lng: selectedHospital.longitude,
+                        }
                         : userLocation || center
                     }
                     zoom={selectedHospital ? 12 : 12}

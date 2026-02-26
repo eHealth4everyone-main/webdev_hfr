@@ -12,6 +12,7 @@ use App\Models\HospitalHistory;
 use App\Models\HospitalServiceHistory;
 use App\Models\StatusTracking;
 use Carbon\Carbon;
+use App\Services\FacilityLevelService;
 
 
 
@@ -160,7 +161,7 @@ class MyRequestController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
      */
-    public function updateRequest(Request $request)
+    public function updateRequest(Request $request, FacilityLevelService $levelService)
     {
 
         $request->validate([
@@ -239,6 +240,11 @@ class MyRequestController extends Controller
                 $hosp->publish_note = '';
                 $hosp->start_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->start_date)));
                 $hosp->operational_days = $hosp->arrayValuesTostring($request->operational_days);
+
+                // Automate Level Determination
+                $determinedLevel = $levelService->determineLevel($request->all());
+                $hosp->facility_level_id = $determinedLevel;
+
                 $hosp->save();
 
                 HospitalHistory::enableAuditing();
@@ -319,6 +325,11 @@ class MyRequestController extends Controller
                 $hosp->publish_note = '';
                 $hosp->start_date = date('Y-m-d', strtotime(str_replace('-', '/', $request->start_date)));
                 $hosp->operational_days = $hosp->arrayValuesTostring($request->operational_days);
+
+                // Automate Level Determination
+                $determinedLevel = $levelService->determineLevel($request->all());
+                $hosp->facility_level_id = $determinedLevel;
+
                 $hosp->save();
 
                 //insert in status tracking

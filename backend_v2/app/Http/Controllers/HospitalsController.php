@@ -14,6 +14,9 @@ use Carbon\Carbon;
 use Auth;
 use App\Models\ApprovalNotifications;
 use App\Models\HospitalHistory;
+use App\Services\FacilityLevelService;
+use App\Services\CertificateService;
+
 
 
 /**
@@ -83,6 +86,33 @@ class HospitalsController extends Controller
         // dd($facilities);
         return view('hospitals.index', compact('facilities'));
     }
+    
+    public function showCertificate($id, CertificateService $certificateService)
+    {
+        $hospital = DB::table('hospital_details')
+            ->join('ou_states', 'hospital_details.state_id', '=', 'ou_states.id')
+            ->join('ou_lgas', 'hospital_details.lga_id', '=', 'ou_lgas.id')
+            ->join('lst_level_of_care', 'hospital_details.facility_level_id', '=', 'lst_level_of_care.id')
+            ->select('hospital_details.*', 'ou_states.name as state', 'ou_lgas.name as lga', 'lst_level_of_care.name as level_name')
+            ->where('hospital_details.id', $id)
+            ->first();
+
+        if (!$hospital) abort(404);
+
+        $certificate = $certificateService->getCertificate($id);
+        if (!$certificate) {
+            // Auto-issue a certificate if it doesn't exist (assuming it's published since it's in hospital_details)
+            $certificateService->issueCertificate($id, Auth::user()->id);
+            $certificate = $certificateService->getCertificate($id);
+        }
+
+        if (!$certificate) {
+            session()->flash('alert-danger', 'No valid certificate could be generated for this facility.');
+            return back();
+        }
+
+        return view('hospitals.certificate', compact('hospital', 'certificate'));
+    }
 
 
     public function create()
@@ -93,7 +123,8 @@ class HospitalsController extends Controller
         return view('hospitals.create', compact('lst_services'));
     }
 
-    public function store(Request $request)
+    public function store(Request $request, FacilityLevelService $levelService)
+
     {
 
 
@@ -180,7 +211,13 @@ class HospitalsController extends Controller
         $hosp->fill($request->except(['images']));
 
         // $hosp->fill($request->all());
+        
+        // Automate Level Determination
+        $determinedLevel = $levelService->determineLevel($request->all());
+        $hosp->facility_level_id = $determinedLevel;
+
         $hosp->id = $hosp->generateUID();
+
         $hosp->unique_id = $hosp->generateFacilityCode($request->lga_id, '1', $request->facility_level_id, $request->ownership_id);
         $hosp->start_date = $start_date;
         $hosp->close_date = $close_date;
@@ -269,7 +306,8 @@ class HospitalsController extends Controller
     }
 
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $id, FacilityLevelService $levelService)
+
     {
         $request->validate([
             'registration_no' => 'nullable|max:20',
@@ -349,7 +387,12 @@ class HospitalsController extends Controller
         // $hosp->fill($request->all());
         $hosp->fill($request->except(['images']));
 
+        // Automate Level Determination
+        $determinedLevel = $levelService->determineLevel($request->all());
+        $hosp->facility_level_id = $determinedLevel;
+
         $hosp->status_id = 8;
+
         $hosp->requested_by = Auth::user()->id;
         $hosp->requested_at = Carbon::now()->format('Y-m-d H:i:s');
         $hosp->request_note = '';

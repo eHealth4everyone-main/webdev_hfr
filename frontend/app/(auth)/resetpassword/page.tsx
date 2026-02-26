@@ -17,9 +17,11 @@ const ResetPassword: React.FC = () => {
             className="w-full"
           /> */}
           <Image
-            src="/SideBar.svg"
+            src="/SideBar.png"
             className="w-full h-auto"
             alt="Reset Password"
+            width={600}
+            height={800}
             priority
           />
         </div>
@@ -31,6 +33,8 @@ const ResetPassword: React.FC = () => {
               src="/new-logo.svg"
               className="mx-auto h-16"
               alt="Logo"
+              width={200}
+              height={64}
               priority
             />
           </div>
